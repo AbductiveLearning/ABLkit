@@ -1,0 +1,24 @@
+# Grounded abductive learning 
+
+This is the code repository of grounded abductive learning.
+
+## Environment dependency 
+...
+
+## Example 
+share_example.py and nonshare_exaple.py are examples of grounded abductive learning.
+
+```bash 
+python share_example.py
+```
+
+
+## Authors 
+
+- [Le-Wen Cai](http://www.lamda.nju.edu.cn/cailw/) (Nanjing University)
+- [Wang-Zhou Dai](http://daiwz.net) (Imperial College London)
+- [Yu-Xuan Huang](http://www.lamda.nju.edu.cn/huangyx/) (Nanjing University)
+
+## NOTICE 
+They can only be used for academic purpose. For other purposes, please contact with LAMDA Group(www.lamda.nju.edu.cn).
+
