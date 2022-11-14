@@ -1,6 +1,6 @@
-# Grounded abductive learning 
+# ABL Package
 
-This is the code repository of grounded abductive learning.
+This is the code repository of abductive learning Package.
 
 ## Environment dependency 
 ...
@@ -15,9 +15,9 @@ python share_example.py
 
 ## Authors 
 
-- [Le-Wen Cai](http://www.lamda.nju.edu.cn/cailw/) (Nanjing University)
-- [Wang-Zhou Dai](http://daiwz.net) (Imperial College London)
 - [Yu-Xuan Huang](http://www.lamda.nju.edu.cn/huangyx/) (Nanjing University)
+- [](http://www.lamda.nju.edu.cn//) (Nanjing University)
+
 
 ## NOTICE 
 They can only be used for academic purpose. For other purposes, please contact with LAMDA Group(www.lamda.nju.edu.cn).
