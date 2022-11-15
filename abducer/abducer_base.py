@@ -17,6 +17,26 @@ import numpy as np
 def hamming_dist(A, B):
     return np.sum(np.array(A) != np.array(B))
 
+def hamming_dist_kb(A, B):
+    B = np.array(B)
+    A = np.expand_dims(A, axis = 0).repeat(axis=0, repeats=(len(B)))
+    return np.sum(A != B, axis = 1)
+
+def confidence_dist_kb(A, B):
+    B = np.array(B)
+
+    #print(A)
+    A = np.clip(A, 1e-9, 1)
+    A = np.expand_dims(A, axis=0)
+    A = A.repeat(axis=0, repeats=(len(B)))
+    rows = np.array(range(len(B)))
+    rows = np.expand_dims(rows, axis = 1).repeat(axis = 1, repeats = len(B[0]))
+    cols = np.array(range(len(B[0])))
+    cols = np.expand_dims(cols, axis = 0).repeat(axis = 0, repeats = len(B))
+    return 1 - np.prod(A[rows, cols, B], axis = 1)
+
+
+
 class AbducerBase(abc.ABC):
     def __init__(self, kb, dist_func = "hamming", pred_res_parse = None, cache = True):
         self.kb = kb
@@ -83,15 +103,17 @@ if __name__ == "__main__":
     abd = AbducerBase(kb)
     res = abd.abduce(([1, 1, 1], 4), max_address_num = 2, require_more_address = 0)
     print(res)
+    print()
     res = abd.abduce(([1, 1, 1], 4), max_address_num = 2, require_more_address = 1)
     print(res)
+    print()
     res = abd.abduce(([1, 1, 1], 4), max_address_num = 1, require_more_address = 1)
     print(res)
     print()
-    print('Test cache')
     res = abd.abduce(([1, 1, 1], 4), max_address_num = 2, require_more_address = 0)
     print(res)
-    res = abd.abduce(([1, 1, 1], 4), max_address_num = 20, require_more_address = 1)
+    print()
+    res = abd.abduce(([1, 1, 1], 5), max_address_num = 2, require_more_address = 1)
     print(res)
     # res = abd.abduce(([0, 2, 0], 0.99), 1, 0)
     # print(res)
