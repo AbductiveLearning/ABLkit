@@ -99,8 +99,8 @@ class add_KB(KBBase):
                 address_idx_list = list(combinations(list(range(len(pred_res))), address_num))
                 for address_idx in address_idx_list:
                     for c in all_address_candidate:
-                        if(np.count_nonzero(np.array(c) != np.array(pred_res)[np.array(address_idx)]) == address_num):
-                            pred_res_array = np.array(pred_res)
+                        pred_res_array = np.array(pred_res)
+                        if(np.count_nonzero(np.array(c) != pred_res_array[np.array(address_idx)]) == address_num):
                             pred_res_array[np.array(address_idx)] = c
                             if(self.logic_forward(pred_res_array) == key):
                                 candidates.append(pred_res_array)
@@ -116,8 +116,8 @@ class add_KB(KBBase):
             address_idx_list = list(combinations(list(range(len(pred_res))), address_num))
             for address_idx in address_idx_list:
                 for c in all_candidate:
-                    if(np.count_nonzero(np.array(c) != np.array(pred_res)[np.array(address_idx)]) == address_num):
-                        pred_res_array = np.array(pred_res)
+                    pred_res_array = np.array(pred_res)
+                    if(np.count_nonzero(np.array(c) != pred_res_array[np.array(address_idx)]) == address_num):
                         pred_res_array[np.array(address_idx)] = c
                         if(self.logic_forward(pred_res_array) == key):
                             candidates.append(pred_res_array)
