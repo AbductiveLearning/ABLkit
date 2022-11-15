@@ -21,6 +21,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
+from models.basic_model import BasicModel
 
 import pickle as pk
 import random
@@ -35,7 +36,6 @@ def merge_data(X):
     ret_mark = list(map(lambda x : len(x), X))
     ret_X = list(chain(*X))
     return ret_X, ret_mark
-
 
 def reshape_data(Y, marks):
     begin_mark = 0
@@ -58,57 +58,26 @@ class WABLBasicModel:
         pass
 
     def predict(self, X):
-        if self.share:
-            data_X, marks = merge_data(X)
-            prob = self.cls_list[0].predict_proba(X = data_X)
-            cls = np.array(prob).argmax(axis = 1)
+        data_X, marks = merge_data(X)
+        prob = self.cls_list[0].predict_proba(X = data_X)
+        cls = np.array(prob).argmax(axis = 1)
 
-            prob = reshape_data(prob, marks)
-            cls = reshape_data(cls, marks)
-        else:
-            cls_result = []
-            prob_result = []
-            for i in range(self.code_len):
-                data_X = get_part_data(X, i)
-                tmp_prob = self.cls_list[i].predict_proba(X = data_X)
-                cls_result.append(np.array(tmp_prob).argmax(axis = 1))
-                prob_result.append(tmp_prob)
-
-            cls = list(zip(*cls_result))
-            prob = list(zip(*prob_result))
+        prob = reshape_data(prob, marks)
+        cls = reshape_data(cls, marks)
 
         return {"cls" : cls, "prob" : prob}
 
     def valid(self, X, Y):
-        if self.share:
-            data_X, _ = merge_data(X)
-            data_Y, _ = merge_data(Y)
-            score = self.cls_list[0].score(X = data_X, y = data_Y)
-            return score, [score]
-        else:
-            score_list = []
-            for i in range(self.code_len):
-                data_X = get_part_data(X, i)
-                data_Y = get_part_data(Y, i)
-                score_list.append(self.cls_list[i].score(data_X, data_Y))
-
-            return sum(score_list) / len(score_list), score_list
+        data_X, _ = merge_data(X)
+        data_Y, _ = merge_data(Y)
+        score = self.cls_list[0].score(X = data_X, y = data_Y)
+        return score, [score]
 
     def train(self, X, Y):
         #self.label_lists = []
-        if self.share:
-            data_X, _ = merge_data(X)
-            data_Y, _ = merge_data(Y)
-            self.cls_list[0].fit(X = data_X, y = data_Y)
-        else:
-            for i in range(self.code_len):
-                data_X = get_part_data(X, i)
-                data_Y = get_part_data(Y, i)
-                self.cls_list[i].fit(data_X, data_Y)
-
-    def _set_label_lists(self, label_lists):
-        label_lists = [sorted(list(set(label_list))) for label_list in label_lists]
-        self.label_lists = label_lists
+        data_X, _ = merge_data(X)
+        data_Y, _ = merge_data(Y)
+        self.cls_list[0].fit(X = data_X, y = data_Y)
 
 class DecisionTree(WABLBasicModel):
     def __init__(self, code_len, label_lists, share = False):
@@ -169,6 +138,11 @@ class CNN(WABLBasicModel):
                 self.cls_list[i].fit(data_X, data_Y)
                 #self.label_lists.append(sorted(list(set(data_Y))))
 
+class MyModel(WABLBasicModel):
+    def __init__(self, base_model):
+
+        self.cls_list = []
+        self.cls_list.append(base_model)
 
 if __name__ == "__main__":
     #data_path = "utils/hamming_data/generated_data/hamming_7_3_0.20.pk"
