@@ -11,7 +11,7 @@
 #================================================================#
 
 import abc
-from kb import add_KB
+from kb import add_KB, hwf_KB
 import numpy as np
 
 from itertools import product, combinations
@@ -100,7 +100,7 @@ class AbducerBase(abc.ABC):
                 pred_res_array = np.array(pred_res)
                 if(np.count_nonzero(np.array(c) != pred_res_array[np.array(address_idx)]) == address_num):
                     pred_res_array[np.array(address_idx)] = c
-                    if(abs(self.kb.logic_forward(pred_res_array) - key) <= 1e-3):
+                    if(self.kb.logic_forward(pred_res_array) == key):
                         new_candidates.append(pred_res_array)
         return new_candidates, address_num
     
@@ -151,19 +151,21 @@ if __name__ == "__main__":
     abd = AbducerBase(kb)
     res = abd.abduce(([1, 1, 1], 4), max_address_num = 2, require_more_address = 0)
     print(res)
-    print()
     res = abd.abduce(([1, 1, 1], 4), max_address_num = 2, require_more_address = 1)
     print(res)
-    print()
     res = abd.abduce(([1, 1, 1], 4), max_address_num = 1, require_more_address = 1)
     print(res)
-    print()
     res = abd.abduce(([1, 1, 1], 4), max_address_num = 2, require_more_address = 0)
     print(res)
-    print()
     res = abd.abduce(([1, 1, 1], 5), max_address_num = 2, require_more_address = 1)
     print(res)
-    # res = abd.abduce(([0, 2, 0], 0.99), 1, 0)
-    # print(res)
-
+    print()
     
+    pseudo_label_list = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '+', '-', '*', '/']
+    kb = hwf_KB(pseudo_label_list)
+    abd = AbducerBase(kb)
+    res = abd.abduce((['5', '+', '2'], 3), max_address_num = 2, require_more_address = 0)
+    print(res)
+    res = abd.abduce((['5', '+', '2'], 1.67), max_address_num = 2, require_more_address = 0)
+    print(res)
+    print()
