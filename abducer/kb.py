@@ -124,11 +124,11 @@ class hwf_KB(KBBase):
                     postfix.append(stack.pop())
                 stack.append(char)
             else:
-                num = char
+                num = int(char)
                 while (i + 1) < len(formula):
                     if formula[i + 1] not in priority.keys():
                         skip_flag += 1
-                        num = num * 10 + formula[i + 1]
+                        num = num * 10 + int(formula[i + 1])
                         i += 1
                     else:
                         break
@@ -316,7 +316,7 @@ if __name__ == "__main__":
     print(res)
     print()
     
-    pseudo_label_list = list(range(10)) + ['+', '-', '*', '/']
+    pseudo_label_list = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '+', '-', '*', '/']
     kb = hwf_KB(pseudo_label_list, kb_max_len = 5)
     print('len(kb):', len(kb))
     res = kb.get_candidates(1, length = 3)
