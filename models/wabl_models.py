@@ -48,19 +48,17 @@ def reshape_data(Y, marks):
 
 
 class WABLBasicModel:
-    """ 
-        label_lists 的目标在于为各个符号设置编号，无论方法是给出字典形式的概率还是给出list形式的，都可以通过这种方式解决.
-                    后续可能会考虑更加完善的措施，降低这部分的复杂度
-                    当模型共享的时候，label_lists 之间的元素也是共享的
-    """
 
-    def __init__(self):
-        pass
+    def __init__(self, pseudo_label_list):
+        self.pseudo_label_list = pseudo_label_list
+        self.mapping = dict(zip(pseudo_label_list, list(range(len(pseudo_label_list)))))
+        self.remapping = dict(zip(list(range(len(pseudo_label_list))), pseudo_label_list))
 
     def predict(self, X):
         data_X, marks = merge_data(X)
         prob = self.cls_list[0].predict_proba(X = data_X)
-        cls = np.array(prob).argmax(axis = 1)
+        _cls = prob.argmax(axis = 1)
+        cls = list(map(lambda x : self.remapping[x], _cls))
 
         prob = reshape_data(prob, marks)
         cls = reshape_data(cls, marks)
@@ -69,14 +67,16 @@ class WABLBasicModel:
 
     def valid(self, X, Y):
         data_X, _ = merge_data(X)
-        data_Y, _ = merge_data(Y)
+        _data_Y, _ = merge_data(Y)
+        data_Y = list(map(lambda y : self.mapping[y], _data_Y))
         score = self.cls_list[0].score(X = data_X, y = data_Y)
         return score, [score]
 
     def train(self, X, Y):
         #self.label_lists = []
         data_X, _ = merge_data(X)
-        data_Y, _ = merge_data(Y)
+        _data_Y, _ = merge_data(Y)
+        data_Y = list(map(lambda y : self.mapping[y], _data_Y))
         self.cls_list[0].fit(X = data_X, y = data_Y)
 
 class DecisionTree(WABLBasicModel):
@@ -139,8 +139,8 @@ class CNN(WABLBasicModel):
                 #self.label_lists.append(sorted(list(set(data_Y))))
 
 class MyModel(WABLBasicModel):
-    def __init__(self, base_model):
-
+    def __init__(self, base_model, pseudo_label_list):
+        super(MyModel, self).__init__(pseudo_label_list)
         self.cls_list = []
         self.cls_list.append(base_model)
 
