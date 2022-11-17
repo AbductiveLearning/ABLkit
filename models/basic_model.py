@@ -58,7 +58,6 @@ class BasicModel():
             optimizer,
             device,
             params,
-            sign_list,
             transform = None,
             target_transform=None,
             collate_fn = None,
@@ -71,10 +70,6 @@ class BasicModel():
         self.transform = transform
         self.target_transform = target_transform
         self.device = device
-
-        self.sign_list = sorted(list(set(sign_list)))
-        self.mapping = dict(zip(sign_list, list(range(len(sign_list)))))
-        self.remapping = dict(zip(list(range(len(sign_list))), sign_list))
 
         if recorder is None:
             recorder = FakeRecorder()
@@ -89,7 +84,7 @@ class BasicModel():
         recorder = self.recorder
         recorder.print("model fitting")
 
-        min_loss = 999999999
+        min_loss = 999999999 
         for epoch in range(n_epoch):
             loss_value = self.train_epoch(data_loader)
             recorder.print(f"{epoch}/{n_epoch} model training loss is {loss_value}")
@@ -103,9 +98,6 @@ class BasicModel():
         recorder.print("Model fitted, minimal loss is ", min_loss)
         return loss_value
 
-    def str2ints(self, Y):
-        return [self.mapping[y] for y in Y]
-
     def fit(self, data_loader = None,
                   X = None,
                   y = None):
@@ -115,8 +107,7 @@ class BasicModel():
             transform = self.transform
             target_transform = self.target_transform
 
-            Y = self.str2ints(y)
-            train_dataset = XYDataset(X, Y, transform=transform, target_transform=target_transform)
+            train_dataset = XYDataset(X, y, transform=transform, target_transform=target_transform)
             sampler = None
             data_loader = torch.utils.data.DataLoader(train_dataset, batch_size=params.batchSize, \
                     shuffle=True, sampler=sampler, num_workers=int(params.workers), \
@@ -155,7 +146,7 @@ class BasicModel():
 
         with torch.no_grad():
             results = []
-            for i, data in enumerate(data_loader):
+            for _, data in enumerate(data_loader):
                 X = data[0].to(device)
                 pred_Y = model(X)
                 results.append(pred_Y)
@@ -179,7 +170,7 @@ class BasicModel():
         recorder = self.recorder
         recorder.print('Start Predict ', print_prefix)
         Y = self._predict(data_loader).argmax(axis=1)
-        return [self.remapping[int(y)] for y in Y]
+        return [int(y) for y in Y]
 
     def predict_proba(self, data_loader = None, X = None, print_prefix = ""):
         if data_loader is None:
@@ -197,7 +188,7 @@ class BasicModel():
 
         recorder = self.recorder
         recorder.print('Start Predict ', print_prefix)
-        return torch.softmax(self._predict(data_loader), axis=1).cpu()
+        return torch.softmax(self._predict(data_loader), axis=1).cpu().numpy()
 
     def _val(self, data_loader, print_prefix):
         model = self.model
@@ -212,7 +203,7 @@ class BasicModel():
         pred_num = 0
         loss_value = 0
         with torch.no_grad():
-            for i, data in enumerate(data_loader):
+            for _, data in enumerate(data_loader):
                 X = data[0].to(device)
                 Y = data[1].to(device)
 
@@ -236,8 +227,7 @@ class BasicModel():
             transform = self.transform
             target_transform = self.target_transform
 
-            Y = self.str2ints(y)
-            val_dataset = XYDataset(X, Y, transform=transform, target_transform=target_transform)
+            val_dataset = XYDataset(X, y, transform=transform, target_transform=target_transform)
             sampler = None
             data_loader = torch.utils.data.DataLoader(val_dataset, batch_size=params.batchSize, \
                 shuffle=True, sampler=sampler, num_workers=int(params.workers), \
