@@ -71,7 +71,7 @@ def run_test():
     base_model = BasicModel(cls, criterion, optimizer, device, Params(), sign_list, recorder=recorder)
     model = MyModel(base_model)
 
-    res = framework.train(model, abducer, train_X, train_Y, logic_forward = kb.logic_forward, sample_num = 10000, verbose = 1)
+    res = framework.train(model, abducer, train_X, train_Y, sample_num = 10000, verbose = 1)
     print(res)
     
 
