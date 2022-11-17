@@ -65,8 +65,6 @@ class AbducerBase(abc.ABC):
 
     def abduce(self, data, max_address_num = -1, require_more_address = 0):
         pred_res, ans = data
-        pred_res = [self.kb.pseudo_label_list[sym] for sym in pred_res]
-        
 
         if max_address_num == -1:
             max_address_num = len(pred_res)
