@@ -14,46 +14,10 @@ import sys
 sys.path.append("..")
 
 import torch
-from torch.autograd import Variable
 from torch.utils.data import Dataset
-import torchvision
 
 import os
 from multiprocessing import Pool
-
-import random
-import torch
-from torch.utils.data import Dataset
-from torch.utils.data import sampler
-import torchvision.transforms as transforms
-import six
-import sys
-from PIL import Image
-import numpy as np
-import collections
-
-class resizeNormalize(object):
-
-    def __init__(self, size, interpolation=Image.BILINEAR):
-        self.size = size
-        self.interpolation = interpolation
-        self.toTensor = transforms.ToTensor()
-        self.transform = transforms.Compose([
-            #transforms.ToPILImage(),
-            #transforms.RandomHorizontalFlip(),
-            #transforms.RandomVerticalFlip(),
-            #transforms.RandomRotation(30),
-            #transforms.RandomAffine(30),
-            transforms.ToTensor(),
-
-        ])
-
-    def __call__(self, img):
-        #img = img.resize(self.size, self.interpolation)
-        #img = self.toTensor(img)
-        img = self.transform(img)
-        img.sub_(0.5).div_(0.5)
-        return img
 
 class XYDataset(Dataset):
     def __init__(self, X, Y, transform=None, target_transform=None):
@@ -80,56 +44,12 @@ class XYDataset(Dataset):
 
         return (img, label, index)
 
-class alignCollate(object):
-
-    def __init__(self, imgH=32, imgW=100, keep_ratio=False, min_ratio=1):
-        self.imgH = imgH
-        self.imgW = imgW
-        self.keep_ratio = keep_ratio
-        self.min_ratio = min_ratio
-
-    def __call__(self, batch):
-        images, labels, img_keys = zip(*batch)
-
-        imgH = self.imgH
-        imgW = self.imgW
-        if self.keep_ratio:
-            ratios = []
-            for image in images:
-                w, h = image.shape[:2]
-                ratios.append(w / float(h))
-            ratios.sort()
-            max_ratio = ratios[-1]
-            imgW = int(np.floor(max_ratio * imgH))
-            imgW = max(imgH * self.min_ratio, imgW)  # assure imgH >= imgW
-
-        transform = resizeNormalize((imgW, imgH))
-        images = [transform(image) for image in images]
-        images = torch.cat([t.unsqueeze(0) for t in images], 0)
-        labels = torch.LongTensor(labels)
-
-        return images, labels, img_keys
-
 class FakeRecorder():
     def __init__(self):
         pass
 
     def print(self, *x):
         pass
-
-from torch.nn import init
-from torch import nn
-
-def weigth_init(m):
-    if isinstance(m, nn.Conv2d):
-        init.xavier_uniform_(m.weight.data)
-        init.constant_(m.bias.data,0.1)
-    elif isinstance(m, nn.BatchNorm2d):
-        m.weight.data.fill_(1)
-        m.bias.data.zero_()
-    elif isinstance(m, nn.Linear):
-        m.weight.data.normal_(0,0.01)
-        m.bias.data.zero_()
 
 class BasicModel():
     def __init__(self,
@@ -142,7 +62,6 @@ class BasicModel():
             transform = None,
             target_transform=None,
             collate_fn = None,
-            pretrained = False,
             recorder = None):
 
         self.model = model.to(device)
@@ -153,19 +72,13 @@ class BasicModel():
         self.target_transform = target_transform
         self.device = device
 
-        sign_list = sorted(list(set(sign_list)))
+        self.sign_list = sorted(list(set(sign_list)))
         self.mapping = dict(zip(sign_list, list(range(len(sign_list)))))
         self.remapping = dict(zip(list(range(len(sign_list))), sign_list))
 
         if recorder is None:
             recorder = FakeRecorder()
         self.recorder = recorder
-
-        if pretrained:
-            # the paths of model, optimizer should be included in params
-            self.load(params.load_dir)
-        else:
-            self.model.apply(weigth_init)
 
         self.save_interval = params.saveInterval
         self.params = params
@@ -211,41 +124,28 @@ class BasicModel():
         return self._fit(data_loader, params.n_epoch, params.stop_loss)
 
     def train_epoch(self, data_loader):
-        # loss_avg = mutils.averager()
-        self.model.train()
-
-        loss_value = 0
-        for i, data in enumerate(data_loader):
-            X = data[0]
-            Y = data[1]
-            loss = self.train_batch(X, Y)
-            loss_value += loss.item()
-
-        return loss_value
-
-    def train_batch(self, X, Y):
-        #cpu_images, cpu_texts, _ = data
         model = self.model
         criterion = self.criterion
         optimizer = self.optimizer
         device = self.device
-    
-        # init training status
-        # torch.autograd.set_detect_anomaly(True)
+        
+        model.train()
 
-        # model predict
-        X = X.to(device)
-        Y = Y.to(device)
-        pred_Y = model(X)
+        loss_value = 0
+        for _, data in enumerate(data_loader):
+            X = data[0].to(device)
+            Y = data[1].to(device)
+            pred_Y = model(X)
 
-        # calculate loss
-        loss = criterion(pred_Y, Y)
+            loss = criterion(pred_Y, Y)
 
-        # back propagation and optimize
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        return loss
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            loss_value += loss.item()
+
+        return loss_value
 
     def _predict(self, data_loader):
         model = self.model
@@ -297,7 +197,7 @@ class BasicModel():
 
         recorder = self.recorder
         recorder.print('Start Predict ', print_prefix)
-        return torch.softmax(self._predict(data_loader), axis=1)
+        return torch.softmax(self._predict(data_loader), axis=1).cpu()
 
     def _val(self, data_loader, print_prefix):
         model = self.model
