@@ -115,7 +115,7 @@ def is_all_sublabel_exist(labels, std_label_list):
 def pretrain(model, X, Y):
     pass
 
-def train(model, abducer, X, C, logic_forward, epochs = 10, sample_num = -1, verbose = -1):
+def train(model, abducer, X, C, epochs = 10, sample_num = -1, verbose = -1):
     # Set default parameters
     if sample_num == -1:
         sample_num = len(X)
@@ -136,7 +136,7 @@ def train(model, abducer, X, C, logic_forward, epochs = 10, sample_num = -1, ver
         X, C = block_sample(X_bak, C_bak, sample_num, epoch_idx)
         preds_res = predict_func(X)
         
-        abl_acc = result_statistics(C, preds_res['cls'], logic_forward)
+        abl_acc = result_statistics(C, preds_res['cls'], abducer.kb.logic_forward)
         print('epoch_idx:', epoch_idx, '  abl_acc:', abl_acc)
         
         abduced_Y = abduce_func(preds_res, C)
