@@ -11,8 +11,6 @@
 #================================================================#
 
 from utils.plog import logger
-from models.wabl_models import DecisionTree, KNN
-import pickle as pk
 import numpy as np
 import time
 import framework
@@ -26,8 +24,6 @@ from models.wabl_models import MyModel
 
 from multiprocessing import Pool
 import os
-from datasets.data_generator import generate_data_via_codes, code_generator
-from collections import defaultdict
 from abducer.abducer_base import AbducerBase
 from abducer.kb import add_KB, hwf_KB
 from datasets.mnist_add.get_mnist_add import get_mnist_add
@@ -49,27 +45,27 @@ def run_test():
 
     recorder_file_path = f"{result_dir}/1116.pk"#
 
-    # words = code_generator(code_len, code_num, letter_num)
-    kb = add_KB()
+    # kb = add_KB()
+    kb = hwf_KB()
     abducer = AbducerBase(kb)
 
     recorder = logger()
     recorder.set_savefile("test.log")
 
 
-    train_X, train_Y, test_X, test_Y = get_mnist_add()
-    # train_X, train_Y, test_X, test_Y = get_hwf()
+    # train_X, train_Y, test_X, test_Y = get_mnist_add()
+    train_X, train_Y, test_X, test_Y = get_hwf()
 
 
     recorder = plog.ResultRecorder()
-    cls = LeNet5()
+    cls = LeNet5(num_classes=len(kb.pseudo_label_list), image_size=(train_X[0][0].shape[1:]))
     
     criterion = nn.CrossEntropyLoss(size_average=True)
     optimizer = torch.optim.Adam(cls.parameters(), lr=0.001, betas=(0.9, 0.99))
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    sign_list = list(range(10))
-    base_model = BasicModel(cls, criterion, optimizer, device, Params(), sign_list, recorder=recorder)
-    model = MyModel(base_model)
+    
+    base_model = BasicModel(cls, criterion, optimizer, device, Params(), recorder=recorder)
+    model = MyModel(base_model, kb.pseudo_label_list)
 
     res = framework.train(model, abducer, train_X, train_Y, sample_num = 10000, verbose = 1)
     print(res)
