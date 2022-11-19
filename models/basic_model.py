@@ -42,7 +42,7 @@ class XYDataset(Dataset):
         if self.target_transform is not None:
             label = self.target_transform(label)
 
-        return (img, label, index)
+        return (img, label)
 
 class FakeRecorder():
     def __init__(self):
@@ -57,14 +57,24 @@ class BasicModel():
             criterion,
             optimizer,
             device,
-            params,
+            batch_size = 1,
+            num_epochs = 10,
+            stop_loss = 0.01,
+            num_workers = 0,
+            save_interval = None,
+            save_dir = None,
             transform = None,
-            target_transform=None,
+            target_transform = None,
             collate_fn = None,
             recorder = None):
 
         self.model = model.to(device)
         
+        self.batch_size = batch_size
+        self.num_epochs = num_epochs
+        self.stop_loss = stop_loss
+        self.num_workers = num_workers
+
         self.criterion = criterion
         self.optimizer = optimizer
         self.transform = transform
@@ -75,8 +85,8 @@ class BasicModel():
             recorder = FakeRecorder()
         self.recorder = recorder
 
-        self.save_interval = params.saveInterval
-        self.params = params
+        self.save_interval = save_interval
+        self.save_dir = save_dir
         self.collate_fn = collate_fn
         pass
 
@@ -91,9 +101,9 @@ class BasicModel():
             if loss_value < min_loss:
                 min_loss = loss_value
             if epoch > 0 and self.save_interval is not None and epoch % self.save_interval == 0:
-                assert hasattr(self.params, 'save_dir')
-                self.save(self.params.save_dir)
-            if stop_loss is not None and  loss_value < stop_loss:
+                assert self.save_dir is not None
+                self.save(self.save_dir)
+            if stop_loss is not None and loss_value < stop_loss:
                 break
         recorder.print("Model fitted, minimal loss is ", min_loss)
         return loss_value
@@ -102,17 +112,16 @@ class BasicModel():
                   X = None,
                   y = None):
         if data_loader is None:
-            params = self.params
             collate_fn = self.collate_fn
             transform = self.transform
             target_transform = self.target_transform
 
             train_dataset = XYDataset(X, y, transform=transform, target_transform=target_transform)
             sampler = None
-            data_loader = torch.utils.data.DataLoader(train_dataset, batch_size=params.batchSize, \
-                    shuffle=True, sampler=sampler, num_workers=int(params.workers), \
+            data_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.batch_size, \
+                    shuffle=True, sampler=sampler, num_workers=int(self.num_workers), \
                     collate_fn=collate_fn)
-        return self._fit(data_loader, params.n_epoch, params.stop_loss)
+        return self._fit(data_loader, self.num_epochs, self.stop_loss)
 
     def train_epoch(self, data_loader):
         model = self.model
@@ -155,7 +164,6 @@ class BasicModel():
 
     def predict(self, data_loader = None, X = None, print_prefix = ""):
         if data_loader is None:
-            params = self.params
             collate_fn = self.collate_fn
             transform = self.transform
             target_transform = self.target_transform
@@ -163,8 +171,8 @@ class BasicModel():
             Y = [0] * len(X)
             val_dataset = XYDataset(X, Y, transform=transform, target_transform=target_transform)
             sampler = None
-            data_loader = torch.utils.data.DataLoader(val_dataset, batch_size=params.batchSize, \
-                shuffle=False, sampler=sampler, num_workers=int(params.workers), \
+            data_loader = torch.utils.data.DataLoader(val_dataset, batch_size=self.batch_size, \
+                shuffle=False, sampler=sampler, num_workers=int(self.num_workers), \
                 collate_fn=collate_fn)
 
         recorder = self.recorder
@@ -174,7 +182,6 @@ class BasicModel():
 
     def predict_proba(self, data_loader = None, X = None, print_prefix = ""):
         if data_loader is None:
-            params = self.params
             collate_fn = self.collate_fn
             transform = self.transform
             target_transform = self.target_transform
@@ -182,8 +189,8 @@ class BasicModel():
             Y = [0] * len(X)
             val_dataset = XYDataset(X, Y, transform=transform, target_transform=target_transform)
             sampler = None
-            data_loader = torch.utils.data.DataLoader(val_dataset, batch_size=params.batchSize, \
-                shuffle=False, sampler=sampler, num_workers=int(params.workers), \
+            data_loader = torch.utils.data.DataLoader(val_dataset, batch_size=self.batch_size, \
+                shuffle=False, sampler=sampler, num_workers=int(self.num_workers), \
                 collate_fn=collate_fn)
 
         recorder = self.recorder
@@ -222,15 +229,14 @@ class BasicModel():
 
     def val(self, data_loader = None, X = None, y = None, print_prefix = ""):
         if data_loader is None:
-            params = self.params
             collate_fn = self.collate_fn
             transform = self.transform
             target_transform = self.target_transform
 
             val_dataset = XYDataset(X, y, transform=transform, target_transform=target_transform)
             sampler = None
-            data_loader = torch.utils.data.DataLoader(val_dataset, batch_size=params.batchSize, \
-                shuffle=True, sampler=sampler, num_workers=int(params.workers), \
+            data_loader = torch.utils.data.DataLoader(val_dataset, batch_size=self.batch_size, \
+                shuffle=True, sampler=sampler, num_workers=int(self.num_workers), \
                 collate_fn=collate_fn)
         return self._val(data_loader, print_prefix)
 

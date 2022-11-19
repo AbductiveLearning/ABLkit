@@ -49,7 +49,10 @@ def reshape_data(Y, marks):
 
 class WABLBasicModel:
 
-    def __init__(self, pseudo_label_list):
+    def __init__(self, base_model, pseudo_label_list):
+        self.cls_list = []
+        self.cls_list.append(base_model)
+
         self.pseudo_label_list = pseudo_label_list
         self.mapping = dict(zip(pseudo_label_list, list(range(len(pseudo_label_list)))))
         self.remapping = dict(zip(list(range(len(pseudo_label_list))), pseudo_label_list))
@@ -137,12 +140,6 @@ class CNN(WABLBasicModel):
                 data_Y = get_part_data(Y, i)
                 self.cls_list[i].fit(data_X, data_Y)
                 #self.label_lists.append(sorted(list(set(data_Y))))
-
-class MyModel(WABLBasicModel):
-    def __init__(self, base_model, pseudo_label_list):
-        super(MyModel, self).__init__(pseudo_label_list)
-        self.cls_list = []
-        self.cls_list.append(base_model)
 
 if __name__ == "__main__":
     #data_path = "utils/hamming_data/generated_data/hamming_7_3_0.20.pk"
