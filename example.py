@@ -36,7 +36,7 @@ class Params:
     saveInterval = 10
     batchSize = 16
     workers = 16
-    n_epoch = 10
+    n_epoch = 1
     stop_loss = None
 
 def run_test():
