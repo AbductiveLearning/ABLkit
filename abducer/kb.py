@@ -134,7 +134,7 @@ class hwf_KB(ClsKB):
         if(self.valid_formula(formula) == False):
             return np.inf
         try:
-            return eval(''.join(formula))
+            return round(eval(''.join(formula)), 2)
         except ZeroDivisionError:
             return np.inf
         
