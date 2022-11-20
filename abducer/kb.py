@@ -46,23 +46,21 @@ class KBBase(ABC):
 
 
 class ClsKB(KBBase):
-    def __init__(self, pseudo_label_list, kb_max_len = -1):
+    def __init__(self, pseudo_label_list, len_list = None):
         super().__init__()
         self.pseudo_label_list = pseudo_label_list
         self.base = {}
-        self.kb_max_len = kb_max_len
+        self.len_list = len_list
         
-        if(self.kb_max_len > 0):
-            X = self.get_X(self.pseudo_label_list, self.kb_max_len)
+        if(self.len_list != None):
+            X = self.get_X(self.pseudo_label_list, self.len_list)
             Y = self.get_Y(X, self.logic_forward)
-
             for x, y in zip(X, Y):
                 self.base.setdefault(len(x), defaultdict(list))[y].append(np.array(x))
     
-    def get_X(self, pseudo_label_list, max_len):
+    def get_X(self, pseudo_label_list, len_list):
         res = []
-        assert(max_len >= 2)
-        for len in range(2, max_len + 1):
+        for len in len_list:
             res += list(product(pseudo_label_list, repeat = len))
         return res
 
@@ -80,7 +78,7 @@ class ClsKB(KBBase):
             return self.get_all_candidates()
         
         length = self._length(length)
-        if(self.kb_max_len < min(length)):
+        if(max(self.len_list) < min(length)):
             return []
         return sum([self.base[l][key] for l in length], [])
     
@@ -96,29 +94,18 @@ class ClsKB(KBBase):
 
 
 class add_KB(ClsKB):
-    def __init__(self, kb_max_len = -1):
+    def __init__(self, len_list = None):
         self.pseudo_label_list = list(range(10))
-        super().__init__(self.pseudo_label_list, kb_max_len)
+        super().__init__(self.pseudo_label_list, len_list)
     
     def logic_forward(self, nums):
         return sum(nums)
-
-    def get_candidates(self, key, length = None):
-        return super().get_candidates(key, length)
     
-    def get_all_candidates(self):
-        return super().get_all_candidates()
-    
-    def _dict_len(self, dic):
-        return super()._dict_len(dic)
-
-    def __len__(self):
-        return super().__len__()
     
 class hwf_KB(ClsKB):
-    def __init__(self, kb_max_len = -1):
+    def __init__(self, len_list = None):
         self.pseudo_label_list = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', '*', '/']
-        super().__init__(self.pseudo_label_list, kb_max_len)
+        super().__init__(self.pseudo_label_list, len_list)
         
     def valid_formula(self, formula):
         if(len(formula) % 2 == 0):
@@ -137,18 +124,6 @@ class hwf_KB(ClsKB):
             return round(eval(''.join(formula)), 2)
         except ZeroDivisionError:
             return np.inf
-        
-    def get_candidates(self, key, length = None):
-        return super().get_candidates(key, length)
-    
-    def get_all_candidates(self):
-        return super().get_all_candidates()
-    
-    def _dict_len(self, dic):
-        return super()._dict_len(dic)
-
-    def __len__(self):
-        return super().__len__()
     
 
 class RegKB(KBBase):
@@ -198,17 +173,18 @@ class RegKB(KBBase):
     def __len__(self):
         return sum([sum(len(x) for x in D[0]) for D in self.base.values()])
 
+import time
 if __name__ == "__main__":
     # With ground KB
-    kb = add_KB(kb_max_len = 5)
+    kb = add_KB(len_list = [2])
     print('len(kb):', len(kb))
     res = kb.get_candidates(0)
     print(res)
-    res = kb.get_candidates(18, length = 2)
+    res = kb.get_candidates(18)
     print(res)
-    res = kb.get_candidates(18, length = 8)
+    res = kb.get_candidates(18)
     print(res)
-    res = kb.get_candidates(7, length = 3)
+    res = kb.get_candidates(7)
     print(res)
     print()
     
@@ -225,8 +201,12 @@ if __name__ == "__main__":
     print(res)
     print()
     
-    kb = hwf_KB(kb_max_len = 5)
+    start = time.time()
+    kb = hwf_KB(len_list = [1, 3, 5, 7])
+    print(time.time() - start)
     print('len(kb):', len(kb))
+    res = kb.get_candidates(2, length = 1)
+    print(res)
     res = kb.get_candidates(1, length = 3)
     print(res)
     res = kb.get_candidates(3.67, length = 5)
