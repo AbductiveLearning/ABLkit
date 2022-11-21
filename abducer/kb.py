@@ -54,10 +54,10 @@ class ClsKB(KBBase):
         super().__init__()
         self.GKB_flag = GKB_flag
         self.pseudo_label_list = pseudo_label_list
-        self.base = {}
         self.len_list = len_list
         
         if GKB_flag:
+            self.base = {}
             X, Y = self.get_GKB(self.pseudo_label_list, self.len_list)
             for x, y in zip(X, Y):
                 self.base.setdefault(len(x), defaultdict(list))[y].append(x)
@@ -82,7 +82,7 @@ class ClsKB(KBBase):
         pass
 
     def get_candidates(self, key, length = None):
-        if(self.base == {}):
+        if not self.GKB_flag or self.base == {}:
             return []
         
         if key is None:
@@ -94,13 +94,22 @@ class ClsKB(KBBase):
         return sum([self.base[l][key] for l in length], [])
     
     def get_all_candidates(self):
-        return sum([sum(v.values(), []) for v in self.base.values()], [])
+        if not self.GKB_flag or self.base == {}:
+            return []
+        else:
+            return sum([sum(v.values(), []) for v in self.base.values()], [])
 
     def _dict_len(self, dic):
-        return sum(len(c) for c in dic.values())
+        if not self.GKB_flag:
+            return 0
+        else:
+            return sum(len(c) for c in dic.values())
 
     def __len__(self):
-        return sum(self._dict_len(v) for v in self.base.values())
+        if not self.GKB_flag:
+            return 0
+        else:
+            return sum(self._dict_len(v) for v in self.base.values())
 
 
 class add_KB(ClsKB):
@@ -123,17 +132,17 @@ class hwf_KB(ClsKB):
         super().__init__(GKB_flag, pseudo_label_list, len_list)
         
     def valid_candidate(self, formula):
-        if(len(formula) % 2 == 0):
+        if len(formula) % 2 == 0:
             return False
         for i in range(len(formula)):
-            if(i % 2 == 0 and formula[i] not in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']):
+            if i % 2 == 0 and formula[i] not in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
                 return False
-            if(i % 2 != 0 and formula[i] not in ['+', '-', '*', '/']):
+            if i % 2 != 0 and formula[i] not in ['+', '-', '*', '/']:
                 return False
         return True
     
     def logic_forward(self, formula):
-        if(self.valid_candidate(formula) == False):
+        if not self.valid_candidate(formula):
             return np.inf
         try:
             return round(eval(''.join(formula)), 2)
