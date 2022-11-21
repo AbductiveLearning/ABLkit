@@ -16,51 +16,42 @@ import pickle as pk
 import os
 import functools
 
-log_name = "default_log.txt"
-logging.basicConfig(level=logging.INFO, 
-    filename=log_name, 
-    filemode='a', 
-    format='%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s') 
-
 global recorder
 recorder = None
 
-def mkdir(dirpath):
-    if not os.path.exists(dirpath):
-        os.makedirs(dirpath)
-
 class ResultRecorder:
-    def __init__(self, pk_dir = None, pk_filepath = None):
-        self.set_savefile(pk_dir, pk_filepath)
-
+    def __init__(self, pk_dir = 'results', pk_filepath = None):
         self.result = {}
+
+        logging.basicConfig(level=logging.DEBUG, filemode='a')
+
+        self.set_savefile(pk_dir, pk_filepath)
+        
         logging.info("===========================================================")
-        logging.info("============= Result Recorder Version: 0.02 ===============")
+        logging.info("============= Result Recorder Version: 0.03 ===============")
         logging.info("===========================================================\n")
 
         pass
 
     def set_savefile(self, pk_dir = None, pk_filepath = None):
         if pk_dir is None:
-            pk_dir = "result"
-        mkdir(pk_dir)
+            pk_dir = "results"
+        
+        if not os.path.exists(pk_dir):
+            os.makedirs(pk_dir)
 
         if pk_filepath is None:
             local_time = time.strftime("%Y%m%d_%H_%M_%S", time.localtime()) 
             pk_filepath = os.path.join(pk_dir, local_time + ".pk")
-
-        self.save_file = open(pk_filepath, "wb")
         
-        logger = logging.getLogger()
-        logger.handlers[0].stream.close()
-        logger.removeHandler(logger.handlers[0])
+        self.save_file = pk_filepath
 
         filename = os.path.join(pk_dir, local_time + ".txt")
         file_handler = logging.FileHandler(filename)
         file_handler.setLevel(logging.DEBUG)
         formatter = logging.Formatter('%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s') 
         file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
+        logging.getLogger().addHandler(file_handler)
 
     def print(self, *argv, screen = False):
         info = ""
@@ -99,7 +90,8 @@ class ResultRecorder:
     def dump(self, save_file = None):
         if save_file is None:
             save_file = self.save_file
-        pk.dump(self.result, save_file)
+        with open(save_file, 'wb') as f:
+            pk.dump(self.result, f)
 
     def clock(self, func):
         @functools.wraps(func)
@@ -111,7 +103,7 @@ class ResultRecorder:
             name = func.__name__
             # arg_str = ','.join(repr(arg) for arg in args)
             # context = f"{name}: ({arg_str})=>({result}), cost {elapsed}s"
-            context = f"{name}: ()=>(), cost {elapsed}s"
+            context = f"{name}: cost {elapsed}s"
             self.write_kv("func:", context)
 
             return result
