@@ -19,7 +19,7 @@ from collections import defaultdict
 from itertools import product
 
 class KBBase(ABC):
-    def __init__(self, GKB_flag = False):
+    def __init__(self):
         pass
 
     @abstractmethod
@@ -31,7 +31,11 @@ class KBBase(ABC):
         pass
 
     @abstractmethod
-    def logic_forward(self, X):
+    def logic_forward(self):
+        pass
+    
+    @abstractmethod
+    def valid_candidate(self):
         pass
     
     def _length(self, length):
@@ -48,27 +52,34 @@ class KBBase(ABC):
 class ClsKB(KBBase):
     def __init__(self, GKB_flag = False, pseudo_label_list = None, len_list = None):
         super().__init__()
+        self.GKB_flag = GKB_flag
         self.pseudo_label_list = pseudo_label_list
         self.base = {}
         self.len_list = len_list
         
         if GKB_flag:
-            X = self.get_X(self.pseudo_label_list, self.len_list)
-            Y = self.get_Y(X, self.logic_forward)
+            X, Y = self.get_GKB(self.pseudo_label_list, self.len_list)
             for x, y in zip(X, Y):
                 self.base.setdefault(len(x), defaultdict(list))[y].append(np.array(x))
     
-    def get_X(self, pseudo_label_list, len_list):
-        res = []
+    def get_GKB(self, pseudo_label_list, len_list):
+        all_X = []
         for len in len_list:
-            res += list(product(pseudo_label_list, repeat = len))
-        return res
-
-    def get_Y(self, X, logic_forward):
-        return [logic_forward(nums) for nums in X]
+            all_X += list(product(pseudo_label_list, repeat = len))
+            
+        X = []
+        Y = []
+        for x in all_X:
+            if self.valid_candidate(x):
+                X.append(x)
+                Y.append(self.logic_forward(x))
+        return X, Y
+    
+    def valid_candidate(self):
+        pass
     
     def logic_forward(self):
-        return None
+        pass
 
     def get_candidates(self, key, length = None):
         if(self.base == {}):
@@ -92,11 +103,13 @@ class ClsKB(KBBase):
         return sum(self._dict_len(v) for v in self.base.values())
 
 
-
 class add_KB(ClsKB):
     def __init__(self, GKB_flag = False, len_list = [2]):
         self.pseudo_label_list = list(range(10))
         super().__init__(GKB_flag, self.pseudo_label_list, len_list)
+        
+    def valid_candidate(self, x):
+        return True
     
     def logic_forward(self, nums):
         return sum(nums)
@@ -107,7 +120,7 @@ class hwf_KB(ClsKB):
         self.pseudo_label_list = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', '*', '/']
         super().__init__(GKB_flag, self.pseudo_label_list, len_list)
         
-    def valid_formula(self, formula):
+    def valid_candidate(self, formula):
         if(len(formula) % 2 == 0):
             return False
         for i in range(len(formula)):
@@ -118,7 +131,7 @@ class hwf_KB(ClsKB):
         return True
     
     def logic_forward(self, formula):
-        if(self.valid_formula(formula) == False):
+        if(self.valid_candidate(formula) == False):
             return np.inf
         try:
             return round(eval(''.join(formula)), 2)
@@ -140,8 +153,12 @@ class RegKB(KBBase):
             Y = [y for y, x in data]
             self.base[l] = (X, Y)
 
+    def valid_candidate(self):
+        pass
+    
     def logic_forward(self):
-        return None
+        pass
+    
               
     def get_candidates(self, key, length = None):
         if key is None:
