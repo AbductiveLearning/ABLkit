@@ -22,3 +22,12 @@ python share_example.py
 ## NOTICE 
 They can only be used for academic purpose. For other purposes, please contact with LAMDA Group(www.lamda.nju.edu.cn).
 
+## To do list 
+
+- Improve speed and accuracy
+- Add comparison with DeepProbLog, NGS,... (Accuracy and Speed)
+- Add Inference/Abduction example with FOL engine (e.g., Prolog)
+- Add zoopt optimization
+- Rearrange structure and make it a python package
+- Documents
+

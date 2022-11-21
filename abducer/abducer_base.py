@@ -11,15 +11,11 @@
 #================================================================#
 
 import abc
-# from kb import add_KB, hwf_KB
-from abducer.kb import add_KB, hwf_KB
+from kb import add_KB, hwf_KB
+# from abducer.kb import add_KB, hwf_KB
 import numpy as np
 
 from itertools import product, combinations
-
-
-
-
 
 class AbducerBase(abc.ABC):
     def __init__(self, kb, dist_func = 'confidence', cache = True):
@@ -51,42 +47,50 @@ class AbducerBase(abc.ABC):
     
     
     def get_cost_list(self, pred_res, pred_res_prob, candidates):
-        if(self.dist_func == 'hamming'):
+        if self.dist_func == 'hamming':
             return self.hamming_dist(pred_res, candidates)
-        elif(self.dist_func == 'confidence'):
+        elif self.dist_func == 'confidence':
             return self.confidence_dist(pred_res_prob, candidates)
 
     def get_min_cost_candidate(self, pred_res, pred_res_prob, candidates):
-        cost_list = self.get_cost_list(pred_res, pred_res_prob, candidates)
-        min_address_num = np.min(cost_list)
-        idxs = np.where(cost_list == min_address_num)[0]
-        return [candidates[idx] for idx in idxs][0]
+        if len(candidates) == 0:
+            return []
+        elif len(candidates) == 1:
+            return candidates[0]
+        else:
+            cost_list = self.get_cost_list(pred_res, pred_res_prob, candidates)
+            min_address_num = np.min(cost_list)
+            idxs = np.where(cost_list == min_address_num)[0]
+            return [candidates[idx] for idx in idxs][0]
 
     def abduce(self, data, max_address_num = -1, require_more_address = 0):
         pred_res, pred_res_prob, ans = data
         if max_address_num == -1:
             max_address_num = len(pred_res)
 
-        if(self.cache and (tuple(pred_res), ans) in self.cache_min_address_num):
+        if self.cache and (tuple(pred_res), ans) in self.cache_min_address_num:
             address_num = min(max_address_num, self.cache_min_address_num[(tuple(pred_res), ans)] + require_more_address)
-            if((tuple(pred_res), ans, address_num) in self.cache_candidates):
+            if (tuple(pred_res), ans, address_num) in self.cache_candidates:
                 # print('cached')
                 candidates = self.cache_candidates[(tuple(pred_res), ans, address_num)]
                 candidate = self.get_min_cost_candidate(pred_res, pred_res_prob, candidates)
                 return candidate
             
-        if(self.kb.base != {}):
+        if self.kb.GKB_flag:
             all_candidates = self.kb.get_candidates(ans, len(pred_res))
-            cost_list = self.hamming_dist(pred_res, all_candidates)
-            min_address_num = np.min(cost_list)
-            address_num = min(max_address_num, min_address_num + require_more_address)
-            idxs = np.where(cost_list <= address_num)[0]
-            candidates = [all_candidates[idx] for idx in idxs]
+            if len(all_candidates) == 0:
+                return []
+            else:
+                cost_list = self.hamming_dist(pred_res, all_candidates)
+                min_address_num = np.min(cost_list)
+                address_num = min(max_address_num, min_address_num + require_more_address)
+                idxs = np.where(cost_list <= address_num)[0]
+                candidates = [all_candidates[idx] for idx in idxs]
             
         else:
             candidates, min_address_num, address_num = self.get_abduce_candidates(pred_res, ans, max_address_num, require_more_address)
         
-        if(self.cache):
+        if self.cache:
             self.cache_min_address_num[(tuple(pred_res), ans)] = min_address_num
             self.cache_candidates[(tuple(pred_res), ans, address_num)] = candidates
 
@@ -100,9 +104,9 @@ class AbducerBase(abc.ABC):
         for address_idx in address_idx_list:
             for c in all_address_candidate:
                 pred_res_array = np.array(pred_res)
-                if(np.count_nonzero(np.array(c) != pred_res_array[np.array(address_idx)]) == address_num):
+                if np.count_nonzero(np.array(c) != pred_res_array[np.array(address_idx)]) == address_num:
                     pred_res_array[np.array(address_idx)] = c
-                    if(self.kb.logic_forward(pred_res_array) == key):
+                    if self.kb.logic_forward(pred_res_array) == key:
                         new_candidates.append(pred_res_array)
         return new_candidates, address_num
     
@@ -110,23 +114,22 @@ class AbducerBase(abc.ABC):
         
         candidates = []
         for address_num in range(len(pred_res) + 1):
-            if(address_num > max_address_num):
-                print('No candidates found')
-                return None, None, None
+            if address_num > max_address_num:
+                return [], None, None
             
-            if(address_num == 0):
-                if(abs(self.kb.logic_forward(pred_res) - key) <= 1e-3):
+            if address_num == 0:
+                if abs(self.kb.logic_forward(pred_res) - key) <= 1e-3:
                     candidates.append(pred_res)
             else:
                 new_candidates, address_num = self.address(address_num, pred_res, key)
                 candidates += new_candidates
                 
-            if(len(candidates) > 0):
+            if len(candidates) > 0:
                 min_address_num = address_num
                 break
         
         for address_num in range(min_address_num + 1, min_address_num + require_more_address + 1):
-            if(address_num > max_address_num):
+            if address_num > max_address_num:
                 return candidates, min_address_num, address_num - 1
             new_candidates, address_num = self.address(address_num, pred_res, key)
             candidates += new_candidates
@@ -146,23 +149,21 @@ class AbducerBase(abc.ABC):
 
 
 if __name__ == '__main__':
-    kb = add_KB()
+    kb = add_KB(GKB_flag = True)
     abd = AbducerBase(kb, 'hamming')
-    res = abd.abduce(([1, 1, 1], None, 4), max_address_num = 2, require_more_address = 0)
+    res = abd.abduce(([1, 1], None, 4), max_address_num = 2, require_more_address = 0)
     print(res)
-    res = abd.abduce(([1, 1, 1], None, 4), max_address_num = 2, require_more_address = 1)
+    res = abd.abduce(([1, 1], None, 4), max_address_num = 2, require_more_address = 1)
     print(res)
-    res = abd.abduce(([1, 1, 1], None, 4), max_address_num = 1, require_more_address = 1)
-    print(res)
-    res = abd.abduce(([1, 1, 1], None, 4), max_address_num = 2, require_more_address = 0)
-    print(res)
-    res = abd.abduce(([1, 1, 1], None, 5), max_address_num = 2, require_more_address = 1)
+    res = abd.abduce(([1, 1], None, 5), max_address_num = 2, require_more_address = 1)
     print(res)
     print()
     
     kb = hwf_KB()
-    abd = AbducerBase(kb)
+    abd = AbducerBase(kb, 'hamming')
     res = abd.abduce((['5', '+', '2'], None, 3), max_address_num = 2, require_more_address = 0)
+    print(res)
+    res = abd.abduce((['5', '+', '2'], None, 3.09), max_address_num = 2, require_more_address = 0)
     print(res)
     res = abd.abduce((['5', '+', '2'], None, 1.67), max_address_num = 3, require_more_address = 0)
     print(res)
