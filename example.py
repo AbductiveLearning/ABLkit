@@ -43,11 +43,11 @@ def run_test():
     optimizer = torch.optim.Adam(cls.parameters(), lr=0.001, betas=(0.9, 0.99))
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     
-    base_model = BasicModel(cls, criterion, optimizer, device, recorder=recorder)
+    base_model = BasicModel(cls, criterion, optimizer, device, save_interval=1, save_dir=recorder.save_dir, num_epochs=1, recorder=recorder)
     model = WABLBasicModel(base_model, kb.pseudo_label_list)
 
     res = framework.train(model, abducer, train_X, train_Z, train_Y, sample_num = 10000, verbose = 1)
-    print(res)
+    recorder.print("abl_acc is ", res)
     
     recorder.dump()
     return True

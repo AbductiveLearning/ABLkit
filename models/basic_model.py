@@ -55,7 +55,7 @@ class BasicModel():
             optimizer,
             device,
             batch_size = 1,
-            num_epochs = 10,
+            num_epochs = 1,
             stop_loss = 0.01,
             num_workers = 0,
             save_interval = None,
@@ -89,15 +89,15 @@ class BasicModel():
         recorder = self.recorder
         recorder.print("model fitting")
 
-        min_loss = 999999999 
+        min_loss = 1e10
         for epoch in range(n_epoch):
             loss_value = self.train_epoch(data_loader)
             recorder.print(f"{epoch}/{n_epoch} model training loss is {loss_value}")
-            if loss_value < min_loss:
+            if min_loss < 0 or loss_value < min_loss:
                 min_loss = loss_value
-            if epoch > 0 and self.save_interval is not None and epoch % self.save_interval == 0:
+            if self.save_interval is not None and (epoch + 1) % self.save_interval == 0:
                 assert self.save_dir is not None
-                self.save(self.save_dir)
+                self.save(epoch + 1, self.save_dir)
             if stop_loss is not None and loss_value < stop_loss:
                 break
         recorder.print("Model fitted, minimal loss is ", min_loss)
@@ -107,14 +107,7 @@ class BasicModel():
                   X = None,
                   y = None):
         if data_loader is None:
-            collate_fn = self.collate_fn
-            transform = self.transform
-
-            train_dataset = XYDataset(X, y, transform=transform)
-            sampler = None
-            data_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.batch_size, \
-                    shuffle=True, sampler=sampler, num_workers=int(self.num_workers), \
-                    collate_fn=collate_fn)
+            data_loader = self._data_loader(X, y)
         return self._fit(data_loader, self.num_epochs, self.stop_loss)
 
     def train_epoch(self, data_loader):
@@ -136,6 +129,7 @@ class BasicModel():
             optimizer.step()
 
             total_loss += loss.item() * data.size(0)
+            total_num += data.size(0)
 
         return total_loss / total_num
 
@@ -149,107 +143,98 @@ class BasicModel():
             results = []
             for data, _ in data_loader:
                 data = data.to(device)
-                pred_Y = model(data)
-                results.append(pred_Y)
+                out = model(data)
+                results.append(out)
     
         return torch.cat(results, axis=0)
 
     def predict(self, data_loader = None, X = None, print_prefix = ""):
-        if data_loader is None:
-            collate_fn = self.collate_fn
-            transform = self.transform
-
-            Y = [0] * len(X)
-            val_dataset = XYDataset(X, Y, transform=transform)
-            sampler = None
-            data_loader = torch.utils.data.DataLoader(val_dataset, batch_size=self.batch_size, \
-                shuffle=False, sampler=sampler, num_workers=int(self.num_workers), \
-                collate_fn=collate_fn)
-
         recorder = self.recorder
-        recorder.print('Start Predict ', print_prefix)
-        Y = self._predict(data_loader).argmax(axis=1)
-        return [int(y) for y in Y]
+        recorder.print('Start Predict Class ', print_prefix)
+
+        if data_loader is None:
+            data_loader = self._data_loader(X)
+        return self._predict(data_loader).argmax(axis=1).cpu().numpy()
 
     def predict_proba(self, data_loader = None, X = None, print_prefix = ""):
-        if data_loader is None:
-            collate_fn = self.collate_fn
-            transform = self.transform
-
-            Y = [0] * len(X)
-            val_dataset = XYDataset(X, Y, transform=transform)
-            sampler = None
-            data_loader = torch.utils.data.DataLoader(val_dataset, batch_size=self.batch_size, \
-                shuffle=False, sampler=sampler, num_workers=int(self.num_workers), \
-                collate_fn=collate_fn)
-
         recorder = self.recorder
-        recorder.print('Start Predict ', print_prefix)
-        return torch.softmax(self._predict(data_loader), axis=1).cpu().numpy()
+        recorder.print('Start Predict Probability ', print_prefix)
 
-    def _val(self, data_loader, print_prefix):
+        if data_loader is None:
+            data_loader = self._data_loader(X)
+        return self._predict(data_loader).softmax(axis=1).cpu().numpy()
+
+    def _val(self, data_loader):
         model = self.model
         criterion = self.criterion
-        recorder = self.recorder
         device = self.device
-        recorder.print('Start val ', print_prefix)
     
         model.eval()
-    
-        n_correct = 0
-        pred_num = 0
-        loss_value = 0
+
+        total_correct_num, total_num, total_loss = 0, 0, 0.0
+
         with torch.no_grad():
-            for _, data in enumerate(data_loader):
-                X = data[0].to(device)
-                Y = data[1].to(device)
+            for data, target in data_loader:
+                data, target = data.to(device), target.to(device)
 
-                pred_Y = model(X)
+                out = model(data)
 
-                correct_num = sum(Y == pred_Y.argmax(axis=1))
-                loss = criterion(pred_Y, Y)
-                loss_value += loss.item()
+                correct_num = sum(target == out.argmax(axis=1)).item()
+                loss = criterion(out, target)
+                total_loss += loss.item() * data.size(0)
 
-            n_correct += correct_num
-            pred_num += len(X)
+                total_correct_num += correct_num
+                total_num += data.size(0)
+        
+        mean_loss = total_loss / total_num
+        accuracy = total_correct_num / total_num
 
-        accuracy = float(n_correct) / float(pred_num)
-        recorder.print('[%s] Val loss: %f, accuray: %f' % (print_prefix, loss_value, accuracy))
-        return accuracy
+        return mean_loss, accuracy
 
     def val(self, data_loader = None, X = None, y = None, print_prefix = ""):
-        if data_loader is None:
-            collate_fn = self.collate_fn
-            transform = self.transform
+        recorder = self.recorder
+        recorder.print('Start val ', print_prefix)
 
-            val_dataset = XYDataset(X, y, transform=transform)
-            sampler = None
-            data_loader = torch.utils.data.DataLoader(val_dataset, batch_size=self.batch_size, \
-                shuffle=True, sampler=sampler, num_workers=int(self.num_workers), \
-                collate_fn=collate_fn)
-        return self._val(data_loader, print_prefix)
+        if data_loader is None:
+            data_loader = self._data_loader(X, y)
+        mean_loss, accuracy = self._val(data_loader)
+        recorder.print('[%s] Val loss: %f, accuray: %f' % (print_prefix, mean_loss, accuracy))
+        return accuracy
 
     def score(self, data_loader = None, X = None, y = None, print_prefix = ""):
         return self.val(data_loader, X, y, print_prefix)
 
-    def save(self, save_dir):
+    def _data_loader(self, X, y = None):
+        collate_fn = self.collate_fn
+        transform = self.transform
+
+        if y is None:
+            y = [0] * len(X)
+        dataset = XYDataset(X, y, transform=transform)
+        sampler = None
+        data_loader = torch.utils.data.DataLoader(dataset, batch_size=self.batch_size, \
+            shuffle=False, sampler=sampler, num_workers=int(self.num_workers), \
+            collate_fn=collate_fn)
+        return data_loader
+
+    def save(self, epoch_id, save_dir):
         recorder = self.recorder
         if not os.path.exists(save_dir):
             os.mkdir(save_dir)
         recorder.print("Saving model and opter")
-        save_path = os.path.join(save_dir, "net.pth")
+        save_path = os.path.join(save_dir, str(epoch_id) + "_net.pth")
         torch.save(self.model.state_dict(), save_path)
 
-        save_path = os.path.join(save_dir, "opt.pth")
+        save_path = os.path.join(save_dir, str(epoch_id) + "_opt.pth")
         torch.save(self.optimizer.state_dict(), save_path)
 
-    def load(self, load_dir):
+    def load(self, epoch_id, load_dir):
         recorder = self.recorder
         recorder.print("Loading model and opter")
-        load_path = os.path.join(load_dir, "net.pth")
+        load_path = os.path.join(load_dir, str(epoch_id) + "_net.pth")
         self.model.load_state_dict(torch.load(load_path))
 
-        load_path = os.path.join(load_dir, "opt.pth")
+        load_path = os.path.join(load_dir, str(epoch_id) + "_opt.pth")
         self.optimizer.load_state_dict(torch.load(load_path))
 
 if __name__ == "__main__":

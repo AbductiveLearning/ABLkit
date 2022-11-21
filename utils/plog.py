@@ -20,12 +20,11 @@ global recorder
 recorder = None
 
 class ResultRecorder:
-    def __init__(self, pk_dir = 'results', pk_filepath = None):
-        self.result = {}
-
+    def __init__(self):
         logging.basicConfig(level=logging.DEBUG, filemode='a')
 
-        self.set_savefile(pk_dir, pk_filepath)
+        self.result = {}
+        self.set_savefile()
         
         logging.info("===========================================================")
         logging.info("============= Result Recorder Version: 0.03 ===============")
@@ -33,20 +32,19 @@ class ResultRecorder:
 
         pass
 
-    def set_savefile(self, pk_dir = None, pk_filepath = None):
-        if pk_dir is None:
-            pk_dir = "results"
-        
-        if not os.path.exists(pk_dir):
-            os.makedirs(pk_dir)
+    def set_savefile(self):
+        local_time = time.strftime("%Y%m%d_%H_%M_%S", time.localtime()) 
 
-        if pk_filepath is None:
-            local_time = time.strftime("%Y%m%d_%H_%M_%S", time.localtime()) 
-            pk_filepath = os.path.join(pk_dir, local_time + ".pk")
+        save_dir = os.path.join("results", local_time)
+        save_file_path = os.path.join(save_dir, "result.pk")
         
-        self.save_file = pk_filepath
+        self.save_dir = save_dir
+        self.save_file_path = save_file_path
 
-        filename = os.path.join(pk_dir, local_time + ".txt")
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+
+        filename = os.path.join(save_dir, "log.txt")
         file_handler = logging.FileHandler(filename)
         file_handler.setLevel(logging.DEBUG)
         formatter = logging.Formatter('%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s') 
@@ -87,10 +85,10 @@ class ResultRecorder:
         #self.print_result(label + ":" + str(data))
         self.store_kv(label, data)
 
-    def dump(self, save_file = None):
-        if save_file is None:
-            save_file = self.save_file
-        with open(save_file, 'wb') as f:
+    def dump(self, save_file_path = None):
+        if save_file_path is None:
+            save_file_path = self.save_file_path
+        with open(save_file_path, 'wb') as f:
             pk.dump(self.result, f)
 
     def clock(self, func):

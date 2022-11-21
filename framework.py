@@ -123,7 +123,7 @@ def is_all_sublabel_exist(labels, std_label_list):
 def pretrain(model, X, Z):
     pass
 
-def train(model, abducer, X, Z, Y, epochs = 10, sample_num = -1, verbose = -1):
+def train(model, abducer, X, Z, Y, epochs = 5, sample_num = -1, verbose = -1):
     # Set default parameters
     if sample_num == -1:
         sample_num = len(X)
@@ -138,10 +138,7 @@ def train(model, abducer, X, Z, Y, epochs = 10, sample_num = -1, verbose = -1):
 
     predict_func = clocker(model.predict)
     train_func = clocker(model.train)
-
     abduce_func = clocker(abducer.batch_abduce)
-
-    epochs = 50
     
     # Abductive learning train process
     for epoch_idx in range(epochs):
@@ -153,12 +150,13 @@ def train(model, abducer, X, Z, Y, epochs = 10, sample_num = -1, verbose = -1):
         if(char_acc_flag):
             ori_char_acc = get_char_acc(Z, preds_res['cls'])
             abd_char_acc = get_char_acc(abduced_Z, preds_res['cls'])
-            print('epoch_idx:', epoch_idx, '  abl_acc:', abl_acc, '  ori_char_acc:', ori_char_acc, '  abd_char_acc:', abd_char_acc)
+            INFO('epoch_idx:', epoch_idx, '  abl_acc:', abl_acc, '  ori_char_acc:', ori_char_acc, '  abd_char_acc:', abd_char_acc)
         else:
-            print('epoch_idx:', epoch_idx, '  abl_acc:', abl_acc)
+            INFO('epoch_idx:', epoch_idx, '  abl_acc:', abl_acc)
         
         finetune_X, finetune_Z = filter_data(X, abduced_Z)
         if len(finetune_X) > 0:
+            # model.valid(finetune_X, finetune_Z)
             train_func(finetune_X, finetune_Z)
         else:
             INFO("lack of data, all abduced failed", len(finetune_X))

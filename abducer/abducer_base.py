@@ -11,8 +11,7 @@
 #================================================================#
 
 import abc
-from kb import add_KB, hwf_KB
-# from abducer.kb import add_KB, hwf_KB
+from abducer.kb import add_KB, hwf_KB
 import numpy as np
 
 from itertools import product, combinations
