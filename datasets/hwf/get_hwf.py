@@ -9,7 +9,7 @@ img_transform = transforms.Compose([
 
 def get_data(file, get_pseudo_label, precision_num = 2):
     X = []
-    if(get_pseudo_label):
+    if get_pseudo_label:
         Z = []
     Y = []
     img_dir = './datasets/hwf/data/Handwritten_Math_Symbols/'
@@ -22,15 +22,14 @@ def get_data(file, get_pseudo_label, precision_num = 2):
                 img = Image.open(img_dir + img_path).convert('L')
                 img = img_transform(img)
                 imgs.append(img)
-                if(get_pseudo_label):
+                if get_pseudo_label:
                     imgs_pseudo_label.append(img_path.split('/')[0])
-            if(len(imgs) == 3):
-                X.append(imgs)
-                if(get_pseudo_label):
-                    Z.append(imgs_pseudo_label)
-                Y.append(round(data[idx]['res'], precision_num))
+            X.append(imgs)
+            if get_pseudo_label:
+                Z.append(imgs_pseudo_label)
+            Y.append(round(data[idx]['res'], precision_num))
     
-    if(get_pseudo_label):
+    if get_pseudo_label:
         return X, Z, Y
     else:
         return X, None, Y
