@@ -9,7 +9,7 @@ img_transform = transforms.Compose([
 
 def get_data(file, get_pseudo_label, precision_num = 2):
     X = []
-    if(get_pseudo_label):
+    if get_pseudo_label:
         Z = []
     Y = []
     img_dir = './datasets/hwf/data/Handwritten_Math_Symbols/'
