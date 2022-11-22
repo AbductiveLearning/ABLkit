@@ -24,11 +24,10 @@ def get_data(file, get_pseudo_label, precision_num = 2):
                 imgs.append(img)
                 if(get_pseudo_label):
                     imgs_pseudo_label.append(img_path.split('/')[0])
-            if(len(imgs) == 3):
-                X.append(imgs)
-                if(get_pseudo_label):
-                    Z.append(imgs_pseudo_label)
-                Y.append(round(data[idx]['res'], precision_num))
+            X.append(imgs)
+            if(get_pseudo_label):
+                Z.append(imgs_pseudo_label)
+            Y.append(round(data[idx]['res'], precision_num))
     
     if(get_pseudo_label):
         return X, Z, Y
