@@ -36,14 +36,13 @@ class ResultRecorder:
         local_time = time.strftime("%Y%m%d_%H_%M_%S", time.localtime()) 
 
         save_dir = os.path.join("results", local_time)
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
         save_file_path = os.path.join(save_dir, "result.pk")
         save_file = open(save_file_path, "wb")
         
         self.save_dir = save_dir
         self.save_file = save_file
-
-        if not os.path.exists(save_dir):
-            os.makedirs(save_dir)
 
         filename = os.path.join(save_dir, "log.txt")
         file_handler = logging.FileHandler(filename)
