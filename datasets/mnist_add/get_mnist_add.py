@@ -5,18 +5,18 @@ from torchvision.transforms import transforms
 
 def get_data(file, img_dataset, get_pseudo_label):
     X = []
-    if(get_pseudo_label):
+    if get_pseudo_label:
         Z = []
     Y = []
     with open(file) as f:
         for line in f:
             line = line.strip().split(' ')
             X.append([img_dataset[int(line[0])][0], img_dataset[int(line[1])][0]])
-            if(get_pseudo_label):
+            if get_pseudo_label:
                 Z.append([img_dataset[int(line[0])][1], img_dataset[int(line[1])][1]])
             Y.append(int(line[2]))
             
-    if(get_pseudo_label):
+    if get_pseudo_label:
         return X, Z, Y
     else:
         return X, None, Y
