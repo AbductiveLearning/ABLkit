@@ -28,28 +28,27 @@ def block_sample(X, Z, Y, sample_num, epoch_idx):
 
     return X, Z, Y
 
-def get_taglist(self, Z):
-    tmp = [[str(x) for x in label] for label in Z]
-    tmp = sorted(list(set(tmp)))
-    return tmp
-
-def get_abl_acc(pred_Z, Y, logic_forward):
-    abl_acc = 0
+def result_statistics(pred_Z, Z, Y, logic_forward, char_acc_flag):
+    result = {}
+    if char_acc_flag:
+        char_acc_num = 0
+        char_num = 0
+        for pred_z, z in zip(pred_Z, Z):
+            char_num += len(z)
+            for zidx in range(len(z)):
+                if(pred_z[zidx] == z[zidx]):
+                    char_acc_num += 1
+        char_acc = char_acc_num / char_num
+        result["Character level accuracy"] = char_acc
+    
+    abl_acc_num = 0
     for pred_z, y in zip(pred_Z, Y):
         if(logic_forward(pred_z) == y):
-            abl_acc += 1      
-    return abl_acc / len(Y)
+            abl_acc_num += 1      
+    abl_acc = abl_acc_num / len(Y)
+    result["ABL accuracy"] = abl_acc
 
-def get_char_acc(Z, pred_Z):
-    char_acc = 0
-    char_num = 0
-    for pred_z, z in zip(pred_Z, Z):
-        char_num += len(z)
-        for zidx in range(len(z)):
-            if(pred_z[zidx] == z[zidx]):
-                char_acc += 1
-    return char_acc / char_num
-    
+    return result
 
 def filter_data(X, abduced_Z):
     finetune_Z = []
@@ -63,7 +62,7 @@ def filter_data(X, abduced_Z):
 def pretrain(model, X, Z):
     pass
 
-def train(model, abducer, train_data, test_data, epochs = 5, sample_num = -1, verbose = -1):
+def train(model, abducer, train_data, test_data, epochs = 50, sample_num = -1, verbose = -1):
     X, Z, Y = train_data
     test_X, test_Z, test_Y = test_data
     
@@ -89,13 +88,9 @@ def train(model, abducer, train_data, test_data, epochs = 5, sample_num = -1, ve
         preds_res = predict_func(X)
         abduced_Z = abduce_func(preds_res, Y)
 
-        abl_acc = get_abl_acc(preds_res['cls'], Y, abducer.kb.logic_forward)
-        if(char_acc_flag):
-            ori_char_acc = get_char_acc(preds_res['cls'], Z)
-            abd_char_acc = get_char_acc(preds_res['cls'], abduced_Z)
-            INFO('epoch_idx:', epoch_idx, '  abl_acc:', abl_acc, '  ori_char_acc:', ori_char_acc, '  abd_char_acc:', abd_char_acc)
-        else:
-            INFO('epoch_idx:', epoch_idx, '  abl_acc:', abl_acc)
+        if ((epoch_idx + 1) % verbose == 0) or (epoch_idx == epochs - 1):
+            res = result_statistics(preds_res['cls'], Z, Y, abducer.kb.logic_forward, char_acc_flag)
+            INFO('epoch: ', epoch_idx + 1, ' ', res)
         
         finetune_X, finetune_Z = filter_data(X, abduced_Z)
         if len(finetune_X) > 0:
@@ -104,7 +99,9 @@ def train(model, abducer, train_data, test_data, epochs = 5, sample_num = -1, ve
         else:
             INFO("lack of data, all abduced failed", len(finetune_X))
             
-    return abl_acc
+    return res
 
 if __name__ == "__main__":
     pass
+
+
