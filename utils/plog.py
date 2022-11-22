@@ -37,9 +37,10 @@ class ResultRecorder:
 
         save_dir = os.path.join("results", local_time)
         save_file_path = os.path.join(save_dir, "result.pk")
+        save_file = open(save_file_path, "wb")
         
         self.save_dir = save_dir
-        self.save_file_path = save_file_path
+        self.save_file = save_file
 
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
@@ -85,11 +86,10 @@ class ResultRecorder:
         #self.print_result(label + ":" + str(data))
         self.store_kv(label, data)
 
-    def dump(self, save_file_path = None):
-        if save_file_path is None:
-            save_file_path = self.save_file_path
-        with open(save_file_path, 'wb') as f:
-            pk.dump(self.result, f)
+    def dump(self, save_file = None):
+        if save_file is None:
+            save_file = self.save_file
+        pk.dump(self.result, save_file)
 
     def clock(self, func):
         @functools.wraps(func)
