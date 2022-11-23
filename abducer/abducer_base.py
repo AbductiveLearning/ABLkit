@@ -10,12 +10,15 @@
 #
 #================================================================#
 
+import sys
+sys.path.append("..")
+
 import abc
-# from kb import add_KB, hwf_KB
 from abducer.kb import add_KB, hwf_KB
 import numpy as np
 
 from itertools import product, combinations
+import time
 
 class AbducerBase(abc.ABC):
     def __init__(self, kb, dist_func = 'confidence', cache = True):
@@ -23,8 +26,10 @@ class AbducerBase(abc.ABC):
         assert(dist_func == 'hamming' or dist_func == 'confidence')
         self.dist_func = dist_func        
         self.cache = cache
-        self.cache_min_address_num = {}
-        self.cache_candidates = {}
+        
+        if self.cache:
+            self.cache_min_address_num = {}
+            self.cache_candidates = {}
 
     def hamming_dist(self, A, B):
         B = np.array(B)
@@ -79,7 +84,9 @@ class AbducerBase(abc.ABC):
         if self.kb.GKB_flag:
             all_candidates = self.kb.get_candidates(ans, len(pred_res))
             if len(all_candidates) == 0:
-                return []
+                candidates = []
+                min_address_num = 0
+                address_num = 0
             else:
                 cost_list = self.hamming_dist(pred_res, all_candidates)
                 min_address_num = np.min(cost_list)
@@ -108,30 +115,30 @@ class AbducerBase(abc.ABC):
                     pred_res_array[np.array(address_idx)] = c
                     if self.kb.logic_forward(pred_res_array) == key:
                         new_candidates.append(pred_res_array)
-        return new_candidates, address_num
+        return new_candidates
     
     def get_abduce_candidates(self, pred_res, key, max_address_num, require_more_address):
-        
         candidates = []
+        print(pred_res)
         for address_num in range(len(pred_res) + 1):
-            if address_num > max_address_num:
-                return [], None, None
-            
             if address_num == 0:
                 if abs(self.kb.logic_forward(pred_res) - key) <= 1e-3:
                     candidates.append(pred_res)
             else:
-                new_candidates, address_num = self.address(address_num, pred_res, key)
+                new_candidates = self.address(address_num, pred_res, key)
                 candidates += new_candidates
                 
             if len(candidates) > 0:
                 min_address_num = address_num
                 break
+            
+            if address_num >= max_address_num:
+                return [], 0, 0
         
         for address_num in range(min_address_num + 1, min_address_num + require_more_address + 1):
             if address_num > max_address_num:
                 return candidates, min_address_num, address_num - 1
-            new_candidates, address_num = self.address(address_num, pred_res, key)
+            new_candidates = self.address(address_num, pred_res, key)
             candidates += new_candidates
 
         return candidates, min_address_num, address_num
@@ -163,7 +170,7 @@ if __name__ == '__main__':
     abd = AbducerBase(kb, 'hamming')
     res = abd.abduce((['5', '+', '2'], None, 3), max_address_num = 2, require_more_address = 0)
     print(res)
-    res = abd.abduce((['5', '+', '2'], None, 3.09), max_address_num = 2, require_more_address = 0)
+    res = abd.abduce((['5', '+', '2'], None, 64), max_address_num = 3, require_more_address = 0)
     print(res)
     res = abd.abduce((['5', '+', '2'], None, 1.67), max_address_num = 3, require_more_address = 0)
     print(res)
