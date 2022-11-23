@@ -63,7 +63,7 @@ def pretrain(model, X, Z):
     pass
 
 def train(model, abducer, train_data, test_data, epochs = 50, sample_num = -1, verbose = -1):
-    X, Z, Y = train_data
+    train_X, train_Z, train_Y = train_data
     test_X, test_Z, test_Y = test_data
     
     # Set default parameters
@@ -74,9 +74,9 @@ def train(model, abducer, train_data, test_data, epochs = 50, sample_num = -1, v
         verbose = epochs
     
     char_acc_flag = 1
-    if Z == None:
+    if train_Z == None:
         char_acc_flag = 0
-        Z = [None] * len(X)
+        train_Z = [None] * len(X)
 
     predict_func = clocker(model.predict)
     train_func = clocker(model.train)
@@ -84,7 +84,7 @@ def train(model, abducer, train_data, test_data, epochs = 50, sample_num = -1, v
     
     # Abductive learning train process
     for epoch_idx in range(epochs):
-        X, Z, Y = block_sample(X, Z, Y, sample_num, epoch_idx)
+        X, Z, Y = block_sample(train_X, train_Z, train_Y, sample_num, epoch_idx)
         preds_res = predict_func(X)
         abduced_Z = abduce_func(preds_res, Y)
 
