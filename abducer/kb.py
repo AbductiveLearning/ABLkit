@@ -234,9 +234,6 @@ class add_prolog_KB(prolog_KB):
     
     def logic_forward(self, nums):
         return list(self.prolog.query("addition(%s, %s, Res)." %(nums[0], nums[1])))[0]['Res']
-    
-    def get_candidates_prolog(self, key):
-        return [(z['Z1'], z['Z2']) for z in list(self.prolog.query("addition(Z1, Z2, %s)." % key))]
 
 
 class RegKB(KBBase):
