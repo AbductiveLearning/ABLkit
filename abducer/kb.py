@@ -132,18 +132,17 @@ class ClsKB(KBBase):
       
 
  
-    def address(self, address_num, pred_res, key):      
+    def address(self, address_num, pred_res, key):  
         new_candidates = []
         all_address_candidate = self.all_address_candidate_dict[address_num]
         address_idx_list = list(combinations(list(range(len(pred_res))), address_num))
         for address_idx in address_idx_list:
             for c in all_address_candidate:
-                address_list = [pred_res[i] for i in address_idx]
-                if(sum([address_list[i] == c[i] for i in range(address_num)]) == 0):
-                    candidate = pred_res.copy()
-                    for i, idx in enumerate(address_idx):
-                        candidate[idx] = c[i]
-                    if self.logic_forward(candidate) == key:
+                candidate = pred_res.copy()
+                for i, idx in enumerate(address_idx):
+                    candidate[idx] = c[i]
+                if self.logic_forward(candidate) == key:
+                    if(sum(pred_res[idx] != candidate[idx] for idx in range(len(pred_res))) == address_num):
                         new_candidates.append(candidate)
         return new_candidates
     
@@ -219,7 +218,8 @@ class prolog_KB(KBBase):
                 candidate = pred_res.copy()
                 for i, idx in enumerate(address_idx):
                     candidate[idx] = c[i]
-                new_candidates.append(candidate)
+                if(sum(pred_res[idx] != candidate[idx] for idx in range(len(pred_res))) == address_num):
+                    new_candidates.append(candidate)
         return new_candidates
 
     
