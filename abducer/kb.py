@@ -142,7 +142,7 @@ class ClsKB(KBBase):
                 for i, idx in enumerate(address_idx):
                     candidate[idx] = c[i]
                 if self.logic_forward(candidate) == key:
-                    if(sum(pred_res[idx] != candidate[idx] for idx in range(len(pred_res))) == address_num):
+                    if sum(pred_res[idx] != candidate[idx] for idx in range(len(pred_res))) == address_num:
                         new_candidates.append(candidate)
         return new_candidates
     
@@ -218,7 +218,7 @@ class prolog_KB(KBBase):
                 candidate = pred_res.copy()
                 for i, idx in enumerate(address_idx):
                     candidate[idx] = c[i]
-                if(sum(pred_res[idx] != candidate[idx] for idx in range(len(pred_res))) == address_num):
+                if sum(pred_res[idx] != candidate[idx] for idx in range(len(pred_res))) == address_num:
                     new_candidates.append(candidate)
         return new_candidates
 
