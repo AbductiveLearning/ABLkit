@@ -213,11 +213,7 @@ class prolog_KB(KBBase):
         new_candidates = []
         address_idx_list = list(combinations(list(range(len(pred_res))), address_num))
         for address_idx in address_idx_list:
-            query_string = "addition("
-            for idx, i in enumerate(pred_res):
-                tmp = 'Z' + str(idx) + ',' if idx in address_idx else str(i) + ','
-                query_string += tmp
-            query_string += "%s)."
+            query_string = self.get_query_string(pred_res, address_idx)
             abduce_c = [list(z.values()) for z in list(self.prolog.query(query_string % key))]
             for c in abduce_c:
                 candidate = pred_res.copy()
@@ -234,6 +230,15 @@ class add_prolog_KB(prolog_KB):
     
     def logic_forward(self, nums):
         return list(self.prolog.query("addition(%s, %s, Res)." %(nums[0], nums[1])))[0]['Res']
+    
+    def get_query_string(self, pred_res, address_idx):
+        query_string = "addition("
+        for idx, i in enumerate(pred_res):
+            tmp = 'Z' + str(idx) + ',' if idx in address_idx else str(i) + ','
+            query_string += tmp
+        query_string += "%s)."
+        return query_string
+    
 
 
 class RegKB(KBBase):
