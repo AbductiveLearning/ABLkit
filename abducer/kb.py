@@ -226,20 +226,7 @@ class prolog_KB(KBBase):
                 candidate[idx] = c[i]
             candidates.append(candidate)
         return candidates
-    
-    def address_by_idx2(self, pred_res, key, address_idx):
-        candidates = []
-        query_string = self.get_query_string(pred_res, address_idx)
-        abduce_c = [list(z.values()) for z in list(self.prolog.query(query_string % key))]
-        # print('abduce_c:', abduce_c)
-        for c in abduce_c:
-            candidate = pred_res.copy()
-            for i, idx in enumerate(address_idx):
-                candidate[idx] = c[i]
-            candidates.append(candidate)
-        return candidates
-
-    
+  
 
     
 class add_prolog_KB(prolog_KB):
