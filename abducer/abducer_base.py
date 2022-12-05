@@ -51,8 +51,7 @@ class AbducerBase(abc.ABC):
         cols = np.array(range(len(B[0])))
         cols = np.expand_dims(cols, axis = 0).repeat(axis = 0, repeats = len(B))
         return 1 - np.prod(A[rows, cols, B], axis = 1)
-    
-    
+       
     def get_cost_list(self, pred_res, pred_res_prob, candidates):
         if self.dist_func == 'hamming':
             return self.hamming_dist(pred_res, candidates)
