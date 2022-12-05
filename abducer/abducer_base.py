@@ -73,7 +73,7 @@ class AbducerBase(abc.ABC):
 
 
     def zoopt_address_score(self, pred_res, key, address_idx):     
-        candidates = self.kb.address_by_idx2(pred_res, key, address_idx)
+        candidates = self.kb.address_by_idx(pred_res, key, address_idx)
         return 0 if len(candidates) > 0 else 1
     
     def constraint_address_num(self, solution, max_address_num):
