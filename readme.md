@@ -24,10 +24,10 @@ They can only be used for academic purpose. For other purposes, please contact w
 
 ## To do list 
 
-- Improve speed and accuracy
-- Add comparison with DeepProbLog, NGS,... (Accuracy and Speed)
-- Add Inference/Abduction example with FOL engine (e.g., Prolog)
-- Add zoopt optimization
-- Rearrange structure and make it a python package
-- Documents
+- [ ] Improve speed and accuracy
+- [ ] Add comparison with DeepProbLog, NGS,... (Accuracy and Speed)
+- [x] Add Inference/Abduction example with FOL engine (e.g., Prolog)
+- [x] Add zoopt optimization
+- [ ] Rearrange structure and make it a python package
+- [ ] Documents
 
