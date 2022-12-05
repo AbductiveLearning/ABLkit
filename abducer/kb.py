@@ -89,7 +89,7 @@ class ClsKB(KBBase):
                 self.base.setdefault(len(x), defaultdict(list))[y].append(x)
         else:
             self.all_address_candidate_dict = {}
-            for address_num in range(1, max(self.len_list) + 1):
+            for address_num in range(max(self.len_list) + 1):
                 self.all_address_candidate_dict[address_num] = list(product(self.pseudo_label_list, repeat = address_num))
     
     def get_GKB(self, pseudo_label_list, len_list):
