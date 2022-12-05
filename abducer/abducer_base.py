@@ -106,21 +106,26 @@ class AbducerBase(abc.ABC):
             address_num = min(max_address_num, self.cache_min_address_num[(tuple(pred_res), key)] + require_more_address)
             if (tuple(pred_res), key, address_num) in self.cache_candidates:
                 candidates = self.cache_candidates[(tuple(pred_res), key, address_num)]
-                return self.get_min_cost_candidate(pred_res, pred_res_prob, candidates)    
+                if self.zoopt:
+                    return candidates[0]
+                else:
+                    return self.get_min_cost_candidate(pred_res, pred_res_prob, candidates)    
         
         if self.zoopt:
             address_idx, address_num = self.zoopt_get_address_idx(pred_res, key, max_address_num)
             candidates = self.kb.address_by_idx(pred_res, key, address_idx)
             min_address_num = address_num
+            candidate = candidates[0]
         else:
             candidates, min_address_num, address_num = self.kb.abduce_candidates(pred_res, key, max_address_num, require_more_address)
+            candidate = self.get_min_cost_candidate(pred_res, pred_res_prob, candidates)
             
             
         if self.cache:
             self.cache_min_address_num[(tuple(pred_res), key)] = min_address_num
             self.cache_candidates[(tuple(pred_res), key, address_num)] = candidates
 
-        candidate = self.get_min_cost_candidate(pred_res, pred_res_prob, candidates)    
+            
         return candidate
     
      
@@ -138,7 +143,7 @@ if __name__ == '__main__':
     prob1 = [[0, 0.99, 0.01, 0, 0, 0, 0, 0, 0, 0], [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]]
     prob2 = [[0, 0, 0.01, 0, 0, 0, 0, 0.99, 0, 0], [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]]
     
-    kb = add_KB(GKB_flag = True)
+    kb = add_KB()
     abd = AbducerBase(kb, 'confidence')
     res = abd.abduce(([1, 1], prob1, 8), max_address_num = 2, require_more_address = 0)
     print(res)
@@ -192,4 +197,3 @@ if __name__ == '__main__':
     print(res)
     print()
     
-
