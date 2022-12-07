@@ -213,21 +213,21 @@ if __name__ == '__main__':
     
     kb = HED_prolog_KB()
     abd = AbducerBase(kb, zoopt=True, multiple_predictions=True)
-    consist_re = [[1, '+', 0, '=', 0], [1, '+', 1, '=', 0], [0, '+', 0, '=', 1, 1]]
-    consist_re2 = [[1, '+', 0, '=', 0], [1, '+', 1, '=', 0], [0, '+', 1, '=', 1, 1]] # not consistent with rules
-    inconsist_re = [[1, '+', 0, '=', 0], [1, '=', 1, '=', 0], [0, '=', 0, '=', 1, 1]]
+    consist_exs = [[1, '+', 0, '=', 0], [1, '+', 1, '=', 0], [0, '+', 0, '=', 1, 1]]
+    consist_exs2 = [[1, '+', 0, '=', 0], [1, '+', 1, '=', 0], [0, '+', 1, '=', 1, 1]] # not consistent with rules
+    inconsist_exs = [[1, '+', 0, '=', 0], [1, '=', 1, '=', 0], [0, '=', 0, '=', 1, 1]]
     rules = ['my_op([0], [0], [1, 1])', 'my_op([1], [1], [0])', 'my_op([1], [0], [0])']
     
-    print(kb.logic_forward(consist_re), kb.logic_forward(inconsist_re))
-    print(kb.consist_rule(consist_re, rules), kb.consist_rule(consist_re2, rules))
+    print(kb.logic_forward(consist_exs), kb.logic_forward(inconsist_exs))
+    print(kb.consist_rule(consist_exs, rules), kb.consist_rule(consist_exs2, rules))
     print()
     
-    res = abd.abduce((consist_re, None, None))
+    res = abd.abduce((consist_exs, None, None))
     print(res)
-    res = abd.abduce((inconsist_re, None, None))
+    res = abd.abduce((inconsist_exs, None, None))
     print(res)
     print()
     
-    abduced_rules = abd.abduce_rules(consist_re)
+    abduced_rules = abd.abduce_rules(consist_exs)
     print(abduced_rules)
     
