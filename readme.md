@@ -3,7 +3,17 @@
 This is the code repository of abductive learning Package.
 
 ## Environment dependency 
-...
+
+#### Install Swipl 
+[http://www.swi-prolog.org/build/unix.html](http://www.swi-prolog.org/build/unix.html)
+
+#### Install required package
+
+```shell
+pip install zoopt
+pip install pyswip==0.2.9
+```
+
 
 ## Example 
 share_example.py and nonshare_exaple.py are examples of grounded abductive learning.
