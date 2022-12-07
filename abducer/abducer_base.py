@@ -222,9 +222,9 @@ if __name__ == '__main__':
     print(kb.consist_rule(consist_exs, rules), kb.consist_rule(consist_exs2, rules))
     print()
     
-    res = abd.abduce((consist_exs, None, None))
+    res = abd.abduce((consist_exs, True, None))
     print(res)
-    res = abd.abduce((inconsist_exs, None, None))
+    res = abd.abduce((inconsist_exs, True, None))
     print(res)
     print()
     
