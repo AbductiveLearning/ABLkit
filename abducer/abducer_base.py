@@ -212,7 +212,7 @@ if __name__ == '__main__':
     print()
     
     kb = HED_prolog_KB()
-    abd = AbducerBase(kb, zoopt=True, multiple_predictions=True)
+    abd = AbducerBase(kb, zoopt=False, multiple_predictions=True)
     consist_exs = [[1, '+', 0, '=', 0], [1, '+', 1, '=', 0], [0, '+', 0, '=', 1, 1]]
     consist_exs2 = [[1, '+', 0, '=', 0], [1, '+', 1, '=', 0], [0, '+', 1, '=', 1, 1]] # not consistent with rules
     inconsist_exs = [[1, '+', 0, '=', 0], [1, '=', 1, '=', 0], [0, '=', 0, '=', 1, 1]]
@@ -222,9 +222,9 @@ if __name__ == '__main__':
     print(kb.consist_rule(consist_exs, rules), kb.consist_rule(consist_exs2, rules))
     print()
     
-    res = abd.abduce((consist_exs, True, None))
+    res = abd.abduce((consist_exs, None, True))
     print(res)
-    res = abd.abduce((inconsist_exs, True, None))
+    res = abd.abduce((inconsist_exs, None, True))
     print(res)
     print()
     
