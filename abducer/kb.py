@@ -43,12 +43,18 @@ class KBBase(ABC):
             new_candidates += candidates
         return new_candidates
     
+    def correct_result(self, pred_res, key):
+        if type(key) == int:
+            return abs(self.logic_forward(pred_res) - key) <= 1e-3
+        else:
+            return self.logic_forward(pred_res) == key
+    
     def abduction(self, pred_res, key, max_address_num, require_more_address, multiple_predictions = False):
         candidates = []
         
         for address_num in range(len(pred_res) + 1):
             if address_num == 0:
-                if abs(self.logic_forward(pred_res) - key) <= 1e-3:
+                if self.correct_result(pred_res, key):
                     candidates.append(pred_res)
             else:
                 new_candidates = self.address(address_num, pred_res, key, multiple_predictions)
