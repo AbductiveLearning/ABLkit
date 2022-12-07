@@ -11,12 +11,14 @@
 #================================================================#
 
 import sys
+sys.path.append(".")
 sys.path.append("..")
 
 import abc
-from abducer.kb import add_KB, HWF_KB, add_prolog_KB, HED_prolog_KB
+from abducer.kb import *
 import numpy as np
 from zoopt import Dimension, Objective, Parameter, Opt
+from utils.utils import _confidence_dist, _flatten, _hamming_dist
 
 import time
 
@@ -32,72 +34,44 @@ class AbducerBase(abc.ABC):
         if self.cache:
             self.cache_min_address_num = {}
             self.cache_candidates = {}
-            
 
-    def hamming_dist(self, A, B):
-        B = np.array(B)
-        A = np.expand_dims(A, axis = 0).repeat(axis=0, repeats=(len(B)))
-        return np.sum(A != B, axis = 1)
-
-    def confidence_dist(self, A, B):
-        mapping = dict(zip(self.kb.pseudo_label_list, list(range(len(self.kb.pseudo_label_list)))))
-        B = [list(map(lambda x : mapping[x], b)) for b in B]
-    
-        B = np.array(B)
-        A = np.clip(A, 1e-9, 1)
-        A = np.expand_dims(A, axis=0)
-        A = A.repeat(axis=0, repeats=(len(B)))
-        rows = np.array(range(len(B)))
-        rows = np.expand_dims(rows, axis = 1).repeat(axis = 1, repeats = len(B[0]))
-        cols = np.array(range(len(B[0])))
-        cols = np.expand_dims(cols, axis = 0).repeat(axis = 0, repeats = len(B))
-        return 1 - np.prod(A[rows, cols, B], axis = 1)
        
-    def get_cost_list(self, pred_res, pred_res_prob, candidates):
+    def _get_cost_list(self, pred_res, pred_res_prob, candidates):
         if self.dist_func == 'hamming':
-            return self.hamming_dist(pred_res, candidates)
+            return _hamming_dist(pred_res, candidates)
         elif self.dist_func == 'confidence':
-            return self.confidence_dist(pred_res_prob, candidates)
+            mapping = dict(zip(self.kb.pseudo_label_list, list(range(len(self.kb.pseudo_label_list)))))
+            return _confidence_dist(pred_res_prob, [list(map(lambda x : mapping[x], c)) for c in candidates])
 
-    def get_one_candidate(self, pred_res, pred_res_prob, candidates):
+    def _get_one_candidate(self, pred_res, pred_res_prob, candidates):
         if len(candidates) == 0:
             return []
         elif len(candidates) == 1 or self.zoopt:
             return candidates[0]
         else:
-            cost_list = self.get_cost_list(pred_res, pred_res_prob, candidates)
+            cost_list = self._get_cost_list(pred_res, pred_res_prob, candidates)
             min_address_num = np.min(cost_list)
             idxs = np.where(cost_list == min_address_num)[0]
             return [candidates[idx] for idx in idxs][0]
 
-
-
-
-    # for multiple_prediction
-    def flatten(self, l):
-        if self.multiple_predictions:
-            return [item for sublist in l for item in sublist]
-        else:
-            return l
-
-    
     
     # for zoopt  
-    def zoopt_address_score(self, pred_res, key, address_idx):     
+    def _zoopt_address_score(self, pred_res, key, address_idx):     
         candidates = self.kb.address_by_idx(pred_res, key, address_idx, self.multiple_predictions)
         return 0 if len(candidates) > 0 else 1
     
-    def constraint_address_num(self, solution, max_address_num):
+    def _constrain_address_num(self, solution, max_address_num):
         x = solution.get_x()
         return max_address_num - x.sum()
 
-    def zoopt_get_address_idx(self, pred_res, key, max_address_num):
-        dimension = Dimension(size=len(self.flatten(pred_res)),
-                        regs=[[0, 1]] * len(self.flatten(pred_res)),
-                        tys=[False] * len(self.flatten(pred_res)))
-        objective = Objective(lambda sol: self.zoopt_address_score(pred_res, key, [idx for idx, i in enumerate(sol.get_x()) if i != 0]), 
+    def _zoopt_get_address_idx(self, pred_res, key, max_address_num):
+        length = len(_flatten(pred_res))
+        dimension = Dimension(size=length,
+                        regs=[[0, 1]] * length,
+                        tys=[False] * length)
+        objective = Objective(lambda sol: self._zoopt_address_score(pred_res, key, [idx for idx, i in enumerate(sol.get_x()) if i != 0]), 
                               dim=dimension,
-                              constraint=lambda sol: self.constraint_address_num(sol, max_address_num))
+                              constraint=lambda sol: self._constrain_address_num(sol, max_address_num))
         parameter = Parameter(budget=100 * dimension.get_size(), autoset=True)
         solution = Opt.min(objective, parameter).get_x()
         
@@ -107,35 +81,51 @@ class AbducerBase(abc.ABC):
         return address_idx, address_num
     
 
+    def _get_cache(self, data, max_address_num, require_more_address):
+        pred_res, pred_res_prob, key = data
+        if self.multiple_predictions:
+            pred_res = _flatten(pred_res)
+            key = tuple(key)
+        if (tuple(pred_res), key) in self.cache_min_address_num:
+            address_num = min(max_address_num, self.cache_min_address_num[(tuple(pred_res), key)] + require_more_address)
+            if (tuple(pred_res), key, address_num) in self.cache_candidates:
+                candidates = self.cache_candidates[(tuple(pred_res), key, address_num)]
+                if self.zoopt:
+                    return candidates[0]
+                else:
+                    return self._get_one_candidate(pred_res, pred_res_prob, candidates)
+        return None
+    
+    def _set_cache(self, pred_res, key, min_address_num, address_num, candidates):
+        if self.multiple_predictions:
+            pred_res = _flatten(pred_res)
+            key = tuple(key)
+        self.cache_min_address_num[(tuple(pred_res), key)] = min_address_num
+        self.cache_candidates[(tuple(pred_res), key, address_num)] = candidates
 
 
     def abduce(self, data, max_address_num = -1, require_more_address = 0):
         pred_res, pred_res_prob, key = data
         if max_address_num == -1:
-            max_address_num = len(pred_res)
-            
-        if self.cache and (tuple(self.flatten(pred_res)), key) in self.cache_min_address_num:
-            address_num = min(max_address_num, self.cache_min_address_num[(tuple(self.flatten(pred_res)), key)] + require_more_address)
-            if (tuple(self.flatten(pred_res)), key, address_num) in self.cache_candidates:
-                candidates = self.cache_candidates[(tuple(self.flatten(pred_res)), key, address_num)]
-                if self.zoopt:
-                    return candidates[0]
-                else:
-                    return self.get_one_candidate(pred_res, pred_res_prob, candidates)    
+            max_address_num = len(_flatten(pred_res))
         
+        if self.cache:
+            candidate = self._get_cache(data, max_address_num, require_more_address)
+            if candidate is not None:
+                return candidate
+
         if self.zoopt:
-            address_idx, address_num = self.zoopt_get_address_idx(pred_res, key, max_address_num)
+            address_idx, address_num = self._zoopt_get_address_idx(pred_res, key, max_address_num)
             candidates = self.kb.address_by_idx(pred_res, key, address_idx, self.multiple_predictions)
             min_address_num = address_num
         else:
             candidates, min_address_num, address_num = self.kb.abduce_candidates(pred_res, key, max_address_num, require_more_address, self.multiple_predictions)
         
-        candidate = self.get_one_candidate(pred_res, pred_res_prob, candidates)
+        candidate = self._get_one_candidate(pred_res, pred_res_prob, candidates)
             
             
         if self.cache:
-            self.cache_min_address_num[(tuple(self.flatten(pred_res)), key)] = min_address_num
-            self.cache_candidates[(tuple(self.flatten(pred_res)), key, address_num)] = candidates
+            self._set_cache(pred_res, key, min_address_num, address_num, candidates)
 
         return candidate
     
@@ -144,10 +134,13 @@ class AbducerBase(abc.ABC):
     
      
     def batch_abduce(self, Z, Y, max_address_num = -1, require_more_address = 0):
-        return [
+        if self.multiple_predictions:
+            return self.abduce((Z['cls'], Z['prob'], Y), max_address_num, require_more_address)
+        else:
+            return [
                 self.abduce((z, prob, y), max_address_num, require_more_address)\
                     for z, prob, y in zip(Z['cls'], Z['prob'], Y)
-            ]
+                ]
 
     def __call__(self, Z, Y, max_address_num = -1, require_more_address = 0):
         return self.batch_abduce(Z, Y, max_address_num, require_more_address)
@@ -212,7 +205,7 @@ if __name__ == '__main__':
     print()
     
     kb = HED_prolog_KB()
-    abd = AbducerBase(kb, zoopt=False, multiple_predictions=True)
+    abd = AbducerBase(kb, zoopt=True, multiple_predictions=True)
     consist_exs = [[1, '+', 0, '=', 0], [1, '+', 1, '=', 0], [0, '+', 0, '=', 1, 1]]
     consist_exs2 = [[1, '+', 0, '=', 0], [1, '+', 1, '=', 0], [0, '+', 1, '=', 1, 1]] # not consistent with rules
     inconsist_exs = [[1, '+', 0, '=', 0], [1, '=', 1, '=', 0], [0, '=', 0, '=', 1, 1]]
@@ -222,9 +215,9 @@ if __name__ == '__main__':
     print(kb.consist_rule(consist_exs, rules), kb.consist_rule(consist_exs2, rules))
     print()
     
-    res = abd.abduce((consist_exs, None, True))
+    res = abd.abduce((consist_exs, None, [1] * len(consist_exs)))
     print(res)
-    res = abd.abduce((inconsist_exs, None, True))
+    res = abd.abduce((inconsist_exs, None, [1] * len(consist_exs)))
     print(res)
     print()
     
