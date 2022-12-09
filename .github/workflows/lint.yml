@@ -17,4 +17,4 @@ jobs:
         uses: py-actions/flake8@v2
         with:
           max-line-length: "110"
-          plugins: "flake8-bugbear"
+          plugins: "flake8-bugbear flake8-black"
