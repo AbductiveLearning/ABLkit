@@ -1,11 +1,11 @@
 import numpy as np
 
 # for multiple predictions, modify from `learn_add.py`
-def _flatten(l):
+def flatten(l):
     return [item for sublist in l for item in _flatten(sublist)] if isinstance(l, list) else [l]
     
 # for multiple predictions, modify from `learn_add.py`
-def _reform_ids(flatten_pred_res, save_pred_res):
+def reform_ids(flatten_pred_res, save_pred_res):
     re = []
     i = 0
     for e in save_pred_res:
@@ -18,12 +18,12 @@ def _reform_ids(flatten_pred_res, save_pred_res):
         i = i + j
     return re
 
-def _hamming_dist(A, B):
+def hamming_dist(A, B):
     B = np.array(B)
     A = np.expand_dims(A, axis = 0).repeat(axis=0, repeats=(len(B)))
     return np.sum(A != B, axis = 1)
 
-def _confidence_dist(A, B):
+def confidence_dist(A, B):
     B = np.array(B)
     A = np.clip(A, 1e-9, 1)
     A = np.expand_dims(A, axis=0)
