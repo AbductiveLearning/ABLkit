@@ -1,16 +1,17 @@
 # coding: utf-8
-#================================================================#
+# ================================================================#
 #   Copyright (C) 2020 Freecss All rights reserved.
-#   
+#
 #   File Name     ：basic_model.py
 #   Author        ：freecss
 #   Email         ：karlfreecss@gmail.com
 #   Created Date  ：2020/11/21
 #   Description   ：
 #
-#================================================================#
+# ================================================================#
 
 import sys
+
 sys.path.append("..")
 
 import torch
@@ -18,6 +19,24 @@ from torch.utils.data import Dataset
 
 import os
 from multiprocessing import Pool
+
+
+class BasicDataset(Dataset):
+    def __init__(self, X, Y):
+        self.X = X
+        self.Y = Y
+
+    def __len__(self):
+        return len(self.X)
+
+    def __getitem__(self, index):
+        assert index < len(self), "index range error"
+
+        img = self.X[index]
+        label = self.Y[index]
+
+        return (img, label)
+
 
 class XYDataset(Dataset):
     def __init__(self, X, Y, transform=None):
@@ -31,8 +50,8 @@ class XYDataset(Dataset):
         return len(self.X)
 
     def __getitem__(self, index):
-        assert index < len(self), 'index range error'
-        
+        assert index < len(self), "index range error"
+
         img = self.X[index]
         if self.transform is not None:
             img = self.transform(img)
@@ -41,31 +60,35 @@ class XYDataset(Dataset):
 
         return (img, label)
 
-class FakeRecorder():
+
+class FakeRecorder:
     def __init__(self):
         pass
 
     def print(self, *x):
         pass
 
-class BasicModel():
-    def __init__(self,
-            model,
-            criterion,
-            optimizer,
-            device,
-            batch_size = 1,
-            num_epochs = 1,
-            stop_loss = 0.01,
-            num_workers = 0,
-            save_interval = None,
-            save_dir = None,
-            transform = None,
-            collate_fn = None,
-            recorder = None):
+
+class BasicModel:
+    def __init__(
+        self,
+        model,
+        criterion,
+        optimizer,
+        device,
+        batch_size=1,
+        num_epochs=1,
+        stop_loss=0.01,
+        num_workers=0,
+        save_interval=None,
+        save_dir=None,
+        transform=None,
+        collate_fn=None,
+        recorder=None,
+    ):
 
         self.model = model.to(device)
-        
+
         self.batch_size = batch_size
         self.num_epochs = num_epochs
         self.stop_loss = stop_loss
@@ -103,9 +126,7 @@ class BasicModel():
         recorder.print("Model fitted, minimal loss is ", min_loss)
         return loss_value
 
-    def fit(self, data_loader = None,
-                  X = None,
-                  y = None):
+    def fit(self, data_loader=None, X=None, y=None):
         if data_loader is None:
             data_loader = self._data_loader(X, y)
         return self._fit(data_loader, self.num_epochs, self.stop_loss)
@@ -115,7 +136,7 @@ class BasicModel():
         criterion = self.criterion
         optimizer = self.optimizer
         device = self.device
-        
+
         model.train()
 
         total_loss, total_num = 0.0, 0
@@ -136,7 +157,7 @@ class BasicModel():
     def _predict(self, data_loader):
         model = self.model
         device = self.device
-    
+
         model.eval()
 
         with torch.no_grad():
@@ -145,20 +166,20 @@ class BasicModel():
                 data = data.to(device)
                 out = model(data)
                 results.append(out)
-    
+
         return torch.cat(results, axis=0)
 
-    def predict(self, data_loader = None, X = None, print_prefix = ""):
+    def predict(self, data_loader=None, X=None, print_prefix=""):
         recorder = self.recorder
-        recorder.print('Start Predict Class ', print_prefix)
+        recorder.print("Start Predict Class ", print_prefix)
 
         if data_loader is None:
             data_loader = self._data_loader(X)
         return self._predict(data_loader).argmax(axis=1).cpu().numpy()
 
-    def predict_proba(self, data_loader = None, X = None, print_prefix = ""):
+    def predict_proba(self, data_loader=None, X=None, print_prefix=""):
         recorder = self.recorder
-        recorder.print('Start Predict Probability ', print_prefix)
+        # recorder.print('Start Predict Probability ', print_prefix)
 
         if data_loader is None:
             data_loader = self._data_loader(X)
@@ -168,7 +189,7 @@ class BasicModel():
         model = self.model
         criterion = self.criterion
         device = self.device
-    
+
         model.eval()
 
         total_correct_num, total_num, total_loss = 0, 0, 0.0
@@ -179,32 +200,37 @@ class BasicModel():
 
                 out = model(data)
 
-                correct_num = sum(target == out.argmax(axis=1)).item()
+                if len(out.shape) > 1:
+                    correct_num = sum(target == out.argmax(axis=1)).item()
+                else:
+                    correct_num = sum(target == (out > 0.5)).item()
                 loss = criterion(out, target)
                 total_loss += loss.item() * data.size(0)
 
                 total_correct_num += correct_num
                 total_num += data.size(0)
-        
+
         mean_loss = total_loss / total_num
         accuracy = total_correct_num / total_num
 
         return mean_loss, accuracy
 
-    def val(self, data_loader = None, X = None, y = None, print_prefix = ""):
+    def val(self, data_loader=None, X=None, y=None, print_prefix=""):
         recorder = self.recorder
-        recorder.print('Start val ', print_prefix)
+        recorder.print("Start val ", print_prefix)
 
         if data_loader is None:
             data_loader = self._data_loader(X, y)
         mean_loss, accuracy = self._val(data_loader)
-        recorder.print('[%s] Val loss: %f, accuray: %f' % (print_prefix, mean_loss, accuracy))
+        recorder.print(
+            "[%s] Val loss: %f, accuray: %f" % (print_prefix, mean_loss, accuracy)
+        )
         return accuracy
 
-    def score(self, data_loader = None, X = None, y = None, print_prefix = ""):
+    def score(self, data_loader=None, X=None, y=None, print_prefix=""):
         return self.val(data_loader, X, y, print_prefix)
 
-    def _data_loader(self, X, y = None):
+    def _data_loader(self, X, y=None):
         collate_fn = self.collate_fn
         transform = self.transform
 
@@ -212,9 +238,14 @@ class BasicModel():
             y = [0] * len(X)
         dataset = XYDataset(X, y, transform=transform)
         sampler = None
-        data_loader = torch.utils.data.DataLoader(dataset, batch_size=self.batch_size, \
-            shuffle=False, sampler=sampler, num_workers=int(self.num_workers), \
-            collate_fn=collate_fn)
+        data_loader = torch.utils.data.DataLoader(
+            dataset,
+            batch_size=self.batch_size,
+            shuffle=False,
+            sampler=sampler,
+            num_workers=int(self.num_workers),
+            collate_fn=collate_fn,
+        )
         return data_loader
 
     def save(self, epoch_id, save_dir):
@@ -237,7 +268,6 @@ class BasicModel():
         load_path = os.path.join(load_dir, str(epoch_id) + "_opt.pth")
         self.optimizer.load_state_dict(torch.load(load_path))
 
+
 if __name__ == "__main__":
     pass
-
-

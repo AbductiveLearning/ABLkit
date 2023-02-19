@@ -1,14 +1,14 @@
 # coding: utf-8
-#================================================================#
+# ================================================================#
 #   Copyright (C) 2020 Freecss All rights reserved.
-#   
+#
 #   File Name     ：plog.py
 #   Author        ：freecss
 #   Email         ：karlfreecss@gmail.com
 #   Created Date  ：2020/10/23
 #   Description   ：
 #
-#================================================================#
+# ================================================================#
 
 import time
 import logging
@@ -19,13 +19,14 @@ import functools
 global recorder
 recorder = None
 
+
 class ResultRecorder:
     def __init__(self):
-        logging.basicConfig(level=logging.DEBUG, filemode='a')
+        logging.basicConfig(level=logging.DEBUG, filemode="a")
 
         self.result = {}
         self.set_savefile()
-        
+
         logging.info("===========================================================")
         logging.info("============= Result Recorder Version: 0.03 ===============")
         logging.info("===========================================================\n")
@@ -33,25 +34,25 @@ class ResultRecorder:
         pass
 
     def set_savefile(self):
-        local_time = time.strftime("%Y%m%d_%H_%M_%S", time.localtime()) 
+        local_time = time.strftime("%Y%m%d_%H_%M_%S", time.localtime())
 
         save_dir = os.path.join("results", local_time)
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         save_file_path = os.path.join(save_dir, "result.pk")
         save_file = open(save_file_path, "wb")
-        
+
         self.save_dir = save_dir
         self.save_file = save_file
 
         filename = os.path.join(save_dir, "log.txt")
         file_handler = logging.FileHandler(filename)
         file_handler.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s') 
+        formatter = logging.Formatter("%(asctime)s - %(levelname)s: %(message)s")
         file_handler.setFormatter(formatter)
         logging.getLogger().addHandler(file_handler)
 
-    def print(self, *argv, screen = False):
+    def print(self, *argv, screen=False):
         info = ""
         for data in argv:
             info += str(data)
@@ -62,9 +63,8 @@ class ResultRecorder:
     def print_result(self, *argv):
         for data in argv:
             info = "#Result# %s" % str(data)
-            #print(info)
             logging.info(info)
-        
+
     def store(self, *argv):
         for data in argv:
             if data.find(":") < 0:
@@ -81,11 +81,11 @@ class ResultRecorder:
         self.result[label].append(data)
 
     def write_kv(self, label, data):
-        self.print_result({label : data})
-        #self.print_result(label + ":" + str(data))
+        self.print_result({label: data})
+        # self.print_result(label + ":" + str(data))
         self.store_kv(label, data)
 
-    def dump(self, save_file = None):
+    def dump(self, save_file=None):
         if save_file is None:
             save_file = self.save_file
         pk.dump(self.result, save_file)
@@ -104,10 +104,12 @@ class ResultRecorder:
             self.write_kv("func:", context)
 
             return result
+
         return clocked
 
     def __del__(self):
         self.dump()
+
 
 def clocker(*argv):
     global recorder
@@ -115,27 +117,30 @@ def clocker(*argv):
         recorder = ResultRecorder()
     return recorder.clock(*argv)
 
-def INFO(*argv, screen = False):
-    global recorder
-    if recorder is None:
-        recorder = ResultRecorder()
-    return recorder.print(*argv, screen = screen)
 
-def DEBUG(*argv, screen = False):
+def INFO(*argv, screen=False):
     global recorder
     if recorder is None:
         recorder = ResultRecorder()
-    return recorder.print(*argv, screen = screen)
+    return recorder.print(*argv, screen=screen)
+
+
+def DEBUG(*argv, screen=False):
+    global recorder
+    if recorder is None:
+        recorder = ResultRecorder()
+    return recorder.print(*argv, screen=screen)
+
 
 def logger():
     global recorder
     if recorder is None:
         recorder = ResultRecorder()
     return recorder
-        
+
+
 if __name__ == "__main__":
     recorder = ResultRecorder()
     recorder.write_kv("test", 1)
-    recorder.set_savefile(pk_dir = "haha")
+    recorder.set_savefile(pk_dir="haha")
     recorder.write_kv("test", 1)
-
