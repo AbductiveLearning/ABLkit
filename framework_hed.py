@@ -303,7 +303,6 @@ def validation(model, abducer, mapping, train_X_true, train_X_false, val_X_true,
 
 def get_final_rules(rules):
     all_rule_dict = {}
-    rule_cnt = 0
     for rule in rules:
         for r in rule:
             all_rule_dict[r] = 1 if r not in all_rule_dict else all_rule_dict[r] + 1
