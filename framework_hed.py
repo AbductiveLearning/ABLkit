@@ -299,7 +299,17 @@ def validation(model, abducer, mapping, train_X_true, train_X_false, val_X_true,
 
         if accuracy > best_accuracy:
             best_accuracy = accuracy
-    return best_accuracy
+    return best_accuracy, rules
+
+def get_final_rules(rules):
+    all_rule_dict = {}
+    rule_cnt = 0
+    for rule in rules:
+        for r in rule:
+            all_rule_dict[r] = 1 if r not in all_rule_dict else all_rule_dict[r] + 1
+    rule_dict = {rule: cnt for rule, cnt in all_rule_dict.items() if cnt >= 5}
+    rule_dict
+    return rule_dict
 
 
 def train_with_rule(model, abducer, train_data, val_data, epochs=50, select_num=10, verbose=-1):
@@ -338,10 +348,11 @@ def train_with_rule(model, abducer, train_data, val_data, epochs=50, select_num=
             # The condition has been satisfied continuously five times
             if condition_cnt >= 5:
                 # Try to abduce rules in `validation`
-                best_accuracy = validation(model, abducer, mapping, train_X_true, train_X_false, val_X_true, val_X_false)
+                best_accuracy, rules = validation(model, abducer, mapping, train_X_true, train_X_false, val_X_true, val_X_false)
                 INFO('best_accuracy is %f' %(best_accuracy))
                 # decide next course or restart
                 if best_accuracy > 0.85:
+                    final_rules = get_final_rules(rules)
                     torch.save(model.cls_list[0].model.state_dict(), "./weights/weights_%d.pth" % equation_len)
                     break
                 else:
@@ -351,7 +362,7 @@ def train_with_rule(model, abducer, train_data, val_data, epochs=50, select_num=
                         model.cls_list[0].model.load_state_dict(torch.load("./weights/weights_%d.pth" % (equation_len - 1)))
                     condition_cnt = 0
 
-    return model
+    return model, final_rules
 
 
 if __name__ == "__main__":
