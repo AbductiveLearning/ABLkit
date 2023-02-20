@@ -308,7 +308,6 @@ def get_final_rules(rules):
         for r in rule:
             all_rule_dict[r] = 1 if r not in all_rule_dict else all_rule_dict[r] + 1
     rule_dict = {rule: cnt for rule, cnt in all_rule_dict.items() if cnt >= 5}
-    rule_dict
     return rule_dict
 
 
