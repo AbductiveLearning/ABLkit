@@ -306,8 +306,9 @@ def get_final_rules(rules):
     for rule in rules:
         for r in rule:
             all_rule_dict[r] = 1 if r not in all_rule_dict else all_rule_dict[r] + 1
-    rule_dict = {rule: cnt for rule, cnt in all_rule_dict.items() if cnt >= 5}
-    return rule_dict
+    rule_dict = {rule: cnt for rule, cnt in all_rule_dict.items() if cnt > 5}
+    final_rules = [r for r in rule_dict]
+    return final_rules
 
 
 def train_with_rule(model, abducer, train_data, val_data, epochs=50, select_num=10, verbose=-1):
@@ -315,7 +316,7 @@ def train_with_rule(model, abducer, train_data, val_data, epochs=50, select_num=
     val_X = val_data
 
     min_len = 5
-    max_len = 18
+    max_len = 8
 
     # Start training / for each length of equations
     for equation_len in range(min_len, max_len):
@@ -359,7 +360,9 @@ def train_with_rule(model, abducer, train_data, val_data, epochs=50, select_num=
                     else:
                         model.cls_list[0].model.load_state_dict(torch.load("./weights/weights_%d.pth" % (equation_len - 1)))
                     condition_cnt = 0
-
+		
+	INFO('final_rules: ', final_rules)
+	
     return model, final_rules
 
 
