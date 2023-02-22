@@ -41,7 +41,7 @@ def get_pretrain_data(labels, image_size=(28, 28, 1)):
     X = []
     for label in labels:
         label_path = os.path.join(
-            "./datasets/hed/dataset/mnist_images", label
+            "./datasets/hed/mnist_images", label
         )
         img_path_list = os.listdir(label_path)
         for img_path in img_path_list:
