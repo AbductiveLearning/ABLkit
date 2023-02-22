@@ -43,29 +43,16 @@ class KBBase(ABC):
     def address(self, address_num, pred_res, key, multiple_predictions=False):
         new_candidates = []
         if not multiple_predictions:
-            address_idx_list = list(
-                combinations(list(range(len(pred_res))), address_num)
-            )
+            address_idx_list = list(combinations(list(range(len(pred_res))), address_num))
         else:
-            address_idx_list = list(
-                combinations(list(range(len(flatten(pred_res)))), address_num)
-            )
+            address_idx_list = list(combinations(list(range(len(flatten(pred_res)))), address_num))
 
         for address_idx in address_idx_list:
-            candidates = self.address_by_idx(
-                pred_res, key, address_idx, multiple_predictions
-            )
+            candidates = self.address_by_idx(pred_res, key, address_idx, multiple_predictions)
             new_candidates += candidates
         return new_candidates
 
-    def abduction(
-        self,
-        pred_res,
-        key,
-        max_address_num,
-        require_more_address,
-        multiple_predictions=False,
-    ):
+    def abduction(self, pred_res, key, max_address_num, require_more_address, multiple_predictions=False):
         candidates = []
 
         for address_num in range(len(pred_res) + 1):
@@ -73,9 +60,7 @@ class KBBase(ABC):
                 if abs(self.logic_forward(pred_res) - key) <= 1e-3:
                     candidates.append(pred_res)
             else:
-                new_candidates = self.address(
-                    address_num, pred_res, key, multiple_predictions
-                )
+                new_candidates = self.address(address_num, pred_res, key, multiple_predictions)
                 candidates += new_candidates
 
             if len(candidates) > 0:
@@ -85,14 +70,10 @@ class KBBase(ABC):
             if address_num >= max_address_num:
                 return [], 0, 0
 
-        for address_num in range(
-            min_address_num + 1, min_address_num + require_more_address + 1
-        ):
+        for address_num in range(min_address_num + 1, min_address_num + require_more_address + 1):
             if address_num > max_address_num:
                 return candidates, min_address_num, address_num - 1
-            new_candidates = self.address(
-                address_num, pred_res, key, multiple_predictions
-            )
+            new_candidates = self.address(address_num, pred_res, key, multiple_predictions)
             candidates += new_candidates
 
         return candidates, min_address_num, address_num
@@ -117,9 +98,7 @@ class ClsKB(KBBase):
         else:
             self.all_address_candidate_dict = {}
             for address_num in range(max(self.len_list) + 1):
-                self.all_address_candidate_dict[address_num] = list(
-                    product(self.pseudo_label_list, repeat=address_num)
-                )
+                self.all_address_candidate_dict[address_num] = list(product(self.pseudo_label_list, repeat=address_num))
 
     # For parallel version of _get_GKB
     def _get_XY_list(self, args):
@@ -164,26 +143,11 @@ class ClsKB(KBBase):
     def logic_forward(self):
         pass
 
-    def abduce_candidates(
-        self,
-        pred_res,
-        key,
-        max_address_num=-1,
-        require_more_address=0,
-        multiple_predictions=False,
-    ):
+    def abduce_candidates(self, pred_res, key, max_address_num=-1, require_more_address=0, multiple_predictions=False):
         if self.GKB_flag:
-            return self.abduce_from_GKB(
-                pred_res, key, max_address_num, require_more_address
-            )
+            return self.abduce_from_GKB(pred_res, key, max_address_num, require_more_address)
         else:
-            return self.abduction(
-                pred_res,
-                key,
-                max_address_num,
-                require_more_address,
-                multiple_predictions,
-            )
+            return self.abduction(pred_res, key, max_address_num, require_more_address, multiple_predictions)
 
     def abduce_from_GKB(self, pred_res, key, max_address_num, require_more_address):
         if self.base == {} or len(pred_res) not in self.len_list:
@@ -247,24 +211,7 @@ class add_KB(ClsKB):
 
 class HWF_KB(ClsKB):
     def __init__(
-        self,
-        GKB_flag=False,
-        pseudo_label_list=[
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "+",
-            "-",
-            "times",
-            "div",
-        ],
-        len_list=[1, 3, 5, 7],
+        self, GKB_flag=False, pseudo_label_list=['1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', 'times', 'div'], len_list=[1, 3, 5, 7]
     ):
         super().__init__(GKB_flag, pseudo_label_list, len_list)
 
@@ -272,19 +219,9 @@ class HWF_KB(ClsKB):
         if len(formula) % 2 == 0:
             return False
         for i in range(len(formula)):
-            if i % 2 == 0 and formula[i] not in [
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-            ]:
+            if i % 2 == 0 and formula[i] not in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
                 return False
-            if i % 2 != 0 and formula[i] not in ["+", "-", "times", "div"]:
+            if i % 2 != 0 and formula[i] not in ['+', '-', 'times', 'div']:
                 return False
         return True
 
@@ -292,22 +229,22 @@ class HWF_KB(ClsKB):
         if not self.valid_candidate(formula):
             return np.inf
         mapping = {
-            "1": "1",
-            "2": "2",
-            "3": "3",
-            "4": "4",
-            "5": "5",
-            "6": "6",
-            "7": "7",
-            "8": "8",
-            "9": "9",
-            "+": "+",
-            "-": "-",
-            "times": "*",
-            "div": "/",
+            '1': '1',
+            '2': '2',
+            '3': '3',
+            '4': '4',
+            '5': '5',
+            '6': '6',
+            '7': '7',
+            '8': '8',
+            '9': '9',
+            '+': '+',
+            '-': '-',
+            'times': '*',
+            'div': '/',
         }
         formula = [mapping[f] for f in formula]
-        return round(eval("".join(formula)), 2)
+        return round(eval(''.join(formula)), 2)
 
 
 class prolog_KB(KBBase):
@@ -319,12 +256,8 @@ class prolog_KB(KBBase):
     def logic_forward(self):
         pass
 
-    def abduce_candidates(
-        self, pred_res, key, max_address_num, require_more_address, multiple_predictions
-    ):
-        return self.abduction(
-            pred_res, key, max_address_num, require_more_address, multiple_predictions
-        )
+    def abduce_candidates(self, pred_res, key, max_address_num, require_more_address, multiple_predictions):
+        return self.abduction(pred_res, key, max_address_num, require_more_address, multiple_predictions)
 
     def address_by_idx(self, pred_res, key, address_idx, multiple_predictions=False):
         candidates = []
@@ -332,9 +265,7 @@ class prolog_KB(KBBase):
         if not multiple_predictions:
             query_string = self.get_query_string(pred_res, key, address_idx)
         else:
-            query_string = self.get_query_string_need_flatten(
-                pred_res, key, address_idx
-            )
+            query_string = self.get_query_string_need_flatten(pred_res, key, address_idx)
 
         if multiple_predictions:
             save_pred_res = pred_res
@@ -358,28 +289,24 @@ class add_prolog_KB(prolog_KB):
         super().__init__(pseudo_label_list)
         for i in self.pseudo_label_list:
             self.prolog.assertz("pseudo_label(%s)" % i)
-        self.prolog.assertz(
-            "addition(Z1, Z2, Res) :- pseudo_label(Z1), pseudo_label(Z2), Res is Z1+Z2"
-        )
+        self.prolog.assertz("addition(Z1, Z2, Res) :- pseudo_label(Z1), pseudo_label(Z2), Res is Z1+Z2")
 
     def logic_forward(self, nums):
-        return list(self.prolog.query("addition(%s, %s, Res)." % (nums[0], nums[1])))[
-            0
-        ]["Res"]
+        return list(self.prolog.query("addition(%s, %s, Res)." % (nums[0], nums[1])))[0]['Res']
 
     def get_query_string(self, pred_res, key, address_idx):
         query_string = "addition("
         for idx, i in enumerate(pred_res):
-            tmp = "Z" + str(idx) + "," if idx in address_idx else str(i) + ","
+            tmp = 'Z' + str(idx) + ',' if idx in address_idx else str(i) + ','
             query_string += tmp
         query_string += "%s)." % key
         return query_string
 
 
 class HED_prolog_KB(prolog_KB):
-    def __init__(self, pseudo_label_list=[0, 1, "+", "="]):
+    def __init__(self, pseudo_label_list=[0, 1, '+', '=']):
         super().__init__(pseudo_label_list)
-        self.prolog.consult("./datasets/hed/learn_add.pl")
+        self.prolog.consult('./datasets/hed/learn_add.pl')
 
     # corresponding to `con_sol is not None` in `consistent_score_mapped` within `learn_add.py`
     def logic_forward(self, exs):
@@ -391,7 +318,7 @@ class HED_prolog_KB(prolog_KB):
         # add variables for prolog
         for idx in range(len(flatten_pred_res)):
             if idx in address_idx:
-                flatten_pred_res[idx] = "X" + str(idx)
+                flatten_pred_res[idx] = 'X' + str(idx)
         # unflatten
         new_pred_res = reform_idx(flatten_pred_res, pred_res)
 
@@ -399,30 +326,15 @@ class HED_prolog_KB(prolog_KB):
         return query_string.replace("'", "").replace("+", "'+'").replace("=", "'='")
 
     def consist_rule(self, exs, rules):
-        consist = False
-        for rule in rules:
-            # print(rule)
-            if (
-                len(
-                    list(
-                        self.prolog.query(
-                            "consistent_inst_feature(%s, [%s])." % (exs, rule)
-                        )
-                    )
-                )
-                != 0
-            ):
-                consist = True
-                break
-        return consist
+        rules = str(rules).replace("\'","")
+        return len(list(self.prolog.query("eval_inst_feature(%s, %s)." % (exs, rules)))) != 0
 
     def abduce_rules(self, pred_res):
-        prolog_result = list(
-            self.prolog.query("consistent_inst_feature(%s, X)." % pred_res)
-        )
+        # print(pred_res)
+        prolog_result = list(self.prolog.query("consistent_inst_feature(%s, X)." % pred_res))
         if len(prolog_result) == 0:
             return None
-        prolog_rules = prolog_result[0]["X"]
+        prolog_rules = prolog_result[0]['X']
         rules = []
         for rule in prolog_rules:
             rules.append(rule.value)
