@@ -11,18 +11,17 @@
 # ================================================================#
 
 import pickle as pk
-import math
 import torch
 import torch.nn as nn
 import numpy as np
+import os
 
 from utils.plog import INFO, DEBUG, clocker
-from utils.utils import flatten, reform_idx, block_sample
-from utils.utils import copy_state_dict
+from utils.utils import flatten, reform_idx, block_sample, gen_mappings, mapping_res, remapping_res
 
-from sklearn.linear_model import LogisticRegression
-from models.nn import MLP
+from models.nn import MLP, SymbolNetAutoencoder
 from models.basic_model import BasicModel, BasicDataset
+from datasets.hed.get_hed import get_pretrain_data
 
 def result_statistics(pred_Z, Z, Y, logic_forward, char_acc_flag):
     result = {}
@@ -99,72 +98,54 @@ def train(model, abducer, train_data, test_data, epochs=50, sample_num=-1, verbo
     return res
 
 
+def hed_pretrain(kb, cls, recorder):
+    cls_autoencoder = SymbolNetAutoencoder(num_classes=len(kb.pseudo_label_list))
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    if not os.path.exists("./weights/pretrain_weights.pth"):
+        INFO("Pretrain Start")
+        pretrain_data_X, pretrain_data_Y = get_pretrain_data(['0', '1', '10', '11'])
+        pretrain_data = BasicDataset(pretrain_data_X, pretrain_data_Y)
+        pretrain_data_loader = torch.utils.data.DataLoader(pretrain_data, batch_size=64, shuffle=True)
+        
+        criterion = nn.MSELoss()
+        optimizer = torch.optim.RMSprop(cls_autoencoder.parameters(), lr=0.001, alpha=0.9, weight_decay=1e-6)
 
-def pretrain(pretrain_model, pretrain_data):
-    INFO("Pretrain Start")
-    pretrain_data_loader = torch.utils.data.DataLoader(
-        pretrain_data,
-        batch_size=64,
-        shuffle=True,
-        num_workers=2,
-    )
-    pretrain_model.fit(pretrain_data_loader)
+        pretrain_model = BasicModel(cls_autoencoder, criterion, optimizer, device, save_interval=1, save_dir=recorder.save_dir, num_epochs=10, recorder=recorder)
+        pretrain_model.fit(pretrain_data_loader)
+        torch.save(cls_autoencoder.base_model.state_dict(), "./weights/pretrain_weights.pth")
+        cls.load_state_dict(cls_autoencoder.base_model.state_dict())
+    
+    else:
+        cls.load_state_dict(torch.load("./weights/pretrain_weights.pth"))
 
 
-def get_char_acc(model, X, consistent_pred_res):
-    print('Abduced labels:        ', flatten(consistent_pred_res))
-    pred_res = flatten(model.predict(X)['cls'])
-    print('Current model\'s output:', pred_res)
+def get_char_acc(model, X, consistent_pred_res, mapping):
+    original_pred_res = model.predict(X)['cls']
+    pred_res = flatten(mapping_res(original_pred_res, mapping))
+    INFO('Current model\'s output:', pred_res)
+    INFO('Abduced labels:        ', flatten(consistent_pred_res))
     assert len(pred_res) == len(flatten(consistent_pred_res))
     return sum([pred_res[idx] == flatten(consistent_pred_res)[idx] for idx in range(len(pred_res))]) / len(pred_res)
 
-def gen_mappings(chars, symbs):
-	n_char = len(chars)
-	n_symbs = len(symbs)
-	if n_char != n_symbs:
-		print('Characters and symbols size dosen\'t match.')
-		return
-	from itertools import permutations
-	mappings = []
-	# returned mappings
-	perms = permutations(symbs)
-	for p in perms:
-		mappings.append(dict(zip(chars, list(p))))
-	return mappings
 
-def map_res(pred_res, m):
-    for i in range(len(pred_res)):
-        for j in range(len(pred_res[i])):
-            pred_res[i][j] = m[pred_res[i][j]]
-    return pred_res
-
-def map_res(original_pred_res, m):
-    return [[m[symbol] for symbol in formula] for formula in original_pred_res]
-
-def abduce_and_train(model, abducer, train_X_true, select_num):
+def abduce_and_train(model, abducer, mapping, train_X_true, select_num):
     select_idx = np.random.randint(len(train_X_true), size=select_num)
     X = []
     for idx in select_idx:
         X.append(train_X_true[idx])
 
-    pred_res = model.predict(X)['cls']
+    original_pred_res = model.predict(X)['cls']
     
-    maps = gen_mappings(['+', '=', 0, 1],['+', '=', 0, 1])
+    if mapping == None:
+        mappings = gen_mappings(['+', '=', 0, 1],['+', '=', 0, 1])
+    else:
+        mappings = [mapping]
     
     consistent_idx = []
     consistent_pred_res = []
     
-    import copy
-
-    original_pred_res = copy.deepcopy(pred_res)
-    mapping = None
-    
-    for m in maps:
-        pred_res = map_res(original_pred_res, m)
-        remapping = {}
-        for key, value in m.items():
-            remapping[value] = key
-        
+    for m in mappings:
+        pred_res = mapping_res(original_pred_res, m)
         max_abduce_num = 20
         solution = abducer.zoopt_get_solution(pred_res, [1] * len(pred_res), max_abduce_num)
         all_address_flag = reform_idx(solution, pred_res)
@@ -177,27 +158,37 @@ def abduce_and_train(model, abducer, train_X_true, select_num):
             candidate = abducer.kb.address_by_idx([pred_res[idx]], 1, address_idx, True)
             if len(candidate) > 0:
                 consistent_idx_tmp.append(idx)
-                consistent_pred_res_tmp.append([remapping[symbol] for symbol in candidate[0][0]])
+                consistent_pred_res_tmp.append(candidate[0][0])
         
         if len(consistent_idx_tmp) > len(consistent_idx):
             consistent_idx = consistent_idx_tmp
             consistent_pred_res = consistent_pred_res_tmp
-            mapping = m
+            if len(mappings) > 1:
+                mapping = m
                 
     if len(consistent_idx) == 0:
         return 0, 0, None
     
-    INFO("Consistent predict results are: ", map_res(consistent_pred_res, mapping))
-    INFO('Train pool size is:', len(flatten(consistent_pred_res)))
+    if len(mappings) > 1:
+        INFO('Final mapping is: ', mapping)
     
+    INFO('Train pool size is:', len(flatten(consistent_pred_res)))
     INFO("Start to use abduced pseudo label to train model...")
-    model.train([X[idx] for idx in consistent_idx], consistent_pred_res)
+    model.train([X[idx] for idx in consistent_idx], remapping_res(consistent_pred_res, mapping))
 
     consistent_acc = len(consistent_idx) / select_num
-    char_acc = get_char_acc(model, [X[idx] for idx in consistent_idx], consistent_pred_res)
+    char_acc = get_char_acc(model, [X[idx] for idx in consistent_idx], consistent_pred_res, mapping)
     INFO('consistent_acc is %s, char_acc is %s' % (consistent_acc, char_acc))
     return consistent_acc, char_acc, mapping
 
+
+def output_rules(rules):
+    all_rule_dict = {}
+    for rule in rules:
+        for r in rule:
+            all_rule_dict[r] = 1 if r not in all_rule_dict else all_rule_dict[r] + 1
+    rule_dict = {rule: cnt for rule, cnt in all_rule_dict.items()}# if cnt >= 5}
+    return rule_dict
 
 def get_rules_from_data(model, abducer, mapping, train_X_true, samples_per_rule, logic_output_dim):
     rules = []
@@ -208,7 +199,7 @@ def get_rules_from_data(model, abducer, mapping, train_X_true, samples_per_rule,
             for idx in select_idx:
                 X.append(train_X_true[idx])
             original_pred_res = model.predict(X)['cls']
-            pred_res = map_res(original_pred_res, mapping)
+            pred_res = mapping_res(original_pred_res, mapping)
 
             consistent_idx = []
             consistent_pred_res = []
@@ -222,15 +213,12 @@ def get_rules_from_data(model, abducer, mapping, train_X_true, samples_per_rule,
                 if rule != None:
                     break
         rules.append(rule)
-    
-    INFO('Learned rules from data:')
-    INFO(rules)
     return rules
 
 
 def get_mlp_vector(model, abducer, mapping, X, rules):
     original_pred_res = model.predict([X])['cls']
-    pred_res = map_res(original_pred_res, mapping)
+    pred_res = mapping_res(original_pred_res, mapping)
     vector = []
     for rule in rules:
         if abducer.kb.consist_rule(pred_res, rule):
@@ -249,25 +237,28 @@ def get_mlp_data(model, abducer, mapping, X_true, X_false, rules):
     for X in X_false:
         mlp_vectors.append(get_mlp_vector(model, abducer, mapping, X, rules))
         mlp_labels.append(0)
-
     return np.array(mlp_vectors, dtype=np.float32), np.array(mlp_labels, dtype=np.int64)
 
+def get_all_mlp_data(model, abducer, mapping, X_true, X_false, rules, min_len, max_len):
+    for equation_len in range(min_len, max_len + 1):
+        mlp_vectors, mlp_labels = get_mlp_data(model, abducer, mapping, X_true[equation_len], X_false[equation_len], rules)
+        if equation_len == min_len:
+            all_mlp_vectors = mlp_vectors
+            all_mlp_labels = mlp_labels
+        else:
+            all_mlp_vectors = np.concatenate((all_mlp_vectors, mlp_vectors))
+            all_mlp_labels = np.concatenate((all_mlp_labels, mlp_labels))
+    return all_mlp_vectors, all_mlp_labels
 
-def validation(model, abducer, mapping, train_X_true, train_X_false, val_X_true, val_X_false):
-    INFO("Now checking if we can go to next course")
-    samples_per_rule = 3
-    logic_output_dim = 50
-    rules = get_rules_from_data(model, abducer, mapping, train_X_true, samples_per_rule, logic_output_dim)
 
+def validation(model, abducer, mapping, logic_output_dim, rules, train_X_true, train_X_false, val_X_true, val_X_false):
     mlp_train_vectors, mlp_train_labels = get_mlp_data(model, abducer, mapping, train_X_true, train_X_false, rules)
-
-    idx = np.array(list(range(len(mlp_train_labels))))
-    np.random.shuffle(idx)
-    mlp_train_vectors = mlp_train_vectors[idx]
-    mlp_train_labels = mlp_train_labels[idx]
-
+    mlp_train_data = BasicDataset(mlp_train_vectors, mlp_train_labels)
+    
+    mlp_val_vectors, mlp_val_labels = get_mlp_data(model, abducer, mapping, val_X_true, val_X_false, rules)
+    mlp_val_data = BasicDataset(mlp_val_vectors, mlp_val_labels)
+    
     best_accuracy = 0
-
     # Try three times to find the best mlp
     for _ in range(3):
         INFO("Training mlp...")
@@ -277,46 +268,29 @@ def validation(model, abducer, mapping, train_X_true, train_X_false, val_X_true,
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         
         mlp_model = BasicModel(mlp, criterion, optimizer, device, batch_size=128, num_epochs=60)
-        mlp_train_data = BasicDataset(mlp_train_vectors, mlp_train_labels)
-        mlp_train_data_loader = torch.utils.data.DataLoader(
-            mlp_train_data,
-            batch_size=128,
-            shuffle=True
-        )
-        loss = mlp_model.fit(mlp_train_data_loader)
-        INFO("mlp training loss is %f" % loss)
+        mlp_train_data_loader = torch.utils.data.DataLoader(mlp_train_data, batch_size=128, shuffle=True)
         
-        mlp_val_vectors, mlp_val_labels = get_mlp_data(model, abducer, mapping, val_X_true, val_X_false, rules)
-
-        # Get MLP validation result
-        mlp_val_data = BasicDataset(mlp_val_vectors, mlp_val_labels)
-        mlp_val_data_loader = torch.utils.data.DataLoader(
-            mlp_val_data,
-            batch_size=64,
-            shuffle=True,
-        )
+        loss = mlp_model.fit(mlp_train_data_loader)
+        INFO("mlp training final loss is %f" % loss)
+        
+        mlp_val_data_loader = torch.utils.data.DataLoader(mlp_val_data, batch_size=64, shuffle=True)
         accuracy = mlp_model.val(mlp_val_data_loader)
 
         if accuracy > best_accuracy:
             best_accuracy = accuracy
-    return best_accuracy, rules
-
-def get_final_rules(rules):
-    all_rule_dict = {}
-    for rule in rules:
-        for r in rule:
-            all_rule_dict[r] = 1 if r not in all_rule_dict else all_rule_dict[r] + 1
-    rule_dict = {rule: cnt for rule, cnt in all_rule_dict.items() if cnt > 5}
-    final_rules = [r for r in rule_dict]
-    return final_rules
+    return best_accuracy
 
 
-def train_with_rule(model, abducer, train_data, val_data, epochs=50, select_num=10, verbose=-1):
+
+
+
+
+def train_with_rule(model, abducer, train_data, val_data, select_num=10, min_len=5, max_len=8):
     train_X = train_data
     val_X = val_data
-
-    min_len = 5
-    max_len = 8
+    
+    logic_output_dim = 50
+    samples_per_rule = 3
 
     # Start training / for each length of equations
     for equation_len in range(min_len, max_len):
@@ -333,8 +307,11 @@ def train_with_rule(model, abducer, train_data, val_data, epochs=50, select_num=
 
         condition_cnt = 0
         while True:
+            if equation_len == min_len:
+                mapping = None
+            
             # Abduce and train NN
-            consistent_acc, char_acc, mapping = abduce_and_train(model, abducer, train_X_true, select_num)
+            consistent_acc, char_acc, mapping = abduce_and_train(model, abducer, mapping, train_X_true, select_num)
             if consistent_acc == 0:
                 continue
             
@@ -346,12 +323,13 @@ def train_with_rule(model, abducer, train_data, val_data, epochs=50, select_num=
 
             # The condition has been satisfied continuously five times
             if condition_cnt >= 5:
-                # Try to abduce rules in `validation`
-                best_accuracy, rules = validation(model, abducer, mapping, train_X_true, train_X_false, val_X_true, val_X_false)
-                INFO('best_accuracy is %f' %(best_accuracy))
+                INFO("Now checking if we can go to next course")
+                rules = get_rules_from_data(model, abducer, mapping, train_X_true, samples_per_rule, logic_output_dim)
+                INFO('Learned rules from data:', output_rules(rules))
+                best_accuracy = validation(model, abducer, mapping, logic_output_dim, rules, train_X_true, train_X_false, val_X_true, val_X_false)
+                INFO('best_accuracy is %f\n' %(best_accuracy))
                 # decide next course or restart
                 if best_accuracy > 0.85:
-                    final_rules = get_final_rules(rules)
                     torch.save(model.cls_list[0].model.state_dict(), "./weights/weights_%d.pth" % equation_len)
                     break
                 else:
@@ -360,11 +338,59 @@ def train_with_rule(model, abducer, train_data, val_data, epochs=50, select_num=
                     else:
                         model.cls_list[0].model.load_state_dict(torch.load("./weights/weights_%d.pth" % (equation_len - 1)))
                     condition_cnt = 0
-		
-	INFO('final_rules: ', final_rules)
-	
-    return model, final_rules
+                    INFO('Reload Model and retrain')
+                  
+    return model, mapping
 
+def hed_test(model, abducer, mapping, train_data, test_data, min_len=5, max_len=8):
+    train_X = train_data
+    test_X = test_data
+    
+    # Calcualte how many equations should be selected in each length
+    # for each length, there are select_equation_cnt[equation_len] rules
+    print("Now begin to train final mlp model")
+    select_equation_cnt = []
+    len_cnt = max_len - min_len + 1
+    logic_output_dim = 50
+    select_equation_cnt += [0] * min_len
+    if logic_output_dim % len_cnt == 0:
+        select_equation_cnt += [logic_output_dim // len_cnt] * len_cnt
+    else:
+        select_equation_cnt += [logic_output_dim // len_cnt] * len_cnt
+        select_equation_cnt[-1] += logic_output_dim % len_cnt
+    assert sum(select_equation_cnt) == logic_output_dim
+
+    # Abduce rules
+    rules = []
+    samples_per_rule = 3
+    for equation_len in range(min_len, max_len + 1):
+        equation_rules = get_rules_from_data(model, abducer, mapping, train_X[1][equation_len], samples_per_rule, select_equation_cnt[equation_len])
+        rules.extend(equation_rules)
+    INFO('Learned rules from data:', output_rules(rules))
+       
+    mlp_train_vectors, mlp_train_labels = get_all_mlp_data(model, abducer, mapping, train_X[1], train_X[0], rules, min_len, max_len)
+    mlp_train_data = BasicDataset(mlp_train_vectors, mlp_train_labels)
+    
+    # Try three times to find the best mlp
+    for _ in range(3):
+        mlp = MLP(input_dim=logic_output_dim)
+        criterion = nn.CrossEntropyLoss()
+        optimizer = torch.optim.Adam(mlp.parameters(), lr=0.01, betas=(0.9, 0.999))
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        
+        mlp_model = BasicModel(mlp, criterion, optimizer, device, batch_size=128, num_epochs=60)
+        mlp_train_data_loader = torch.utils.data.DataLoader(mlp_train_data, batch_size=128, shuffle=True)
+        
+        loss = mlp_model.fit(mlp_train_data_loader)
+        INFO("mlp training final loss is %f" % loss)
+        
+        for equation_len in range(5, 27):
+            mlp_test_vectors, mlp_test_labels = get_mlp_data(model, abducer, mapping, test_X[1][equation_len], test_X[0][equation_len], rules)
+            mlp_test_data = BasicDataset(mlp_test_vectors, mlp_test_labels)
+            mlp_test_data_loader = torch.utils.data.DataLoader(mlp_test_data, batch_size=64, shuffle=True)
+            accuracy = mlp_model.val(mlp_test_data_loader)
+            INFO("The accuracy of testing length %d equations is: %f" % (equation_len, accuracy))
+        INFO("\n")
 
 if __name__ == "__main__":
     pass
