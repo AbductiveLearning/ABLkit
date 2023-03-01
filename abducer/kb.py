@@ -21,7 +21,7 @@ sys.path.append("..")
 
 from collections import defaultdict
 from itertools import product, combinations
-from utils.utils import flatten, reform_idx, hamming_dist
+from utils.utils import flatten, reform_idx, hamming_dist, check_is_equal
 
 from multiprocessing import Pool
 
@@ -39,8 +39,12 @@ class KBBase(ABC):
     @abstractmethod
     def abduce_candidates(self):
         pass
+    
+    @abstractmethod
+    def address_by_idx(self):
+        pass
 
-    def address(self, address_num, pred_res, key, multiple_predictions=False):
+    def _address(self, address_num, pred_res, key, multiple_predictions=False):
         new_candidates = []
         if not multiple_predictions:
             address_idx_list = list(combinations(list(range(len(pred_res))), address_num))
@@ -48,23 +52,19 @@ class KBBase(ABC):
             address_idx_list = list(combinations(list(range(len(flatten(pred_res)))), address_num))
 
         for address_idx in address_idx_list:
-            # TODO: 要么address_by_idx放这个类，要么定义abstractmethod
             candidates = self.address_by_idx(pred_res, key, address_idx, multiple_predictions)
             new_candidates += candidates
         return new_candidates
 
-    def abduction(self, pred_res, key, max_address_num, require_more_address=0, multiple_predictions=False):
+    def _abduce_by_abduction(self, pred_res, key, max_address_num, require_more_address=0, multiple_predictions=False):
         candidates = []
 
-        # TODO: 这里的len(pred_res)考虑了multiple_predictions吗？
-        for address_num in range(len(pred_res) + 1):
+        for address_num in range(len(flatten(pred_res)) + 1):
             if address_num == 0:
-                # TODO: 不是所有的key都是数字，也可以是字符串，甚至列表？
-                # TODO: check type (str int float multiple_pred ...)
-                if abs(self.logic_forward(pred_res) - key) <= 1e-3:
+                if check_is_equal(pred_res, key):
                     candidates.append(pred_res)
             else:
-                new_candidates = self.address(address_num, pred_res, key, multiple_predictions)
+                new_candidates = self._address(address_num, pred_res, key, multiple_predictions)
                 candidates += new_candidates
 
             if len(candidates) > 0:
@@ -77,7 +77,7 @@ class KBBase(ABC):
         for address_num in range(min_address_num + 1, min_address_num + require_more_address + 1):
             if address_num > max_address_num:
                 return candidates, min_address_num, address_num - 1
-            new_candidates = self.address(address_num, pred_res, key, multiple_predictions)
+            new_candidates = self._address(address_num, pred_res, key, multiple_predictions)
             candidates += new_candidates
 
         return candidates, min_address_num, address_num
@@ -92,12 +92,10 @@ class ClsKB(KBBase):
         self.GKB_flag = GKB_flag
         self.pseudo_label_list = pseudo_label_list
         self.len_list = len_list
-        self.prolog_flag = False # TODO：没用？
-        # TODO: 既然pseudo_label_list len_list prolog_flag都存为self了，那为啥又传到后面的方法里，或者说self就没用上
 
         if GKB_flag:
             self.base = {}
-            X, Y = self._get_GKB(self.pseudo_label_list, self.len_list)
+            X, Y = self._get_GKB()
             for x, y in zip(X, Y):
                 self.base.setdefault(len(x), defaultdict(list))[y].append(x)
         else:
@@ -117,10 +115,10 @@ class ClsKB(KBBase):
         return XY_list
 
     # Parallel get GKB
-    def _get_GKB(self, pseudo_label_list, len_list):
+    def _get_GKB(self):
         # all_X = []
         # for length in len_list:
-        #     all_X += list(product(pseudo_label_list, repeat = length))
+        #     all_X += list(product(self.pseudo_label_list, repeat = length))
 
         # X, Y = [], []
         # for x in all_X:
@@ -130,10 +128,10 @@ class ClsKB(KBBase):
         #         Y.append(y)
 
         X, Y = [], []
-        for length in len_list:
+        for length in self.len_list:
             arg_list = []
-            for pre_x in pseudo_label_list:
-                post_x_it = product(pseudo_label_list, repeat=length - 1)
+            for pre_x in self.pseudo_label_list:
+                post_x_it = product(self.pseudo_label_list, repeat=length - 1)
                 arg_list.append((pre_x, post_x_it))
             with Pool(processes=len(arg_list)) as pool:
                 ret_list = pool.map(self._get_XY_list, arg_list)
@@ -148,14 +146,13 @@ class ClsKB(KBBase):
     def logic_forward(self):
         pass
 
-    # TODO: abduction和abduce_candidates命名上太相近了，即使这样，也有其中一个是私有方法加"_"吧
     def abduce_candidates(self, pred_res, key, max_address_num=-1, require_more_address=0, multiple_predictions=False):
         if self.GKB_flag:
-            return self.abduce_from_GKB(pred_res, key, max_address_num, require_more_address)
+            return self._abduce_from_GKB(pred_res, key, max_address_num, require_more_address)
         else:
-            return self.abduction(pred_res, key, max_address_num, require_more_address, multiple_predictions)
+            return self._abduce_by_abduction(pred_res, key, max_address_num, require_more_address, multiple_predictions)
 
-    def abduce_from_GKB(self, pred_res, key, max_address_num, require_more_address):
+    def _abduce_from_GKB(self, pred_res, key, max_address_num, require_more_address):
         if self.base == {} or len(pred_res) not in self.len_list:
             return []
 
@@ -263,7 +260,7 @@ class prolog_KB(KBBase):
         pass
 
     def abduce_candidates(self, pred_res, key, max_address_num, require_more_address, multiple_predictions):
-        return self.abduction(pred_res, key, max_address_num, require_more_address, multiple_predictions)
+        return self._abduce_by_abduction(pred_res, key, max_address_num, require_more_address, multiple_predictions)
 
     def address_by_idx(self, pred_res, key, address_idx, multiple_predictions=False):
         candidates = []
