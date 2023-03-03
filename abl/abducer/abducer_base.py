@@ -11,7 +11,6 @@
 # ================================================================#
 
 import abc
-from .kb import *
 import numpy as np
 from zoopt import Dimension, Objective, Parameter, Opt
 from ..utils.utils import confidence_dist, flatten, hamming_dist
@@ -159,6 +158,8 @@ class AbducerBase(abc.ABC):
 
 
 if __name__ == '__main__':
+    from kb import add_KB, add_prolog_KB, HWF_KB, HED_prolog_KB
+    
     prob1 = [[0, 0.99, 0.01, 0, 0, 0, 0, 0, 0, 0], [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]]
     prob2 = [[0, 0, 0.01, 0, 0, 0, 0, 0.99, 0, 0], [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]]
 
