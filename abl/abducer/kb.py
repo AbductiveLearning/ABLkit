@@ -461,7 +461,7 @@ import time
 
 if __name__ == "__main__":
     t1 = time.time()
-    kb = add_KB(True)
+    kb = add_KB(GKB_flag=True)
     t2 = time.time()
     print(t2 - t1)
 
