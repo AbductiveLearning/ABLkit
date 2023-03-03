@@ -63,9 +63,10 @@ class KBBase(ABC):
                 part_X, part_Y = zip(*XY_list)
                 X.extend(part_X)
                 Y.extend(part_Y)
-        sorted_XY = sorted(list(zip(Y, X)))
-        X = [x for y, x in sorted_XY]
-        Y = [y for y, x in sorted_XY]
+        if self.max_err != 0:      
+            sorted_XY = sorted(list(zip(Y, X)))
+            X = [x for y, x in sorted_XY]
+            Y = [y for y, x in sorted_XY]
         return X, Y
 
     @abstractmethod
