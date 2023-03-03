@@ -15,10 +15,6 @@ import bisect
 import copy
 import numpy as np
 
-import sys
-
-sys.path.append("..")
-
 from collections import defaultdict
 from itertools import product, combinations
 from ..utils.utils import flatten, reform_idx, hamming_dist, check_equal
