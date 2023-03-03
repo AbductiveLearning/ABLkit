@@ -76,9 +76,9 @@ def remapping_res(pred_res, m):
         remapping[value] = key
     return [[remapping[symbol] for symbol in formula] for formula in pred_res]
 
-def check_equal(a, b):
+def check_equal(a, b, max_err=0):
     if isinstance(a, (int, float)) and isinstance(b, (int, float)):
-        return abs(a - b) <= 1e-3
+        return abs(a - b) <= max_err
     
     if isinstance(a, list) and isinstance(b, list):
         if len(a) != len(b):
@@ -89,4 +89,4 @@ def check_equal(a, b):
         return True
     
     else:    
-        return a == b       
+        return a == b        
