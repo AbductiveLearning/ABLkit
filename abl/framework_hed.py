@@ -16,12 +16,15 @@ import torch.nn as nn
 import numpy as np
 import os
 
-from utils.plog import INFO, DEBUG, clocker
-from utils.utils import flatten, reform_idx, block_sample, gen_mappings, mapping_res, remapping_res
+from .utils.plog import INFO, DEBUG, clocker
+from .utils.utils import flatten, reform_idx, block_sample, gen_mappings, mapping_res, remapping_res
 
-from models.nn import MLP, SymbolNetAutoencoder
-from models.basic_model import BasicModel, BasicDataset
-from datasets.hed.get_hed import get_pretrain_data
+from .models.nn import MLP, SymbolNetAutoencoder
+from .models.basic_model import BasicModel, BasicDataset
+
+import sys
+sys.path.append("..")
+from examples.datasets.hed.get_hed import get_pretrain_data
 
 def result_statistics(pred_Z, Z, Y, logic_forward, char_acc_flag):
     result = {}

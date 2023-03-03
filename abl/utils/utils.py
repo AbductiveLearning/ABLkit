@@ -1,5 +1,5 @@
 import numpy as np
-from utils.plog import INFO
+from .plog import INFO
 from collections import OrderedDict
 
 # for multiple predictions, modify from `learn_add.py`

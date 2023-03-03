@@ -21,7 +21,7 @@ sys.path.append("..")
 
 from collections import defaultdict
 from itertools import product, combinations
-from utils.utils import flatten, reform_idx, hamming_dist, check_equal
+from ..utils.utils import flatten, reform_idx, hamming_dist, check_equal
 
 from multiprocessing import Pool
 
@@ -299,7 +299,7 @@ class add_prolog_KB(prolog_KB):
 class HED_prolog_KB(prolog_KB):
     def __init__(self, pseudo_label_list=[0, 1, '+', '=']):
         super().__init__(pseudo_label_list)
-        self.prolog.consult('./datasets/hed/learn_add.pl')
+        self.prolog.consult('../examples/datasets/hed/learn_add.pl')
 
     # corresponding to `con_sol is not None` in `consistent_score_mapped` within `learn_add.py`
     def logic_forward(self, exs):

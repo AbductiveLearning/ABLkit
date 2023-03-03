@@ -10,16 +10,17 @@
 #
 # ================================================================#
 
-import sys
+# import sys
 
-sys.path.append(".")
-sys.path.append("..")
+# sys.path.append(".")
+# sys.path.append("..")
 
 import abc
-from abducer.kb import *
+# TODO 尽量别用import *
+from .kb import *
 import numpy as np
 from zoopt import Dimension, Objective, Parameter, Opt
-from utils.utils import confidence_dist, flatten, hamming_dist
+from ..utils.utils import confidence_dist, flatten, hamming_dist
 
 import math
 import time

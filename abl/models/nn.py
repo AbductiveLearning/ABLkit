@@ -10,9 +10,6 @@
 #
 # ================================================================#
 
-import sys
-
-sys.path.append("..")
 
 import torchvision
 
@@ -23,8 +20,6 @@ from torch.autograd import Variable
 import torchvision.transforms as transforms
 import numpy as np
 
-from models.basic_model import BasicModel
-import utils.plog as plog
 
 
 class LeNet5(nn.Module):

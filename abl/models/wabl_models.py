@@ -21,7 +21,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
-from models.basic_model import BasicModel
 
 import pickle as pk
 import random
