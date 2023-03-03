@@ -378,7 +378,7 @@ class HWF_KB(RegKB):
             'div': '/',
         }
         formula = [mapping[f] for f in formula]
-        return round(eval(''.join(formula)), 2)
+        return eval(''.join(formula))
 
 
 import time
