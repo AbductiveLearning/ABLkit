@@ -13,7 +13,7 @@
 import abc
 import numpy as np
 from zoopt import Dimension, Objective, Parameter, Opt
-from ..utils.utils import confidence_dist, flatten, hamming_dist
+from ..utils.utils import confidence_dist, flatten, reform_idx, hamming_dist
 
 class AbducerBase(abc.ABC):
     def __init__(self, kb, dist_func='confidence', zoopt=False, multiple_predictions=False, cache=True):
