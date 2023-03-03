@@ -116,7 +116,7 @@ class KBBase(ABC):
             for p_res, k in zip(pred_res, key):
                 if len(p_res) not in self.len_list:
                     return [], 0, 0
-                all_candidates = self._regression_find_candidate_GKB(p_res, k)
+                all_candidates = self._find_candidate_GKB(p_res, k)
                 if len(all_candidates) == 0:
                     return [], 0, 0
                 else:
