@@ -10,6 +10,19 @@
 #
 # ================================================================#
 
+from abc import ABC, abstractmethod
+import bisect
+import copy
+import numpy as np
+
+from collections import defaultdict
+from itertools import product, combinations
+from ..utils.utils import flatten, reform_idx, hamming_dist, check_equal
+
+from multiprocessing import Pool
+
+import pyswip
+
 class KBBase(ABC):
     def __init__(self, pseudo_label_list=None, len_list=None, GKB_flag=False, max_err=0):
         self.pseudo_label_list = pseudo_label_list
