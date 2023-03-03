@@ -77,9 +77,7 @@ class KBBase(ABC):
         if not multiple_predictions:
             return self.logic_forward(xs)
         else:
-            res = []
-            for x in xs:
-                res.append(self.logic_forward(x))
+            res = [self.logic_forward(x) for x in xs]
             return res
 
     def abduce_candidates(self, pred_res, key, max_address_num=-1, require_more_address=0, multiple_predictions=False):
