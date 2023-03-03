@@ -63,6 +63,9 @@ class KBBase(ABC):
                 part_X, part_Y = zip(*XY_list)
                 X.extend(part_X)
                 Y.extend(part_Y)
+        sorted_XY = sorted(list(zip(Y, X)))
+        X = [x for y, x in sorted_XY]
+        Y = [y for y, x in sorted_XY]
         return X, Y
 
     @abstractmethod
@@ -318,7 +321,7 @@ class RegKB(KBBase):
 
     def _find_candidate_GKB(self, pred_res, key):
         potential_candidates = self.base[len(pred_res)]
-        key_list = sorted(potential_candidates)
+        key_list = list(potential_candidates.keys())
         key_idx = bisect.bisect_left(key_list, key)
         
         all_candidates = []
@@ -377,6 +380,9 @@ class HWF_KB(RegKB):
         }
         formula = [mapping[f] for f in formula]
         return round(eval(''.join(formula)), 2)
+
+
+import time
 
 if __name__ == "__main__":
     pass
