@@ -7,6 +7,7 @@ def flatten(l):
     # return [item for sublist in l for item in flatten(sublist)] if isinstance(l, (list, tuple)) else [l]
     if not isinstance(l[0], (list, tuple)):
         return l
+    # TODO 稍微对比一下和itertools.chain.from_iterable(nested_list)的速度区别，看看哪个好
     return [item for sublist in l for item in sublist] if isinstance(l, (list, tuple)) else [l]
     
 # for multiple predictions, modify from `learn_add.py`
@@ -14,13 +15,8 @@ def reform_idx(flatten_pred_res, save_pred_res):
     re = []
     i = 0
     for e in save_pred_res:
-        j = 0
-        idx = []
-        while j < len(e):
-            idx.append(flatten_pred_res[i + j])
-            j += 1
-        re.append(idx)
-        i = i + j
+        re.append(flatten_pred_res[i:i + len(e)])
+        i += len(e)
     return re
 
 def hamming_dist(A, B):
