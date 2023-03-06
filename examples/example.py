@@ -20,7 +20,7 @@ from models.wabl_models import DecisionTree, WABLBasicModel
 
 from multiprocessing import Pool
 from abducer.abducer_base import AbducerBase
-from abducer.kb import add_KB, HWF_KB, HED_prolog_KB
+from abducer.kb import add_KB, HWF_KB, prolog_KB
 from datasets.mnist_add.get_mnist_add import get_mnist_add
 from datasets.hwf.get_hwf import get_hwf
 from datasets.hed.get_hed import get_hed, split_equation
@@ -33,7 +33,7 @@ def run_test():
     # kb = HWF_KB(True)
     # abducer = AbducerBase(kb)
 
-    kb = HED_prolog_KB()
+    kb = prolog_KB(pseudo_label_list=[1, 0, '+', '='], pl_file='../examples/datasets/hed/hed.pl')
     abducer = AbducerBase(kb, zoopt=True, multiple_predictions=True)
 
     recorder = logger()

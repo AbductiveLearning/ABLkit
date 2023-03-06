@@ -158,7 +158,7 @@ class AbducerBase(abc.ABC):
 
 
 if __name__ == '__main__':
-    from kb import add_KB, add_prolog_KB, HWF_KB, HED_prolog_KB
+    from kb import add_KB, prolog_KB, HWF_KB
     
     prob1 = [[0, 0.99, 0.01, 0, 0, 0, 0, 0, 0, 0], [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]]
     prob2 = [[0, 0, 0.01, 0, 0, 0, 0, 0.99, 0, 0], [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]]
@@ -191,7 +191,7 @@ if __name__ == '__main__':
     print()
     
 
-    kb = add_prolog_KB()
+    kb = prolog_KB(pseudo_label_list=list(range(10)), pl_file='../examples/datasets/mnist_add/add.pl')
     abd = AbducerBase(kb, 'confidence')
     res = abd.abduce(([1, 1], prob1, 8), max_address_num=2, require_more_address=0)
     print(res)
@@ -205,7 +205,7 @@ if __name__ == '__main__':
     print(res)
     print()
 
-    kb = add_prolog_KB()
+    kb = prolog_KB(pseudo_label_list=list(range(10)), pl_file='../examples/datasets/mnist_add/add.pl')
     abd = AbducerBase(kb, 'confidence', zoopt=True)
     res = abd.abduce(([1, 1], prob1, 8), max_address_num=2, require_more_address=0)
     print(res)
@@ -260,7 +260,7 @@ if __name__ == '__main__':
     print(res)
     print()
 
-    kb = HED_prolog_KB()
+    kb = prolog_KB(pseudo_label_list=[1, 0, '+', '='], pl_file='../examples/datasets/hed/hed.pl')
     abd = AbducerBase(kb, zoopt=True, multiple_predictions=True)
     consist_exs = [[1, 1, '+', 0, '=', 1, 1], [1, '+', 1, '=', 1, 0], [0, '+', 0, '=', 0]]
     inconsist_exs = [[1, '+', 0, '=', 0], [1, '=', 1, '=', 0], [0, '=', 0, '=', 1, 1]]

@@ -225,9 +225,10 @@ class add_KB(ClsKB):
 
 
 class prolog_KB(KBBase):
-    def __init__(self, pseudo_label_list):
+    def __init__(self, pseudo_label_list, pl_file):
         super().__init__(pseudo_label_list)
         self.prolog = pyswip.Prolog()
+        self.prolog.consult(pl_file)
 
     def logic_forward(self, pseudo_labels):
         result = list(self.prolog.query("logic_forward(%s, Res)." % pseudo_labels))[0]['Res']
@@ -277,18 +278,6 @@ class prolog_KB(KBBase):
                 candidate = reform_idx(candidate, save_pred_res)
             candidates.append(candidate)
         return candidates
-
-
-class add_prolog_KB(prolog_KB):
-    def __init__(self, pseudo_label_list=list(range(10))):
-        super().__init__(pseudo_label_list)
-        self.prolog.consult('../datasets/mnist_add/add.pl')
-
-
-class HED_prolog_KB(prolog_KB):
-    def __init__(self, pseudo_label_list=[0, 1, '+', '=']):
-        super().__init__(pseudo_label_list)
-        self.prolog.consult('./datasets/hed/learn_add.pl')
 
     def consist_rule(self, exs, rules):
         rules = str(rules).replace("\'","")
