@@ -282,9 +282,7 @@ class prolog_KB(KBBase):
 class add_prolog_KB(prolog_KB):
     def __init__(self, pseudo_label_list=list(range(10))):
         super().__init__(pseudo_label_list)
-        for i in self.pseudo_label_list:
-            self.prolog.assertz("pseudo_label(%s)" % i)
-        self.prolog.assertz("addition(Z1, Z2, Res) :- pseudo_label(Z1), pseudo_label(Z2), Res is Z1+Z2")
+        self.prolog.consult('../datasets/mnist_add/add.pl')
 
 
 class HED_prolog_KB(prolog_KB):
