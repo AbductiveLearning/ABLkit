@@ -24,6 +24,7 @@ from multiprocessing import Pool
 import pyswip
 
 class KBBase(ABC):
+    # TODO：有些不能是默认参数，必须给定
     def __init__(self, pseudo_label_list=None, len_list=None, GKB_flag=False, max_err=0):
         self.pseudo_label_list = pseudo_label_list
         self.len_list = len_list
@@ -70,7 +71,7 @@ class KBBase(ABC):
         return X, Y
 
     @abstractmethod
-    def logic_forward(self):
+    def logic_forward(self, pseudo_labels):
         pass
     
     def _logic_forward(self, xs, multiple_predictions=False):
@@ -87,7 +88,7 @@ class KBBase(ABC):
             return self._abduce_by_search(pred_res, key, max_address_num, require_more_address, multiple_predictions)
     
     @abstractmethod
-    def _find_candidate_GKB(self):
+    def _find_candidate_GKB(self, pred_res, key):
         pass
     
     def _abduce_by_GKB(self, pred_res, key, max_address_num, require_more_address, multiple_predictions):
@@ -260,7 +261,7 @@ class prolog_KB(KBBase):
         query_string += ",%s)." % key if not key_is_none_flag else ")."
         return query_string
 
-    def _find_candidate_GKB(self):
+    def _find_candidate_GKB(self, pred_res, key):
         pass
     
     def address_by_idx(self, pred_res, key, address_idx, multiple_predictions=False):
