@@ -214,7 +214,7 @@ def get_rules_from_data(model, abducer, mapping, train_X_true, samples_per_rule,
             consistent_idx = []
             consistent_pred_res = []
             for idx in range(len(pred_res)):
-                if abducer.kb.logic_forward([pred_res[idx]]):
+                if abducer.kb.logic_forward(pred_res[idx]):
                     consistent_idx.append(idx)
                     consistent_pred_res.append(pred_res[idx])
 
