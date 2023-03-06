@@ -24,8 +24,7 @@ from multiprocessing import Pool
 import pyswip
 
 class KBBase(ABC):
-    # TODO：有些不能是默认参数，必须给定
-    def __init__(self, pseudo_label_list=None, len_list=None, GKB_flag=False, max_err=0):
+    def __init__(self, pseudo_label_list, len_list=None, GKB_flag=False, max_err=0):
         self.pseudo_label_list = pseudo_label_list
         self.len_list = len_list
         self.GKB_flag = GKB_flag

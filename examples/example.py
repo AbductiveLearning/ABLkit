@@ -36,7 +36,7 @@ def run_test():
     # kb = HWF_KB(True)
     # abducer = AbducerBase(kb)
 
-    kb = prolog_KB(pseudo_label_list=[1, 0, '+', '='], pl_file='../examples/datasets/hed/hed.pl')
+    kb = prolog_KB(pseudo_label_list=[1, 0, '+', '='], pl_file='../examples/datasets/hed/learn_add.pl')
     abducer = AbducerBase(kb, zoopt=True, multiple_predictions=True)
 
     recorder = logger()
