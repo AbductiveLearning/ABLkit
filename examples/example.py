@@ -10,21 +10,24 @@
 #
 # ================================================================#
 
-from utils.plog import logger, INFO
+import sys
+sys.path.append("../")
+
+from abl.utils.plog import logger, INFO
 import torch.nn as nn
 import torch
 
-from models.nn import LeNet5, SymbolNet
-from models.basic_model import BasicModel, BasicDataset
-from models.wabl_models import DecisionTree, WABLBasicModel
+from abl.models.nn import LeNet5, SymbolNet
+from abl.models.basic_model import BasicModel, BasicDataset
+from abl.models.wabl_models import DecisionTree, WABLBasicModel
 
 from multiprocessing import Pool
-from abducer.abducer_base import AbducerBase
-from abducer.kb import add_KB, HWF_KB, prolog_KB
+from abl.abducer.abducer_base import AbducerBase
+from abl.abducer.kb import add_KB, HWF_KB, prolog_KB
 from datasets.mnist_add.get_mnist_add import get_mnist_add
 from datasets.hwf.get_hwf import get_hwf
 from datasets.hed.get_hed import get_hed, split_equation
-import framework_hed
+from abl import framework_hed
 
 
 def run_test():
