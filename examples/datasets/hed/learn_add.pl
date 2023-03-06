@@ -32,6 +32,9 @@ abduce_consistent_insts(Exs):-
 % (Experimental) Uncomment to use parallel abduction
 % abduce_consistent_exs_concurrent(Exs), !.
 
+logic_forward(Exs, X) :- abduce_consistent_insts([Exs]) -> X = true ; X = false.
+logic_forward(Exs) :- abduce_consistent_insts(Exs).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Abduce Delta_C given pseudo-labels
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
