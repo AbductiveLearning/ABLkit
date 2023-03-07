@@ -291,7 +291,7 @@ class prolog_KB(KBBase):
 
 
 class RegKB(KBBase):
-    def __init__(self, pseudo_label_list=None, len_list=None, GKB_flag=False, max_err=1e-3):
+    def __init__(self, pseudo_label_list, len_list, GKB_flag, max_err):
         super().__init__(pseudo_label_list, len_list, GKB_flag, max_err)
 
     def _find_candidate_GKB(self, pred_res, key):
