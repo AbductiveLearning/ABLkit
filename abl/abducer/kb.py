@@ -339,26 +339,11 @@ class HWF_KB(RegKB):
     def logic_forward(self, formula):
         if not self._valid_candidate(formula):
             return np.inf
-        mapping = {
-            '1': '1',
-            '2': '2',
-            '3': '3',
-            '4': '4',
-            '5': '5',
-            '6': '6',
-            '7': '7',
-            '8': '8',
-            '9': '9',
-            '+': '+',
-            '-': '-',
-            'times': '*',
-            'div': '/',
-        }
+        mapping = {str(i): str(i) for i in range(1, 10)}
+        mapping.update({'+': '+', '-': '-', 'times': '*', 'div': '/'})
         formula = [mapping[f] for f in formula]
         return eval(''.join(formula))
 
-
-import time
 
 if __name__ == "__main__":
     pass
