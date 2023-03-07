@@ -1,30 +1,23 @@
 import torch
 import torch.nn as nn
 import numpy as np
-from utils.plog import INFO
+from .plog import INFO
 from collections import OrderedDict
+from itertools import chain
 
-# for multiple predictions, modify from `learn_add.py`
+# for multiple predictions
 def flatten(l):
-    return (
-        [item for sublist in l for item in flatten(sublist)]
-        if isinstance(l, list)
-        else [l]
-    )
-
-
-# for multiple predictions, modify from `learn_add.py`
+    if not isinstance(l[0], (list, tuple)):
+        return l
+    return list(chain.from_iterable(l))
+    
+# for multiple predictions
 def reform_idx(flatten_pred_res, save_pred_res):
     re = []
     i = 0
     for e in save_pred_res:
-        j = 0
-        idx = []
-        while j < len(e):
-            idx.append(flatten_pred_res[i + j])
-            j += 1
-        re.append(idx)
-        i = i + j
+        re.append(flatten_pred_res[i:i + len(e)])
+        i += len(e)
     return re
 
 
@@ -85,11 +78,10 @@ def remapping_res(pred_res, m):
         remapping[value] = key
     return [[remapping[symbol] for symbol in formula] for formula in pred_res]
 
-
-def check_equal(a, b):
+def check_equal(a, b, max_err=0):
     if isinstance(a, (int, float)) and isinstance(b, (int, float)):
-        return abs(a - b) <= 1e-3
-
+        return abs(a - b) <= max_err
+    
     if isinstance(a, list) and isinstance(b, list):
         if len(a) != len(b):
             return False
@@ -119,4 +111,4 @@ def reduce_dimension(data):
                 [extract_feature(symbol_img) for symbol_img in equation]
                 for equation in equations
             ]
-            data[truth_value][equation_len] = reduced_equations
+            data[truth_value][equation_len] = reduced_equations       

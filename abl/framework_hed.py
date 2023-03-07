@@ -16,12 +16,15 @@ import torch.nn as nn
 import numpy as np
 import os
 
-from utils.plog import INFO, DEBUG, clocker
-from utils.utils import flatten, reform_idx, block_sample, gen_mappings, mapping_res, remapping_res
+from .utils.plog import INFO, DEBUG, clocker
+from .utils.utils import flatten, reform_idx, block_sample, gen_mappings, mapping_res, remapping_res
 
-from models.nn import MLP, SymbolNetAutoencoder
-from models.basic_model import BasicModel, BasicDataset
-from datasets.hed.get_hed import get_pretrain_data
+from .models.nn import MLP, SymbolNetAutoencoder
+from .models.basic_model import BasicModel, BasicDataset
+
+import sys
+sys.path.append("..")
+from examples.datasets.hed.get_hed import get_pretrain_data
 
 def result_statistics(pred_Z, Z, Y, logic_forward, char_acc_flag):
     result = {}
@@ -147,7 +150,7 @@ def abduce_and_train(model, abducer, mapping, train_X_true, select_num):
     for m in mappings:
         pred_res = mapping_res(original_pred_res, m)
         max_abduce_num = 20
-        solution = abducer.zoopt_get_solution(pred_res, [1] * len(pred_res), max_abduce_num)
+        solution = abducer.zoopt_get_solution(pred_res, [None] * len(pred_res), max_abduce_num)
         all_address_flag = reform_idx(solution, pred_res)
 
         consistent_idx_tmp = []
@@ -155,7 +158,7 @@ def abduce_and_train(model, abducer, mapping, train_X_true, select_num):
         
         for idx in range(len(pred_res)):
             address_idx = [i for i, flag in enumerate(all_address_flag[idx]) if flag != 0]
-            candidate = abducer.kb.address_by_idx([pred_res[idx]], 1, address_idx, True)
+            candidate = abducer.address_by_idx([pred_res[idx]], None, address_idx)
             if len(candidate) > 0:
                 consistent_idx_tmp.append(idx)
                 consistent_pred_res_tmp.append(candidate[0][0])
@@ -211,7 +214,7 @@ def get_rules_from_data(model, abducer, mapping, train_X_true, samples_per_rule,
             consistent_idx = []
             consistent_pred_res = []
             for idx in range(len(pred_res)):
-                if abducer.kb.logic_forward([pred_res[idx]]):
+                if abducer.kb.logic_forward(pred_res[idx]):
                     consistent_idx.append(idx)
                     consistent_pred_res.append(pred_res[idx])
 

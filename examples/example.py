@@ -10,24 +10,24 @@
 #
 # ================================================================#
 
-from utils.plog import logger, INFO
-from utils.utils import reduce_dimension
+import sys
+sys.path.append("../")
+
+from abl.utils.plog import logger, INFO
 import torch.nn as nn
 import torch
 
-from models.nn import LeNet5, SymbolNet
-from models.basic_model import BasicModel, BasicDataset
-from models.wabl_models import DecisionTree, WABLBasicModel
-from sklearn.neighbors import KNeighborsClassifier
+from abl.models.nn import LeNet5, SymbolNet
+from abl.models.basic_model import BasicModel, BasicDataset
+from abl.models.wabl_models import DecisionTree, WABLBasicModel
 
 from multiprocessing import Pool
-from abducer.abducer_base import AbducerBase
-from abducer.kb import add_KB, HWF_KB, HED_prolog_KB
+from abl.abducer.abducer_base import AbducerBase
+from abl.abducer.kb import add_KB, HWF_KB, prolog_KB
 from datasets.mnist_add.get_mnist_add import get_mnist_add
 from datasets.hwf.get_hwf import get_hwf
 from datasets.hed.get_hed import get_hed, split_equation
-import framework_hed
-import framework_hed_knn
+from abl import framework_hed
 
 
 def run_test():
@@ -36,7 +36,7 @@ def run_test():
     # kb = HWF_KB(True)
     # abducer = AbducerBase(kb)
 
-    kb = HED_prolog_KB()
+    kb = prolog_KB(pseudo_label_list=[1, 0, '+', '='], pl_file='../examples/datasets/hed/learn_add.pl')
     abducer = AbducerBase(kb, zoopt=True, multiple_predictions=True)
 
     recorder = logger()

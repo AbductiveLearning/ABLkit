@@ -14,7 +14,7 @@ import pickle as pk
 
 import numpy as np
 
-from utils.plog import INFO, DEBUG, clocker
+from .utils.plog import INFO, DEBUG, clocker
 
 def block_sample(X, Z, Y, sample_num, epoch_idx):
     part_num = (len(X) // sample_num)
