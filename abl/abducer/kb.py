@@ -80,8 +80,7 @@ class KBBase(ABC):
             res = [self.logic_forward(x) for x in xs]
             return res
 
-    # TODO：这里max_address_num默认值-1，后面运行会有问题吗
-    def abduce_candidates(self, pred_res, key, max_address_num=-1, require_more_address=0, multiple_predictions=False):
+    def abduce_candidates(self, pred_res, key, max_address_num, require_more_address=0, multiple_predictions=False):
         if self.GKB_flag:
             return self._abduce_by_GKB(pred_res, key, max_address_num, require_more_address, multiple_predictions)
         else:
@@ -135,11 +134,9 @@ class KBBase(ABC):
             candidates = [reform_idx(multiple_all_candidates[idx], pred_res) for idx in idxs]
             return candidates, min_address_num, address_num
     
-    # TODO：应该也是内部使用的方法？
     def address_by_idx(self, pred_res, key, address_idx, multiple_predictions=False):
         candidates = []
-        # TODO：product combinations本身就是迭代器，如果没有其他用途，不用转list，直接放到循环那即可，省去一些时间，下面的同理
-        abduce_c = list(product(self.pseudo_label_list, repeat=len(address_idx)))
+        abduce_c = product(self.pseudo_label_list, repeat=len(address_idx))
 
         if multiple_predictions:
             save_pred_res = pred_res
@@ -160,9 +157,9 @@ class KBBase(ABC):
     def _address(self, address_num, pred_res, key, multiple_predictions):
         new_candidates = []
         if not multiple_predictions:
-            address_idx_list = list(combinations(list(range(len(pred_res))), address_num))
+            address_idx_list = combinations(list(range(len(pred_res))), address_num)
         else:
-            address_idx_list = list(combinations(list(range(len(flatten(pred_res)))), address_num))
+            address_idx_list = combinations(list(range(len(flatten(pred_res)))), address_num)
 
         for address_idx in address_idx_list:
             candidates = self.address_by_idx(pred_res, key, address_idx, multiple_predictions)
@@ -212,10 +209,6 @@ class ClsKB(KBBase):
     def __init__(self, pseudo_label_list, len_list, GKB_flag):
         super().__init__(pseudo_label_list, len_list, GKB_flag)
 
-    # TODO:这里以及RegKB可以不实现logic_forward吗，这样用户继承后不实现logic_forward就会报错
-    def logic_forward(self, pseudo_labels):
-        pass
-
     def _find_candidate_GKB(self, pred_res, key):
         return self.base[len(pred_res)][key]
 
@@ -248,10 +241,8 @@ class prolog_KB(KBBase):
         if multiple_predictions:
             address_pred_res = flatten(address_pred_res)
         
-        # TODO：可以直接对address_idx循环？
-        for idx in range(len(address_pred_res)):
-            if idx in address_idx:
-                address_pred_res[idx] = 'P' + str(idx)
+        for idx in address_idx:
+            address_pred_res[idx] = 'P' + str(idx)
         if multiple_predictions:
             address_pred_res = reform_idx(address_pred_res, pred_res)
         
@@ -275,8 +266,7 @@ class prolog_KB(KBBase):
         if multiple_predictions:
             save_pred_res = pred_res
             pred_res = flatten(pred_res)
-        # TODO:这里后面的那个list应该也不需要
-        abduce_c = [list(z.values()) for z in list(self.prolog.query(query_string))]
+        abduce_c = [list(z.values()) for z in self.prolog.query(query_string)]
         for c in abduce_c:
             candidate = pred_res.copy()
             for i, idx in enumerate(address_idx):
@@ -299,13 +289,10 @@ class prolog_KB(KBBase):
         rules = [rule.value for rule in prolog_rules]
         return rules
 
-# TODO：和ClsKB的参数顺序不统一
-class RegKB(KBBase):
-    def __init__(self, GKB_flag=False, pseudo_label_list=None, len_list=None, max_err=1e-3):
-        super().__init__(pseudo_label_list, len_list, GKB_flag, max_err)
 
-    def logic_forward(self, pseudo_labels):
-        pass
+class RegKB(KBBase):
+    def __init__(self, pseudo_label_list=None, len_list=None, GKB_flag=False, max_err=1e-3):
+        super().__init__(pseudo_label_list, len_list, GKB_flag, max_err)
 
     def _find_candidate_GKB(self, pred_res, key):
         potential_candidates = self.base[len(pred_res)]
@@ -331,15 +318,15 @@ class RegKB(KBBase):
 
 class HWF_KB(RegKB):
     def __init__(
-        self, GKB_flag=False, 
+        self, 
         pseudo_label_list=['1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', 'times', 'div'], 
         len_list=[1, 3, 5, 7],
+        GKB_flag=False,
         max_err=1e-3
     ):
-        super().__init__(GKB_flag, pseudo_label_list, len_list, max_err)
+        super().__init__(pseudo_label_list, len_list, GKB_flag, max_err)
 
-    # TODO：应该是静态方法
-    def valid_candidate(self, formula):
+    def _valid_candidate(self, formula):
         if len(formula) % 2 == 0:
             return False
         for i in range(len(formula)):
@@ -350,7 +337,7 @@ class HWF_KB(RegKB):
         return True
 
     def logic_forward(self, formula):
-        if not self.valid_candidate(formula):
+        if not self._valid_candidate(formula):
             return np.inf
         mapping = {
             '1': '1',
@@ -375,4 +362,3 @@ import time
 
 if __name__ == "__main__":
     pass
-    

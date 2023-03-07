@@ -219,7 +219,7 @@ if __name__ == '__main__':
     print(res)
     print()
 
-    kb = HWF_KB(GKB_flag=True, len_list=[1, 3, 5], max_err = 0.1)
+    kb = HWF_KB(len_list=[1, 3, 5], GKB_flag=True, max_err = 0.1)
     abd = AbducerBase(kb, 'hamming')
     res = abd.abduce((['5', '+', '2'], None, 3), max_address_num=2, require_more_address=0)
     print(res)
@@ -227,7 +227,7 @@ if __name__ == '__main__':
     print(res)
     print()
     
-    kb = HWF_KB(GKB_flag=True, len_list=[1, 3, 5], max_err = 1)
+    kb = HWF_KB(len_list=[1, 3, 5], GKB_flag=True, max_err = 1)
     abd = AbducerBase(kb, 'hamming')
     res = abd.abduce((['5', '+', '9'], None, 64), max_address_num=3, require_more_address=0)
     print(res)

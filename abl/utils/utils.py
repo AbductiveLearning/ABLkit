@@ -1,16 +1,15 @@
 import numpy as np
 from .plog import INFO
 from collections import OrderedDict
+from itertools import chain
 
-# for multiple predictions, modify from `learn_add.py`
+# for multiple predictions
 def flatten(l):
-    # return [item for sublist in l for item in flatten(sublist)] if isinstance(l, (list, tuple)) else [l]
     if not isinstance(l[0], (list, tuple)):
         return l
-    # TODO 稍微对比一下和itertools.chain.from_iterable(nested_list)的速度区别，看看哪个好
-    return [item for sublist in l for item in sublist] if isinstance(l, (list, tuple)) else [l]
+    return list(chain.from_iterable(l))
     
-# for multiple predictions, modify from `learn_add.py`
+# for multiple predictions
 def reform_idx(flatten_pred_res, save_pred_res):
     re = []
     i = 0
