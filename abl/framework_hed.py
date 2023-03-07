@@ -158,7 +158,7 @@ def abduce_and_train(model, abducer, mapping, train_X_true, select_num):
         
         for idx in range(len(pred_res)):
             address_idx = [i for i, flag in enumerate(all_address_flag[idx]) if flag != 0]
-            candidate = abducer.kb.address_by_idx([pred_res[idx]], None, address_idx, True)
+            candidate = abducer.address_by_idx([pred_res[idx]], None, address_idx)
             if len(candidate) > 0:
                 consistent_idx_tmp.append(idx)
                 consistent_pred_res_tmp.append(candidate[0][0])
