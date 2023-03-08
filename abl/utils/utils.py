@@ -19,7 +19,8 @@ def reform_idx(flatten_pred_res, save_pred_res):
     return re
 
 def hamming_dist(A, B):
-    B = np.array(B)
+    A = np.array(A, dtype='<U')
+    B = np.array(B, dtype='<U')
     A = np.expand_dims(A, axis = 0).repeat(axis=0, repeats=(len(B)))
     return np.sum(A != B, axis = 1)
 

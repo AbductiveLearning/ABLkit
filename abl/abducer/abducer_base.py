@@ -68,8 +68,8 @@ class AbducerBase(abc.ABC):
                 if len(candidates) > 0:
                     score += np.min(self._get_cost_list(pred_res[idx], pred_res_prob[idx], candidates))
                 else:
-                    score += len(pred_res)
-            return -self._zoopt_score_multiple(pred_res, key, sol.get_x())
+                    score += len(pred_res[idx])
+            return score
         
     def _constrain_address_num(self, solution, max_address_num):
         x = solution.get_x()
