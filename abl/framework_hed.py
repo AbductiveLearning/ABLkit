@@ -150,7 +150,7 @@ def abduce_and_train(model, abducer, mapping, train_X_true, select_num):
     for m in mappings:
         pred_res = mapping_res(original_pred_res, m)
         max_abduce_num = 20
-        solution = abducer.zoopt_get_solution(pred_res, [None] * len(pred_res), max_abduce_num)
+        solution = abducer.zoopt_get_solution(pred_res, [None] * len(pred_res), [None] * len(pred_res), max_abduce_num)
         all_address_flag = reform_idx(solution, pred_res)
 
         consistent_idx_tmp = []
