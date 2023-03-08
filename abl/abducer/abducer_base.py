@@ -85,7 +85,6 @@ class AbducerBase(abc.ABC):
         )
         parameter = Parameter(budget=100, intermediate_result=False, autoset=True)
         solution = Opt.min(objective, parameter).get_x()
-
         return solution
     
     def address_by_idx(self, pred_res, key, address_idx):
@@ -106,7 +105,6 @@ class AbducerBase(abc.ABC):
             )
 
         candidate = self._get_one_candidate(pred_res, pred_res_prob, candidates)
-
         return candidate
 
     def abduce_rules(self, pred_res):
