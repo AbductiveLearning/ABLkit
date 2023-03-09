@@ -17,7 +17,7 @@ import numpy as np
 
 from collections import defaultdict
 from itertools import product, combinations
-from utils.utils import flatten, reform_idx, hamming_dist, check_equal
+from ..utils.utils import flatten, reform_idx, hamming_dist, check_equal
 
 from multiprocessing import Pool
 
