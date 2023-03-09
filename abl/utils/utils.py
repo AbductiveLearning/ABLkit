@@ -35,7 +35,6 @@ def confidence_dist(A, B):
     cols = np.expand_dims(cols, axis = 0).repeat(axis = 0, repeats = len(B))
     return 1 - np.prod(A[rows, cols, B], axis = 1)
 
-
 def block_sample(X, Z, Y, sample_num, epoch_idx):
     part_num = len(X) // sample_num
     if part_num == 0:
@@ -47,7 +46,6 @@ def block_sample(X, Z, Y, sample_num, epoch_idx):
     Y = Y[sample_num * seg_idx : sample_num * (seg_idx + 1)]
 
     return X, Z, Y
-
 
 def gen_mappings(chars, symbs):
 	n_char = len(chars)
@@ -86,3 +84,17 @@ def check_equal(a, b, max_err=0):
     
     else:    
         return a == b        
+
+def to_hashable(l):
+    if type(l) is not list:
+        return l
+    if type(l[0]) is not list:
+        return tuple(l)
+    return tuple(tuple(sublist) for sublist in l)
+
+def hashable_to_list(t):
+    if type(t) is not tuple:
+        return t
+    if type(t[0]) is not tuple:
+        return list(t)
+    return [list(subtuple) for subtuple in t]
