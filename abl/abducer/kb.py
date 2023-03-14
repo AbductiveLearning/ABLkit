@@ -271,12 +271,16 @@ class prolog_KB(KBBase):
             candidates.append(candidate)
         return candidates
 
+
+class HED_prolog_KB(prolog_KB):
+    def __init__(self, pseudo_label_list, pl_file):
+        super().__init__(pseudo_label_list, pl_file)
+        
     def consist_rule(self, exs, rules):
         rules = str(rules).replace("\'","")
         return len(list(self.prolog.query("eval_inst_feature(%s, %s)." % (exs, rules)))) != 0
 
     def abduce_rules(self, pred_res):
-        # print(pred_res)
         prolog_result = list(self.prolog.query("consistent_inst_feature(%s, X)." % pred_res))
         if len(prolog_result) == 0:
             return None
