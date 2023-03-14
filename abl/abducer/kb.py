@@ -166,6 +166,7 @@ class KBBase(ABC):
         return new_candidates
 
     # TODO：在类初始化时应该有一个cache（默认True）的参数，用户可以指定是否用cache（若KB会变，那不能用cache）
+    # TODO：如果是multiple_predictions=True，那这个cache几乎不会命中吧？
     @lru_cache(maxsize=100)
     def _abduce_by_search(self, pred_res, key, max_address_num, require_more_address, multiple_predictions):
         pred_res = hashable_to_list(pred_res)
