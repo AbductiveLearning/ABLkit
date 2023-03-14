@@ -22,10 +22,10 @@ def reform_idx(flatten_pred_res, save_pred_res):
 
 
 def hamming_dist(A, B):
-    B = np.array(B)
-    A = np.expand_dims(A, axis=0).repeat(axis=0, repeats=(len(B)))
-    return np.sum(A != B, axis=1)
-
+    A = np.array(A, dtype='<U')
+    B = np.array(B, dtype='<U')
+    A = np.expand_dims(A, axis = 0).repeat(axis=0, repeats=(len(B)))
+    return np.sum(A != B, axis = 1)
 
 def confidence_dist(A, B):
     B = np.array(B)
@@ -38,7 +38,6 @@ def confidence_dist(A, B):
     cols = np.expand_dims(cols, axis=0).repeat(axis=0, repeats=len(B))
     return 1 - np.prod(A[rows, cols, B], axis=1)
 
-
 def block_sample(X, Z, Y, sample_num, epoch_idx):
     part_num = len(X) // sample_num
     if part_num == 0:
@@ -50,7 +49,6 @@ def block_sample(X, Z, Y, sample_num, epoch_idx):
     Y = Y[sample_num * seg_idx : sample_num * (seg_idx + 1)]
 
     return X, Z, Y
-
 
 def gen_mappings(chars, symbs):
     n_char = len(chars)
@@ -112,3 +110,18 @@ def reduce_dimension(data):
                 for equation in equations
             ]
             data[truth_value][equation_len] = reduced_equations       
+   
+
+def to_hashable(l):
+    if type(l) is not list:
+        return l
+    if type(l[0]) is not list:
+        return tuple(l)
+    return tuple(tuple(sublist) for sublist in l)
+
+def hashable_to_list(t):
+    if type(t) is not tuple:
+        return t
+    if type(t[0]) is not tuple:
+        return list(t)
+    return [list(subtuple) for subtuple in t]

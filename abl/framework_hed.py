@@ -150,7 +150,7 @@ def abduce_and_train(model, abducer, mapping, train_X_true, select_num):
     for m in mappings:
         pred_res = mapping_res(original_pred_res, m)
         max_abduce_num = 20
-        solution = abducer.zoopt_get_solution(pred_res, [None] * len(pred_res), max_abduce_num)
+        solution = abducer.zoopt_get_solution(pred_res, [None] * len(pred_res), [None] * len(pred_res), max_abduce_num)
         all_address_flag = reform_idx(solution, pred_res)
 
         consistent_idx_tmp = []
@@ -291,7 +291,7 @@ def train_with_rule(model, abducer, train_data, val_data, select_num=10, min_len
                 
                 INFO('consist_rule_acc is %f, %f\n' %(true_consist_rule_acc, false_consist_rule_acc))
                 # decide next course or restart
-                if true_consist_rule_acc > 0.9 and false_consist_rule_acc < 0.1:
+                if true_consist_rule_acc > 0.95 and false_consist_rule_acc < 0.1:
                     torch.save(model.cls_list[0].model.state_dict(), "./weights/weights_%d.pth" % equation_len)
                     break
                 else:

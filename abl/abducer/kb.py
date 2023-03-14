@@ -17,10 +17,11 @@ import numpy as np
 
 from collections import defaultdict
 from itertools import product, combinations
-from ..utils.utils import flatten, reform_idx, hamming_dist, check_equal
+from ..utils.utils import flatten, reform_idx, hamming_dist, check_equal, to_hashable, hashable_to_list
 
 from multiprocessing import Pool
 
+from functools import lru_cache
 import pyswip
 
 class KBBase(ABC):
@@ -84,7 +85,7 @@ class KBBase(ABC):
         if self.GKB_flag:
             return self._abduce_by_GKB(pred_res, key, max_address_num, require_more_address, multiple_predictions)
         else:
-            return self._abduce_by_search(pred_res, key, max_address_num, require_more_address, multiple_predictions)
+            return self._abduce_by_search(to_hashable(pred_res), to_hashable(key), max_address_num, require_more_address, multiple_predictions)
     
     @abstractmethod
     def _find_candidate_GKB(self, pred_res, key):
@@ -92,33 +93,32 @@ class KBBase(ABC):
     
     def _abduce_by_GKB(self, pred_res, key, max_address_num, require_more_address, multiple_predictions):
         if self.base == {}:
-            return [], 0, 0
+            return []
 
         if not multiple_predictions:
             if len(pred_res) not in self.len_list:
-                return [], 0, 0
+                return []
             all_candidates = self._find_candidate_GKB(pred_res, key)
             if len(all_candidates) == 0:
-                return [], 0, 0
+                return []
             else:
                 cost_list = hamming_dist(pred_res, all_candidates)
                 min_address_num = np.min(cost_list)
                 address_num = min(max_address_num, min_address_num + require_more_address)
                 idxs = np.where(cost_list <= address_num)[0]
                 candidates = [all_candidates[idx] for idx in idxs]
-                return candidates, min_address_num, address_num
+                return candidates
        
         else:
             min_address_num = 0
             all_candidates_save = []
             cost_list_save = []
-            
             for p_res, k in zip(pred_res, key):
                 if len(p_res) not in self.len_list:
-                    return [], 0, 0
+                    return []
                 all_candidates = self._find_candidate_GKB(p_res, k)
                 if len(all_candidates) == 0:
-                    return [], 0, 0
+                    return []
                 else:
                     all_candidates_save.append(all_candidates)
                     cost_list = hamming_dist(p_res, all_candidates)
@@ -126,18 +126,15 @@ class KBBase(ABC):
                     cost_list_save.append(cost_list)
             
             multiple_all_candidates = [flatten(c) for c in product(*all_candidates_save)]
-            assert len(multiple_all_candidates[0]) == len(flatten(pred_res))
             multiple_cost_list = np.array([sum(cost) for cost in product(*cost_list_save)])
-            assert len(multiple_all_candidates) == len(multiple_cost_list)
             address_num = min(max_address_num, min_address_num + require_more_address)
             idxs = np.where(multiple_cost_list <= address_num)[0]
             candidates = [reform_idx(multiple_all_candidates[idx], pred_res) for idx in idxs]
-            return candidates, min_address_num, address_num
-    
+            return candidates
+
     def address_by_idx(self, pred_res, key, address_idx, multiple_predictions=False):
         candidates = []
         abduce_c = product(self.pseudo_label_list, repeat=len(address_idx))
-
         if multiple_predictions:
             save_pred_res = pred_res
             pred_res = flatten(pred_res)
@@ -146,10 +143,8 @@ class KBBase(ABC):
             candidate = pred_res.copy()
             for i, idx in enumerate(address_idx):
                 candidate[idx] = c[i]
-
             if multiple_predictions:
                 candidate = reform_idx(candidate, save_pred_res)
-
             if check_equal(self._logic_forward(candidate, multiple_predictions), key, self.max_err):
                 candidates.append(candidate)
         return candidates
@@ -166,9 +161,12 @@ class KBBase(ABC):
             new_candidates += candidates
         return new_candidates
 
+    @lru_cache(maxsize=100)
     def _abduce_by_search(self, pred_res, key, max_address_num, require_more_address, multiple_predictions):
+        pred_res = hashable_to_list(pred_res)
+        key = hashable_to_list(key)
+        
         candidates = []
-
         for address_num in range(len(flatten(pred_res)) + 1):
             if address_num == 0:
                 if check_equal(self._logic_forward(pred_res, multiple_predictions), key, self.max_err):
@@ -176,21 +174,18 @@ class KBBase(ABC):
             else:
                 new_candidates = self._address(address_num, pred_res, key, multiple_predictions)
                 candidates += new_candidates
-
             if len(candidates) > 0:
                 min_address_num = address_num
                 break
-
             if address_num >= max_address_num:
-                return [], 0, 0
+                return []
 
         for address_num in range(min_address_num + 1, min_address_num + require_more_address + 1):
             if address_num > max_address_num:
-                return candidates, min_address_num, address_num - 1
+                return candidates
             new_candidates = self._address(address_num, pred_res, key, multiple_predictions)
             candidates += new_candidates
-
-        return candidates, min_address_num, address_num
+        return candidates
 
     def _dict_len(self, dic):
         if not self.GKB_flag:
@@ -276,12 +271,16 @@ class prolog_KB(KBBase):
             candidates.append(candidate)
         return candidates
 
+
+class HED_prolog_KB(prolog_KB):
+    def __init__(self, pseudo_label_list, pl_file):
+        super().__init__(pseudo_label_list, pl_file)
+        
     def consist_rule(self, exs, rules):
         rules = str(rules).replace("\'","")
         return len(list(self.prolog.query("eval_inst_feature(%s, %s)." % (exs, rules)))) != 0
 
     def abduce_rules(self, pred_res):
-        # print(pred_res)
         prolog_result = list(self.prolog.query("consistent_inst_feature(%s, X)." % pred_res))
         if len(prolog_result) == 0:
             return None
@@ -339,26 +338,11 @@ class HWF_KB(RegKB):
     def logic_forward(self, formula):
         if not self._valid_candidate(formula):
             return np.inf
-        mapping = {
-            '1': '1',
-            '2': '2',
-            '3': '3',
-            '4': '4',
-            '5': '5',
-            '6': '6',
-            '7': '7',
-            '8': '8',
-            '9': '9',
-            '+': '+',
-            '-': '-',
-            'times': '*',
-            'div': '/',
-        }
+        mapping = {str(i): str(i) for i in range(1, 10)}
+        mapping.update({'+': '+', '-': '-', 'times': '*', 'div': '/'})
         formula = [mapping[f] for f in formula]
         return eval(''.join(formula))
 
-
-import time
 
 if __name__ == "__main__":
     pass
