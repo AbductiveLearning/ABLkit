@@ -62,6 +62,7 @@ class AbducerBase(abc.ABC):
         else:
             all_address_flag = reform_idx(sol.get_x(), pred_res)
             score = 0
+            # TODO：这个循环里，和上面if not self.multiple_predictions部分逻辑完全一样吧，应该把上面封装一下，然后下面循环里调用封装方法即可
             for idx in range(len(pred_res)):
                 address_idx = np.where(all_address_flag[idx] != 0)[0]
                 candidates = self.address_by_idx([pred_res[idx]], key[idx], address_idx)
