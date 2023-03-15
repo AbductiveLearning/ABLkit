@@ -10,10 +10,13 @@
 #
 # ================================================================#
 
+import sys
+sys.path.append('/home/huwc/ABL-Package/abl/')
+
 import abc
 import numpy as np
 from zoopt import Dimension, Objective, Parameter, Opt
-from ..utils.utils import confidence_dist, flatten, reform_idx, hamming_dist
+from utils.utils import confidence_dist, flatten, reform_idx, hamming_dist
 
 class AbducerBase(abc.ABC):
     def __init__(self, kb, dist_func='hamming', zoopt=False):
