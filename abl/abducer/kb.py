@@ -17,7 +17,7 @@ import numpy as np
 
 from collections import defaultdict
 from itertools import product, combinations
-from ..utils.utils import flatten, reform_idx, hamming_dist, check_equal, to_hashable, hashable_to_list
+from utils.utils import flatten, reform_idx, hamming_dist, check_equal, to_hashable, hashable_to_list
 
 from multiprocessing import Pool
 
@@ -25,11 +25,16 @@ from functools import lru_cache
 import pyswip
 
 class KBBase(ABC):
-    def __init__(self, pseudo_label_list, len_list=None, GKB_flag=False, max_err=0):
+    def __init__(self, pseudo_label_list, len_list=None, GKB_flag=False, max_err=0, cache_size=128):
+        # TODO：添加一下类型检查，比如
+        # if not isinstance(X, (np.ndarray, spmatrix)):
+        #     raise TypeError("X should be numpy array or sparse matrix")
+
         self.pseudo_label_list = pseudo_label_list
         self.len_list = len_list
         self.GKB_flag = GKB_flag
         self.max_err = max_err
+        self.cache_size = cache_size
 
         if GKB_flag:
             self.base = {}
@@ -73,106 +78,73 @@ class KBBase(ABC):
     @abstractmethod
     def logic_forward(self, pseudo_labels):
         pass
-    
-    def _logic_forward(self, xs, multiple_predictions=False):
-        if not multiple_predictions:
-            return self.logic_forward(xs)
-        else:
-            res = [self.logic_forward(x) for x in xs]
-            return res
 
-    def abduce_candidates(self, pred_res, key, max_address_num, require_more_address=0, multiple_predictions=False):
+    def abduce_candidates(self, pred_res, key, max_address_num, require_more_address=0):
         if self.GKB_flag:
-            return self._abduce_by_GKB(pred_res, key, max_address_num, require_more_address, multiple_predictions)
+            return self._abduce_by_GKB(pred_res, key, max_address_num, require_more_address)
         else:
-            return self._abduce_by_search(to_hashable(pred_res), to_hashable(key), max_address_num, require_more_address, multiple_predictions)
+            return self._abduce_by_search(to_hashable(pred_res), to_hashable(key), max_address_num, require_more_address)
     
     @abstractmethod
     def _find_candidate_GKB(self, pred_res, key):
         pass
     
-    def _abduce_by_GKB(self, pred_res, key, max_address_num, require_more_address, multiple_predictions):
+    def _abduce_by_GKB(self, pred_res, key, max_address_num, require_more_address):
         if self.base == {}:
             return []
-
-        if not multiple_predictions:
-            if len(pred_res) not in self.len_list:
-                return []
-            all_candidates = self._find_candidate_GKB(pred_res, key)
-            if len(all_candidates) == 0:
-                return []
-            else:
-                cost_list = hamming_dist(pred_res, all_candidates)
-                min_address_num = np.min(cost_list)
-                address_num = min(max_address_num, min_address_num + require_more_address)
-                idxs = np.where(cost_list <= address_num)[0]
-                candidates = [all_candidates[idx] for idx in idxs]
-                return candidates
-       
+        
+        if len(pred_res) not in self.len_list:
+            return []
+        all_candidates = self._find_candidate_GKB(pred_res, key)
+        if len(all_candidates) == 0:
+            return []
         else:
-            min_address_num = 0
-            all_candidates_save = []
-            cost_list_save = []
-            for p_res, k in zip(pred_res, key):
-                if len(p_res) not in self.len_list:
-                    return []
-                all_candidates = self._find_candidate_GKB(p_res, k)
-                if len(all_candidates) == 0:
-                    return []
-                else:
-                    all_candidates_save.append(all_candidates)
-                    cost_list = hamming_dist(p_res, all_candidates)
-                    min_address_num += np.min(cost_list)
-                    cost_list_save.append(cost_list)
-            
-            multiple_all_candidates = [flatten(c) for c in product(*all_candidates_save)]
-            multiple_cost_list = np.array([sum(cost) for cost in product(*cost_list_save)])
+            cost_list = hamming_dist(pred_res, all_candidates)
+            min_address_num = np.min(cost_list)
             address_num = min(max_address_num, min_address_num + require_more_address)
-            idxs = np.where(multiple_cost_list <= address_num)[0]
-            candidates = [reform_idx(multiple_all_candidates[idx], pred_res) for idx in idxs]
+            idxs = np.where(cost_list <= address_num)[0]
+            candidates = [all_candidates[idx] for idx in idxs]
             return candidates
 
-    def address_by_idx(self, pred_res, key, address_idx, multiple_predictions=False):
+    def address_by_idx(self, pred_res, key, address_idx):
         candidates = []
         abduce_c = product(self.pseudo_label_list, repeat=len(address_idx))
-        if multiple_predictions:
-            save_pred_res = pred_res
-            pred_res = flatten(pred_res)
+        # if multiple_predictions:
+        #     save_pred_res = pred_res
+        #     pred_res = flatten(pred_res)
 
         for c in abduce_c:
             candidate = pred_res.copy()
             for i, idx in enumerate(address_idx):
                 candidate[idx] = c[i]
-            if multiple_predictions:
-                candidate = reform_idx(candidate, save_pred_res)
-            if check_equal(self._logic_forward(candidate, multiple_predictions), key, self.max_err):
+            # if multiple_predictions:
+            #     candidate = reform_idx(candidate, save_pred_res)
+            if check_equal(self.logic_forward(candidate), key, self.max_err):
                 candidates.append(candidate)
         return candidates
 
-    def _address(self, address_num, pred_res, key, multiple_predictions):
+    def _address(self, address_num, pred_res, key):
         new_candidates = []
-        if not multiple_predictions:
-            address_idx_list = combinations(list(range(len(pred_res))), address_num)
-        else:
-            address_idx_list = combinations(list(range(len(flatten(pred_res)))), address_num)
+        address_idx_list = combinations(list(range(len(pred_res))), address_num)
 
         for address_idx in address_idx_list:
-            candidates = self.address_by_idx(pred_res, key, address_idx, multiple_predictions)
+            candidates = self.address_by_idx(pred_res, key, address_idx)
             new_candidates += candidates
         return new_candidates
 
-    @lru_cache(maxsize=100)
-    def _abduce_by_search(self, pred_res, key, max_address_num, require_more_address, multiple_predictions):
+    # TODO：在类初始化时应该有一个cache（默认True）的参数，用户可以指定是否用cache（若KB会变，那不能用cache）
+    @lru_cache(maxsize=None)
+    def _abduce_by_search(self, pred_res, key, max_address_num, require_more_address):
         pred_res = hashable_to_list(pred_res)
         key = hashable_to_list(key)
         
         candidates = []
         for address_num in range(len(flatten(pred_res)) + 1):
             if address_num == 0:
-                if check_equal(self._logic_forward(pred_res, multiple_predictions), key, self.max_err):
+                if check_equal(self.logic_forward(pred_res), key, self.max_err):
                     candidates.append(pred_res)
             else:
-                new_candidates = self._address(address_num, pred_res, key, multiple_predictions)
+                new_candidates = self._address(address_num, pred_res, key)
                 candidates += new_candidates
             if len(candidates) > 0:
                 min_address_num = address_num
@@ -183,7 +155,7 @@ class KBBase(ABC):
         for address_num in range(min_address_num + 1, min_address_num + require_more_address + 1):
             if address_num > max_address_num:
                 return candidates
-            new_candidates = self._address(address_num, pred_res, key, multiple_predictions)
+            new_candidates = self._address(address_num, pred_res, key)
             candidates += new_candidates
         return candidates
 
