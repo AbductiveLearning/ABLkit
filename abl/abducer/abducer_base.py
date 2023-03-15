@@ -13,7 +13,7 @@
 import abc
 import numpy as np
 from zoopt import Dimension, Objective, Parameter, Opt
-from ..utils.utils import confidence_dist, flatten, reform_idx, hamming_dist
+from ..utils.utils import confidence_dist, flatten, reform_idx, hamming_dist, nested_length
 
 class AbducerBase(abc.ABC):
     def __init__(self, kb, dist_func='hamming', zoopt=False):
@@ -52,14 +52,14 @@ class AbducerBase(abc.ABC):
             return len(pred_res)
     
     def _zoopt_address_score(self, pred_res, pred_res_prob, key, sol): 
-        # if not self.multiple_predictions:
-        return self._zoopt_address_score_single(sol.get_x(), pred_res, pred_res_prob, key)
-        # else:
-        #     all_address_flag = reform_idx(sol.get_x(), pred_res)
-        #     score = 0
-        #     for idx in range(len(pred_res)):
-        #         score += self._zoopt_address_score_single(all_address_flag[idx], pred_res[idx], pred_res_prob[idx], key)
-        #     return score
+        all_address_flag = reform_idx(sol.get_x(), pred_res)
+        if nested_length(pred_res) == 1:
+            return self._zoopt_address_score_single(all_address_flag[idx], pred_res, pred_res_prob, key)
+        else:
+            score = 0
+            for idx in range(nested_length(pred_res)):
+                score += self._zoopt_address_score_single(all_address_flag[idx], [pred_res[idx]], [pred_res_prob[idx]], [key[idx]])
+            return score
         
     def _constrain_address_num(self, solution, max_address_num):
         x = solution.get_x()
@@ -78,19 +78,18 @@ class AbducerBase(abc.ABC):
         return solution
     
     def address_by_idx(self, pred_res, key, address_idx):
+        # print(pred_res, address_idx)
         return self.kb.address_by_idx(pred_res, key, address_idx)
 
     def abduce(self, data, max_address=-1, require_more_address=0):
         pred_res, pred_res_prob, key = data
-        # if max_address_num == -1:
-        #     max_address_num = len(flatten(pred_res))
         
         assert(type(max_address) in (int, float))
         if max_address == -1:
-            max_address_num = len(pred_res)
+            max_address_num = len(flatten(pred_res))
         elif type(max_address) == float:
             assert(max_address >= 0 and max_address <= 1)
-            max_address_num = round(len(pred_res) * max_address)
+            max_address_num = round(len(flatten(pred_res)) * max_address)
         else:
             assert(max_address >= 0)
             max_address_num = max_address
@@ -267,11 +266,11 @@ if __name__ == '__main__':
     print(kb.consist_rule([1, '+', 1, '=', 1, 1], rules))
     print()
 
-    # res = abd.abduce((consist_exs, [None] * len(consist_exs), [None] * len(consist_exs)))
-    # print(res)
-    # res = abd.batch_abduce((inconsist_exs, [None] * len(consist_exs), [None] * len(inconsist_exs)))
-    # print(res)
-    # print()
+    res = abd.abduce((consist_exs, [[[None]]] * len(consist_exs), [None] * len(consist_exs)))
+    print(res)
+    res = abd.abduce((inconsist_exs, [[[None]]] * len(consist_exs), [None] * len(inconsist_exs)))
+    print(res)
+    print()
 
-    # abduced_rules = abd.batch_abduce_rules(consist_exs)
-    # print(abduced_rules)
+    abduced_rules = abd.abduce_rules(consist_exs)
+    print(abduced_rules)
