@@ -54,7 +54,7 @@ class AbducerBase(abc.ABC):
     def _zoopt_address_score(self, pred_res, pred_res_prob, key, sol): 
         all_address_flag = reform_idx(sol.get_x(), pred_res)
         if nested_length(pred_res) == 1:
-            return self._zoopt_address_score_single(all_address_flag[idx], pred_res, pred_res_prob, key)
+            return self._zoopt_address_score_single(all_address_flag, pred_res, pred_res_prob, key)
         else:
             score = 0
             for idx in range(nested_length(pred_res)):
