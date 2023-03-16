@@ -10,10 +10,13 @@
 #
 # ================================================================#
 
+import sys
+sys.path.append('/home/huwc/ABL-Package/abl')
+
 import abc
 import numpy as np
 from zoopt import Dimension, Objective, Parameter, Opt
-from ..utils.utils import confidence_dist, flatten, reform_idx, hamming_dist, nested_length
+from utils.utils import confidence_dist, flatten, reform_idx, hamming_dist
 
 class AbducerBase(abc.ABC):
     def __init__(self, kb, dist_func='hamming', zoopt=False):
@@ -52,53 +55,12 @@ class AbducerBase(abc.ABC):
             return len(pred_res)
     
     def _zoopt_address_score(self, pred_res, pred_res_prob, key, sol): 
-        if nested_length(pred_res) == 1:
-            return self._zoopt_address_score_single(sol.get_x(), pred_res, pred_res_prob, key)
+        address_idx = np.where(sol.get_x() != 0)[0]
+        candidates = self.address_by_idx(pred_res, key, address_idx)
+        if len(candidates) > 0:
+            return np.min(self._get_cost_list(pred_res, pred_res_prob, candidates))
         else:
-            all_address_flag = reform_idx(sol.get_x(), pred_res)
-            lefted_idx = [i for i in range(len(pred_res))]
-            candidate_size = []         
-            while lefted_idx:
-                temp_idx = []
-                temp_idx.append(lefted_idx.pop(0))
-                max_candidate_idx = []
-                found = False
-                for idx in range(-1, len(pred_res)):
-                    if (not idx in temp_idx) and (idx >= 0):
-                        temp_idx.append(idx)
-                    
-                    pred = []
-                    k = []
-                    address_flag = []
-                    for idx in temp_idx:
-                        pred.append(pred_res[idx])
-                        k.append(key[idx])
-                        address_flag += list(all_address_flag[idx])
-                    address_idx = np.where(np.array(address_flag) != 0)[0]   
-                    candidate = self.address_by_idx(pred, k, address_idx)
-                    if len(candidate) == 0:
-                        if len(temp_idx) > 1:
-                            temp_idx.pop()
-                    else:
-                        if len(temp_idx) > len(max_candidate_idx):
-                            found = True
-                            max_candidate_idx = temp_idx.copy() 
-                removed = [i for i in lefted_idx if i in max_candidate_idx]
-                
-                if found:
-                    candidate_size.append(len(removed) + 1)
-                    lefted_idx = [i for i in lefted_idx if i not in max_candidate_idx]
-                    
-            candidate_size.sort()
-            score = 0
-            import math
-            for i in range(0, len(candidate_size)):
-                score -= math.exp(-i) * candidate_size[i]
-
-            # score = 0
-            # for idx in range(nested_length(pred_res)):
-            #     score += self._zoopt_address_score_single(all_address_flag[idx], [pred_res[idx]], [pred_res_prob[idx]], [key[idx]])
-            return score
+            return len(pred_res)
         
     def _constrain_address_num(self, solution, max_address_num):
         x = solution.get_x()
@@ -143,15 +105,63 @@ class AbducerBase(abc.ABC):
         candidate = self._get_one_candidate(pred_res, pred_res_prob, candidates)
         return candidate
 
-    def abduce_rules(self, pred_res):
-        return self.kb.abduce_rules(pred_res)
-
     def batch_abduce(self, data, max_address=-1, require_more_address=0):
         Z1, Z2, Y = data
         return [self.abduce((z, prob, y), max_address, require_more_address) for z, prob, y in zip(Z1, Z2, Y)]
 
-    def __call__(self, Z, Y, max_address_num=-1, require_more_address=0):
-        return self.batch_abduce(Z, Y, max_address_num, require_more_address)
+    def __call__(self, Z, Y, max_address=-1, require_more_address=0):
+        return self.batch_abduce(Z, Y, max_address, require_more_address)
+    
+class HED_Abducer(AbducerBase):
+    def __init__(self, kb, dist_func='hamming'):
+        super().__init__(kb, dist_func, zoopt=True)
+    
+    def _address_by_idxs(self, pred_res, key, all_address_flag, idxs):
+        pred = []
+        k = []
+        address_flag = []
+        for idx in idxs:
+            pred.append(pred_res[idx])
+            k.append(key[idx])
+            address_flag += list(all_address_flag[idx])
+        address_idx = np.where(np.array(address_flag) != 0)[0]   
+        candidate = self.address_by_idx(pred, k, address_idx)
+        return candidate
+    
+    def _zoopt_address_score(self, pred_res, pred_res_prob, key, sol): 
+        all_address_flag = reform_idx(sol.get_x(), pred_res)
+        lefted_idxs = [i for i in range(len(pred_res))]
+        candidate_size = []         
+        while lefted_idxs:
+            idxs = []
+            idxs.append(lefted_idxs.pop(0))
+            max_candidate_idxs = []
+            found = False
+            for idx in range(-1, len(pred_res)):
+                if (not idx in idxs) and (idx >= 0):
+                    idxs.append(idx)
+                candidate = self._address_by_idxs(pred_res, key, all_address_flag, idxs)
+                if len(candidate) == 0:
+                    if len(idxs) > 1:
+                        idxs.pop()
+                else:
+                    if len(idxs) > len(max_candidate_idxs):
+                        found = True
+                        max_candidate_idxs = idxs.copy() 
+            removed = [i for i in lefted_idxs if i in max_candidate_idxs]
+            if found:
+                candidate_size.append(len(removed) + 1)
+                lefted_idxs = [i for i in lefted_idxs if i not in max_candidate_idxs]       
+        candidate_size.sort()
+        score = 0
+        import math
+        for i in range(0, len(candidate_size)):
+            score -= math.exp(-i) * candidate_size[i]
+        return score
+
+    def abduce_rules(self, pred_res):
+        return self.kb.abduce_rules(pred_res)
+    
 
 if __name__ == '__main__':
     from kb import add_KB, prolog_KB, HWF_KB, HED_prolog_KB
@@ -293,7 +303,7 @@ if __name__ == '__main__':
     print()
 
     kb = HED_prolog_KB(pseudo_label_list=[1, 0, '+', '='], pl_file='../examples/datasets/hed/learn_add.pl')
-    abd = AbducerBase(kb, zoopt=True)
+    abd = HED_Abducer(kb)
     consist_exs = [[1, 1, '+', 0, '=', 1, 1], [1, '+', 1, '=', 1, 0], [0, '+', 0, '=', 0]]
     inconsist_exs = [[1, '+', 0, '=', 0], [1, '=', 1, '=', 0], [0, '=', 0, '=', 1, 1]]
     rules = ['my_op([0], [0], [0])', 'my_op([1], [1], [1, 0])']
