@@ -109,16 +109,10 @@ class KBBase(ABC):
     def address_by_idx(self, pred_res, key, address_idx):
         candidates = []
         abduce_c = product(self.pseudo_label_list, repeat=len(address_idx))
-        # if multiple_predictions:
-        #     save_pred_res = pred_res
-        #     pred_res = flatten(pred_res)
-
         for c in abduce_c:
             candidate = pred_res.copy()
             for i, idx in enumerate(address_idx):
                 candidate[idx] = c[i]
-            # if multiple_predictions:
-            #     candidate = reform_idx(candidate, save_pred_res)
             if check_equal(self.logic_forward(candidate), key, self.max_err):
                 candidates.append(candidate)
         return candidates
@@ -139,7 +133,7 @@ class KBBase(ABC):
         key = hashable_to_list(key)
         
         candidates = []
-        for address_num in range(len(flatten(pred_res)) + 1):
+        for address_num in range(len(pred_res) + 1):
             if address_num == 0:
                 if check_equal(self.logic_forward(pred_res), key, self.max_err):
                     candidates.append(pred_res)
@@ -202,24 +196,22 @@ class prolog_KB(KBBase):
             return False
         return result
     
-    def _address_pred_res(self, pred_res, address_idx, multiple_predictions):
+    def _address_pred_res(self, pred_res, address_idx):
         import re
         address_pred_res = pred_res.copy()
-        if multiple_predictions:
-            address_pred_res = flatten(address_pred_res)
+        address_pred_res = flatten(address_pred_res)
         
         for idx in address_idx:
             address_pred_res[idx] = 'P' + str(idx)
-        if multiple_predictions:
-            address_pred_res = reform_idx(address_pred_res, pred_res)
+        address_pred_res = reform_idx(address_pred_res, pred_res)
         
         # TODO：不知道有没有更简洁的方法
         regex = r"'P\d+'"
         return re.sub(regex, lambda x: x.group().replace("'", ""), str(address_pred_res))
     
-    def get_query_string(self, pred_res, key, address_idx, multiple_predictions):
+    def get_query_string(self, pred_res, key, address_idx):
         query_string = "logic_forward("
-        query_string += self._address_pred_res(pred_res, address_idx, multiple_predictions)
+        query_string += self._address_pred_res(pred_res, address_idx)
         key_is_none_flag = key is None or (type(key) == list and key[0] is None)
         query_string += ",%s)." % key if not key_is_none_flag else ")."
         return query_string
@@ -227,19 +219,17 @@ class prolog_KB(KBBase):
     def _find_candidate_GKB(self, pred_res, key):
         pass
     
-    def address_by_idx(self, pred_res, key, address_idx, multiple_predictions=False):
+    def address_by_idx(self, pred_res, key, address_idx):
         candidates = []
-        query_string = self.get_query_string(pred_res, key, address_idx, multiple_predictions)
-        if multiple_predictions:
-            save_pred_res = pred_res
-            pred_res = flatten(pred_res)
+        query_string = self.get_query_string(pred_res, key, address_idx)
+        save_pred_res = pred_res
+        pred_res = flatten(pred_res)
         abduce_c = [list(z.values()) for z in self.prolog.query(query_string)]
         for c in abduce_c:
             candidate = pred_res.copy()
             for i, idx in enumerate(address_idx):
                 candidate[idx] = c[i]
-            if multiple_predictions:
-                candidate = reform_idx(candidate, save_pred_res)
+            candidate = reform_idx(candidate, save_pred_res)
             candidates.append(candidate)
         return candidates
 

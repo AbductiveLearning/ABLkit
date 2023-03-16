@@ -172,9 +172,6 @@ def abduce_and_train(model, abducer, mapping, train_X_true, select_num):
     if len(consistent_idx) == 0:
         return 0, 0, None
     
-    if len(mappings) > 1:
-        INFO('Final mapping is: ', mapping)
-    
     INFO('Train pool size is:', len(flatten(consistent_pred_res)))
     INFO("Start to use abduced pseudo label to train model...")
     model.train([X[idx] for idx in consistent_idx], remapping_res(consistent_pred_res, mapping))
@@ -214,7 +211,7 @@ def get_rules_from_data(model, abducer, mapping, train_X_true, samples_per_rule,
             consistent_idx = []
             consistent_pred_res = []
             for idx in range(len(pred_res)):
-                if abducer.kb.logic_forward(pred_res[idx]):
+                if abducer.kb.logic_forward([pred_res[idx]]):
                     consistent_idx.append(idx)
                     consistent_pred_res.append(pred_res[idx])
 
@@ -296,6 +293,7 @@ def train_with_rule(model, abducer, train_data, val_data, select_num=10, min_len
                     break
                 else:
                     if equation_len == min_len:
+                        INFO('Final mapping is: ', mapping)
                         model.cls_list[0].model.load_state_dict(torch.load("./weights/pretrain_weights.pth"))
                     else:
                         model.cls_list[0].model.load_state_dict(torch.load("./weights/weights_%d.pth" % (equation_len - 1)))

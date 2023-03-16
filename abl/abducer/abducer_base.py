@@ -52,14 +52,12 @@ class AbducerBase(abc.ABC):
             return len(pred_res)
     
     def _zoopt_address_score(self, pred_res, pred_res_prob, key, sol): 
-        # if not self.multiple_predictions:
-        return self._zoopt_address_score_single(sol.get_x(), pred_res, pred_res_prob, key)
-        # else:
-        #     all_address_flag = reform_idx(sol.get_x(), pred_res)
-        #     score = 0
-        #     for idx in range(len(pred_res)):
-        #         score += self._zoopt_address_score_single(all_address_flag[idx], pred_res[idx], pred_res_prob[idx], key)
-        #     return score
+        address_idx = np.where(sol.get_x() != 0)[0]
+        candidates = self.address_by_idx(pred_res, key, address_idx)
+        if len(candidates) > 0:
+            return np.min(self._get_cost_list(pred_res, pred_res_prob, candidates))
+        else:
+            return len(pred_res)
         
     def _constrain_address_num(self, solution, max_address_num):
         x = solution.get_x()
@@ -82,15 +80,13 @@ class AbducerBase(abc.ABC):
 
     def abduce(self, data, max_address=-1, require_more_address=0):
         pred_res, pred_res_prob, key = data
-        # if max_address_num == -1:
-        #     max_address_num = len(flatten(pred_res))
         
         assert(type(max_address) in (int, float))
         if max_address == -1:
-            max_address_num = len(pred_res)
+            max_address_num = len(flatten(pred_res))
         elif type(max_address) == float:
             assert(max_address >= 0 and max_address <= 1)
-            max_address_num = round(len(pred_res) * max_address)
+            max_address_num = round(len(flatten(pred_res)) * max_address)
         else:
             assert(max_address >= 0)
             max_address_num = max_address
@@ -105,15 +101,62 @@ class AbducerBase(abc.ABC):
         candidate = self._get_one_candidate(pred_res, pred_res_prob, candidates)
         return candidate
 
+    def batch_abduce(self, Z, Y, max_address=-1, require_more_address=0):
+        return [self.abduce((z, prob, y), max_address, require_more_address) for z, prob, y in zip(Z['cls'], Z['prob'], Y)]
+
+    def __call__(self, Z, Y, max_address=-1, require_more_address=0):
+        return self.batch_abduce(Z, Y, max_address, require_more_address)
+    
+class HED_Abducer(AbducerBase):
+    def __init__(self, kb, dist_func='hamming'):
+        super().__init__(kb, dist_func, zoopt=True)
+    
+    def _address_by_idxs(self, pred_res, key, all_address_flag, idxs):
+        pred = []
+        k = []
+        address_flag = []
+        for idx in idxs:
+            pred.append(pred_res[idx])
+            k.append(key[idx])
+            address_flag += list(all_address_flag[idx])
+        address_idx = np.where(np.array(address_flag) != 0)[0]   
+        candidate = self.address_by_idx(pred, k, address_idx)
+        return candidate
+    
+    def _zoopt_address_score(self, pred_res, pred_res_prob, key, sol): 
+        all_address_flag = reform_idx(sol.get_x(), pred_res)
+        lefted_idxs = [i for i in range(len(pred_res))]
+        candidate_size = []         
+        while lefted_idxs:
+            idxs = []
+            idxs.append(lefted_idxs.pop(0))
+            max_candidate_idxs = []
+            found = False
+            for idx in range(-1, len(pred_res)):
+                if (not idx in idxs) and (idx >= 0):
+                    idxs.append(idx)
+                candidate = self._address_by_idxs(pred_res, key, all_address_flag, idxs)
+                if len(candidate) == 0:
+                    if len(idxs) > 1:
+                        idxs.pop()
+                else:
+                    if len(idxs) > len(max_candidate_idxs):
+                        found = True
+                        max_candidate_idxs = idxs.copy() 
+            removed = [i for i in lefted_idxs if i in max_candidate_idxs]
+            if found:
+                candidate_size.append(len(removed) + 1)
+                lefted_idxs = [i for i in lefted_idxs if i not in max_candidate_idxs]       
+        candidate_size.sort()
+        score = 0
+        import math
+        for i in range(0, len(candidate_size)):
+            score -= math.exp(-i) * candidate_size[i]
+        return score
+
     def abduce_rules(self, pred_res):
         return self.kb.abduce_rules(pred_res)
-
-    def batch_abduce(self, data, max_address=-1, require_more_address=0):
-        Z1, Z2, Y = data
-        return [self.abduce((z, prob, y), max_address, require_more_address) for z, prob, y in zip(Z1, Z2, Y)]
-
-    def __call__(self, Z, Y, max_address_num=-1, require_more_address=0):
-        return self.batch_abduce(Z, Y, max_address_num, require_more_address)
+    
 
 if __name__ == '__main__':
     from kb import add_KB, prolog_KB, HWF_KB, HED_prolog_KB
@@ -124,60 +167,60 @@ if __name__ == '__main__':
     print('add_KB with GKB:')
     kb = add_KB(GKB_flag=True)
     abd = AbducerBase(kb, 'confidence')
-    res = abd.batch_abduce(([[1, 1]], prob1, [8]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [8], max_address=2, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob2, [8]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob2}, [8], max_address=2, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob1, [17]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [17], max_address=2, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob1, [17]), max_address=1, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [17], max_address=1, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob1, [20]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [20], max_address=2, require_more_address=0)
     print(res)
     print()
     
     print('add_KB without GKB:')
     kb = add_KB()
     abd = AbducerBase(kb, 'confidence')
-    res = abd.batch_abduce(([[1, 1]], prob1, [8]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [8], max_address=2, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob2, [8]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob2}, [8], max_address=2, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob1, [17]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [17], max_address=2, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob1, [17]), max_address=1, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [17], max_address=1, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob1, [20]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [20], max_address=2, require_more_address=0)
     print(res)
     print()
     
     print('prolog_KB with add.pl:')
     kb = prolog_KB(pseudo_label_list=list(range(10)), pl_file='../examples/datasets/mnist_add/add.pl')
     abd = AbducerBase(kb, 'confidence')
-    res = abd.batch_abduce(([[1, 1]], prob1, [8]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [8], max_address=2, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob2, [8]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob2}, [8], max_address=2, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob1, [17]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [17], max_address=2, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob1, [17]), max_address=1, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [17], max_address=1, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob1, [20]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [20], max_address=2, require_more_address=0)
     print(res)
     print()
 
     print('prolog_KB with add.pl using zoopt:')
     kb = prolog_KB(pseudo_label_list=list(range(10)), pl_file='../examples/datasets/mnist_add/add.pl')
     abd = AbducerBase(kb, 'confidence', zoopt=True)
-    res = abd.batch_abduce(([[1, 1]], prob1, [8]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [8], max_address=2, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob2, [8]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob2}, [8], max_address=2, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob1, [17]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [17], max_address=2, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob1, [17]), max_address=1, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [17], max_address=1, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1]], prob1, [20]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [20], max_address=2, require_more_address=0)
     print(res)
     print()
     
@@ -187,91 +230,98 @@ if __name__ == '__main__':
     
     kb = add_KB()
     abd = AbducerBase(kb, 'confidence')
-    res = abd.batch_abduce(([[1, 1], [1, 2]], multiple_prob, [4, 8]), max_address=4, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1], [1, 2]], 'prob':multiple_prob}, [4, 8], max_address=4, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([[1, 1], [1, 2]], multiple_prob, [4, 8]), max_address=4, require_more_address=1)
+    res = abd.batch_abduce({'cls':[[1, 1], [1, 2]], 'prob':multiple_prob}, [4, 8], max_address=4, require_more_address=1)
     print(res)
     print()
     
     print('HWF_KB with GKB, max_err=0.1')
     kb = HWF_KB(len_list=[1, 3, 5], GKB_flag=True, max_err = 0.1)
     abd = AbducerBase(kb, 'hamming')
-    res = abd.batch_abduce(([['5', '+', '2']], [None], [3]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[['5', '+', '2']], 'prob':[None]}, [3], max_address=2, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([['5', '+', '9']], [None], [65]), max_address=3, require_more_address=0)
+    res = abd.batch_abduce({'cls':[['5', '+', '9']], 'prob':[None]}, [65], max_address=3, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([['5', '8', '8', '8', '8']], [None], [3.17]), max_address=5, require_more_address=3)
+    res = abd.batch_abduce({'cls':[['5', '8', '8', '8', '8']], 'prob':[None]}, [3.17], max_address=5, require_more_address=3)
     print(res)
     print()
     
     print('HWF_KB without GKB, max_err=0.1')
     kb = HWF_KB(len_list=[1, 3, 5], max_err = 0.1)
     abd = AbducerBase(kb, 'hamming')
-    res = abd.batch_abduce(([['5', '+', '2']], [None], [3]), max_address=2, require_more_address=0)
+    res = abd.batch_abduce({'cls':[['5', '+', '2']], 'prob':[None]}, [3], max_address=2, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([['5', '+', '9']], [None], [65]), max_address=3, require_more_address=0)
+    res = abd.batch_abduce({'cls':[['5', '+', '9']], 'prob':[None]}, [65], max_address=3, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([['5', '8', '8', '8', '8']], [None], [3.17]), max_address=5, require_more_address=3)
+    res = abd.batch_abduce({'cls':[['5', '8', '8', '8', '8']], 'prob':[None]}, [3.17], max_address=5, require_more_address=3)
     print(res)
     print()
     
     print('HWF_KB with GKB, max_err=1')
     kb = HWF_KB(len_list=[1, 3, 5], GKB_flag=True, max_err = 1)
     abd = AbducerBase(kb, 'hamming')
-    res = abd.batch_abduce(([['5', '+', '9']], [None], [65]), max_address=3, require_more_address=0)
+    res = abd.batch_abduce({'cls':[['5', '+', '9']], 'prob':[None]}, [65], max_address=3, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([['5', '+', '2']], [None], [1.67]), max_address=3, require_more_address=0)
+    res = abd.batch_abduce({'cls':[['5', '+', '2']], 'prob':[None]}, [1.67], max_address=3, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([['5', '8', '8', '8', '8']], [None], [3.17]), max_address=5, require_more_address=3)
+    res = abd.batch_abduce({'cls':[['5', '8', '8', '8', '8']], 'prob':[None]}, [3.17], max_address=5, require_more_address=3)
     print(res)
     print()
     
     print('HWF_KB without GKB, max_err=1')
     kb = HWF_KB(len_list=[1, 3, 5], max_err = 1)
     abd = AbducerBase(kb, 'hamming')
-    res = abd.batch_abduce(([['5', '+', '9']], [None], [65]), max_address=3, require_more_address=0)
+    res = abd.batch_abduce({'cls':[['5', '+', '9']], 'prob':[None]}, [65], max_address=3, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([['5', '+', '2']], [None], [1.67]), max_address=3, require_more_address=0)
+    res = abd.batch_abduce({'cls':[['5', '+', '2']], 'prob':[None]}, [1.67], max_address=3, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([['5', '8', '8', '8', '8']], [None], [3.17]), max_address=5, require_more_address=3)
+    res = abd.batch_abduce({'cls':[['5', '8', '8', '8', '8']], 'prob':[None]}, [3.17], max_address=5, require_more_address=3)
     print(res)
     print()
     
     print('HWF_KB with multiple inputs at once:')
     kb = HWF_KB(len_list=[1, 3, 5], max_err = 0.1)
     abd = AbducerBase(kb, 'hamming')
-    res = abd.batch_abduce(([['5', '+', '2'], ['5', '+', '9']], [None, None], [3, 64]), max_address=1, require_more_address=0)
+    res = abd.batch_abduce({'cls':[['5', '+', '2'], ['5', '+', '9']], 'prob':[None, None]}, [3, 64], max_address=1, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([['5', '+', '2'], ['5', '+', '9']], [None, None], [3, 64]), max_address=3, require_more_address=0)
+    res = abd.batch_abduce({'cls':[['5', '+', '2'], ['5', '+', '9']], 'prob':[None, None]}, [3, 64], max_address=3, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([['5', '+', '2'], ['5', '+', '9']], [None, None], [3, 65]), max_address=3, require_more_address=0)
+    res = abd.batch_abduce({'cls':[['5', '+', '2'], ['5', '+', '9']], 'prob':[None, None]}, [3, 65], max_address=3, require_more_address=0)
     print(res)
     print()
     print('max_address is float')
-    res = abd.batch_abduce(([['5', '+', '2'], ['5', '+', '9']], [None, None], [3, 64]), max_address=0.5, require_more_address=0)
+    res = abd.batch_abduce({'cls':[['5', '+', '2'], ['5', '+', '9']], 'prob':[None, None]}, [3, 64], max_address=0.5, require_more_address=0)
     print(res)
-    res = abd.batch_abduce(([['5', '+', '2'], ['5', '+', '9']], [None, None], [3, 64]), max_address=0.9, require_more_address=0)
+    res = abd.batch_abduce({'cls':[['5', '+', '2'], ['5', '+', '9']], 'prob':[None, None]}, [3, 64], max_address=0.9, require_more_address=0)
     print(res)
     print()
 
     kb = HED_prolog_KB(pseudo_label_list=[1, 0, '+', '='], pl_file='../examples/datasets/hed/learn_add.pl')
-    abd = AbducerBase(kb, zoopt=True)
+    abd = HED_Abducer(kb)
     consist_exs = [[1, 1, '+', 0, '=', 1, 1], [1, '+', 1, '=', 1, 0], [0, '+', 0, '=', 0]]
-    inconsist_exs = [[1, '+', 0, '=', 0], [1, '=', 1, '=', 0], [0, '=', 0, '=', 1, 1]]
+    inconsist_exs1 = [[1, 1, '+', 0, '=', 1, 1], [1, '+', 1, '=', 1, 0], [0, '+', 0, '=', 0], [0, '+', 0, '=', 1]]
+    inconsist_exs2 = [[1, '+', 0, '=', 0], [1, '=', 1, '=', 0], [0, '=', 0, '=', 1, 1]]
     rules = ['my_op([0], [0], [0])', 'my_op([1], [1], [1, 0])']
 
+    print('HED_kb logic forward')
     print(kb.logic_forward(consist_exs))
-    print(kb.logic_forward(inconsist_exs))
+    print(kb.logic_forward(inconsist_exs1), kb.logic_forward(inconsist_exs2))
     print()
+    print('HED_kb consist rule')
     print(kb.consist_rule([1, '+', 1, '=', 1, 0], rules))
     print(kb.consist_rule([1, '+', 1, '=', 1, 1], rules))
     print()
 
-    # res = abd.abduce((consist_exs, [None] * len(consist_exs), [None] * len(consist_exs)))
-    # print(res)
-    # res = abd.batch_abduce((inconsist_exs, [None] * len(consist_exs), [None] * len(inconsist_exs)))
-    # print(res)
-    # print()
+    print('HED_Abducer abduce')
+    res = abd.abduce((consist_exs, [[[None]]] * len(consist_exs), [None] * len(consist_exs)))
+    print(res)
+    res = abd.abduce((inconsist_exs1, [[[None]]] * len(inconsist_exs1), [None] * len(inconsist_exs1)))
+    print(res)
+    res = abd.abduce((inconsist_exs2, [[[None]]] * len(inconsist_exs2), [None] * len(inconsist_exs2)))
+    print(res)
+    print()
 
-    # abduced_rules = abd.batch_abduce_rules(consist_exs)
-    # print(abduced_rules)
+    print('HED_Abducer abduce rules')
+    abduced_rules = abd.abduce_rules(consist_exs)
+    print(abduced_rules)

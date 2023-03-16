@@ -5,14 +5,15 @@ from .plog import INFO
 from collections import OrderedDict
 from itertools import chain
 
-# for multiple predictions
 def flatten(l):
     if not isinstance(l[0], (list, tuple)):
         return l
     return list(chain.from_iterable(l))
     
-# for multiple predictions
 def reform_idx(flatten_pred_res, save_pred_res):
+    if not isinstance(save_pred_res[0], (list, tuple)):
+        return flatten_pred_res
+    
     re = []
     i = 0
     for e in save_pred_res:
