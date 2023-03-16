@@ -10,10 +10,13 @@
 #
 # ================================================================#
 
+import sys
+sys.path.append('/home/huwc/ABL-Package/abl')
+
 import abc
 import numpy as np
 from zoopt import Dimension, Objective, Parameter, Opt
-from ..utils.utils import confidence_dist, flatten, reform_idx, hamming_dist
+from utils.utils import confidence_dist, flatten, reform_idx, hamming_dist
 
 class AbducerBase(abc.ABC):
     def __init__(self, kb, dist_func='hamming', zoopt=False):
@@ -302,21 +305,28 @@ if __name__ == '__main__':
     kb = HED_prolog_KB(pseudo_label_list=[1, 0, '+', '='], pl_file='../examples/datasets/hed/learn_add.pl')
     abd = HED_Abducer(kb)
     consist_exs = [[1, 1, '+', 0, '=', 1, 1], [1, '+', 1, '=', 1, 0], [0, '+', 0, '=', 0]]
-    inconsist_exs = [[1, '+', 0, '=', 0], [1, '=', 1, '=', 0], [0, '=', 0, '=', 1, 1]]
+    inconsist_exs1 = [[1, 1, '+', 0, '=', 1, 1], [1, '+', 1, '=', 1, 0], [0, '+', 0, '=', 0], [0, '+', 0, '=', 1]]
+    inconsist_exs2 = [[1, '+', 0, '=', 0], [1, '=', 1, '=', 0], [0, '=', 0, '=', 1, 1]]
     rules = ['my_op([0], [0], [0])', 'my_op([1], [1], [1, 0])']
 
+    print('HED_kb logic forward')
     print(kb.logic_forward(consist_exs))
-    print(kb.logic_forward(inconsist_exs))
+    print(kb.logic_forward(inconsist_exs1), kb.logic_forward(inconsist_exs2))
     print()
+    print('HED_kb consist rule')
     print(kb.consist_rule([1, '+', 1, '=', 1, 0], rules))
     print(kb.consist_rule([1, '+', 1, '=', 1, 1], rules))
     print()
 
+    print('HED_Abducer abduce')
     res = abd.abduce((consist_exs, [[[None]]] * len(consist_exs), [None] * len(consist_exs)))
     print(res)
-    res = abd.abduce((inconsist_exs, [[[None]]] * len(consist_exs), [None] * len(inconsist_exs)))
+    res = abd.abduce((inconsist_exs1, [[[None]]] * len(inconsist_exs1), [None] * len(inconsist_exs1)))
+    print(res)
+    res = abd.abduce((inconsist_exs2, [[[None]]] * len(inconsist_exs2), [None] * len(inconsist_exs2)))
     print(res)
     print()
 
+    print('HED_Abducer abduce rules')
     abduced_rules = abd.abduce_rules(consist_exs)
     print(abduced_rules)
