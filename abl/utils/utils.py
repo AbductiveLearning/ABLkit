@@ -3,11 +3,6 @@ from .plog import INFO
 from collections import OrderedDict
 from itertools import chain
 
-def nested_length(l):
-    if not isinstance(l[0], (list, tuple)):
-        return 1
-    return len(l)
-
 def flatten(l):
     if not isinstance(l[0], (list, tuple)):
         return l
