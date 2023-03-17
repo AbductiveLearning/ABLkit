@@ -7,7 +7,7 @@ img_transform = transforms.Compose([
                         transforms.Normalize((0.5,), (1,))
                     ])
 
-def get_data(file, get_pseudo_label, precision_num = 2):
+def get_data(file, get_pseudo_label):
     X = []
     if get_pseudo_label:
         Z = []
@@ -27,20 +27,20 @@ def get_data(file, get_pseudo_label, precision_num = 2):
             X.append(imgs)
             if get_pseudo_label:
                 Z.append(imgs_pseudo_label)
-            Y.append(round(data[idx]['res'], precision_num))
+            Y.append(data[idx]['res'])
     
     if get_pseudo_label:
         return X, Z, Y
     else:
         return X, None, Y
 
-def get_hwf(train = True, get_pseudo_label = False, precision_num = 2):
+def get_hwf(train = True, get_pseudo_label = False):
     if(train):
         file = './datasets/hwf/data/expr_train.json'
     else:
         file = './datasets/hwf/data/expr_test.json'
     
-    return get_data(file, get_pseudo_label, precision_num)
+    return get_data(file, get_pseudo_label)
 
 if __name__ == "__main__":
     train_X, train_Y = get_hwf(train = True)
