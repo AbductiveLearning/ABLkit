@@ -12,6 +12,7 @@
 
 import abc
 import numpy as np
+import multiprocessing
 from zoopt import Dimension, Objective, Parameter, Opt
 from ..utils.utils import confidence_dist, flatten, reform_idx, hamming_dist
 
@@ -101,9 +102,20 @@ class AbducerBase(abc.ABC):
         candidate = self._get_one_candidate(pred_res, pred_res_prob, candidates)
         return candidate
 
-    def batch_abduce(self, Z, Y, max_address=-1, require_more_address=0):
-        return [self.abduce((z, prob, y), max_address, require_more_address) for z, prob, y in zip(Z['cls'], Z['prob'], Y)]
+    # def batch_abduce(self, Z, Y, max_address=-1, require_more_address=0):
+    #     return [self.abduce((z, prob, y), max_address, require_more_address) for z, prob, y in zip(Z['cls'], Z['prob'], Y)]
+    
+    def _batch_abduce_helper(self, args):
+        z, prob, y, max_address, require_more_address = args
+        return self.abduce((z, prob, y), max_address, require_more_address)
 
+    def batch_abduce(self, Z, Y, max_address=-1, require_more_address=0):
+        pool = multiprocessing.Pool(processes=len(Z))
+        results = pool.map(self._batch_abduce_helper, [(z, prob, y, max_address, require_more_address) for z, prob, y in zip(Z['cls'], Z['prob'], Y)])
+        pool.close()
+        pool.join()
+        return results
+    
     def __call__(self, Z, Y, max_address=-1, require_more_address=0):
         return self.batch_abduce(Z, Y, max_address, require_more_address)
     
