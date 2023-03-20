@@ -251,7 +251,7 @@ class BasicModel:
     def save(self, epoch_id, save_dir):
         recorder = self.recorder
         if not os.path.exists(save_dir):
-            os.mkdir(save_dir)
+            os.makedirs(save_dir)
         recorder.print("Saving model and opter")
         save_path = os.path.join(save_dir, str(epoch_id) + "_net.pth")
         torch.save(self.model.state_dict(), save_path)
