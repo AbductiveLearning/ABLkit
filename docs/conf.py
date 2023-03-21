@@ -27,6 +27,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx_rtd_theme',
     'recommonmark',
+    'sphinx_markdown_tables',
 ]
 
 templates_path = ['_templates']
