@@ -4,3 +4,4 @@ pytest-cov
 torch
 torchvision
 torchaudio
+zoopt
