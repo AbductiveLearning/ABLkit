@@ -17,7 +17,7 @@ slug = re.sub(r'\W+', '-', project.lower())
 author = u'Yu-Xuan Huang, Wen-Chao Hu, En-Hao Gao'
 version = u'0.1.0'
 release = u'0.1.0'
-copyright = author
+copyright = u'2023, LAMDA, Nanjing University, China'
 language = 'en'
 
 extensions = [
