@@ -26,10 +26,11 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx_rtd_theme',
+    'recommonmark',
 ]
 
 templates_path = ['_templates']
-source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
 exclude_patterns = []
 # locale_dirs = ['locale/']
 gettext_compact = False

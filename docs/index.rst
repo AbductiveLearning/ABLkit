@@ -6,6 +6,7 @@
 
    ABL/Abductive Learning.rst
    ABL/Quick Start.rst
+   ABL/Test.md
 
 .. toctree::
    :caption: Examples
