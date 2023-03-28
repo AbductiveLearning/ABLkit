@@ -17,7 +17,7 @@ import numpy as np
 
 from collections import defaultdict
 from itertools import product, combinations
-from ..utils.utils import flatten, reform_idx, hamming_dist, check_equal, to_hashable, hashable_to_list
+from utils.utils import flatten, reform_idx, hamming_dist, check_equal, to_hashable, hashable_to_list
 
 from multiprocessing import Pool
 
@@ -192,8 +192,8 @@ class KBBase(ABC):
             return sum(self._dict_len(v) for v in self.base.values())
 
 class add_KB(KBBase):
-    def __init__(self, pseudo_label_list=list(range(10)), len_list=[2], GKB_flag=False, use_cache=True):
-        super().__init__(pseudo_label_list, len_list, GKB_flag, use_cache)
+    def __init__(self, pseudo_label_list=list(range(10)), len_list=[2], GKB_flag=False, max_err=0, use_cache=True):
+        super().__init__(pseudo_label_list, len_list, GKB_flag, max_err, use_cache)
 
     def logic_forward(self, nums):
         return sum(nums)
