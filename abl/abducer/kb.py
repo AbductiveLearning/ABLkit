@@ -149,11 +149,7 @@ class KBBase(ABC):
             new_candidates += candidates
         return new_candidates
 
-    def _abduce_by_search(self, pred_res, key, max_address_num, require_more_address):
-        if self.use_cache:
-            pred_res = hashable_to_list(pred_res)
-            key = hashable_to_list(key)
-        
+    def _abduce_by_search(self, pred_res, key, max_address_num, require_more_address):      
         candidates = []
         for address_num in range(len(pred_res) + 1):
             if address_num == 0:
@@ -177,6 +173,8 @@ class KBBase(ABC):
     
     @lru_cache(maxsize=None)
     def _abduce_by_search_cache(self, pred_res, key, max_address_num, require_more_address):
+        pred_res = hashable_to_list(pred_res)
+        key = hashable_to_list(key)
         return self._abduce_by_search(pred_res, key, max_address_num, require_more_address)
     
     def _dict_len(self, dic):
