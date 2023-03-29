@@ -61,7 +61,7 @@ def filter_data(X, abduced_Z):
 
     
     
-def train(model, abducer, train_data, test_data, epochs=50, sample_num=-1, verbose=-1):
+def train(model, abducer, train_data, test_data, loop_num=50, sample_num=-1, verbose=-1):
     train_X, train_Z, train_Y = train_data
     test_X, test_Z, test_Y = test_data
 
@@ -70,7 +70,7 @@ def train(model, abducer, train_data, test_data, epochs=50, sample_num=-1, verbo
         sample_num = len(train_X)
 
     if verbose < 1:
-        verbose = epochs
+        verbose = loop_num
 
     char_acc_flag = 1
     if train_Z == None:
@@ -81,14 +81,14 @@ def train(model, abducer, train_data, test_data, epochs=50, sample_num=-1, verbo
     train_func = clocker(model.train)
     abduce_func = clocker(abducer.batch_abduce)
 
-    for epoch_idx in range(epochs):
-        X, Z, Y = block_sample(train_X, train_Z, train_Y, sample_num, epoch_idx)
+    for loop_idx in range(loop_num):
+        X, Z, Y = block_sample(train_X, train_Z, train_Y, sample_num, loop_idx)
         preds_res = predict_func(X)
         abduced_Z = abduce_func(preds_res, Y)
 
-        if ((epoch_idx + 1) % verbose == 0) or (epoch_idx == epochs - 1):
+        if ((loop_idx + 1) % verbose == 0) or (loop_idx == loop_num - 1):
             res = result_statistics(preds_res['cls'], Z, Y, abducer.kb.logic_forward, char_acc_flag)
-            INFO('epoch: ', epoch_idx + 1, ' ', res)
+            INFO('loop: ', loop_idx + 1, ' ', res)
 
         finetune_X, finetune_Z = filter_data(X, abduced_Z)
         if len(finetune_X) > 0:
