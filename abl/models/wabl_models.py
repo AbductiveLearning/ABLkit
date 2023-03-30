@@ -34,7 +34,8 @@ def reshape_data(Y, marks):
 
 
 class WABLBasicModel:
-    """A basic model for weakly augmented bag learning.
+    """
+    Serialize data and provide a unified interface for different machine learning models.
 
     Parameters
     ----------
@@ -57,11 +58,11 @@ class WABLBasicModel:
     Methods
     -------
     predict(X: List[List[Any]]) -> dict
-        Predicts the class labels and probabilities for the given data.
+        Predict the class labels and probabilities for the given data.
     valid(X: List[List[Any]], Y: List[Any]) -> float
-        Calculates the accuracy score for the given data.
+        Calculate the accuracy score for the given data.
     train(X: List[List[Any]], Y: List[Any])
-        Trains the model on the given data.
+        Train the model on the given data.
     """
     def __init__(self, base_model, pseudo_label_list: List[Any]):
         self.cls_list = []
@@ -74,7 +75,8 @@ class WABLBasicModel:
         )
 
     def predict(self, X: List[List[Any]]) -> dict:
-        """Predicts the class labels and probabilities for the given data.
+        """
+        Predict the class labels and probabilities for the given data.
 
         Parameters
         ----------
@@ -97,12 +99,13 @@ class WABLBasicModel:
         return {"cls": cls, "prob": prob}
 
     def valid(self, X: List[List[Any]], Y: List[Any]) -> float:
-        """Calculates the accuracy score for the given data.
+        """
+        Calculate the accuracy for the given data.
 
         Parameters
         ----------
         X : List[List[Any]]
-            The data to calculate the accuracy score on.
+            The data to calculate the accuracy on.
         Y : List[Any]
             The true class labels for the given data.
 
@@ -118,7 +121,8 @@ class WABLBasicModel:
         return score
 
     def train(self, X: List[List[Any]], Y: List[Any]):
-        """Trains the model on the given data.
+        """
+        Train the model on the given data.
 
         Parameters
         ----------
