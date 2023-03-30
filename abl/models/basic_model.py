@@ -60,7 +60,8 @@ class BasicDataset(Dataset):
         Tuple(Any, Any)
             A tuple containing the input and output data at the specified index.
         """
-        assert index < len(self), "index range error"
+        if index >= len(self):
+            raise ValueError("index range error")
 
         img = self.X[index]
         label = self.Y[index]
@@ -113,7 +114,8 @@ class XYDataset(Dataset):
         Tuple[Any, torch.Tensor]
             A tuple containing the object and its label.
         """
-        assert index < len(self), "index range error"
+        if index >= len(self):
+            raise ValueError("index range error")
 
         img = self.X[index]
         if self.transform is not None:
@@ -209,12 +211,13 @@ class BasicModel:
     score(data_loader=None, X=None, y=None, print_prefix="")
         Score the model.
     _data_loader(X, y=None)
-        Load data.
+        Generate the data_loader.
     save(epoch_id, save_dir="")
         Save the model.
     load(epoch_id, load_dir="")
         Load the model.
     """
+
     def __init__(
         self,
         model: torch.nn.Module,
@@ -263,7 +266,10 @@ class BasicModel:
             if min_loss < 0 or loss_value < min_loss:
                 min_loss = loss_value
             if self.save_interval is not None and (epoch + 1) % self.save_interval == 0:
-                assert self.save_dir is not None
+                if self.save_dir is None:
+                    raise ValueError(
+                        "save_dir should not be None if save_interval is not None"
+                    )
                 self.save(epoch + 1, self.save_dir)
             if stop_loss is not None and loss_value < stop_loss:
                 break
