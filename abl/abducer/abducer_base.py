@@ -1,16 +1,3 @@
-# coding: utf-8
-# ================================================================#
-#   Copyright (C) 2021 Freecss All rights reserved.
-#
-#   File Name     ：abducer_base.py
-#   Author        ：freecss
-#   Email         ：karlfreecss@gmail.com
-#   Created Date  ：2021/06/03
-#   Description   ：
-#
-# ================================================================#
-
-import os
 import abc
 import numpy as np
 from multiprocessing import Pool
@@ -27,6 +14,23 @@ class AbducerBase(abc.ABC):
             self.mapping = dict(zip(self.kb.pseudo_label_list, list(range(len(self.kb.pseudo_label_list)))))
 
     def _get_cost_list(self, pred_res, pred_res_prob, candidates):
+        """
+        Get the cost list of candidates based on the distance function.
+
+        Parameters
+        ----------
+        pred_res : list
+            The predicted result.
+        pred_res_prob : list
+            The predicted result probability.
+        candidates : list
+            The list of candidates.
+
+        Returns
+        -------
+        list
+            The cost list of candidates.
+        """
         if self.dist_func == 'hamming':
             return hamming_dist(pred_res, candidates)
         
@@ -35,6 +39,23 @@ class AbducerBase(abc.ABC):
             return confidence_dist(pred_res_prob, candidates)
 
     def _get_one_candidate(self, pred_res, pred_res_prob, candidates):
+        """
+        Get the best candidate based on the distance function.
+
+        Parameters
+        ----------
+        pred_res : list
+            The predicted result.
+        pred_res_prob : list
+            The predicted result probability.
+        candidates : list
+            The list of candidates.
+
+        Returns
+        -------
+        list
+            The best candidate.
+        """
         if len(candidates) == 0:
             return []
         elif len(candidates) == 1 or self.zoopt:
@@ -54,6 +75,25 @@ class AbducerBase(abc.ABC):
             return len(pred_res)
     
     def _zoopt_address_score(self, pred_res, pred_res_prob, key, sol): 
+        """
+        Get the address score for a single solution.
+
+        Parameters
+        ----------
+        sol_x : array-like
+            Solution to evaluate.
+        pred_res : list
+            List of predicted results.
+        pred_res_prob : list
+            List of probabilities for predicted results.
+        key : str
+            Key for the predicted results.
+
+        Returns
+        -------
+        float
+            The address score for the given solution.
+        """
         address_idx = np.where(sol.get_x() != 0)[0]
         candidates = self.address_by_idx(pred_res, key, address_idx)
         if len(candidates) > 0:
@@ -66,10 +106,28 @@ class AbducerBase(abc.ABC):
         return max_address_num - x.sum()
 
     def zoopt_get_solution(self, pred_res, pred_res_prob, key, max_address_num):
+        """Get the optimal solution using the Zoopt library.
+
+        Parameters
+        ----------
+        pred_res : list
+            List of predicted results.
+        pred_res_prob : list
+            List of probabilities for predicted results.
+        key : str
+            Key for the predicted results.
+        max_address_num : int or float
+            Maximum number of addresses to use. If float, represents the fraction of total addresses to use.
+
+        Returns
+        -------
+        array-like
+            The optimal solution.
+        """
         length = len(flatten(pred_res))
         dimension = Dimension(size=length, regs=[[0, 1]] * length, tys=[False] * length)
         objective = Objective(
-            lambda sol: self._zoopt_address_score(pred_res, pred_res_prob, key, sol),
+            lambda sol: self.zoopt_address_score(pred_res, pred_res_prob, key, sol),
             dim=dimension,
             constraint=lambda sol: self._constrain_address_num(sol, max_address_num),
         )
@@ -78,9 +136,42 @@ class AbducerBase(abc.ABC):
         return solution
     
     def address_by_idx(self, pred_res, key, address_idx):
+        """Get the addresses corresponding to the given indices.
+
+        Parameters
+        ----------
+        pred_res : list
+            List of predicted results.
+        key : str
+            Key for the predicted results.
+        address_idx : array-like
+            Indices of the addresses to retrieve.
+
+        Returns
+        -------
+        list
+            The addresses corresponding to the given indices.
+        """
         return self.kb.address_by_idx(pred_res, key, address_idx)
 
     def abduce(self, data, max_address=-1, require_more_address=0):
+        """Perform abduction on the given data.
+
+        Parameters
+        ----------
+        data : tuple
+            Tuple containing the predicted results, predicted result probabilities, and key.
+        max_address : int or float, optional
+            Maximum number of addresses to use. If float, represents the fraction of total addresses to use. 
+            If -1, use all addresses. Defaults to -1.
+        require_more_address : int, optional
+            Number of additional addresses to require. Defaults to 0.
+
+        Returns
+        -------
+        list
+            The abduced addresses.
+        """
         pred_res, pred_res_prob, key = data
         
         assert(type(max_address) in (int, float))
@@ -103,17 +194,36 @@ class AbducerBase(abc.ABC):
         candidate = self._get_one_candidate(pred_res, pred_res_prob, candidates)
         return candidate
 
-    # def batch_abduce(self, Z, Y, max_address=-1, require_more_address=0):
-    #     return [self.abduce((z, prob, y), max_address, require_more_address) for z, prob, y in zip(Z['cls'], Z['prob'], Y)]
-    
-    def _batch_abduce_helper(self, args):
-        z, prob, y, max_address, require_more_address = args
-        return self.abduce((z, prob, y), max_address, require_more_address)
-
     def batch_abduce(self, Z, Y, max_address=-1, require_more_address=0):
-        with Pool(processes=os.cpu_count()) as pool:
-            results = pool.map(self._batch_abduce_helper, [(z, prob, y, max_address, require_more_address) for z, prob, y in zip(Z['cls'], Z['prob'], Y)])
-        return results
+        """Perform abduction on the given data in batches.
+
+        Parameters
+        ----------
+        Z : list
+            List of predicted results.
+        Y : list
+            List of predicted result probabilities.
+        max_address : int or float, optional
+            Maximum number of addresses to use. If float, represents the fraction of total addresses to use. 
+            If -1, use all addresses. Defaults to -1.
+        require_more_address : int, optional
+            Number of additional addresses to require. Defaults to 0.
+
+        Returns
+        -------
+        list
+            The abduced addresses.
+        """
+        return [self.abduce((z, prob, y), max_address, require_more_address) for z, prob, y in zip(Z['cls'], Z['prob'], Y)]
+    
+    # def _batch_abduce_helper(self, args):
+    #     z, prob, y, max_address, require_more_address = args
+    #     return self.abduce((z, prob, y), max_address, require_more_address)
+
+    # def batch_abduce(self, Z, Y, max_address=-1, require_more_address=0):
+    #     with Pool(processes=os.cpu_count()) as pool:
+    #         results = pool.map(self._batch_abduce_helper, [(z, prob, y, max_address, require_more_address) for z, prob, y in zip(Z['cls'], Z['prob'], Y)])
+    #     return results
     
     def __call__(self, Z, Y, max_address=-1, require_more_address=0):
         return self.batch_abduce(Z, Y, max_address, require_more_address)
@@ -134,7 +244,7 @@ class HED_Abducer(AbducerBase):
         candidate = self.address_by_idx(pred, k, address_idx)
         return candidate
     
-    def _zoopt_address_score(self, pred_res, pred_res_prob, key, sol): 
+    def zoopt_address_score(self, pred_res, pred_res_prob, key, sol): 
         all_address_flag = reform_idx(sol.get_x(), pred_res)
         lefted_idxs = [i for i in range(len(pred_res))]
         candidate_size = []         
@@ -205,6 +315,21 @@ if __name__ == '__main__':
     print(res)
     print()
     
+    print('add_KB without GKB:, no cache')
+    kb = add_KB(use_cache=False)
+    abd = AbducerBase(kb, 'confidence')
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [8], max_address=2, require_more_address=0)
+    print(res)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob2}, [8], max_address=2, require_more_address=0)
+    print(res)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [17], max_address=2, require_more_address=0)
+    print(res)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [17], max_address=1, require_more_address=0)
+    print(res)
+    res = abd.batch_abduce({'cls':[[1, 1]], 'prob':prob1}, [20], max_address=2, require_more_address=0)
+    print(res)
+    print()
+    
     print('prolog_KB with add.pl:')
     kb = prolog_KB(pseudo_label_list=list(range(10)), pl_file='../examples/datasets/mnist_add/add.pl')
     abd = AbducerBase(kb, 'confidence')
@@ -241,9 +366,9 @@ if __name__ == '__main__':
     
     kb = add_KB()
     abd = AbducerBase(kb, 'confidence')
-    res = abd.batch_abduce({'cls':[[1, 1], [1, 2]], 'prob':multiple_prob}, [4, 8], max_address=4, require_more_address=0)
+    res = abd.batch_abduce({'cls':[[1, 1], [1, 2]], 'prob':multiple_prob}, [4, 8], max_address=2, require_more_address=0)
     print(res)
-    res = abd.batch_abduce({'cls':[[1, 1], [1, 2]], 'prob':multiple_prob}, [4, 8], max_address=4, require_more_address=1)
+    res = abd.batch_abduce({'cls':[[1, 1], [1, 2]], 'prob':multiple_prob}, [4, 8], max_address=2, require_more_address=1)
     print(res)
     print()
     
