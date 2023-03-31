@@ -5,5 +5,5 @@
 *.pth
 *.json
 *.ckpt
-examples/results
+results
 raw/

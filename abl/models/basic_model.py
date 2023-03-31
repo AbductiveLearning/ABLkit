@@ -47,7 +47,7 @@ class BasicDataset(Dataset):
         """
         return len(self.X)
 
-    def __getitem__(self, index: int) -> Tuple(Any, Any):
+    def __getitem__(self, index: int) -> Tuple[Any, Any]:
         """Get an item from the dataset.
 
         Parameters
@@ -57,7 +57,7 @@ class BasicDataset(Dataset):
 
         Returns
         -------
-        Tuple(Any, Any)
+        Tuple[Any, Any]
             A tuple containing the input and output data at the specified index.
         """
         if index >= len(self):
@@ -70,7 +70,7 @@ class BasicDataset(Dataset):
 
 
 class XYDataset(Dataset):
-    def __init__(self, X: List[Any], Y: List[int], transform: Callable[...] = None):
+    def __init__(self, X: List[Any], Y: List[int], transform: Callable[..., Any] = None):
         """
         Initialize the dataset used for classification task.
 
@@ -80,7 +80,7 @@ class XYDataset(Dataset):
             The input data.
         Y : List[int]
             The target data.
-        transform : callable, optional
+        transform : Callable[..., Any], optional
             A function/transform that takes in an object and returns a transformed version. Defaults to None.
         """
         self.X = X
@@ -161,7 +161,7 @@ class BasicModel:
     save_dir : Optional[str], optional
         The directory in which to save the model during training, by default None.
     transform : Callable[..., Any], optional
-        The transformation function used for data augmentation, by default None.
+        A function/transform that takes in an object and returns a transformed version. Defaults to None.
     collate_fn : Callable[[List[T]], Any], optional
         The function used to collate data, by default None.
     recorder : Any, optional
@@ -230,7 +230,7 @@ class BasicModel:
         num_workers: int = 0,
         save_interval: Optional[int] = None,
         save_dir: Optional[str] = None,
-        transform: Callable[...] = None,
+        transform: Callable[..., Any] = None,
         collate_fn: Callable[[List[T]], Any] = None,
         recorder=None,
     ):
