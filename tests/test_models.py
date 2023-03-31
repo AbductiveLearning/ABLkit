@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 
-from abl.models.nn import LeNet5, SymbolNet
+from examples.models.nn import LeNet5, SymbolNet
 from abl.models.basic_model import BasicModel
 
 
