@@ -34,7 +34,7 @@
 
 ## GKB
 
-建立 KB 时, 用户可以在`__init__`中指定`GKB_flag`, 说明是否需要建立GKB (Ground Knowledge Base, 领域知识库). GKB 是一个 Python 字典, key 为`pseudo_label`组成的 list 代入`logic_forward`得到的所有可能的结果, 每个 key 对应的 value 为前述的`pseudo_label`组成的 list. 建立好 GKB 之后可以加快反绎所需的时间.
+建立 KB 时, 用户可以在`__init__`中指定`GKB_flag`, 说明是否需要建立GKB (Ground Knowledge Base, 领域知识库). GKB 是一个 Python 字典, key 为`pseudo_label`组成的 list 代入`logic_forward`得到的所有可能的结果, 每个 key 对应的 value 为前述的`pseudo_label`组成的 list. 建立好 GKB 之后可以加快反绎的速度.
 
 ### GKB 的建立
 

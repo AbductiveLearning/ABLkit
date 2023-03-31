@@ -10,94 +10,18 @@
 #
 # ================================================================#
 
-import pickle as pk
 import torch
 import torch.nn as nn
 import numpy as np
 import os
 
-from .utils.plog import INFO, DEBUG, clocker
-from .utils.utils import flatten, reform_idx, block_sample, gen_mappings, mapping_res, remapping_res
+from abl.utils.plog import INFO
+from abl.utils.utils import flatten, reform_idx
+from abl.models.basic_model import BasicModel, BasicDataset
 
-from .models.nn import MLP, SymbolNetAutoencoder
-from .models.basic_model import BasicModel, BasicDataset
-
-import sys
-sys.path.append("..")
-from examples.datasets.hed.get_hed import get_pretrain_data
-
-def result_statistics(pred_Z, Z, Y, logic_forward, char_acc_flag):
-    result = {}
-    if char_acc_flag:
-        char_acc_num = 0
-        char_num = 0
-        for pred_z, z in zip(pred_Z, Z):
-            char_num += len(z)
-            for zidx in range(len(z)):
-                if pred_z[zidx] == z[zidx]:
-                    char_acc_num += 1
-        char_acc = char_acc_num / char_num
-        result["Character level accuracy"] = char_acc
-
-    abl_acc_num = 0
-    for pred_z, y in zip(pred_Z, Y):
-        if logic_forward(pred_z) == y:
-            abl_acc_num += 1
-    abl_acc = abl_acc_num / len(Y)
-    result["ABL accuracy"] = abl_acc
-
-    return result
-
-
-def filter_data(X, abduced_Z):
-    finetune_Z = []
-    finetune_X = []
-    for x, abduced_z in zip(X, abduced_Z):
-        if len(abduced_z) > 0:
-            finetune_X.append(x)
-            finetune_Z.append(abduced_z)
-    return finetune_X, finetune_Z
-
-
-    
-    
-def train(model, abducer, train_data, test_data, epochs=50, sample_num=-1, verbose=-1):
-    train_X, train_Z, train_Y = train_data
-    test_X, test_Z, test_Y = test_data
-
-    # Set default parameters
-    if sample_num == -1:
-        sample_num = len(train_X)
-
-    if verbose < 1:
-        verbose = epochs
-
-    char_acc_flag = 1
-    if train_Z == None:
-        char_acc_flag = 0
-        train_Z = [None] * len(train_X)
-
-    predict_func = clocker(model.predict)
-    train_func = clocker(model.train)
-    abduce_func = clocker(abducer.batch_abduce)
-
-    for epoch_idx in range(epochs):
-        X, Z, Y = block_sample(train_X, train_Z, train_Y, sample_num, epoch_idx)
-        preds_res = predict_func(X)
-        abduced_Z = abduce_func(preds_res, Y)
-
-        if ((epoch_idx + 1) % verbose == 0) or (epoch_idx == epochs - 1):
-            res = result_statistics(preds_res['cls'], Z, Y, abducer.kb.logic_forward, char_acc_flag)
-            INFO('epoch: ', epoch_idx + 1, ' ', res)
-
-        finetune_X, finetune_Z = filter_data(X, abduced_Z)
-        if len(finetune_X) > 0:
-            # model.valid(finetune_X, finetune_Z)
-            train_func(finetune_X, finetune_Z)
-        else:
-            INFO("lack of data, all abduced failed", len(finetune_X))
-
-    return res
+from utils import gen_mappings, mapping_res, remapping_res
+from models.nn import SymbolNetAutoencoder
+from datasets.get_hed import get_pretrain_data
 
 
 def hed_pretrain(kb, cls, recorder):

@@ -1,6 +1,9 @@
 *.pyc
-/results
-raw/
 *.jpg
 *.png
 *.pk
+*.pth
+*.json
+*.ckpt
+results
+raw/

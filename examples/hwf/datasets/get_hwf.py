@@ -12,7 +12,7 @@ def get_data(file, get_pseudo_label):
     if get_pseudo_label:
         Z = []
     Y = []
-    img_dir = './datasets/hwf/data/Handwritten_Math_Symbols/'
+    img_dir = './datasets/data/Handwritten_Math_Symbols/'
     with open(file) as f:
         data = json.load(f)
         for idx in range(len(data)):
@@ -36,9 +36,9 @@ def get_data(file, get_pseudo_label):
 
 def get_hwf(train = True, get_pseudo_label = False):
     if(train):
-        file = './datasets/hwf/data/expr_train.json'
+        file = './datasets/data/expr_train.json'
     else:
-        file = './datasets/hwf/data/expr_test.json'
+        file = './datasets/data/expr_test.json'
     
     return get_data(file, get_pseudo_label)
 

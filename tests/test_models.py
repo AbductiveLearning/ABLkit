@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 
-from abl.models.nn import LeNet5, SymbolNet
+from examples.models.nn import LeNet5, SymbolNet
 from abl.models.basic_model import BasicModel
 
 
@@ -39,7 +39,7 @@ class TestBasicModel(object):
         self._test_fit()
         self._test_predict()
         self._test_predict_proba()
-        self._test_val()
+        self._test_score()
         self._test_save()
         self._test_load()
 
@@ -58,8 +58,8 @@ class TestBasicModel(object):
         assert predict_result.shape == (5, self.num_classes)
         assert (0 <= predict_result).all() and (predict_result <= 1).all()
 
-    def _test_val(self):
-        accuracy = self.model.val(X=self.data_X, y=self.data_y)
+    def _test_score(self):
+        accuracy = self.model.score(X=self.data_X, y=self.data_y)
         assert type(accuracy) == float
         assert 0 <= accuracy <= 1
 
