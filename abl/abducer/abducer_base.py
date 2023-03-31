@@ -74,7 +74,7 @@ class AbducerBase(abc.ABC):
         else:
             return len(pred_res)
     
-    def _zoopt_address_score(self, pred_res, pred_res_prob, key, sol): 
+    def zoopt_address_score(self, pred_res, pred_res_prob, key, sol): 
         """
         Get the address score for a single solution.
 
