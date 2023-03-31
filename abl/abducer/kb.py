@@ -189,13 +189,6 @@ class KBBase(ABC):
         else:
             return sum(self._dict_len(v) for v in self.base.values())
 
-class add_KB(KBBase):
-    def __init__(self, pseudo_label_list=list(range(10)), len_list=[2], GKB_flag=False, max_err=0, use_cache=True):
-        super().__init__(pseudo_label_list, len_list, GKB_flag, max_err, use_cache)
-
-    def logic_forward(self, nums):
-        return sum(nums)
-
 
 class prolog_KB(KBBase):
     def __init__(self, pseudo_label_list, pl_file):
@@ -244,54 +237,3 @@ class prolog_KB(KBBase):
             candidate = reform_idx(candidate, save_pred_res)
             candidates.append(candidate)
         return candidates
-
-
-class HED_prolog_KB(prolog_KB):
-    def __init__(self, pseudo_label_list, pl_file):
-        super().__init__(pseudo_label_list, pl_file)
-        
-    def consist_rule(self, exs, rules):
-        rules = str(rules).replace("\'","")
-        return len(list(self.prolog.query("eval_inst_feature(%s, %s)." % (exs, rules)))) != 0
-
-    def abduce_rules(self, pred_res):
-        prolog_result = list(self.prolog.query("consistent_inst_feature(%s, X)." % pred_res))
-        if len(prolog_result) == 0:
-            return None
-        prolog_rules = prolog_result[0]['X']
-        rules = [rule.value for rule in prolog_rules]
-        return rules
-
-
-class HWF_KB(KBBase):
-    def __init__(
-        self, 
-        pseudo_label_list=['1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', 'times', 'div'], 
-        len_list=[1, 3, 5, 7],
-        GKB_flag=False,
-        max_err=1e-3,
-        use_cache=True
-    ):
-        super().__init__(pseudo_label_list, len_list, GKB_flag, max_err, use_cache)
-
-    def _valid_candidate(self, formula):
-        if len(formula) % 2 == 0:
-            return False
-        for i in range(len(formula)):
-            if i % 2 == 0 and formula[i] not in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
-                return False
-            if i % 2 != 0 and formula[i] not in ['+', '-', 'times', 'div']:
-                return False
-        return True
-
-    def logic_forward(self, formula):
-        if not self._valid_candidate(formula):
-            return np.inf
-        mapping = {str(i): str(i) for i in range(1, 10)}
-        mapping.update({'+': '+', '-': '-', 'times': '*', 'div': '/'})
-        formula = [mapping[f] for f in formula]
-        return eval(''.join(formula))
-
-
-if __name__ == "__main__":
-    pass
