@@ -41,7 +41,7 @@ def get_pretrain_data(labels, image_size=(28, 28, 1)):
     X = []
     for label in labels:
         label_path = os.path.join(
-            "./datasets/hed/mnist_images", label
+            "./datasets/mnist_images", label
         )
         img_path_list = os.listdir(label_path)
         for img_path in img_path_list:
@@ -107,13 +107,13 @@ def get_hed(dataset="mnist", train=True):
 
     if dataset == "mnist":
         with open(
-            "./datasets/hed/mnist_equation_data_train_len_26_test_len_26_sys_2_.pk",
+            "./datasets/mnist_equation_data_train_len_26_test_len_26_sys_2_.pk",
             "rb",
         ) as f:
             img_dataset = pickle.load(f)
     elif dataset == "random":
         with open(
-            "./datasets/hed/random_equation_data_train_len_26_test_len_26_sys_2_.pk",
+            "./datasets/random_equation_data_train_len_26_test_len_26_sys_2_.pk",
             "rb",
         ) as f:
             img_dataset = pickle.load(f)
