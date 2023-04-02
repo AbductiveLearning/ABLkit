@@ -169,4 +169,4 @@ _需要注意: 传入的 prolog 程序中需要有 `logic_forward` 的实现, �
 
 ## 批量化反绎
 
-可以使用`batch_abduce`同时传入一批数据进行反绎, 如上文定义的 `abd1`, 调用`abd.batch_abduce({'cls':[[1,1], [1,2]], 'prob':multiple_prob}, [4,8], max_address=2, require_more_address=0)`时, 返回的结果为 [[1,3], [6,2]].
+可以使用`batch_abduce`同时传入一批数据进行反绎, 如上文定义的 `abd1`, 调用`abd1.batch_abduce({'cls':[[1,1], [1,2]], 'prob':multiple_prob}, [4,8], max_address=2, require_more_address=0)`时, 返回的结果为 [[1,3], [6,2]].
