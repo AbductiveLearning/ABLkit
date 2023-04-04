@@ -1,18 +1,5 @@
-# coding: utf-8
-# ================================================================#
-#   Copyright (C) 2021 LAMDA All rights reserved.
-#
-#   File Name     ：kb.py
-#   Author        ：freecss
-#   Email         ：karlfreecss@gmail.com
-#   Created Date  ：2021/06/03
-#   Description   ：
-#
-# ================================================================#
-
 from abc import ABC, abstractmethod
 import bisect
-import copy
 import numpy as np
 
 from collections import defaultdict
@@ -79,103 +66,103 @@ class KBBase(ABC):
     def logic_forward(self, pseudo_labels):
         pass
 
-    def abduce_candidates(self, pred_res, key, max_address_num, require_more_address=0):
+    def abduce_candidates(self, pred_res, y, max_revision_num, require_more_revision=0):
         if self.GKB_flag:
-            return self._abduce_by_GKB(pred_res, key, max_address_num, require_more_address)
+            return self._abduce_by_GKB(pred_res, y, max_revision_num, require_more_revision)
         else:
             if not self.use_cache:
-                return self._abduce_by_search(pred_res, key, max_address_num, require_more_address)
+                return self._abduce_by_search(pred_res, y, max_revision_num, require_more_revision)
             else:    
-                return self._abduce_by_search_cache(to_hashable(pred_res), to_hashable(key), max_address_num, require_more_address)
+                return self._abduce_by_search_cache(to_hashable(pred_res), to_hashable(y), max_revision_num, require_more_revision)
     
-    def _find_candidate_GKB(self, pred_res, key):
+    def _find_candidate_GKB(self, pred_res, y):
         if self.max_err == 0:
-            return self.base[len(pred_res)][key]
+            return self.base[len(pred_res)][y]
         else:
             potential_candidates = self.base[len(pred_res)]
             key_list = list(potential_candidates.keys())
-            key_idx = bisect.bisect_left(key_list, key)
+            key_idx = bisect.bisect_left(key_list, y)
             
             all_candidates = []
             for idx in range(key_idx - 1, 0, -1):
                 k = key_list[idx]
-                if abs(k - key) <= self.max_err:
+                if abs(k - y) <= self.max_err:
                     all_candidates += potential_candidates[k]
                 else:
                     break
                 
             for idx in range(key_idx, len(key_list)):
                 k = key_list[idx]
-                if abs(k - key) <= self.max_err:
+                if abs(k - y) <= self.max_err:
                     all_candidates += potential_candidates[k]
                 else:
                     break
             return all_candidates
     
-    def _abduce_by_GKB(self, pred_res, key, max_address_num, require_more_address):
+    def _abduce_by_GKB(self, pred_res, y, max_revision_num, require_more_revision):
         if self.base == {}:
             return []
         
         if len(pred_res) not in self.len_list:
             return []
-        all_candidates = self._find_candidate_GKB(pred_res, key)
+        all_candidates = self._find_candidate_GKB(pred_res, y)
         if len(all_candidates) == 0:
             return []
         else:
             cost_list = hamming_dist(pred_res, all_candidates)
             min_address_num = np.min(cost_list)
-            address_num = min(max_address_num, min_address_num + require_more_address)
+            address_num = min(max_revision_num, min_address_num + require_more_revision)
             idxs = np.where(cost_list <= address_num)[0]
             candidates = [all_candidates[idx] for idx in idxs]
             return candidates
 
-    def address_by_idx(self, pred_res, key, address_idx):
+    def address_by_idx(self, pred_res, y, address_idx):
         candidates = []
         abduce_c = product(self.pseudo_label_list, repeat=len(address_idx))
         for c in abduce_c:
             candidate = pred_res.copy()
             for i, idx in enumerate(address_idx):
                 candidate[idx] = c[i]
-            if check_equal(self.logic_forward(candidate), key, self.max_err):
+            if check_equal(self.logic_forward(candidate), y, self.max_err):
                 candidates.append(candidate)
         return candidates
 
-    def _address(self, address_num, pred_res, key):
+    def _address(self, address_num, pred_res, y):
         new_candidates = []
         address_idx_list = combinations(list(range(len(pred_res))), address_num)
 
         for address_idx in address_idx_list:
-            candidates = self.address_by_idx(pred_res, key, address_idx)
+            candidates = self.address_by_idx(pred_res, y, address_idx)
             new_candidates += candidates
         return new_candidates
 
-    def _abduce_by_search(self, pred_res, key, max_address_num, require_more_address):      
+    def _abduce_by_search(self, pred_res, y, max_revision_num, require_more_revision):      
         candidates = []
         for address_num in range(len(pred_res) + 1):
             if address_num == 0:
-                if check_equal(self.logic_forward(pred_res), key, self.max_err):
+                if check_equal(self.logic_forward(pred_res), y, self.max_err):
                     candidates.append(pred_res)
             else:
-                new_candidates = self._address(address_num, pred_res, key)
+                new_candidates = self._address(address_num, pred_res, y)
                 candidates += new_candidates
             if len(candidates) > 0:
                 min_address_num = address_num
                 break
-            if address_num >= max_address_num:
+            if address_num >= max_revision_num:
                 return []
 
-        for address_num in range(min_address_num + 1, min_address_num + require_more_address + 1):
-            if address_num > max_address_num:
+        for address_num in range(min_address_num + 1, min_address_num + require_more_revision + 1):
+            if address_num > max_revision_num:
                 return candidates
-            new_candidates = self._address(address_num, pred_res, key)
+            new_candidates = self._address(address_num, pred_res, y)
             candidates += new_candidates
         return candidates
     
     @lru_cache(maxsize=None)
-    def _abduce_by_search_cache(self, pred_res, key, max_address_num, require_more_address):
+    def _abduce_by_search_cache(self, pred_res, y, max_revision_num, require_more_revision):
         pred_res = hashable_to_list(pred_res)
-        key = hashable_to_list(key)
-        return self._abduce_by_search(pred_res, key, max_address_num, require_more_address)
+        y = hashable_to_list(y)
+        return self._abduce_by_search(pred_res, y, max_revision_num, require_more_revision)
     
     def _dict_len(self, dic):
         if not self.GKB_flag:
@@ -217,16 +204,16 @@ class prolog_KB(KBBase):
         regex = r"'P\d+'"
         return re.sub(regex, lambda x: x.group().replace("'", ""), str(address_pred_res))
     
-    def get_query_string(self, pred_res, key, address_idx):
+    def get_query_string(self, pred_res, y, address_idx):
         query_string = "logic_forward("
         query_string += self._address_pred_res(pred_res, address_idx)
-        key_is_none_flag = key is None or (type(key) == list and key[0] is None)
-        query_string += ",%s)." % key if not key_is_none_flag else ")."
+        key_is_none_flag = y is None or (type(y) == list and y[0] is None)
+        query_string += ",%s)." % y if not key_is_none_flag else ")."
         return query_string
     
-    def address_by_idx(self, pred_res, key, address_idx):
+    def address_by_idx(self, pred_res, y, address_idx):
         candidates = []
-        query_string = self.get_query_string(pred_res, key, address_idx)
+        query_string = self.get_query_string(pred_res, y, address_idx)
         save_pred_res = pred_res
         pred_res = flatten(pred_res)
         abduce_c = [list(z.values()) for z in self.prolog.query(query_string)]
