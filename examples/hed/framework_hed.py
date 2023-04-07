@@ -17,7 +17,7 @@ import os
 
 from abl.utils.plog import INFO
 from abl.utils.utils import flatten, reform_idx
-from abl.models.basic_model import BasicModel, BasicDataset
+from abl.learning.basic_nn import BasicNN, BasicDataset
 
 from utils import gen_mappings, mapping_res, remapping_res
 from models.nn import SymbolNetAutoencoder
@@ -36,7 +36,7 @@ def hed_pretrain(kb, cls, recorder):
         criterion = nn.MSELoss()
         optimizer = torch.optim.RMSprop(cls_autoencoder.parameters(), lr=0.001, alpha=0.9, weight_decay=1e-6)
 
-        pretrain_model = BasicModel(cls_autoencoder, criterion, optimizer, device, save_interval=1, save_dir=recorder.save_dir, num_epochs=10, recorder=recorder)
+        pretrain_model = BasicNN(cls_autoencoder, criterion, optimizer, device, save_interval=1, save_dir=recorder.save_dir, num_epochs=10, recorder=recorder)
         pretrain_model.fit(pretrain_data_loader)
         torch.save(cls_autoencoder.base_model.state_dict(), "./weights/pretrain_weights.pth")
         cls.load_state_dict(cls_autoencoder.base_model.state_dict())
