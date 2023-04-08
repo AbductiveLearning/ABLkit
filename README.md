@@ -6,26 +6,26 @@
 
 This is the code repository of abductive learning Package.
 
-## Environment dependency 
+## Installation
 
-#### Install Swipl 
-[http://www.swi-prolog.org/build/unix.html](http://www.swi-prolog.org/build/unix.html)
-
-#### Install required package
-
-```shell
-pip install zoopt
-pip install pyswip==0.2.9
+Case a: If you develop and run abl directly, install it from source:
+```bash 
+git clone https://github.com/AbductiveLearning/ABL-Package.git
+cd ABL-Package
+pip install -v -e .
+# "-v" means verbose, or more output
+# "-e" means installing a project in editable mode,
+# thus any local modifications made to the code will take effect without reinstallation.
 ```
-
+Case b (TO DO):  If you use abl as a dependency or third-party package, install it with pip:
+```bash 
+pip install abl
+```
 
 ## Example 
-share_example.py and nonshare_exaple.py are examples of grounded abductive learning.
-
-```bash 
-python share_example.py
-```
-
++ MNIST ADD - [here](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/mnist_add/mnist_add_example.ipynb)
++ Hand Written Formula - [here](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/hwf/hwf_example.ipynb)
++ Hand written Equation Decipherment - [here](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed)
 
 ## Authors 
 
