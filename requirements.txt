@@ -1,6 +1,5 @@
 numpy
 pyswip==0.2.9
-pytest-cov
 torch
 torchvision
 torchaudio
