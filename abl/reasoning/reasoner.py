@@ -2,7 +2,7 @@ import abc
 import numpy as np
 from multiprocessing import Pool
 from zoopt import Dimension, Objective, Parameter, Opt
-from ..utils.utils import confidence_dist, flatten, reform_idx, hamming_dist
+from ..utils.utils import confidence_dist, flatten, reform_idx, hamming_dist, float_parameter
 
 class ReasonerBase(abc.ABC):
     def __init__(self, kb, dist_func='hamming', zoopt=False):
@@ -173,16 +173,7 @@ class ReasonerBase(abc.ABC):
             The abduced revisiones.
         """
         pred_res, pred_res_prob, y = data
-        
-        assert(type(max_revision) in (int, float))
-        if max_revision == -1:
-            max_revision_num = len(flatten(pred_res))
-        elif type(max_revision) == float:
-            assert(max_revision >= 0 and max_revision <= 1)
-            max_revision_num = round(len(flatten(pred_res)) * max_revision)
-        else:
-            assert(max_revision >= 0)
-            max_revision_num = max_revision
+        max_revision_num = float_parameter(max_revision, len(flatten(pred_res)))
 
         if self.zoopt:
             solution = self.zoopt_get_solution(pred_res, pred_res_prob, y, max_revision_num)

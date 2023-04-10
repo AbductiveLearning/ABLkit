@@ -36,16 +36,10 @@ def confidence_dist(A, B):
     cols = np.expand_dims(cols, axis=0).repeat(axis=0, repeats=len(B))
     return 1 - np.prod(A[rows, cols, B], axis=1)
 
-def block_sample(X, Z, Y, sample_num, epoch_idx):
-    part_num = len(X) // sample_num
-    if part_num == 0:
-        part_num = 1
-    seg_idx = epoch_idx % part_num
-    INFO("seg_idx:", seg_idx, ", part num:", part_num, ", data num:", len(X))
+def block_sample(X, Z, Y, sample_num, seg_idx):
     X = X[sample_num * seg_idx : sample_num * (seg_idx + 1)]
     Z = Z[sample_num * seg_idx : sample_num * (seg_idx + 1)]
     Y = Y[sample_num * seg_idx : sample_num * (seg_idx + 1)]
-
     return X, Z, Y
 
 
@@ -78,3 +72,15 @@ def hashable_to_list(t):
     if type(t[0]) is not tuple:
         return list(t)
     return [list(subtuple) for subtuple in t]
+
+
+def float_parameter(parameter, total_length):
+    assert(type(parameter) in (int, float))
+    if parameter == -1:
+        return total_length
+    elif type(parameter) == float:
+        assert(parameter >= 0 and parameter <= 1)
+        return round(total_length * parameter)
+    else:
+        assert(parameter >= 0)
+        return parameter
