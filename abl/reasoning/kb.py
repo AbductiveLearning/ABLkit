@@ -110,51 +110,51 @@ class KBBase(ABC):
             return []
         else:
             cost_list = hamming_dist(pred_res, all_candidates)
-            min_address_num = np.min(cost_list)
-            address_num = min(max_revision_num, min_address_num + require_more_revision)
-            idxs = np.where(cost_list <= address_num)[0]
+            min_revision_num = np.min(cost_list)
+            revision_num = min(max_revision_num, min_revision_num + require_more_revision)
+            idxs = np.where(cost_list <= revision_num)[0]
             candidates = [all_candidates[idx] for idx in idxs]
             return candidates
 
-    def address_by_idx(self, pred_res, y, address_idx):
+    def revise_by_idx(self, pred_res, y, revision_idx):
         candidates = []
-        abduce_c = product(self.pseudo_label_list, repeat=len(address_idx))
+        abduce_c = product(self.pseudo_label_list, repeat=len(revision_idx))
         for c in abduce_c:
             candidate = pred_res.copy()
-            for i, idx in enumerate(address_idx):
+            for i, idx in enumerate(revision_idx):
                 candidate[idx] = c[i]
             if check_equal(self.logic_forward(candidate), y, self.max_err):
                 candidates.append(candidate)
         return candidates
 
-    def _address(self, address_num, pred_res, y):
+    def _revision(self, revision_num, pred_res, y):
         new_candidates = []
-        address_idx_list = combinations(list(range(len(pred_res))), address_num)
+        revision_idx_list = combinations(list(range(len(pred_res))), revision_num)
 
-        for address_idx in address_idx_list:
-            candidates = self.address_by_idx(pred_res, y, address_idx)
+        for revision_idx in revision_idx_list:
+            candidates = self.revise_by_idx(pred_res, y, revision_idx)
             new_candidates += candidates
         return new_candidates
 
     def _abduce_by_search(self, pred_res, y, max_revision_num, require_more_revision):      
         candidates = []
-        for address_num in range(len(pred_res) + 1):
-            if address_num == 0:
+        for revision_num in range(len(pred_res) + 1):
+            if revision_num == 0:
                 if check_equal(self.logic_forward(pred_res), y, self.max_err):
                     candidates.append(pred_res)
             else:
-                new_candidates = self._address(address_num, pred_res, y)
+                new_candidates = self._revision(revision_num, pred_res, y)
                 candidates += new_candidates
             if len(candidates) > 0:
-                min_address_num = address_num
+                min_revision_num = revision_num
                 break
-            if address_num >= max_revision_num:
+            if revision_num >= max_revision_num:
                 return []
 
-        for address_num in range(min_address_num + 1, min_address_num + require_more_revision + 1):
-            if address_num > max_revision_num:
+        for revision_num in range(min_revision_num + 1, min_revision_num + require_more_revision + 1):
+            if revision_num > max_revision_num:
                 return candidates
-            new_candidates = self._address(address_num, pred_res, y)
+            new_candidates = self._revision(revision_num, pred_res, y)
             candidates += new_candidates
         return candidates
     
@@ -191,35 +191,35 @@ class prolog_KB(KBBase):
             return False
         return result
     
-    def _address_pred_res(self, pred_res, address_idx):
+    def _revision_pred_res(self, pred_res, revision_idx):
         import re
-        address_pred_res = pred_res.copy()
-        address_pred_res = flatten(address_pred_res)
+        revision_pred_res = pred_res.copy()
+        revision_pred_res = flatten(revision_pred_res)
         
-        for idx in address_idx:
-            address_pred_res[idx] = 'P' + str(idx)
-        address_pred_res = reform_idx(address_pred_res, pred_res)
+        for idx in revision_idx:
+            revision_pred_res[idx] = 'P' + str(idx)
+        revision_pred_res = reform_idx(revision_pred_res, pred_res)
         
         # TODO：不知道有没有更简洁的方法
         regex = r"'P\d+'"
-        return re.sub(regex, lambda x: x.group().replace("'", ""), str(address_pred_res))
+        return re.sub(regex, lambda x: x.group().replace("'", ""), str(revision_pred_res))
     
-    def get_query_string(self, pred_res, y, address_idx):
+    def get_query_string(self, pred_res, y, revision_idx):
         query_string = "logic_forward("
-        query_string += self._address_pred_res(pred_res, address_idx)
+        query_string += self._revision_pred_res(pred_res, revision_idx)
         key_is_none_flag = y is None or (type(y) == list and y[0] is None)
         query_string += ",%s)." % y if not key_is_none_flag else ")."
         return query_string
     
-    def address_by_idx(self, pred_res, y, address_idx):
+    def revise_by_idx(self, pred_res, y, revision_idx):
         candidates = []
-        query_string = self.get_query_string(pred_res, y, address_idx)
+        query_string = self.get_query_string(pred_res, y, revision_idx)
         save_pred_res = pred_res
         pred_res = flatten(pred_res)
         abduce_c = [list(z.values()) for z in self.prolog.query(query_string)]
         for c in abduce_c:
             candidate = pred_res.copy()
-            for i, idx in enumerate(address_idx):
+            for i, idx in enumerate(revision_idx):
                 candidate[idx] = c[i]
             candidate = reform_idx(candidate, save_pred_res)
             candidates.append(candidate)

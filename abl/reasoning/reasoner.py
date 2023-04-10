@@ -66,17 +66,17 @@ class ReasonerBase(abc.ABC):
             candidate = candidates[np.argmin(cost_list)]
             return candidate
     
-    def _zoopt_address_score_single(self, sol_x, pred_res, pred_res_prob, y):
-        address_idx = np.where(sol_x != 0)[0]
-        candidates = self.address_by_idx(pred_res, y, address_idx)
+    def _zoopt_revision_score_single(self, sol_x, pred_res, pred_res_prob, y):
+        revision_idx = np.where(sol_x != 0)[0]
+        candidates = self.revise_by_idx(pred_res, y, revision_idx)
         if len(candidates) > 0:
             return np.min(self._get_cost_list(pred_res, pred_res_prob, candidates))
         else:
             return len(pred_res)
     
-    def zoopt_address_score(self, pred_res, pred_res_prob, y, sol): 
+    def zoopt_revision_score(self, pred_res, pred_res_prob, y, sol): 
         """
-        Get the address score for a single solution.
+        Get the revision score for a single solution.
 
         Parameters
         ----------
@@ -92,20 +92,20 @@ class ReasonerBase(abc.ABC):
         Returns
         -------
         float
-            The address score for the given solution.
+            The revision score for the given solution.
         """
-        address_idx = np.where(sol.get_x() != 0)[0]
-        candidates = self.address_by_idx(pred_res, y, address_idx)
+        revision_idx = np.where(sol.get_x() != 0)[0]
+        candidates = self.revise_by_idx(pred_res, y, revision_idx)
         if len(candidates) > 0:
             return np.min(self._get_cost_list(pred_res, pred_res_prob, candidates))
         else:
             return len(pred_res)
         
-    def _constrain_address_num(self, solution, max_address_num):
+    def _constrain_revision_num(self, solution, max_revision_num):
         x = solution.get_x()
-        return max_address_num - x.sum()
+        return max_revision_num - x.sum()
 
-    def zoopt_get_solution(self, pred_res, pred_res_prob, y, max_address_num):
+    def zoopt_get_solution(self, pred_res, pred_res_prob, y, max_revision_num):
         """Get the optimal solution using the Zoopt library.
 
         Parameters
@@ -116,8 +116,8 @@ class ReasonerBase(abc.ABC):
             List of probabilities for predicted results.
         y : str
             Ground truth for the predicted results.
-        max_address_num : int or float
-            Maximum number of addresses to use. If float, represents the fraction of total addresses to use.
+        max_revision_num : int
+            Maximum number of revisiones to use.
 
         Returns
         -------
@@ -127,16 +127,16 @@ class ReasonerBase(abc.ABC):
         length = len(flatten(pred_res))
         dimension = Dimension(size=length, regs=[[0, 1]] * length, tys=[False] * length)
         objective = Objective(
-            lambda sol: self.zoopt_address_score(pred_res, pred_res_prob, y, sol),
+            lambda sol: self.zoopt_revision_score(pred_res, pred_res_prob, y, sol),
             dim=dimension,
-            constraint=lambda sol: self._constrain_address_num(sol, max_address_num),
+            constraint=lambda sol: self._constrain_revision_num(sol, max_revision_num),
         )
         parameter = Parameter(budget=100, intermediate_result=False, autoset=True)
         solution = Opt.min(objective, parameter).get_x()
         return solution
     
-    def address_by_idx(self, pred_res, y, address_idx):
-        """Get the addresses corresponding to the given indices.
+    def revise_by_idx(self, pred_res, y, revision_idx):
+        """Get the revisiones corresponding to the given indices.
 
         Parameters
         ----------
@@ -144,15 +144,15 @@ class ReasonerBase(abc.ABC):
             List of predicted results.
         y : str
             Ground truth for the predicted results.
-        address_idx : array-like
-            Indices of the addresses to retrieve.
+        revision_idx : array-like
+            Indices of the revisiones to retrieve.
 
         Returns
         -------
         list
-            The addresses corresponding to the given indices.
+            The revisiones corresponding to the given indices.
         """
-        return self.kb.address_by_idx(pred_res, y, address_idx)
+        return self.kb.revise_by_idx(pred_res, y, revision_idx)
 
     def abduce(self, data, max_revision=-1, require_more_revision=0):
         """Perform abduction on the given data.
@@ -162,34 +162,34 @@ class ReasonerBase(abc.ABC):
         data : tuple
             Tuple containing the predicted results, predicted result probabilities, and y.
      max_revision : int or float, optional
-            Maximum number of addresses to use. If float, represents the fraction of total addresses to use. 
-            If -1, use all addresses. Defaults to -1.
+            Maximum number of revisiones to use. If float, represents the fraction of total revisiones to use. 
+            If -1, use all revisiones. Defaults to -1.
         require_more_revision : int, optional
-            Number of additional addresses to require. Defaults to 0.
+            Number of additional revisiones to require. Defaults to 0.
 
         Returns
         -------
         list
-            The abduced addresses.
+            The abduced revisiones.
         """
         pred_res, pred_res_prob, y = data
         
         assert(type(max_revision) in (int, float))
         if max_revision == -1:
-            max_address_num = len(flatten(pred_res))
+            max_revision_num = len(flatten(pred_res))
         elif type(max_revision) == float:
             assert(max_revision >= 0 and max_revision <= 1)
-            max_address_num = round(len(flatten(pred_res)) * max_revision)
+            max_revision_num = round(len(flatten(pred_res)) * max_revision)
         else:
             assert(max_revision >= 0)
-            max_address_num = max_revision
+            max_revision_num = max_revision
 
         if self.zoopt:
-            solution = self.zoopt_get_solution(pred_res, pred_res_prob, y, max_address_num)
-            address_idx = np.where(solution != 0)[0]
-            candidates = self.address_by_idx(pred_res, y, address_idx)
+            solution = self.zoopt_get_solution(pred_res, pred_res_prob, y, max_revision_num)
+            revision_idx = np.where(solution != 0)[0]
+            candidates = self.revise_by_idx(pred_res, y, revision_idx)
         else:
-            candidates = self.kb.abduce_candidates(pred_res, y, max_address_num, require_more_revision)
+            candidates = self.kb.abduce_candidates(pred_res, y, max_revision_num, require_more_revision)
 
         candidate = self._get_one_candidate(pred_res, pred_res_prob, candidates)
         return candidate
@@ -204,15 +204,15 @@ class ReasonerBase(abc.ABC):
         Y : list
             List of ground truths.
      max_revision : int or float, optional
-            Maximum number of addresses to use. If float, represents the fraction of total addresses to use. 
-            If -1, use all addresses. Defaults to -1.
+            Maximum number of revisiones to use. If float, represents the fraction of total revisiones to use. 
+            If -1, use all revisiones. Defaults to -1.
         require_more_revision : int, optional
-            Number of additional addresses to require. Defaults to 0.
+            Number of additional revisiones to require. Defaults to 0.
 
         Returns
         -------
         list
-            The abduced addresses.
+            The abduced revisiones.
         """
         return [self.abduce((z, prob, y), max_revision, require_more_revision) for z, prob, y in zip(Z['cls'], Z['prob'], Y)]
     
@@ -440,20 +440,20 @@ if __name__ == '__main__':
         def __init__(self, kb, dist_func='hamming'):
             super().__init__(kb, dist_func, zoopt=True)
     
-        def _address_by_idxs(self, pred_res, y, all_address_flag, idxs):
+        def _revise_by_idxs(self, pred_res, y, all_revision_flag, idxs):
             pred = []
             k = []
-            address_flag = []
+            revision_flag = []
             for idx in idxs:
                 pred.append(pred_res[idx])
                 k.append(y[idx])
-                address_flag += list(all_address_flag[idx])
-            address_idx = np.where(np.array(address_flag) != 0)[0]   
-            candidate = self.address_by_idx(pred, k, address_idx)
+                revision_flag += list(all_revision_flag[idx])
+            revision_idx = np.where(np.array(revision_flag) != 0)[0]   
+            candidate = self.revise_by_idx(pred, k, revision_idx)
             return candidate
         
-        def zoopt_address_score(self, pred_res, pred_res_prob, y, sol): 
-            all_address_flag = reform_idx(sol.get_x(), pred_res)
+        def zoopt_revision_score(self, pred_res, pred_res_prob, y, sol): 
+            all_revision_flag = reform_idx(sol.get_x(), pred_res)
             lefted_idxs = [i for i in range(len(pred_res))]
             candidate_size = []         
             while lefted_idxs:
@@ -464,7 +464,7 @@ if __name__ == '__main__':
                 for idx in range(-1, len(pred_res)):
                     if (not idx in idxs) and (idx >= 0):
                         idxs.append(idx)
-                    candidate = self._address_by_idxs(pred_res, y, all_address_flag, idxs)
+                    candidate = self._revise_by_idxs(pred_res, y, all_revision_flag, idxs)
                     if len(candidate) == 0:
                         if len(idxs) > 1:
                             idxs.pop()
