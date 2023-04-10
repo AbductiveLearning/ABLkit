@@ -117,7 +117,7 @@ class ReasonerBase(abc.ABC):
         y : str
             Ground truth for the predicted results.
         max_revision_num : int
-            Maximum number of revisiones to use.
+            Maximum number of revisions to use.
 
         Returns
         -------
@@ -136,7 +136,7 @@ class ReasonerBase(abc.ABC):
         return solution
     
     def revise_by_idx(self, pred_res, y, revision_idx):
-        """Get the revisiones corresponding to the given indices.
+        """Get the revisions corresponding to the given indices.
 
         Parameters
         ----------
@@ -145,12 +145,12 @@ class ReasonerBase(abc.ABC):
         y : str
             Ground truth for the predicted results.
         revision_idx : array-like
-            Indices of the revisiones to retrieve.
+            Indices of the revisions to retrieve.
 
         Returns
         -------
         list
-            The revisiones corresponding to the given indices.
+            The revisions corresponding to the given indices.
         """
         return self.kb.revise_by_idx(pred_res, y, revision_idx)
 
@@ -162,15 +162,15 @@ class ReasonerBase(abc.ABC):
         data : tuple
             Tuple containing the predicted results, predicted result probabilities, and y.
      max_revision : int or float, optional
-            Maximum number of revisiones to use. If float, represents the fraction of total revisiones to use. 
-            If -1, use all revisiones. Defaults to -1.
+            Maximum number of revisions to use. If float, represents the fraction of total revisions to use. 
+            If -1, use all revisions. Defaults to -1.
         require_more_revision : int, optional
-            Number of additional revisiones to require. Defaults to 0.
+            Number of additional revisions to require. Defaults to 0.
 
         Returns
         -------
         list
-            The abduced revisiones.
+            The abduced revisions.
         """
         pred_res, pred_res_prob, y = data
         max_revision_num = float_parameter(max_revision, len(flatten(pred_res)))
@@ -195,15 +195,15 @@ class ReasonerBase(abc.ABC):
         Y : list
             List of ground truths.
      max_revision : int or float, optional
-            Maximum number of revisiones to use. If float, represents the fraction of total revisiones to use. 
-            If -1, use all revisiones. Defaults to -1.
+            Maximum number of revisions to use. If float, represents the fraction of total revisions to use. 
+            If -1, use all revisions. Defaults to -1.
         require_more_revision : int, optional
-            Number of additional revisiones to require. Defaults to 0.
+            Number of additional revisions to require. Defaults to 0.
 
         Returns
         -------
         list
-            The abduced revisiones.
+            The abduced revisions.
         """
         return [self.abduce((z, prob, y), max_revision, require_more_revision) for z, prob, y in zip(Z['cls'], Z['prob'], Y)]
     
