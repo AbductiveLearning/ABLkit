@@ -161,7 +161,7 @@ class ReasonerBase(abc.ABC):
         ----------
         data : tuple
             Tuple containing the predicted results, predicted result probabilities, and y.
-     max_revision : int or float, optional
+        max_revision : int or float, optional
             Maximum number of revisions to use. If float, represents the fraction of total revisions to use. 
             If -1, use all revisions. Defaults to -1.
         require_more_revision : int, optional
@@ -194,7 +194,7 @@ class ReasonerBase(abc.ABC):
             List of predicted results and result probablities.
         Y : list
             List of ground truths.
-     max_revision : int or float, optional
+        max_revision : int or float, optional
             Maximum number of revisions to use. If float, represents the fraction of total revisions to use. 
             If -1, use all revisions. Defaults to -1.
         require_more_revision : int, optional

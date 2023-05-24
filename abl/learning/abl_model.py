@@ -64,7 +64,7 @@ class ABLModel:
     train(X: List[List[Any]], Y: List[Any])
         Train the model on the given data.
     """
-    def __init__(self, base_model, pseudo_label_list: List[Any]):
+    def __init__(self, base_model, pseudo_label_list: List[Any]) -> None:
         self.cls_list = []
         self.cls_list.append(base_model)
 
