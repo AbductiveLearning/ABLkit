@@ -45,7 +45,7 @@ class ABLModel:
         self.classifier_list = []
         self.classifier_list.append(base_model)
 
-    def predict(self, X: List[List[Any]], mapping: Optional[dict]) -> dict:
+    def predict(self, X: List[List[Any]], mapping: Optional[dict] = None) -> dict:
         """
         Predict the labels and probabilities for the given data.
 
@@ -120,6 +120,6 @@ class ABLModel:
         ret_Y = []
         for mark in marks:
             end_mark = begin_mark + mark
-            ret_Y.append(Y[begin_mark:end_mark])
+            ret_Y.append(list(Y[begin_mark:end_mark]))
             begin_mark = end_mark
         return ret_Y
