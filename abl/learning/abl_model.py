@@ -87,8 +87,7 @@ class ABLModel:
             The accuracy score for the given data.
         """
         data_X, _ = self.merge_data(X)
-        _data_Y, _ = self.merge_data(Y)
-        data_Y = list(map(lambda y: self.mapping[y], _data_Y))
+        data_Y, _ = self.merge_data(Y)
         score = self.classifier_list[0].score(X=data_X, y=data_Y)
         return score
 
@@ -104,8 +103,7 @@ class ABLModel:
             The true labels for the given data.
         """
         data_X, _ = self.merge_data(X)
-        _data_Y, _ = self.merge_data(Y)
-        data_Y = list(map(lambda y: self.mapping[y], _data_Y))
+        data_Y, _ = self.merge_data(Y)
         self.classifier_list[0].fit(X=data_X, y=data_Y)
 
     @staticmethod
