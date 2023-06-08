@@ -6,9 +6,10 @@ class ABLMetric(BaseMetric):
     def __init__(self, prefix: Optional[str] = None) -> None:
         super().__init__(prefix)
 
-    def process(self, data_samples: Sequence[dict], logic_forward: Callable) -> None:
+    def process(self, data_samples: Sequence[dict]) -> None:
         pred_pseudo_label = data_samples["pred_pseudo_label"]
         gt_Y = data_samples["Y"]
+        logic_forward = data_samples["logic_forward"]
 
         for pred_z, y in zip(pred_pseudo_label, gt_Y):
             if logic_forward(pred_z) == y:
