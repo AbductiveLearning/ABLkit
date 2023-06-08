@@ -201,7 +201,7 @@ class ReasonerBase(abc.ABC):
             candidates = self.revise_by_idx(pseudo_label, y, revision_idx)
         else:
             candidates = self.kb.abduce_candidates(
-                pred_res, y, max_revision_num, require_more_revision
+                pseudo_label, y, max_revision_num, require_more_revision
             )
 
         candidate = self._get_one_candidate(pseudo_label, pred_res_prob, candidates)

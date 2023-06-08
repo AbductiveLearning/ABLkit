@@ -52,7 +52,7 @@ def train(model, abducer, train_data, epochs=50, sample=-1, verbose=-1):
 
     # Set default parameters
     sample_num = float_parameter(sample, len(train_X))
-    part_num = len(train_X) // sample_num + 1
+    part_num = (len(train_X) - 1) // sample_num + 1
 
     if verbose < 1:
         verbose = epochs
@@ -76,10 +76,12 @@ def train(model, abducer, train_data, epochs=50, sample=-1, verbose=-1):
 
             ## TODO: change verbose
             if ((seg_idx + 1) % verbose == 0) or (seg_idx == epochs - 1):
-                res = result_statistics(preds_res["cls"], Z, Y, abducer.kb.logic_forward, char_acc_flag)
+                pseudo_label = [[abducer.mapping[label] for label in formula] for formula in preds_res['label']]
+                res = result_statistics(pseudo_label, Z, Y, abducer.kb.logic_forward, char_acc_flag)
                 INFO("seg: ", seg_idx + 1, " ", res)
 
             finetune_X, finetune_Z = filter_data(X, abduced_Z)
+            finetune_Z = [[abducer.remapping[symbol] for symbol in formula] for formula in finetune_Z]
             if len(finetune_X) > 0:
                 # model.valid(finetune_X, finetune_Z)
                 train_func(finetune_X, finetune_Z)
