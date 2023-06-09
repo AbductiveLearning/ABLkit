@@ -1,5 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from typing import Any, List, Optional, Sequence
+from ..utils import print_log
+
+import logging
 
 
 class BaseMetric(metaclass=ABCMeta):
@@ -60,13 +63,13 @@ class BaseMetric(metaclass=ABCMeta):
             dict: Evaluation metrics dict on the val dataset. The keys are the
             names of the metrics, and the values are corresponding results.
         """
-        # if len(self.results) == 0:
-        #     print_log(
-        #         f'{self.__class__.__name__} got empty `self.results`. Please '
-        #         'ensure that the processed results are properly added into '
-        #         '`self.results` in `process` method.',
-        #         logger='current',
-        #         level=logging.WARNING)
+        if len(self.results) == 0:
+            print_log(
+                f'{self.__class__.__name__} got empty `self.results`. Please '
+                'ensure that the processed results are properly added into '
+                '`self.results` in `process` method.',
+                logger='current',
+                level=logging.WARNING)
 
         metrics = self.compute_metrics(self.results)
         # Add prefix to metric names

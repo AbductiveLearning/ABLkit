@@ -13,10 +13,6 @@ from itertools import chain
 from typing import List, Any, Optional
 
 
-def get_part_data(X, i):
-    return list(map(lambda x: x[i], X))
-
-
 class ABLModel:
     """
     Serialize data and provide a unified interface for different machine learning models.

@@ -16,13 +16,12 @@ sys.path.append("..")
 
 import torch
 import numpy
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader
 from ..utils.logger import print_log
 from ..dataset import ClassificationDataset
 
 import os
-from multiprocessing import Pool
-from typing import List, Any, T, Tuple, Optional, Callable
+from typing import List, Any, T, Optional, Callable
 
 
 class BasicNN:
