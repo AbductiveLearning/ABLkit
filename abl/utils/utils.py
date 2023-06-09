@@ -1,5 +1,4 @@
 import numpy as np
-from .plog import INFO
 from itertools import chain
 
 def flatten(l):
