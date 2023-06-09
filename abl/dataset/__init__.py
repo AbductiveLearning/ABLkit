@@ -1,1 +1,3 @@
-from .base_dataset import BaseDataset
+from .bridge_dataset import BridgeDataset
+from .classification_dataset import ClassificationDataset
+from .regression_dataset import RegressionDataset
