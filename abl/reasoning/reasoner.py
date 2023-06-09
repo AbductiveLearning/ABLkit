@@ -188,26 +188,25 @@ class ReasonerBase(abc.ABC):
         list
             The abduced revisions.
         """
-        pred_res, pred_res_prob, y = data
-        pseudo_label = [self.mapping[_idx] for _idx in pred_res]
+        pred_label, pred_prob, pred_pseudo_label, y = data
 
-        max_revision_num = float_parameter(max_revision, len(flatten(pred_res)))
+        max_revision_num = float_parameter(max_revision, len(flatten(pred_label)))
 
         if self.zoopt:
             solution = self.zoopt_get_solution(
-                pred_res, pseudo_label, pred_res_prob, y, max_revision_num
+                pred_label, pred_pseudo_label, pred_prob, y, max_revision_num
             )
             revision_idx = np.where(solution != 0)[0]
-            candidates = self.revise_by_idx(pseudo_label, y, revision_idx)
+            candidates = self.revise_by_idx(pred_pseudo_label, y, revision_idx)
         else:
             candidates = self.kb.abduce_candidates(
-                pseudo_label, y, max_revision_num, require_more_revision
+                pred_pseudo_label, y, max_revision_num, require_more_revision
             )
 
-        candidate = self._get_one_candidate(pseudo_label, pred_res_prob, candidates)
+        candidate = self._get_one_candidate(pred_pseudo_label, pred_prob, candidates)
         return candidate
 
-    def batch_abduce(self, Z, Y, max_revision=-1, require_more_revision=0):
+    def batch_abduce(self, pred_label, pred_prob, pred_pseudo_label, Y, max_revision=-1, require_more_revision=0):
         """Perform abduction on the given data in batches.
 
         Parameters
@@ -228,8 +227,8 @@ class ReasonerBase(abc.ABC):
             The abduced revisions.
         """
         return [
-            self.abduce((z, prob, y), max_revision, require_more_revision)
-            for z, prob, y in zip(Z["label"], Z["prob"], Y)
+            self.abduce(data, max_revision, require_more_revision)
+            for data in list(zip(pred_label, pred_prob, pred_pseudo_label, Y))
         ]
 
     # def _batch_abduce_helper(self, args):

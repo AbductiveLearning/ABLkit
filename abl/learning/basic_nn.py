@@ -17,121 +17,12 @@ sys.path.append("..")
 import torch
 import numpy
 from torch.utils.data import Dataset, DataLoader
+from ..utils.logger import print_log
+from ..dataset import ClassificationDataset
 
 import os
 from multiprocessing import Pool
 from typing import List, Any, T, Tuple, Optional, Callable
-
-
-class BasicDataset(Dataset):
-    def __init__(self, X: List[Any], Y: List[Any]):
-        """Initialize a basic dataset.
-
-        Parameters
-        ----------
-        X : List[Any]
-            A list of objects representing the input data.
-        Y : List[Any]
-            A list of objects representing the output data.
-        """
-        self.X = X
-        self.Y = Y
-
-    def __len__(self):
-        """Return the length of the dataset.
-
-        Returns
-        -------
-        int
-            The length of the dataset.
-        """
-        return len(self.X)
-
-    def __getitem__(self, index: int) -> Tuple[Any, Any]:
-        """Get an item from the dataset.
-
-        Parameters
-        ----------
-        index : int
-            The index of the item to retrieve.
-
-        Returns
-        -------
-        Tuple[Any, Any]
-            A tuple containing the input and output data at the specified index.
-        """
-        if index >= len(self):
-            raise ValueError("index range error")
-
-        img = self.X[index]
-        label = self.Y[index]
-
-        return (img, label)
-
-
-class XYDataset(Dataset):
-    def __init__(self, X: List[Any], Y: List[int], transform: Callable[..., Any] = None):
-        """
-        Initialize the dataset used for classification task.
-
-        Parameters
-        ----------
-        X : List[Any]
-            The input data.
-        Y : List[int]
-            The target data.
-        transform : Callable[..., Any], optional
-            A function/transform that takes in an object and returns a transformed version. Defaults to None.
-        """
-        self.X = X
-        self.Y = torch.LongTensor(Y)
-
-        self.n_sample = len(X)
-        self.transform = transform
-
-    def __len__(self) -> int:
-        """
-        Return the length of the dataset.
-
-        Returns
-        -------
-        int
-            The length of the dataset.
-        """
-        return len(self.X)
-
-    def __getitem__(self, index: int) -> Tuple[Any, torch.Tensor]:
-        """
-        Get the item at the given index.
-
-        Parameters
-        ----------
-        index : int
-            The index of the item to get.
-
-        Returns
-        -------
-        Tuple[Any, torch.Tensor]
-            A tuple containing the object and its label.
-        """
-        if index >= len(self):
-            raise ValueError("index range error")
-
-        img = self.X[index]
-        if self.transform is not None:
-            img = self.transform(img)
-
-        label = self.Y[index]
-
-        return (img, label)
-
-
-class FakeRecorder:
-    def __init__(self):
-        pass
-
-    def print(self, *x):
-        pass
 
 
 class BasicNN:
@@ -164,8 +55,6 @@ class BasicNN:
         A function/transform that takes in an object and returns a transformed version. Defaults to None.
     collate_fn : Callable[[List[T]], Any], optional
         The function used to collate data, by default None.
-    recorder : Any, optional
-        The recorder used to record training progress, by default None.
 
     Attributes
     ----------
@@ -187,8 +76,6 @@ class BasicNN:
         The transformation function used for data augmentation.
     device : torch.device
         The device on which the model will be trained or used for prediction.
-    recorder : Any
-        The recorder used to record training progress.
     save_interval : Optional[int]
         The interval at which to save the model during training.
     save_dir : Optional[str]
@@ -232,9 +119,7 @@ class BasicNN:
         save_dir: Optional[str] = None,
         transform: Callable[..., Any] = None,
         collate_fn: Callable[[List[T]], Any] = None,
-        recorder=None,
     ):
-
         self.model = model.to(device)
 
         self.batch_size = batch_size
@@ -247,22 +132,14 @@ class BasicNN:
         self.transform = transform
         self.device = device
 
-        if recorder is None:
-            recorder = FakeRecorder()
-        self.recorder = recorder
-
         self.save_interval = save_interval
         self.save_dir = save_dir
         self.collate_fn = collate_fn
 
     def _fit(self, data_loader, n_epoch, stop_loss):
-        recorder = self.recorder
-        recorder.print("model fitting")
-
         min_loss = 1e10
         for epoch in range(n_epoch):
             loss_value = self.train_epoch(data_loader)
-            recorder.print(f"{epoch}/{n_epoch} model training loss is {loss_value}")
             if min_loss < 0 or loss_value < min_loss:
                 min_loss = loss_value
             if self.save_interval is not None and (epoch + 1) % self.save_interval == 0:
@@ -273,8 +150,7 @@ class BasicNN:
                 self.save(epoch + 1, self.save_dir)
             if stop_loss is not None and loss_value < stop_loss:
                 break
-        recorder.print("Model fitted, minimal loss is ", min_loss)
-        return loss_value
+        return min_loss
 
     def fit(
         self, data_loader: DataLoader = None, X: List[Any] = None, y: List[int] = None
@@ -374,8 +250,6 @@ class BasicNN:
         numpy.ndarray
             The predicted class of the input data.
         """
-        recorder = self.recorder
-        recorder.print("Start Predict Class ", print_prefix)
 
         if data_loader is None:
             data_loader = self._data_loader(X)
@@ -404,8 +278,6 @@ class BasicNN:
         numpy.ndarray
             The predicted probability of each class for the input data.
         """
-        recorder = self.recorder
-        recorder.print("Start Predict Probability ", print_prefix)
 
         if data_loader is None:
             data_loader = self._data_loader(X)
@@ -467,14 +339,13 @@ class BasicNN:
         float
             The accuracy of the model.
         """
-        recorder = self.recorder
-        recorder.print("Start validation ", print_prefix)
+        print_log(f"Start machine learning model validation")
 
         if data_loader is None:
             data_loader = self._data_loader(X, y)
         mean_loss, accuracy = self._score(data_loader)
-        recorder.print(
-            "[%s] mean loss: %f, accuray: %f" % (print_prefix, mean_loss, accuracy)
+        print_log(
+            f"{print_prefix} mean loss: {mean_loss:.3f}, accuray: {accuracy:.3f}"
         )
         return accuracy
 
@@ -503,7 +374,7 @@ class BasicNN:
 
         if y is None:
             y = [0] * len(X)
-        dataset = XYDataset(X, y, transform=transform)
+        dataset = ClassificationDataset(X, y, transform=transform)
         sampler = None
         data_loader = DataLoader(
             dataset,
@@ -526,10 +397,9 @@ class BasicNN:
         save_dir : str, optional
             The directory to save the model, by default ""
         """
-        recorder = self.recorder
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
-        recorder.print("Saving model and opter")
+            print_log(f"Checkpoints will be saved to {save_dir}")
         save_path = os.path.join(save_dir, str(epoch_id) + "_net.pth")
         torch.save(self.model.state_dict(), save_path)
 
@@ -547,8 +417,9 @@ class BasicNN:
         load_dir : str, optional
             The directory to load the model, by default ""
         """
-        recorder = self.recorder
-        recorder.print("Loading model and opter")
+
+        print_log(f"Loads checkpoint by local backend from dir: {load_dir}")
+
         load_path = os.path.join(load_dir, str(epoch_id) + "_net.pth")
         self.model.load_state_dict(torch.load(load_path))
 
