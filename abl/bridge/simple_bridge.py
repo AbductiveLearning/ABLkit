@@ -75,17 +75,16 @@ class SimpleBridge(BaseBridge):
                 abduced_label = self.pseudo_label_to_label(abduced_pseudo_label)
                 min_loss = self.model.train(X, abduced_label)
 
-                print_log(f"Epoch(train) [{epoch}] [{seg_idx:3}/{len(data_loader)}] minimal_loss is {min_loss:.5f}", logger="current")
+                print_log(
+                    f"Epoch(train) [{epoch + 1}] [{seg_idx:3}/{len(data_loader)}] minimal_loss is {min_loss:.5f}",
+                    logger="current",
+                )
 
             if (epoch + 1) % eval_interval == 0 or epoch == epochs - 1:
                 print_log(f"Evaluation start: Epoch(val) [{epoch}]", logger="current")
                 self.valid(train_data)
 
-    def test(self, test_data):
-        return super().test(test_data)
-
     def _valid(self, data_loader):
-        res = dict()
         for X, Z, Y in data_loader:
             pred_label, pred_prob = self.predict(X)
             pred_pseudo_label = self.label_to_pseudo_label(pred_label)
@@ -97,10 +96,12 @@ class SimpleBridge(BaseBridge):
                 Y=Y,
                 logic_forward=self.abducer.kb.logic_forward,
             )
-            
             for metric in self.metric_list:
                 metric.process(data_samples)
-                res.update(metric.evaluate())
+
+        res = dict()
+        for metric in self.metric_list:
+            res.update(metric.evaluate())
         msg = "Evaluation ended, "
         for k, v in res.items():
             msg += k + f": {v:.3f} "
@@ -115,4 +116,5 @@ class SimpleBridge(BaseBridge):
         )
         self._valid(data_loader)
 
-        return super().valid(valid_data)
+    def test(self, test_data, batch_size=1000):
+        self.valid(test_data, batch_size)
