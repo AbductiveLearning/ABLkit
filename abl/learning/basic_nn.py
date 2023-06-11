@@ -338,14 +338,12 @@ class BasicNN:
         float
             The accuracy of the model.
         """
-        print_log(f"Start machine learning model validation")
+        print_log(f"Start machine learning model validation", logger="current")
 
         if data_loader is None:
             data_loader = self._data_loader(X, y)
         mean_loss, accuracy = self._score(data_loader)
-        print_log(
-            f"{print_prefix} mean loss: {mean_loss:.3f}, accuray: {accuracy:.3f}"
-        )
+        print_log(f"{print_prefix} mean loss: {mean_loss:.3f}, accuray: {accuracy:.3f}", logger="current")
         return accuracy
 
     def _data_loader(
@@ -385,7 +383,7 @@ class BasicNN:
         )
         return data_loader
 
-    def save(self, epoch_id: int, save_dir: str = ""):
+    def save(self, epoch_id: int = 0, save_dir: str = None, save_path: str = None):
         """
         Save the model and the optimizer.
 
@@ -396,16 +394,23 @@ class BasicNN:
         save_dir : str, optional
             The directory to save the model, by default ""
         """
-        if not os.path.exists(save_dir):
+        if save_dir and (not os.path.exists(save_dir)):
             os.makedirs(save_dir)
-            print_log(f"Checkpoints will be saved to {save_dir}")
-        save_path = os.path.join(save_dir, str(epoch_id) + "_net.pth")
-        torch.save(self.model.state_dict(), save_path)
+            print_log(f"Checkpoints will be saved to {save_dir}", logger="current")
+        
+        if save_path is None:
+            save_path = os.path.join(save_dir, str(epoch_id) + ".pth")
 
-        save_path = os.path.join(save_dir, str(epoch_id) + "_opt.pth")
-        torch.save(self.optimizer.state_dict(), save_path)
+        print_log(f"Checkpoints will be saved to {save_path}", logger="current")
 
-    def load(self, epoch_id: int, load_dir: str = ""):
+        save_parma_dic = {
+            "model": self.model.state_dict(),
+            "optimizer": self.optimizer.state_dict(),
+        }
+
+        torch.save(save_parma_dic, save_path)
+
+    def load(self, epoch_id: int = 0, load_dir: str = "", load_path: str = None):
         """
         Load the model and the optimizer.
 
@@ -417,13 +422,16 @@ class BasicNN:
             The directory to load the model, by default ""
         """
 
-        print_log(f"Loads checkpoint by local backend from dir: {load_dir}")
-
-        load_path = os.path.join(load_dir, str(epoch_id) + "_net.pth")
-        self.model.load_state_dict(torch.load(load_path))
-
-        load_path = os.path.join(load_dir, str(epoch_id) + "_opt.pth")
-        self.optimizer.load_state_dict(torch.load(load_path))
+        if load_path is not None:
+            print_log(f"Loads checkpoint by local backend from path: {load_path}", logger="current")
+        else:
+            print_log(f"Loads checkpoint by local backend from dir: {load_dir}", logger="current")
+            load_path = os.path.join(load_dir, str(epoch_id) + ".pth")
+        
+        param_dic = torch.load(load_path)
+        self.model.load_state_dict(param_dic["model"])
+        if "optimizer" in param_dic.keys():
+            self.optimizer.load_state_dict(param_dic["optimizer"])
 
 
 if __name__ == "__main__":
