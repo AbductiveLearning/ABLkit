@@ -105,7 +105,7 @@ class ABLModel:
     def save(self, *args, **kwargs) -> None:
         _model = self.classifier_list[0]
         if hasattr(_model, "save"):
-            self._model.save(*args, **kwargs)
+            _model.save(*args, **kwargs)
         else:
             raise NotImplementedError(f"{type(_model).__name__} object dosen't have the save method")
         
