@@ -28,6 +28,9 @@ class ReasonerBase(abc.ABC):
             )
         else:
             self.mapping = mapping
+        self.set_remapping()
+    
+    def set_remapping(self):
         self.remapping = dict(zip(self.mapping.values(), self.mapping.keys()))
 
     def _get_cost_list(self, pseudo_label, pred_res_prob, candidates):
