@@ -1,8 +1,7 @@
-import abc
 import numpy as np
 from multiprocessing import Pool
 from zoopt import Dimension, Objective, Parameter, Opt
-from ..utils.utils import (
+from abl.utils.utils import (
     confidence_dist,
     flatten,
     reform_idx,
@@ -11,7 +10,7 @@ from ..utils.utils import (
 )
 
 
-class ReasonerBase(abc.ABC):
+class ReasonerBase():
     def __init__(self, kb, dist_func="hamming", mapping=None, zoopt=False):
         if not (dist_func == "hamming" or dist_func == "confidence"):
             raise NotImplementedError
@@ -50,7 +49,7 @@ class ReasonerBase(abc.ABC):
             return hamming_dist(pseudo_label, candidates)
 
         elif self.dist_func == "confidence":
-            candidates = [list(map(lambda x: self.remapping[x], c)) for c in candidates]
+            candidates = [[self.remapping[x] for x in c] for c in candidates]
             return confidence_dist(pred_res_prob, candidates)
 
     def _get_one_candidate(self, pseudo_label, pred_res_prob, candidates):

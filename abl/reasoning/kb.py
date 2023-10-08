@@ -5,7 +5,7 @@ import numpy as np
 from collections import defaultdict
 from itertools import product, combinations
 
-from ..utils.utils import flatten, reform_idx, hamming_dist, check_equal, to_hashable, hashable_to_list
+from abl.utils.utils import flatten, reform_idx, hamming_dist, check_equal, to_hashable, hashable_to_list
 
 from multiprocessing import Pool
 
@@ -86,14 +86,14 @@ class KBBase(ABC):
             for idx in range(key_idx - 1, 0, -1):
                 k = key_list[idx]
                 if abs(k - y) <= self.max_err:
-                    all_candidates += potential_candidates[k]
+                    all_candidates.extend(potential_candidates[k])
                 else:
                     break
                 
             for idx in range(key_idx, len(key_list)):
                 k = key_list[idx]
                 if abs(k - y) <= self.max_err:
-                    all_candidates += potential_candidates[k]
+                    all_candidates.extend(potential_candidates[k])
                 else:
                     break
             return all_candidates
@@ -139,7 +139,7 @@ class KBBase(ABC):
             if revision_num == 0 and check_equal(self.logic_forward(pred_res), y, self.max_err):
                 candidates.append(pred_res)
             elif revision_num > 0:
-                candidates += self._revision(revision_num, pred_res, y)
+                candidates.extend(self._revision(revision_num, pred_res, y))
             if len(candidates) > 0:
                 min_revision_num = revision_num
                 break
@@ -149,7 +149,7 @@ class KBBase(ABC):
         for revision_num in range(min_revision_num + 1, min_revision_num + require_more_revision + 1):
             if revision_num > max_revision_num:
                 return candidates
-            candidates += self._revision(revision_num, pred_res, y)
+            candidates.extend(self._revision(revision_num, pred_res, y))
         return candidates
     
     @lru_cache(maxsize=None)
