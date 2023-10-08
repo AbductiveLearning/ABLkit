@@ -13,18 +13,18 @@ from functools import lru_cache
 import pyswip
 
 class KBBase(ABC):
-    def __init__(self, pseudo_label_list, len_list=None, GKB_flag=False, max_err=0, use_cache=True):
+    def __init__(self, pseudo_label_list, prebuild_GKB=False, GKB_len_list=None, max_err=0, use_cache=True):
         # TODO：添加一下类型检查，比如
         # if not isinstance(X, (np.ndarray, spmatrix)):
         #     raise TypeError("X should be numpy array or sparse matrix")
 
         self.pseudo_label_list = pseudo_label_list
-        self.len_list = len_list
-        self.GKB_flag = GKB_flag
+        self.prebuild_GKB = prebuild_GKB
+        self.GKB_len_list = GKB_len_list
         self.max_err = max_err
         self.use_cache = use_cache
 
-        if GKB_flag:
+        if prebuild_GKB:
             self.base = {}
             X, Y = self._get_GKB()
             for x, y in zip(X, Y):
@@ -44,7 +44,7 @@ class KBBase(ABC):
     # Parallel _get_GKB
     def _get_GKB(self):
         X, Y = [], []
-        for length in self.len_list:
+        for length in self.GKB_len_list:
             arg_list = []
             for pre_x in self.pseudo_label_list:
                 post_x_it = product(self.pseudo_label_list, repeat=length - 1)
@@ -66,7 +66,7 @@ class KBBase(ABC):
         pass
 
     def abduce_candidates(self, pred_res, y, max_revision_num, require_more_revision=0):
-        if self.GKB_flag:
+        if self.prebuild_GKB:
             return self._abduce_by_GKB(pred_res, y, max_revision_num, require_more_revision)
         else:
             if not self.use_cache:
@@ -99,7 +99,7 @@ class KBBase(ABC):
             return all_candidates
     
     def _abduce_by_GKB(self, pred_res, y, max_revision_num, require_more_revision):
-        if self.base == {} or len(pred_res) not in self.len_list:
+        if self.base == {} or len(pred_res) not in self.GKB_len_list:
             return []
         
         all_candidates = self._find_candidate_GKB(pred_res, y)

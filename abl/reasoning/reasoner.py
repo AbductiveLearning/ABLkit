@@ -18,18 +18,13 @@ class ReasonerBase(abc.ABC):
 
         self.kb = kb
         self.dist_func = dist_func
-        self.zoopt = zoopt
+        self.use_zoopt = zoopt
         if mapping is None:
-            self.mapping = dict(
-                zip(
-                    list(range(len(self.kb.pseudo_label_list))),
-                    self.kb.pseudo_label_list,
-                )
-            )
+            self.mapping = {index: label for index, label in enumerate(self.kb.pseudo_label_list)}
         else:
             self.mapping = mapping
         self.set_remapping()
-    
+
     def set_remapping(self):
         self.remapping = dict(zip(self.mapping.values(), self.mapping.keys()))
 
@@ -118,9 +113,7 @@ class ReasonerBase(abc.ABC):
         x = solution.get_x()
         return max_revision_num - x.sum()
 
-    def zoopt_get_solution(
-        self, pred_res, pseudo_label, pred_res_prob, y, max_revision_num
-    ):
+    def zoopt_get_solution(self, pred_res, pseudo_label, pred_res_prob, y, max_revision_num):
         """Get the optimal solution using the Zoopt library.
 
         Parameters
@@ -144,9 +137,7 @@ class ReasonerBase(abc.ABC):
         length = len(flatten(pred_res))
         dimension = Dimension(size=length, regs=[[0, 1]] * length, tys=[False] * length)
         objective = Objective(
-            lambda sol: self.zoopt_revision_score(
-                pred_res, pseudo_label, pred_res_prob, y, sol
-            ),
+            lambda sol: self.zoopt_revision_score(pred_res, pseudo_label, pred_res_prob, y, sol),
             dim=dimension,
             constraint=lambda sol: self._constrain_revision_num(sol, max_revision_num),
         )
@@ -192,19 +183,14 @@ class ReasonerBase(abc.ABC):
             The abduced revisions.
         """
         pred_label, pred_prob, pred_pseudo_label, y = data
-
         max_revision_num = float_parameter(max_revision, len(flatten(pred_label)))
 
-        if self.zoopt:
-            solution = self.zoopt_get_solution(
-                pred_label, pred_pseudo_label, pred_prob, y, max_revision_num
-            )
+        if self.use_zoopt:
+            solution = self.zoopt_get_solution(pred_label, pred_pseudo_label, pred_prob, y, max_revision_num)
             revision_idx = np.where(solution != 0)[0]
             candidates = self.revise_by_idx(pred_pseudo_label, y, revision_idx)
         else:
-            candidates = self.kb.abduce_candidates(
-                pred_pseudo_label, y, max_revision_num, require_more_revision
-            )
+            candidates = self.kb.abduce_candidates(pred_pseudo_label, y, max_revision_num, require_more_revision)
 
         candidate = self._get_one_candidate(pred_pseudo_label, pred_prob, candidates)
         return candidate
@@ -231,7 +217,7 @@ class ReasonerBase(abc.ABC):
         """
         return [
             self.abduce(data, max_revision, require_more_revision)
-            for data in list(zip(pred_label, pred_prob, pred_pseudo_label, Y))
+            for data in zip(pred_label, pred_prob, pred_pseudo_label, Y)
         ]
 
     # def _batch_abduce_helper(self, args):
@@ -267,144 +253,94 @@ if __name__ == "__main__":
         def __init__(
             self,
             pseudo_label_list=list(range(10)),
-            len_list=[2],
-            GKB_flag=False,
+            prebuild_GKB=False,
+            GKB_len_list=[2],
             max_err=0,
             use_cache=True,
         ):
-            super().__init__(pseudo_label_list, len_list, GKB_flag, max_err, use_cache)
+            super().__init__(pseudo_label_list, prebuild_GKB, GKB_len_list, max_err, use_cache)
 
         def logic_forward(self, nums):
             return sum(nums)
 
     print("add_KB with GKB:")
-    kb = add_KB(GKB_flag=True)
+    kb = add_KB(prebuild_GKB=True)
     reasoner = ReasonerBase(kb, "confidence")
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [8], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [8], max_revision=2, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob2}, [8], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob2, [[1, 1]], [8], max_revision=2, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [17], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [17], max_revision=2, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [17], max_revision=1, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [17], max_revision=1, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [20], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [20], max_revision=2, require_more_revision=0)
     print(res)
     print()
 
     print("add_KB without GKB:")
     kb = add_KB()
     reasoner = ReasonerBase(kb, "confidence")
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [8], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [8], max_revision=2, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob2}, [8], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob2, [[1, 1]], [8], max_revision=2, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [17], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [17], max_revision=2, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [17], max_revision=1, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [17], max_revision=1, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [20], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [20], max_revision=2, require_more_revision=0)
     print(res)
     print()
 
     print("add_KB without GKB:, no cache")
     kb = add_KB(use_cache=False)
     reasoner = ReasonerBase(kb, "confidence")
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [8], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [8], max_revision=2, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob2}, [8], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob2, [[1, 1]], [8], max_revision=2, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [17], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [17], max_revision=2, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [17], max_revision=1, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [17], max_revision=1, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [20], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [20], max_revision=2, require_more_revision=0)
     print(res)
     print()
 
     print("prolog_KB with add.pl:")
     kb = prolog_KB(
         pseudo_label_list=list(range(10)),
-        pl_file="../examples/mnist_add/datasets/add.pl",
+        pl_file="examples/mnist_add/datasets/add.pl",
     )
     reasoner = ReasonerBase(kb, "confidence")
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [8], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [8], max_revision=2, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob2}, [8], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob2, [[1, 1]], [8], max_revision=2, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [17], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [17], max_revision=2, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [17], max_revision=1, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [17], max_revision=1, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [20], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [20], max_revision=2, require_more_revision=0)
     print(res)
     print()
 
     print("prolog_KB with add.pl using zoopt:")
     kb = prolog_KB(
         pseudo_label_list=list(range(10)),
-        pl_file="../examples/mnist_add/datasets/add.pl",
+        pl_file="examples/mnist_add/datasets/add.pl",
     )
     reasoner = ReasonerBase(kb, "confidence", zoopt=True)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [8], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [8], max_revision=2, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob2}, [8], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob2, [[1, 1]], [8], max_revision=2, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [17], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [17], max_revision=2, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [17], max_revision=1, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [17], max_revision=1, require_more_revision=0)
     print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [[1, 1]], "prob": prob1}, [20], max_revision=2, require_more_revision=0
-    )
+    res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [20], max_revision=2, require_more_revision=0)
     print(res)
     print()
 
@@ -423,15 +359,13 @@ if __name__ == "__main__":
     kb = add_KB()
     reasoner = ReasonerBase(kb, "confidence")
     res = reasoner.batch_abduce(
-        {"cls": [[1, 1], [1, 2]], "prob": multiple_prob},
-        [4, 8],
+        [[1, 1], [1, 2]], multiple_prob, [[1, 1], [1, 2]], [4, 8],
         max_revision=2,
         require_more_revision=0,
     )
     print(res)
     res = reasoner.batch_abduce(
-        {"cls": [[1, 1], [1, 2]], "prob": multiple_prob},
-        [4, 8],
+        [[1, 1], [1, 2]], multiple_prob, [[1, 1], [1, 2]], [4, 8],
         max_revision=2,
         require_more_revision=1,
     )
@@ -456,12 +390,12 @@ if __name__ == "__main__":
                 "times",
                 "div",
             ],
-            len_list=[1, 3, 5, 7],
-            GKB_flag=False,
+            prebuild_GKB=False,
+            GKB_len_list=[1, 3, 5, 7],
             max_err=1e-3,
             use_cache=True,
         ):
-            super().__init__(pseudo_label_list, len_list, GKB_flag, max_err, use_cache)
+            super().__init__(pseudo_label_list, prebuild_GKB, GKB_len_list, max_err, use_cache)
 
         def _valid_candidate(self, formula):
             if len(formula) % 2 == 0:
@@ -492,25 +426,22 @@ if __name__ == "__main__":
             return eval("".join(formula))
 
     print("HWF_KB with GKB, max_err=0.1")
-    kb = HWF_KB(len_list=[1, 3, 5], GKB_flag=True, max_err=0.1)
+    kb = HWF_KB(prebuild_GKB=True, GKB_len_list=[1, 3, 5], max_err=0.1)
     reasoner = ReasonerBase(kb, "hamming")
     res = reasoner.batch_abduce(
-        {"cls": [["5", "+", "2"]], "prob": [None]},
-        [3],
+        [["5", "+", "2"]], [None], [[5,10,2]], [3],
         max_revision=2,
         require_more_revision=0,
     )
     print(res)
     res = reasoner.batch_abduce(
-        {"cls": [["5", "+", "9"]], "prob": [None]},
-        [65],
+        [["5", "+", "2"]], [None], [[5,10,9]], [65],
         max_revision=3,
         require_more_revision=0,
     )
     print(res)
     res = reasoner.batch_abduce(
-        {"cls": [["5", "8", "8", "8", "8"]], "prob": [None]},
-        [3.17],
+        [["5", "8", "8", "8", "8"]], [None], [[5,8,8,8,8]], [3.17],
         max_revision=5,
         require_more_revision=3,
     )
@@ -518,25 +449,22 @@ if __name__ == "__main__":
     print()
 
     print("HWF_KB without GKB, max_err=0.1")
-    kb = HWF_KB(len_list=[1, 3, 5], max_err=0.1)
+    kb = HWF_KB(GKB_len_list=[1, 3, 5], max_err=0.1)
     reasoner = ReasonerBase(kb, "hamming")
     res = reasoner.batch_abduce(
-        {"cls": [["5", "+", "2"]], "prob": [None]},
-        [3],
+        [["5", "+", "2"]], [None], [[5,10,2]], [3],
         max_revision=2,
         require_more_revision=0,
     )
     print(res)
     res = reasoner.batch_abduce(
-        {"cls": [["5", "+", "9"]], "prob": [None]},
-        [65],
+        [["5", "+", "2"]], [None], [[5,10,9]], [65],
         max_revision=3,
         require_more_revision=0,
     )
     print(res)
     res = reasoner.batch_abduce(
-        {"cls": [["5", "8", "8", "8", "8"]], "prob": [None]},
-        [3.17],
+        [["5", "8", "8", "8", "8"]], [None], [[5,8,8,8,8]], [3.17],
         max_revision=5,
         require_more_revision=3,
     )
@@ -544,25 +472,22 @@ if __name__ == "__main__":
     print()
 
     print("HWF_KB with GKB, max_err=1")
-    kb = HWF_KB(len_list=[1, 3, 5], GKB_flag=True, max_err=1)
+    kb = HWF_KB(GKB_len_list=[1, 3, 5], prebuild_GKB=True, max_err=1)
     reasoner = ReasonerBase(kb, "hamming")
     res = reasoner.batch_abduce(
-        {"cls": [["5", "+", "9"]], "prob": [None]},
-        [65],
+        [["5", "+", "2"]], [None], [[5,10,2]], [3],
+        max_revision=2,
+        require_more_revision=0,
+    )
+    print(res)
+    res = reasoner.batch_abduce(
+        [["5", "+", "2"]], [None], [[5,10,9]], [65],
         max_revision=3,
         require_more_revision=0,
     )
     print(res)
     res = reasoner.batch_abduce(
-        {"cls": [["5", "+", "2"]], "prob": [None]},
-        [1.67],
-        max_revision=3,
-        require_more_revision=0,
-    )
-    print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [["5", "8", "8", "8", "8"]], "prob": [None]},
-        [3.17],
+        [["5", "8", "8", "8", "8"]], [None], [[5,8,8,8,8]], [3.17],
         max_revision=5,
         require_more_revision=3,
     )
@@ -570,25 +495,22 @@ if __name__ == "__main__":
     print()
 
     print("HWF_KB without GKB, max_err=1")
-    kb = HWF_KB(len_list=[1, 3, 5], max_err=1)
+    kb = HWF_KB(GKB_len_list=[1, 3, 5], max_err=1)
     reasoner = ReasonerBase(kb, "hamming")
     res = reasoner.batch_abduce(
-        {"cls": [["5", "+", "9"]], "prob": [None]},
-        [65],
+        [["5", "+", "2"]], [None], [[5,10,2]], [3],
+        max_revision=2,
+        require_more_revision=0,
+    )
+    print(res)
+    res = reasoner.batch_abduce(
+        [["5", "+", "2"]], [None], [[5,10,9]], [65],
         max_revision=3,
         require_more_revision=0,
     )
     print(res)
     res = reasoner.batch_abduce(
-        {"cls": [["5", "+", "2"]], "prob": [None]},
-        [1.67],
-        max_revision=3,
-        require_more_revision=0,
-    )
-    print(res)
-    res = reasoner.batch_abduce(
-        {"cls": [["5", "8", "8", "8", "8"]], "prob": [None]},
-        [3.17],
+        [["5", "8", "8", "8", "8"]], [None], [[5,8,8,8,8]], [3.17],
         max_revision=5,
         require_more_revision=3,
     )
@@ -596,24 +518,24 @@ if __name__ == "__main__":
     print()
 
     print("HWF_KB with multiple inputs at once:")
-    kb = HWF_KB(len_list=[1, 3, 5], max_err=0.1)
+    kb = HWF_KB(GKB_len_list=[1, 3, 5], max_err=0.1)
     reasoner = ReasonerBase(kb, "hamming")
     res = reasoner.batch_abduce(
-        {"cls": [["5", "+", "2"], ["5", "+", "9"]], "prob": [None, None]},
+        [["5", "+", "2"], ["5", "+", "9"]], [None, None], [[5,10,2],[5,10,9]],
         [3, 64],
         max_revision=1,
         require_more_revision=0,
     )
     print(res)
     res = reasoner.batch_abduce(
-        {"cls": [["5", "+", "2"], ["5", "+", "9"]], "prob": [None, None]},
+        [["5", "+", "2"], ["5", "+", "9"]], [None, None], [[5,10,2],[5,10,9]],
         [3, 64],
         max_revision=3,
         require_more_revision=0,
     )
     print(res)
     res = reasoner.batch_abduce(
-        {"cls": [["5", "+", "2"], ["5", "+", "9"]], "prob": [None, None]},
+        [["5", "+", "2"], ["5", "+", "9"]], [None, None], [[5,10,2],[5,10,9]],
         [3, 65],
         max_revision=3,
         require_more_revision=0,
@@ -622,14 +544,14 @@ if __name__ == "__main__":
     print()
     print("max_revision is float")
     res = reasoner.batch_abduce(
-        {"cls": [["5", "+", "2"], ["5", "+", "9"]], "prob": [None, None]},
+        [["5", "+", "2"], ["5", "+", "9"]], [None, None], [[5,10,2],[5,10,9]],
         [3, 64],
         max_revision=0.5,
         require_more_revision=0,
     )
     print(res)
     res = reasoner.batch_abduce(
-        {"cls": [["5", "+", "2"], ["5", "+", "9"]], "prob": [None, None]},
+        [["5", "+", "2"], ["5", "+", "9"]], [None, None], [[5,10,2],[5,10,9]],
         [3, 64],
         max_revision=0.9,
         require_more_revision=0,
@@ -643,17 +565,12 @@ if __name__ == "__main__":
 
         def consist_rule(self, exs, rules):
             rules = str(rules).replace("'", "")
-            return (
-                len(
-                    list(self.prolog.query("eval_inst_feature(%s, %s)." % (exs, rules)))
-                )
-                != 0
-            )
+            pl_query = "eval_inst_feature(%s, %s)." % (exs, rules)
+            return len(list(self.prolog.query(pl_query))) != 0
 
         def abduce_rules(self, pred_res):
-            prolog_result = list(
-                self.prolog.query("consistent_inst_feature(%s, X)." % pred_res)
-            )
+            pl_query = "consistent_inst_feature(%s, X)." % pred_res
+            prolog_result = list(self.prolog.query(pl_query))
             if len(prolog_result) == 0:
                 return None
             prolog_rules = prolog_result[0]["X"]
@@ -688,9 +605,7 @@ if __name__ == "__main__":
                 for idx in range(-1, len(pred_res)):
                     if (not idx in idxs) and (idx >= 0):
                         idxs.append(idx)
-                    candidate = self._revise_by_idxs(
-                        pred_res, y, all_revision_flag, idxs
-                    )
+                    candidate = self._revise_by_idxs(pred_res, y, all_revision_flag, idxs)
                     if len(candidate) == 0:
                         if len(idxs) > 1:
                             idxs.pop()
@@ -701,9 +616,7 @@ if __name__ == "__main__":
                 removed = [i for i in lefted_idxs if i in max_candidate_idxs]
                 if found:
                     candidate_size.append(len(removed) + 1)
-                    lefted_idxs = [
-                        i for i in lefted_idxs if i not in max_candidate_idxs
-                    ]
+                    lefted_idxs = [i for i in lefted_idxs if i not in max_candidate_idxs]
             candidate_size.sort()
             score = 0
             import math
@@ -717,7 +630,7 @@ if __name__ == "__main__":
 
     kb = HED_prolog_KB(
         pseudo_label_list=[1, 0, "+", "="],
-        pl_file="../examples/hed/datasets/learn_add.pl",
+        pl_file="examples/hed/datasets/learn_add.pl",
     )
     reasoner = HED_Reasoner(kb)
     consist_exs = [
@@ -744,17 +657,11 @@ if __name__ == "__main__":
     print()
 
     print("HED_Reasoner abduce")
-    res = reasoner.abduce(
-        (consist_exs, [[[None]]] * len(consist_exs), [None] * len(consist_exs))
-    )
+    res = reasoner.abduce((consist_exs, [[[None]]] * len(consist_exs), [None] * len(consist_exs)))
     print(res)
-    res = reasoner.abduce(
-        (inconsist_exs1, [[[None]]] * len(inconsist_exs1), [None] * len(inconsist_exs1))
-    )
+    res = reasoner.abduce((inconsist_exs1, [[[None]]] * len(inconsist_exs1), [None] * len(inconsist_exs1)))
     print(res)
-    res = reasoner.abduce(
-        (inconsist_exs2, [[[None]]] * len(inconsist_exs2), [None] * len(inconsist_exs2))
-    )
+    res = reasoner.abduce((inconsist_exs2, [[[None]]] * len(inconsist_exs2), [None] * len(inconsist_exs2)))
     print(res)
     print()
 
