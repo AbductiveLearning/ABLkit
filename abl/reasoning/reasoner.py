@@ -1,7 +1,7 @@
 import numpy as np
 from multiprocessing import Pool
 from zoopt import Dimension, Objective, Parameter, Opt
-from abl.utils.utils import (
+from ..utils.utils import (
     confidence_dist,
     flatten,
     reform_idx,
@@ -11,39 +11,29 @@ from abl.utils.utils import (
 
 
 class ReasonerBase():
-    def __init__(self, kb, dist_func="hamming", mapping=None, zoopt=False):
+    def __init__(self, kb, dist_func="hamming", mapping=None, use_zoopt=False):
+        """
+        This class serves as 
+        
+        Parameter `dist_func` is used to specify the distance function to use.
+        """
+        
         if not (dist_func == "hamming" or dist_func == "confidence"):
-            raise NotImplementedError
+            raise NotImplementedError # Only hamming or confidence distance is available.
 
         self.kb = kb
         self.dist_func = dist_func
-        self.use_zoopt = zoopt
+        self.use_zoopt = use_zoopt
         if mapping is None:
             self.mapping = {index: label for index, label in enumerate(self.kb.pseudo_label_list)}
         else:
             self.mapping = mapping
-        self.set_remapping()
-
-    def set_remapping(self):
         self.remapping = dict(zip(self.mapping.values(), self.mapping.keys()))
 
     def _get_cost_list(self, pseudo_label, pred_res_prob, candidates):
         """
-        Get the cost list of candidates based on the distance function.
-
-        Parameters
-        ----------
-        pseudo_label : list
-            List of predicted pseudo labels.
-        pred_res_prob : list
-            The predicted result probability.
-        candidates : list
-            The list of candidates.
-
-        Returns
-        -------
-        list
-            The cost list of candidates.
+        Get the list consisting of costs between each pseudo label and candidate.
+        Parameter `pred_res_prob` is needed while using confidence distance.
         """
         if self.dist_func == "hamming":
             return hamming_dist(pseudo_label, candidates)
@@ -54,21 +44,7 @@ class ReasonerBase():
 
     def _get_one_candidate(self, pseudo_label, pred_res_prob, candidates):
         """
-        Get the best candidate based on the distance function.
-
-        Parameters
-        ----------
-        pseudo_label : list
-            List of predicted pseudo labels.
-        pred_res_prob : list
-            The predicted result probability.
-        candidates : list
-            The list of candidates.
-
-        Returns
-        -------
-        list
-            The best candidate.
+        Get one candidate. If multiple candidates exist, return the one with minimum cost.
         """
         if len(candidates) == 0:
             return []
@@ -145,7 +121,8 @@ class ReasonerBase():
         return solution
 
     def revise_by_idx(self, pseudo_label, y, revision_idx):
-        """Get the revisions corresponding to the given indices.
+        """
+        Get the revisions corresponding to the given indices.
 
         Parameters
         ----------
@@ -164,7 +141,8 @@ class ReasonerBase():
         return self.kb.revise_by_idx(pseudo_label, y, revision_idx)
 
     def abduce(self, data, max_revision=-1, require_more_revision=0):
-        """Perform abduction on the given data.
+        """
+        Perform abduction on the given data.
 
         Parameters
         ----------
@@ -330,7 +308,7 @@ if __name__ == "__main__":
         pseudo_label_list=list(range(10)),
         pl_file="examples/mnist_add/datasets/add.pl",
     )
-    reasoner = ReasonerBase(kb, "confidence", zoopt=True)
+    reasoner = ReasonerBase(kb, "confidence", use_zoopt=True)
     res = reasoner.batch_abduce([[1, 1]], prob1, [[1, 1]], [8], max_revision=2, require_more_revision=0)
     print(res)
     res = reasoner.batch_abduce([[1, 1]], prob2, [[1, 1]], [8], max_revision=2, require_more_revision=0)

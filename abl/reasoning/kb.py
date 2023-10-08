@@ -5,7 +5,7 @@ import numpy as np
 from collections import defaultdict
 from itertools import product, combinations
 
-from abl.utils.utils import flatten, reform_idx, hamming_dist, check_equal, to_hashable, hashable_to_list
+from ..utils.utils import flatten, reform_idx, hamming_dist, check_equal, to_hashable, hashable_to_list
 
 from multiprocessing import Pool
 
@@ -37,7 +37,7 @@ class KBBase(ABC):
         for post_x in post_x_it:
             x = (pre_x,) + post_x
             y = self.logic_forward(x)
-            if y != np.inf:
+            if y is not None:
                 XY_list.append((x, y))
         return XY_list
 
