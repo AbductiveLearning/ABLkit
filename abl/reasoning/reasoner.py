@@ -119,13 +119,13 @@ class ReasonerBase():
         solution = Opt.min(objective, parameter).get_x()
         return solution
 
-    def revise_by_idx(self, pseudo_label, y, revision_idx):
+    def revise_by_idx(self, pred_pseudo_label, y, revision_idx):
         """
         Get the revisions corresponding to the given indices.
 
         Parameters
         ----------
-        pseudo_label : list
+        pred_pseudo_label : list
             List of predicted pseudo labels.
         y : str
             Ground truth for the predicted results.
@@ -137,7 +137,7 @@ class ReasonerBase():
         list
             The revisions corresponding to the given indices.
         """
-        return self.kb.revise_by_idx(pseudo_label, y, revision_idx)
+        return self.kb.revise_by_idx(pred_pseudo_label, y, revision_idx)
 
     def abduce(self, pred_prob, pred_pseudo_label, y, max_revision=-1, require_more_revision=0):
         """

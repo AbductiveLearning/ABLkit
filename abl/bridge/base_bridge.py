@@ -26,12 +26,12 @@ class BaseBridge(metaclass=ABCMeta):
         """Placeholder for abduce pseudo labels."""
 
     @abstractmethod
-    def label_to_pseudo_label(self, label: List[List[Any]]) -> List[List[Any]]:
+    def idx_to_pseudo_label(self, idx: List[List[Any]]) -> List[List[Any]]:
         """Placeholder for map label space to symbol space."""
         pass
 
     @abstractmethod
-    def pseudo_label_to_label(self, pseudo_label: List[List[Any]]) -> List[List[Any]]:
+    def pseudo_label_to_idx(self, pseudo_label: List[List[Any]]) -> List[List[Any]]:
         """Placeholder for map symbol space to label space."""
         pass
     
