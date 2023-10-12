@@ -13,9 +13,23 @@ from ..utils.utils import (
 class ReasonerBase():
     def __init__(self, kb, dist_func="hamming", mapping=None, use_zoopt=False):
         """
-        This class serves as 
-        
-        Parameter `dist_func` is used to specify the distance function to use.
+        Root class for all reasoner in the ABL system.
+
+        Parameters
+        ----------
+        kb : KBBase
+            The knowledge base to be used for reasoning.
+        dist_func : str, optional
+            The distance function to be used. Can be "hamming" or "confidence". Default is "hamming".
+        mapping : dict, optional
+            A mapping of indices to labels. If None, a default mapping is generated.
+        use_zoopt : bool, optional
+            Whether to use the Zoopt library for optimization. Default is False.
+
+        Raises
+        ------
+        NotImplementedError
+            If the specified distance function is neither "hamming" nor "confidence".
         """
         
         if not (dist_func == "hamming" or dist_func == "confidence"):
@@ -30,29 +44,57 @@ class ReasonerBase():
             self.mapping = mapping
         self.remapping = dict(zip(self.mapping.values(), self.mapping.keys()))
 
-    def _get_cost_list(self, pseudo_label, pred_prob, candidates):
+    def _get_cost_list(self, pred_pseudo_label, pred_prob, candidates):
         """
-        Get the list consisting of costs between each pseudo label and candidate.
-        Parameter `pred_prob` is needed while using confidence distance.
+        Get the list of costs between pseudo label and each candidate.
+
+        Parameters
+        ----------
+        pred_pseudo_label : list
+            The pseudo label to be used for computing costs of candidates.
+        pred_prob : list
+            Probabilities of the predictions. Used when distance function is "confidence".
+        candidates : list
+            List of candidate abduction result.
+
+        Returns
+        -------
+        numpy.ndarray
+            Array of computed costs for each candidate.
         """
         if self.dist_func == "hamming":
-            return hamming_dist(pseudo_label, candidates)
+            return hamming_dist(pred_pseudo_label, candidates)
 
         elif self.dist_func == "confidence":
             candidates = [[self.remapping[x] for x in c] for c in candidates]
             return confidence_dist(pred_prob, candidates)
 
-    def _get_one_candidate(self, pseudo_label, pred_prob, candidates):
+    def _get_one_candidate(self, pred_pseudo_label, pred_prob, candidates):
         """
         Get one candidate. If multiple candidates exist, return the one with minimum cost.
+
+        Parameters
+        ----------
+        pred_pseudo_label : list
+            The pseudo label to be used for selecting a candidate.
+        pred_prob : list
+            Probabilities of the predictions.
+        candidates : list
+            List of candidate abduction result.
+
+        Returns
+        -------
+        list
+            The chosen candidate based on minimum cost.
+            If no candidates, an empty list is returned.
         """
         if len(candidates) == 0:
             return []
         elif len(candidates) == 1:
             return candidates[0]
         else:
-            cost_list = self._get_cost_list(pseudo_label, pred_prob, candidates)
-            candidate = candidates[np.argmin(cost_list)]
+            cost_array = self._get_cost_list(pred_pseudo_label, pred_prob, candidates)
+            candidate = candidates[np.argmin(cost_array)]
             return candidate
 
     def zoopt_revision_score(self, symbol_num, pred_pseudo_label, pred_prob, y, sol):
@@ -61,16 +103,16 @@ class ReasonerBase():
 
         Parameters
         ----------
-        sol_x : array-like
-            Solution to evaluate.
-        pred_res : list
-            List of predicted results.
+        symbol_num : int
+            Number of total symbols.
         pred_pseudo_label : list
             List of predicted pseudo labels.
         pred_prob : list
             List of probabilities for predicted results.
-        y : str
+        y : any
             Ground truth for the predicted results.
+        sol : array-like
+            Solution to evaluate.
 
         Returns
         -------
@@ -93,13 +135,13 @@ class ReasonerBase():
 
         Parameters
         ----------
-        pred_res : list
-            List of predicted results.
+        symbol_num : int
+            Number of total symbols.
         pred_pseudo_label : list
             List of predicted pseudo labels.
         pred_prob : list
             List of probabilities for predicted results.
-        y : str
+        y : any
             Ground truth for the predicted results.
         max_revision_num : int
             Maximum number of revisions to use.
@@ -107,7 +149,7 @@ class ReasonerBase():
         Returns
         -------
         array-like
-            The optimal solution.
+            The optimal solution, i.e., where to revise predict pseudo label.
         """
         dimension = Dimension(size=symbol_num, regs=[[0, 1]] * symbol_num, tys=[False] * symbol_num)
         objective = Objective(
@@ -121,13 +163,13 @@ class ReasonerBase():
 
     def revise_by_idx(self, pred_pseudo_label, y, revision_idx):
         """
-        Get the revisions corresponding to the given indices.
+        Revise the pseudo label according to the given indices.
 
         Parameters
         ----------
         pred_pseudo_label : list
             List of predicted pseudo labels.
-        y : str
+        y : any
             Ground truth for the predicted results.
         revision_idx : array-like
             Indices of the revisions to retrieve.
@@ -135,21 +177,25 @@ class ReasonerBase():
         Returns
         -------
         list
-            The revisions corresponding to the given indices.
+            The revisions according to the given indices.
         """
         return self.kb.revise_by_idx(pred_pseudo_label, y, revision_idx)
 
     def abduce(self, pred_prob, pred_pseudo_label, y, max_revision=-1, require_more_revision=0):
         """
-        Perform abduction on the given data.
+        Perform revision by abduction on the given data.
 
         Parameters
         ----------
-        data : tuple
-            Tuple containing the predicted results, predicted result probabilities, and y.
+        pred_prob : list
+            List of probabilities for predicted results.
+        pred_pseudo_label : list
+            List of predicted pseudo labels.
+        y : any
+            Ground truth for the predicted results.
         max_revision : int or float, optional
             Maximum number of revisions to use. If float, represents the fraction of total revisions to use.
-            If -1, use all revisions. Defaults to -1.
+            If -1, any revisions are allowed. Defaults to -1.
         require_more_revision : int, optional
             Number of additional revisions to require. Defaults to 0.
 
@@ -172,14 +218,17 @@ class ReasonerBase():
         return candidate
 
     def batch_abduce(self, pred_prob, pred_pseudo_label, Y, max_revision=-1, require_more_revision=0):
-        """Perform abduction on the given data in batches.
+        """
+        Perform abduction on the given data in batches.
 
         Parameters
         ----------
-        Z : list
-            List of predicted results and result probablities.
+        pred_prob : list
+            List of probabilities for predicted results.
+        pred_pseudo_label : list
+            List of predicted pseudo labels.
         Y : list
-            List of ground truths.
+            List of ground truths for the predicted results.
         max_revision : int or float, optional
             Maximum number of revisions to use. If float, represents the fraction of total revisions to use.
             If -1, use all revisions. Defaults to -1.
@@ -189,7 +238,7 @@ class ReasonerBase():
         Returns
         -------
         list
-            The abduced revisions.
+            The abduced revisions in batches.
         """
         return [self.abduce(_pred_prob, _pred_pseudo_label, _Y, max_revision, require_more_revision)
             for _pred_prob, _pred_pseudo_label, _Y in zip(pred_prob, pred_pseudo_label, Y)]
