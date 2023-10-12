@@ -15,7 +15,7 @@ class SimpleBridge(BaseBridge):
         self,
         model: ABLModel,
         abducer: ReasonerBase,
-        metric_list: BaseMetric,
+        metric_list: List[BaseMetric],
     ) -> None:
         super().__init__(model, abducer)
         self.metric_list = metric_list
@@ -34,7 +34,7 @@ class SimpleBridge(BaseBridge):
         max_revision: int = -1,
         require_more_revision: int = 0,
     ) -> List[List[Any]]:
-        return self.abducer.batch_abduce(pred_label, pred_prob, pseudo_label, Y, max_revision, require_more_revision)
+        return self.abducer.batch_abduce(pred_prob, pseudo_label, Y, max_revision, require_more_revision)
 
     def label_to_pseudo_label(
         self, label: List[List[Any]], mapping: Dict = None
