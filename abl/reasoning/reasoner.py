@@ -5,7 +5,7 @@ from ..utils.utils import (
     flatten,
     reform_idx,
     hamming_dist,
-    float_parameter,
+    calculate_revision_num,
 )
 
 
@@ -214,7 +214,7 @@ class ReasonerBase:
             The abduced revisions.
         """
         symbol_num = len(flatten(pred_pseudo_label))
-        max_revision_num = float_parameter(max_revision, symbol_num)
+        max_revision_num = calculate_revision_num(max_revision, symbol_num)
 
         if self.use_zoopt:
             solution = self.zoopt_get_solution(
