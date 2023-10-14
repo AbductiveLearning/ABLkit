@@ -30,33 +30,36 @@ def flatten(nested_list):
     return list(chain.from_iterable(nested_list))
 
 
-def reform_idx(flattened_pred, saved_pred):
+def reform_idx(flattened_list, structured_list):
     """
-    Reform the index based on saved_pred structure.
+    Reform the index based on structured_list structure.
 
     Parameters
     ----------
-    flattened_pred : list
+    flattened_list : list
         A flattened list of predictions.
-    saved_pred : list
+    structured_list : list
         A list containing saved predictions, which could be nested lists or tuples.
 
     Returns
     -------
     list
-        A reformed list that mimics the structure of saved_pred.
+        A reformed list that mimics the structure of structured_list.
     """
-    if not isinstance(saved_pred[0], (list, tuple)):
-        return flattened_pred
+    if not isinstance(flattened_list, list):
+        raise TypeError("Input must be of type list.")
+    
+    if not isinstance(structured_list[0], (list, tuple)):
+        return flattened_list
 
-    reformed_pred = []
+    reformed_list = []
     idx_start = 0
-    for elem in saved_pred:
+    for elem in structured_list:
         idx_end = idx_start + len(elem)
-        reformed_pred.append(flattened_pred[idx_start:idx_end])
+        reformed_list.append(flattened_list[idx_start:idx_end])
         idx_start = idx_end
 
-    return reformed_pred
+    return reformed_list
 
 
 def hamming_dist(pred_pseudo_label, candidates):
