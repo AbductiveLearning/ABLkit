@@ -74,10 +74,10 @@ class SimpleBridge(BaseBridge):
                     pred_prob, pred_pseudo_label, Y
                 )
                 abduced_label = self.pseudo_label_to_idx(abduced_pseudo_label)
-                min_loss = self.model.train(X, abduced_label)
+                loss = self.model.train(X, abduced_label)
 
                 print_log(
-                    f"Epoch(train) [{epoch + 1}] [{(seg_idx + 1):3}/{len(data_loader)}] minimal_loss is {min_loss:.5f}",
+                    f"Epoch(train) [{epoch + 1}] [{(seg_idx + 1):3}/{len(data_loader)}] model loss is {loss:.5f}",
                     logger="current",
                 )
 
