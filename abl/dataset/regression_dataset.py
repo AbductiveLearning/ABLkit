@@ -14,6 +14,11 @@ class RegressionDataset(Dataset):
         Y : List[Any]
             A list of objects representing the output data.
         """
+        if (not isinstance(X, list)) or (not isinstance(Y, list)):
+            raise ValueError("X and Y should be of type list.")
+        if len(X) != len(Y):
+            raise ValueError("Length of X and Y must be equal.")
+        
         self.X = X
         self.Y = Y
 
