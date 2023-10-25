@@ -1,8 +1,10 @@
-from typing import Optional, Sequence, Callable
+from typing import Optional, Sequence
 from .base_metric import BaseMetric
 
+class ABLMetric():
+    pass
 
-class ABLMetric(BaseMetric):
+class SemanticsMetric(BaseMetric):
     def __init__(self, prefix: Optional[str] = None) -> None:
         super().__init__(prefix)
 
@@ -19,5 +21,5 @@ class ABLMetric(BaseMetric):
     
     def compute_metrics(self, results: list) -> dict:
         metrics = dict()
-        metrics["abl_accuracy"] = sum(results) / len(results)
+        metrics["semantics_accuracy"] = sum(results) / len(results)
         return metrics
