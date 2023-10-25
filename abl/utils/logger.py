@@ -198,11 +198,11 @@ class ABLLogger(Logger, ManagerMixin):
             import time
             local_time = time.strftime("%Y%m%d_%H_%M_%S", time.localtime())
 
-            save_dir = os.path.join("results", local_time)
-            self.save_dir = save_dir
-            if not os.path.exists(save_dir):
-                os.makedirs(save_dir)
-            log_file = osp.join(save_dir, local_time + ".log")
+            _log_dir = os.path.join("results", local_time)
+            self._log_dir = _log_dir
+            if not os.path.exists(_log_dir):
+                os.makedirs(_log_dir)
+            log_file = osp.join(_log_dir, local_time + ".log")
 
         file_handler = logging.FileHandler(log_file, file_mode)
         file_handler.setFormatter(
@@ -216,6 +216,10 @@ class ABLLogger(Logger, ManagerMixin):
     @property
     def log_file(self):
         return self._log_file
+    
+    @property
+    def log_dir(self):
+        return self._log_dir
 
     @classmethod
     def get_current_instance(cls) -> "ABLLogger":
