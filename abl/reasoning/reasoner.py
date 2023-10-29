@@ -12,7 +12,7 @@ from ..utils.utils import (
 class ReasonerBase:
     def __init__(self, kb, dist_func="hamming", mapping=None, use_zoopt=False):
         """
-        Root class for all reasoner in the ABL system.
+        Base class for all reasoner in the ABL system.
 
         Parameters
         ----------
@@ -47,7 +47,7 @@ class ReasonerBase:
 
     def _get_cost_list(self, pred_pseudo_label, pred_prob, candidates):
         """
-        Get the list of costs between pseudo label and each candidate.
+        Get the list of costs between each pseudo label and candidate.
 
         Parameters
         ----------
@@ -284,33 +284,26 @@ class ReasonerBase:
 
 
 if __name__ == "__main__":
-    from kb import KBBase, prolog_KB
+    from kb import KBBase, ground_KB, prolog_KB
 
-    prob1 = [
-        [
-            [0, 0.99, 0.01, 0, 0, 0, 0, 0, 0, 0],
-            [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-        ]
-    ]
-    prob2 = [
-        [
-            [0, 0, 0.01, 0, 0, 0, 0, 0.99, 0, 0],
-            [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-        ]
-    ]
+    prob1 = [[[0, 0.99, 0.01, 0, 0, 0, 0, 0, 0, 0],
+              [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]]]
+    
+    prob2 = [[[0, 0, 0.01, 0, 0, 0, 0, 0.99, 0, 0],
+              [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]]]
 
     class add_KB(KBBase):
-        def __init__(
-            self,
-            pseudo_label_list=list(range(10)),
-            prebuild_GKB=False,
-            GKB_len_list=[2],
-            max_err=0,
-            use_cache=True,
-        ):
-            super().__init__(
-                pseudo_label_list, prebuild_GKB, GKB_len_list, max_err, use_cache
-            )
+        def __init__(self, pseudo_label_list=list(range(10)),
+                           use_cache=True):
+            super().__init__(pseudo_label_list, use_cache=use_cache)
+
+        def logic_forward(self, nums):
+            return sum(nums)
+        
+    class add_ground_KB(ground_KB):
+        def __init__(self, pseudo_label_list=list(range(10)), 
+                           GKB_len_list=[2]):
+            super().__init__(pseudo_label_list, GKB_len_list)
 
         def logic_forward(self, nums):
             return sum(nums)
@@ -329,7 +322,7 @@ if __name__ == "__main__":
         print()
 
     print("add_KB with GKB:")
-    kb = add_KB(prebuild_GKB=True)
+    kb = add_ground_KB()
     reasoner = ReasonerBase(kb, "confidence")
     test_add(reasoner)
 
@@ -338,16 +331,14 @@ if __name__ == "__main__":
     reasoner = ReasonerBase(kb, "confidence")
     test_add(reasoner)
 
-    print("add_KB without GKB:, no cache")
+    print("add_KB without GKB, no cache")
     kb = add_KB(use_cache=False)
     reasoner = ReasonerBase(kb, "confidence")
     test_add(reasoner)
 
     print("prolog_KB with add.pl:")
-    kb = prolog_KB(
-        pseudo_label_list=list(range(10)),
-        pl_file="examples/mnist_add/datasets/add.pl",
-    )
+    kb = prolog_KB(pseudo_label_list=list(range(10)),
+                   pl_file="examples/mnist_add/datasets/add.pl")
     reasoner = ReasonerBase(kb, "confidence")
     test_add(reasoner)
 
@@ -360,16 +351,14 @@ if __name__ == "__main__":
     test_add(reasoner)
 
     print("add_KB with multiple inputs at once:")
-    multiple_prob = [
-        [
-            [0, 0.99, 0.01, 0, 0, 0, 0, 0, 0, 0],
-            [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-        ],
-        [
-            [0, 0, 0.01, 0, 0, 0, 0, 0.99, 0, 0],
-            [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-        ],
-    ]
+    multiple_prob = [[
+                        [0, 0.99, 0.01, 0, 0, 0, 0, 0, 0, 0],
+                        [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+                    ],
+                    [
+                        [0, 0, 0.01, 0, 0, 0, 0, 0.99, 0, 0],
+                        [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+                    ]]
 
     kb = add_KB()
     reasoner = ReasonerBase(kb, "confidence")
@@ -394,45 +383,45 @@ if __name__ == "__main__":
     class HWF_KB(KBBase):
         def __init__(
             self,
-            pseudo_label_list=[
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "+",
-                "-",
-                "times",
-                "div",
-            ],
-            prebuild_GKB=False,
-            GKB_len_list=[1, 3, 5, 7],
+            pseudo_label_list=["1", "2", "3", "4", "5", "6", "7", "8", "9",
+                               "+", "-", "times", "div"],
             max_err=1e-3,
-            use_cache=True,
         ):
-            super().__init__(
-                pseudo_label_list, prebuild_GKB, GKB_len_list, max_err, use_cache
-            )
+            super().__init__(pseudo_label_list, max_err)
 
         def _valid_candidate(self, formula):
             if len(formula) % 2 == 0:
                 return False
             for i in range(len(formula)):
-                if i % 2 == 0 and formula[i] not in [
-                    "1",
-                    "2",
-                    "3",
-                    "4",
-                    "5",
-                    "6",
-                    "7",
-                    "8",
-                    "9",
-                ]:
+                if i % 2 == 0 and formula[i] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+                    return False
+                if i % 2 != 0 and formula[i] not in ["+", "-", "times", "div"]:
+                    return False
+            return True
+
+        def logic_forward(self, formula):
+            if not self._valid_candidate(formula):
+                return np.inf
+            mapping = {str(i): str(i) for i in range(1, 10)}
+            mapping.update({"+": "+", "-": "-", "times": "*", "div": "/"})
+            formula = [mapping[f] for f in formula]
+            return eval("".join(formula))
+    
+    class HWF_ground_KB(ground_KB):
+        def __init__(
+            self,
+            pseudo_label_list=["1", "2", "3", "4", "5", "6", "7", "8", "9",
+                               "+", "-", "times", "div"],
+            GKB_len_list=[1, 3, 5, 7],
+            max_err=1e-3,
+        ):
+            super().__init__(pseudo_label_list, GKB_len_list, max_err)
+
+        def _valid_candidate(self, formula):
+            if len(formula) % 2 == 0:
+                return False
+            for i in range(len(formula)):
+                if i % 2 == 0 and formula[i] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
                     return False
                 if i % 2 != 0 and formula[i] not in ["+", "-", "times", "div"]:
                     return False
@@ -473,12 +462,12 @@ if __name__ == "__main__":
         print(res)
         print()
     
-    def test_hwf_multiple(reasoner):
+    def test_hwf_multiple(reasoner, max_revisions):
         res = reasoner.batch_abduce(
             [None, None],
             [["5", "+", "2"], ["5", "+", "9"]],
             [3, 64],
-            max_revision=1,
+            max_revision=max_revisions[0],
             require_more_revision=0,
         )
         print(res)
@@ -486,7 +475,7 @@ if __name__ == "__main__":
             [None, None],
             [["5", "+", "2"], ["5", "+", "9"]],
             [3, 64],
-            max_revision=3,
+            max_revision=max_revisions[1],
             require_more_revision=0,
         )
         print(res)
@@ -494,39 +483,39 @@ if __name__ == "__main__":
             [None, None],
             [["5", "+", "2"], ["5", "+", "9"]],
             [3, 65],
-            max_revision=3,
+            max_revision=max_revisions[2],
             require_more_revision=0,
         )
         print(res)
         print()
 
     print("HWF_KB with GKB, max_err=0.1")
-    kb = HWF_KB(prebuild_GKB=True, GKB_len_list=[1, 3, 5], max_err=0.1)
+    kb = HWF_ground_KB(GKB_len_list=[1, 3, 5], max_err=0.1)
     reasoner = ReasonerBase(kb, "hamming")
     test_hwf(reasoner)
 
     print("HWF_KB without GKB, max_err=0.1")
-    kb = HWF_KB(GKB_len_list=[1, 3, 5], max_err=0.1)
+    kb = HWF_KB(max_err=0.1)
     reasoner = ReasonerBase(kb, "hamming")
     test_hwf(reasoner)
 
     print("HWF_KB with GKB, max_err=1")
-    kb = HWF_KB(GKB_len_list=[1, 3, 5], prebuild_GKB=True, max_err=1)
+    kb = HWF_ground_KB(GKB_len_list=[1, 3, 5], max_err=1)
     reasoner = ReasonerBase(kb, "hamming")
     test_hwf(reasoner)
 
     print("HWF_KB without GKB, max_err=1")
-    kb = HWF_KB(GKB_len_list=[1, 3, 5], max_err=1)
+    kb = HWF_KB(max_err=1)
     reasoner = ReasonerBase(kb, "hamming")
     test_hwf(reasoner)
 
     print("HWF_KB with multiple inputs at once:")
-    kb = HWF_KB(GKB_len_list=[1, 3, 5], max_err=0.1)
+    kb = HWF_KB(max_err=0.1)
     reasoner = ReasonerBase(kb, "hamming")
-    test_hwf_multiple(reasoner)
+    test_hwf_multiple(reasoner, max_revisions=[1,3,3])
     
     print("max_revision is float")
-    test_hwf_multiple(reasoner)
+    test_hwf_multiple(reasoner, max_revisions=[0.5,0.9,0.9])
 
     class HED_prolog_KB(prolog_KB):
         def __init__(self, pseudo_label_list, pl_file):
@@ -548,7 +537,7 @@ if __name__ == "__main__":
 
     class HED_Reasoner(ReasonerBase):
         def __init__(self, kb, dist_func="hamming"):
-            super().__init__(kb, dist_func, zoopt=True)
+            super().__init__(kb, dist_func, use_zoopt=True)
 
         def _revise_by_idxs(self, pred_res, y, all_revision_flag, idxs):
             pred = []
@@ -562,7 +551,7 @@ if __name__ == "__main__":
             candidate = self.revise_by_idx(pred, k, revision_idx)
             return candidate
 
-        def zoopt_revision_score(self, pred_res, pred_prob, y, sol):
+        def zoopt_revision_score(self, symbol_num, pred_res, pred_prob, y, sol):
             all_revision_flag = reform_idx(sol.get_x(), pred_res)
             lefted_idxs = [i for i in range(len(pred_res))]
             candidate_size = []
@@ -631,15 +620,15 @@ if __name__ == "__main__":
 
     print("HED_Reasoner abduce")
     res = reasoner.abduce(
-        (consist_exs, [[[None]]] * len(consist_exs), [None] * len(consist_exs))
+        [[[None]]] * len(consist_exs), consist_exs, [None] * len(consist_exs)
     )
     print(res)
     res = reasoner.abduce(
-        (inconsist_exs1, [[[None]]] * len(inconsist_exs1), [None] * len(inconsist_exs1))
+        [[[None]]] * len(inconsist_exs1), inconsist_exs1, [None] * len(inconsist_exs1)
     )
     print(res)
     res = reasoner.abduce(
-        (inconsist_exs2, [[[None]]] * len(inconsist_exs2), [None] * len(inconsist_exs2))
+        [[[None]]] * len(inconsist_exs2), inconsist_exs2, [None] * len(inconsist_exs2)
     )
     print(res)
     print()
