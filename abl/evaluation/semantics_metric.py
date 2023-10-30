@@ -1,8 +1,6 @@
 from typing import Optional, Sequence
 from .base_metric import BaseMetric
 
-class ABLMetric():
-    pass
 
 class SemanticsMetric(BaseMetric):
     def __init__(self, prefix: Optional[str] = None) -> None:

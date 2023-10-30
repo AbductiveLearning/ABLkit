@@ -70,7 +70,7 @@ class ReasonerBase:
             candidates = [[self.remapping[x] for x in c] for c in candidates]
             return confidence_dist(pred_prob, candidates)
 
-    def _get_one_candidate(self, pred_pseudo_label, pred_prob, candidates):
+    def _get_one_candidate(self, data_sample, candidates):
         """
         Get one candidate. If multiple candidates exist, return the one with minimum cost.
 
@@ -94,7 +94,9 @@ class ReasonerBase:
         elif len(candidates) == 1:
             return candidates[0]
         else:
-            cost_array = self._get_cost_list(pred_pseudo_label, pred_prob, candidates)
+            cost_array = self._get_cost_list(
+                data_sample["pred_pseudo_label"][0], data_sample["pred_prob"][0], candidates
+            )
             candidate = candidates[np.argmin(cost_array)]
             return candidate
 
@@ -188,9 +190,7 @@ class ReasonerBase:
         """
         return self.kb.revise_by_idx(pred_pseudo_label, y, revision_idx)
 
-    def abduce(
-        self, pred_prob, pred_pseudo_label, y, max_revision=-1, require_more_revision=0
-    ):
+    def abduce(self, data_sample, max_revision=-1, require_more_revision=0):
         """
         Perform revision by abduction on the given data.
 
@@ -213,26 +213,24 @@ class ReasonerBase:
         list
             The abduced revisions.
         """
-        symbol_num = len(flatten(pred_pseudo_label))
+        symbol_num = len(flatten(data_sample.pred_pseudo_label))
         max_revision_num = calculate_revision_num(max_revision, symbol_num)
 
         if self.use_zoopt:
             solution = self.zoopt_get_solution(
-                symbol_num, pred_pseudo_label, pred_prob, y, max_revision_num
+                symbol_num, data_sample, max_revision_num
             )
             revision_idx = np.where(solution != 0)[0]
-            candidates = self.revise_by_idx(pred_pseudo_label, y, revision_idx)
+            candidates = self.revise_by_idx(data_sample, revision_idx)
         else:
             candidates = self.kb.abduce_candidates(
-                pred_pseudo_label, y, max_revision_num, require_more_revision
+                data_sample, max_revision_num, require_more_revision
             )
 
-        candidate = self._get_one_candidate(pred_pseudo_label, pred_prob, candidates)
+        candidate = self._get_one_candidate(data_sample, candidates)
         return candidate
 
-    def batch_abduce(
-        self, pred_prob, pred_pseudo_label, Y, max_revision=-1, require_more_revision=0
-    ):
+    def batch_abduce(self, data_samples, max_revision=-1, require_more_revision=0):
         """
         Perform abduction on the given data in batches.
 
@@ -255,14 +253,15 @@ class ReasonerBase:
         list
             The abduced revisions in batches.
         """
-        return [
+        abduced_pseudo_label = [
             self.abduce(
-                _pred_prob, _pred_pseudo_label, _Y, max_revision, require_more_revision
+                data_sample,
+                max_revision=max_revision,
+                require_more_revision=require_more_revision,
             )
-            for _pred_prob, _pred_pseudo_label, _Y in zip(
-                pred_prob, pred_pseudo_label, Y
-            )
+            for data_sample in data_samples
         ]
+        data_samples.abduced_pseudo_label = abduced_pseudo_label
 
     # def _batch_abduce_helper(self, args):
     #     z, prob, y, max_revision, require_more_revision = args
@@ -281,43 +280,57 @@ class ReasonerBase:
         )
 
 
-
-
 if __name__ == "__main__":
     from kb import KBBase, ground_KB, prolog_KB
 
-    prob1 = [[[0, 0.99, 0.01, 0, 0, 0, 0, 0, 0, 0],
-              [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]]]
-    
-    prob2 = [[[0, 0, 0.01, 0, 0, 0, 0, 0.99, 0, 0],
-              [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]]]
+    prob1 = [
+        [
+            [0, 0.99, 0.01, 0, 0, 0, 0, 0, 0, 0],
+            [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+        ]
+    ]
+
+    prob2 = [
+        [
+            [0, 0, 0.01, 0, 0, 0, 0, 0.99, 0, 0],
+            [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+        ]
+    ]
 
     class add_KB(KBBase):
-        def __init__(self, pseudo_label_list=list(range(10)),
-                           use_cache=True):
+        def __init__(self, pseudo_label_list=list(range(10)), use_cache=True):
             super().__init__(pseudo_label_list, use_cache=use_cache)
 
         def logic_forward(self, nums):
             return sum(nums)
-        
+
     class add_ground_KB(ground_KB):
-        def __init__(self, pseudo_label_list=list(range(10)), 
-                           GKB_len_list=[2]):
+        def __init__(self, pseudo_label_list=list(range(10)), GKB_len_list=[2]):
             super().__init__(pseudo_label_list, GKB_len_list)
 
         def logic_forward(self, nums):
             return sum(nums)
-        
+
     def test_add(reasoner):
-        res = reasoner.batch_abduce(prob1, [[1, 1]], [8], max_revision=2, require_more_revision=0)
+        res = reasoner.batch_abduce(
+            prob1, [[1, 1]], [8], max_revision=2, require_more_revision=0
+        )
         print(res)
-        res = reasoner.batch_abduce(prob2, [[1, 1]], [8], max_revision=2, require_more_revision=0)
+        res = reasoner.batch_abduce(
+            prob2, [[1, 1]], [8], max_revision=2, require_more_revision=0
+        )
         print(res)
-        res = reasoner.batch_abduce(prob1, [[1, 1]], [17], max_revision=2, require_more_revision=0)
+        res = reasoner.batch_abduce(
+            prob1, [[1, 1]], [17], max_revision=2, require_more_revision=0
+        )
         print(res)
-        res = reasoner.batch_abduce(prob1, [[1, 1]], [17], max_revision=1, require_more_revision=0)
+        res = reasoner.batch_abduce(
+            prob1, [[1, 1]], [17], max_revision=1, require_more_revision=0
+        )
         print(res)
-        res = reasoner.batch_abduce(prob1, [[1, 1]], [20], max_revision=2, require_more_revision=0)
+        res = reasoner.batch_abduce(
+            prob1, [[1, 1]], [20], max_revision=2, require_more_revision=0
+        )
         print(res)
         print()
 
@@ -337,8 +350,9 @@ if __name__ == "__main__":
     test_add(reasoner)
 
     print("prolog_KB with add.pl:")
-    kb = prolog_KB(pseudo_label_list=list(range(10)),
-                   pl_file="examples/mnist_add/datasets/add.pl")
+    kb = prolog_KB(
+        pseudo_label_list=list(range(10)), pl_file="examples/mnist_add/datasets/add.pl"
+    )
     reasoner = ReasonerBase(kb, "confidence")
     test_add(reasoner)
 
@@ -351,14 +365,16 @@ if __name__ == "__main__":
     test_add(reasoner)
 
     print("add_KB with multiple inputs at once:")
-    multiple_prob = [[
-                        [0, 0.99, 0.01, 0, 0, 0, 0, 0, 0, 0],
-                        [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-                    ],
-                    [
-                        [0, 0, 0.01, 0, 0, 0, 0, 0.99, 0, 0],
-                        [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-                    ]]
+    multiple_prob = [
+        [
+            [0, 0.99, 0.01, 0, 0, 0, 0, 0, 0, 0],
+            [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+        ],
+        [
+            [0, 0, 0.01, 0, 0, 0, 0, 0.99, 0, 0],
+            [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+        ],
+    ]
 
     kb = add_KB()
     reasoner = ReasonerBase(kb, "confidence")
@@ -383,8 +399,21 @@ if __name__ == "__main__":
     class HWF_KB(KBBase):
         def __init__(
             self,
-            pseudo_label_list=["1", "2", "3", "4", "5", "6", "7", "8", "9",
-                               "+", "-", "times", "div"],
+            pseudo_label_list=[
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "+",
+                "-",
+                "times",
+                "div",
+            ],
             max_err=1e-3,
         ):
             super().__init__(pseudo_label_list, max_err)
@@ -393,7 +422,17 @@ if __name__ == "__main__":
             if len(formula) % 2 == 0:
                 return False
             for i in range(len(formula)):
-                if i % 2 == 0 and formula[i] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+                if i % 2 == 0 and formula[i] not in [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                ]:
                     return False
                 if i % 2 != 0 and formula[i] not in ["+", "-", "times", "div"]:
                     return False
@@ -406,12 +445,25 @@ if __name__ == "__main__":
             mapping.update({"+": "+", "-": "-", "times": "*", "div": "/"})
             formula = [mapping[f] for f in formula]
             return eval("".join(formula))
-    
+
     class HWF_ground_KB(ground_KB):
         def __init__(
             self,
-            pseudo_label_list=["1", "2", "3", "4", "5", "6", "7", "8", "9",
-                               "+", "-", "times", "div"],
+            pseudo_label_list=[
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "+",
+                "-",
+                "times",
+                "div",
+            ],
             GKB_len_list=[1, 3, 5, 7],
             max_err=1e-3,
         ):
@@ -421,7 +473,17 @@ if __name__ == "__main__":
             if len(formula) % 2 == 0:
                 return False
             for i in range(len(formula)):
-                if i % 2 == 0 and formula[i] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+                if i % 2 == 0 and formula[i] not in [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                ]:
                     return False
                 if i % 2 != 0 and formula[i] not in ["+", "-", "times", "div"]:
                     return False
@@ -434,7 +496,7 @@ if __name__ == "__main__":
             mapping.update({"+": "+", "-": "-", "times": "*", "div": "/"})
             formula = [mapping[f] for f in formula]
             return eval("".join(formula))
-    
+
     def test_hwf(reasoner):
         res = reasoner.batch_abduce(
             [None],
@@ -461,7 +523,7 @@ if __name__ == "__main__":
         )
         print(res)
         print()
-    
+
     def test_hwf_multiple(reasoner, max_revisions):
         res = reasoner.batch_abduce(
             [None, None],
@@ -512,10 +574,10 @@ if __name__ == "__main__":
     print("HWF_KB with multiple inputs at once:")
     kb = HWF_KB(max_err=0.1)
     reasoner = ReasonerBase(kb, "hamming")
-    test_hwf_multiple(reasoner, max_revisions=[1,3,3])
-    
+    test_hwf_multiple(reasoner, max_revisions=[1, 3, 3])
+
     print("max_revision is float")
-    test_hwf_multiple(reasoner, max_revisions=[0.5,0.9,0.9])
+    test_hwf_multiple(reasoner, max_revisions=[0.5, 0.9, 0.9])
 
     class HED_prolog_KB(prolog_KB):
         def __init__(self, pseudo_label_list, pl_file):

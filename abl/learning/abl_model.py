@@ -9,9 +9,13 @@
 #   Description   ：
 #
 # ================================================================#
-import pickle
-from ..utils import flatten, reform_idx
 from typing import List, Any, Optional
+
+import pickle
+
+from ..structures import ListData
+from ..utils import flatten, reform_idx
+
 
 
 class ABLModel:
@@ -55,7 +59,7 @@ class ABLModel:
                 "base_model should have fit, predict and score methods."
             )
 
-    def predict(self, X: List[List[Any]], mapping: Optional[dict] = None) -> dict:
+    def predict(self, data_samples: ListData, mapping: Optional[dict] = None) -> dict:
         """
         Predict the labels and probabilities for the given data.
 
@@ -72,11 +76,11 @@ class ABLModel:
             A dictionary containing the predicted labels and probabilities.
         """
         model = self.classifier_list[0]
-        data_X = flatten(X)
+        data_X = flatten(data_samples["X"])
         if hasattr(model, "predict_proba"):
             prob = model.predict_proba(X=data_X)
             label = prob.argmax(axis=1)
-            prob = reform_idx(prob, X)
+            prob = reform_idx(prob, data_samples["X"])
         else:
             prob = None
             label = model.predict(X=data_X)
@@ -84,7 +88,7 @@ class ABLModel:
         if mapping is not None:
             label = [mapping[y] for y in label]
 
-        label = reform_idx(label, X)
+        label = reform_idx(label, data_samples["X"])
 
         return {"label": label, "prob": prob}
 
@@ -109,7 +113,7 @@ class ABLModel:
         score = self.classifier_list[0].score(X=data_X, y=data_Y)
         return score
 
-    def train(self, X: List[List[Any]], Y: List[Any]) -> float:
+    def train(self, data_samples: ListData) -> float:
         """
         Train the model on the given data.
 
@@ -125,9 +129,9 @@ class ABLModel:
         float
             The loss value of the trained model.
         """
-        data_X = flatten(X)
-        data_Y = flatten(Y)
-        return self.classifier_list[0].fit(X=data_X, y=data_Y)
+        data_X = flatten(data_samples["X"])
+        data_y = flatten(data_samples["abduced_idx"])
+        return self.classifier_list[0].fit(X=data_X, y=data_y)
 
     def _model_operation(self, operation: str, *args, **kwargs):
         model = self.classifier_list[0]
