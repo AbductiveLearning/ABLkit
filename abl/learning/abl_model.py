@@ -10,7 +10,7 @@
 #
 # ================================================================#
 import pickle
-from utils import flatten, reform_idx
+from ..utils import flatten, reform_idx
 from typing import List, Any, Optional
 
 

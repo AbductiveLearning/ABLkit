@@ -142,7 +142,7 @@ class ground_KB(KBBase):
             key_idx = bisect.bisect_left(key_list, y)
             
             all_candidates = []
-            for idx in range(key_idx - 1, 0, -1):
+            for idx in range(key_idx - 1, -1, -1):
                 k = key_list[idx]
                 if abs(k - y) <= self.max_err:
                     all_candidates.extend(potential_candidates[k])
