@@ -10,84 +10,55 @@ from ..utils.utils import (
 
 
 class ReasonerBase:
+    """
+    Base class for reasoner.
+
+    Attributes
+    ----------
+    kb :
+        The knowledge base to be used for reasoning.
+    dist_func : str, optional
+        The distance function to be used when determining the cost list between each 
+        candidate and the given prediction. Valid options include: `"hamming"` (default) 
+        | `"confidence"`. Any other options will raise a `NotImplementedError`. 
+        For detailed explanations of these options, refer to `_get_cost_list`.
+    mapping : dictt, optional
+        A mapping from label to index. If not provided, a default 
+        order-based mapping is created.
+    use_zoopt : bool, optional
+        Whether to use the Zoopt library during abductive reasoning.
+        Default is False.
+    """
+        
     def __init__(self, kb, dist_func="hamming", mapping=None, use_zoopt=False):
-        """
-        Base class for all reasoner in the ABL system.
-
-        Parameters
-        ----------
-        kb : KBBase
-            The knowledge base to be used for reasoning.
-        dist_func : str, optional
-            The distance function to be used. Can be "hamming" or "confidence". Default is "hamming".
-        mapping : dict, optional
-            A mapping of indices to labels. If None, a default mapping is generated.
-        use_zoopt : bool, optional
-            Whether to use the Zoopt library for optimization. Default is False.
-
-        Raises
-        ------
-        NotImplementedError
-            If the specified distance function is neither "hamming" nor "confidence".
-        """
-
         if not (dist_func == "hamming" or dist_func == "confidence"):
-            raise NotImplementedError  # Only hamming or confidence distance is available.
+            raise NotImplementedError  
 
         self.kb = kb
         self.dist_func = dist_func
         self.use_zoopt = use_zoopt
         if mapping is None:
             self.mapping = {
-                index: label for index, label in enumerate(self.kb.pseudo_label_list)
+                label: index for index, label in enumerate(self.kb.pseudo_label_list)
             }
         else:
             self.mapping = mapping
-        self.remapping = dict(zip(self.mapping.values(), self.mapping.keys()))
-
-    def _get_cost_list(self, pred_pseudo_label, pred_prob, candidates):
-        """
-        Get the list of costs between each pseudo label and candidate.
-
-        Parameters
-        ----------
-        pred_pseudo_label : list
-            The pseudo label to be used for computing costs of candidates.
-        pred_prob : list
-            Probabilities of the predictions. Used when distance function is "confidence".
-        candidates : list
-            List of candidate abduction result.
-
-        Returns
-        -------
-        numpy.ndarray
-            Array of computed costs for each candidate.
-        """
-        if self.dist_func == "hamming":
-            return hamming_dist(pred_pseudo_label, candidates)
-
-        elif self.dist_func == "confidence":
-            candidates = [[self.remapping[x] for x in c] for c in candidates]
-            return confidence_dist(pred_prob, candidates)
 
     def _get_one_candidate(self, pred_pseudo_label, pred_prob, candidates):
         """
-        Get one candidate. If multiple candidates exist, return the one with minimum cost.
-
+        Due to the nondeterminism of abductive reasoning, there could be multiple candidates 
+        satisfying the knowledge base. If this happens, return one candidate that has the 
+        minimum cost. If no candidates are provided, an empty list is returned.
+        
         Parameters
         ----------
-        pred_pseudo_label : list
-            The pseudo label to be used for selecting a candidate.
-        pred_prob : list
-            Probabilities of the predictions.
-        candidates : list
-            List of candidate abduction result.
-
-        Returns
-        -------
-        list
-            The chosen candidate based on minimum cost.
-            If no candidates, an empty list is returned.
+        pred_pseudo_label : List[Any]
+            Predicted pseudo label to be used for selecting a candidate.
+        pred_prob : List[List[Any]]
+            Predicted probabilities of the prediction (Each sublist contains the probability 
+            values of all pseudo labels).
+        candidates : List[List[Any]]
+            Several candidate abduction results. 
         """
         if len(candidates) == 0:
             return []
@@ -97,62 +68,54 @@ class ReasonerBase:
             cost_array = self._get_cost_list(pred_pseudo_label, pred_prob, candidates)
             candidate = candidates[np.argmin(cost_array)]
             return candidate
-
-    def zoopt_revision_score(self, symbol_num, pred_pseudo_label, pred_prob, y, sol):
+    
+    def _get_cost_list(self, pred_pseudo_label, pred_prob, candidates):
         """
-        Get the revision score for a single solution.
-
+        Get the list of costs between each candidate and the given prediction. The list is 
+        calculated based on one of the following distance functions:
+        - "hamming": Directly calculates the Hamming distance between the predicted pseudo 
+                     label and candidate.
+        - "confidence": Calculates the distance between the prediction and candidate based 
+                        on confidence derived from the predicted probability.
+        
         Parameters
         ----------
-        symbol_num : int
-            Number of total symbols.
-        pred_pseudo_label : list
-            List of predicted pseudo labels.
-        pred_prob : list
-            List of probabilities for predicted results.
-        y : any
-            Ground truth for the predicted results.
-        sol : array-like
-            Solution to evaluate.
-
-        Returns
-        -------
-        float
-            The revision score for the given solution.
+        pred_pseudo_label : List[Any]
+            Predicted pseudo label.
+        pred_prob : List[List[Any]]
+            Predicted probabilities of the prediction (Each sublist contains the probability 
+            values of all pseudo labels). Used when distance function is "confidence".
+        candidates : List[List[Any]]
+            Several candidate abduction results.
         """
-        revision_idx = np.where(sol.get_x() != 0)[0]
-        candidates = self.revise_by_idx(pred_pseudo_label, y, revision_idx)
-        if len(candidates) > 0:
-            return np.min(self._get_cost_list(pred_pseudo_label, pred_prob, candidates))
-        else:
-            return symbol_num
+        if self.dist_func == "hamming":
+            return hamming_dist(pred_pseudo_label, candidates)
 
-    def _constrain_revision_num(self, solution, max_revision_num):
-        x = solution.get_x()
-        return max_revision_num - x.sum()
+        elif self.dist_func == "confidence":
+            candidates = [[self.mapping[x] for x in c] for c in candidates]
+            return confidence_dist(pred_prob, candidates)
+
 
     def zoopt_get_solution(
         self, symbol_num, pred_pseudo_label, pred_prob, y, max_revision_num
     ):
-        """Get the optimal solution using the Zoopt library.
+        """
+        Get the optimal solution using the Zoopt library. The solution is a list of 
+        boolean values, where '1' (True) indicates the indices chosen to be revised.
 
         Parameters
         ----------
         symbol_num : int
             Number of total symbols.
-        pred_pseudo_label : list
-            List of predicted pseudo labels.
-        pred_prob : list
-            List of probabilities for predicted results.
-        y : any
-            Ground truth for the predicted results.
+        pred_pseudo_label : List[Any]
+            Predicted pseudo label.
+        pred_prob : List[List[Any]]
+            Predicted probabilities of the prediction (Each sublist contains the probability 
+            values of all pseudo labels).
+        y : Any
+            Ground truth.
         max_revision_num : int
-            Maximum number of revisions to use.
-
-        Returns
-        -------
-        array-like
-            The optimal solution, i.e., where to revise predict pseudo label.
+            Specifies the maximum number of revisions allowed.
         """
         dimension = Dimension(
             size=symbol_num, regs=[[0, 1]] * symbol_num, tys=[False] * symbol_num
@@ -167,51 +130,70 @@ class ReasonerBase:
         parameter = Parameter(budget=100, intermediate_result=False, autoset=True)
         solution = Opt.min(objective, parameter).get_x()
         return solution
-
-    def revise_by_idx(self, pred_pseudo_label, y, revision_idx):
+    
+    def zoopt_revision_score(self, symbol_num, pred_pseudo_label, pred_prob, y, sol):
         """
-        Revise the pseudo label according to the given indices.
+        Get the revision score for a solution. A lower score suggests that the Zoopt library 
+        has a higher preference for this solution.
+        """
+        revision_idx = np.where(sol.get_x() != 0)[0]
+        candidates = self.revise_at_idx(pred_pseudo_label, y, revision_idx)
+        if len(candidates) > 0:
+            return np.min(self._get_cost_list(pred_pseudo_label, pred_prob, candidates))
+        else:
+            return symbol_num
+
+    def _constrain_revision_num(self, solution, max_revision_num):
+        """
+        Constrain that the total number of revisions chosen by the solution does not exceed 
+        maximum number of revisions allowed.
+        """
+        x = solution.get_x()
+        return max_revision_num - x.sum()
+    
+    def revise_at_idx(self, pred_pseudo_label, y, revision_idx):
+        """
+        Revise the predicted pseudo label at specified index positions.
 
         Parameters
         ----------
-        pred_pseudo_label : list
-            List of predicted pseudo labels.
-        y : any
-            Ground truth for the predicted results.
+        pred_pseudo_label : List[Any]
+            Predicted pseudo label.
+        y : Any
+            Ground truth.
         revision_idx : array-like
-            Indices of the revisions to retrieve.
-
-        Returns
-        -------
-        list
-            The revisions according to the given indices.
+            Indices of where revisions should be made to the predicted pseudo label.
         """
-        return self.kb.revise_by_idx(pred_pseudo_label, y, revision_idx)
+        return self.kb.revise_at_idx(pred_pseudo_label, y, revision_idx)
 
     def abduce(
         self, pred_prob, pred_pseudo_label, y, max_revision=-1, require_more_revision=0
     ):
         """
-        Perform revision by abduction on the given data.
+        Perform abductive reasoning on the given prediction data.
 
         Parameters
         ----------
-        pred_prob : list
-            List of probabilities for predicted results.
-        pred_pseudo_label : list
-            List of predicted pseudo labels.
+        pred_prob : List[List[Any]]
+            Predicted probabilities of the prediction (Each sublist contains the probability 
+            values of all pseudo labels).
+        pred_pseudo_label : List[Any]
+            Predicted pseudo label.
         y : any
-            Ground truth for the predicted results.
+            Ground truth.
         max_revision : int or float, optional
-            Maximum number of revisions to use. If float, represents the fraction of total revisions to use.
-            If -1, any revisions are allowed. Defaults to -1.
+            The upper limit on the number of revisions. If float, denotes the fraction of the 
+            total length that can be revised. A value of -1 implies no restriction on the number 
+            of revisions. Default to -1.
         require_more_revision : int, optional
-            Number of additional revisions to require. Defaults to 0.
+            Specifies additional number of revisions permitted beyond the minimum required.  
+            Defaults to 0.
 
         Returns
         -------
-        list
-            The abduced revisions.
+        List[Any]
+            The revised pseudo label through abductive reasoning, which is consistent with the
+            knowledge base.
         """
         symbol_num = len(flatten(pred_pseudo_label))
         max_revision_num = calculate_revision_num(max_revision, symbol_num)
@@ -221,7 +203,7 @@ class ReasonerBase:
                 symbol_num, pred_pseudo_label, pred_prob, y, max_revision_num
             )
             revision_idx = np.where(solution != 0)[0]
-            candidates = self.revise_by_idx(pred_pseudo_label, y, revision_idx)
+            candidates = self.revise_at_idx(pred_pseudo_label, y, revision_idx)
         else:
             candidates = self.kb.abduce_candidates(
                 pred_pseudo_label, y, max_revision_num, require_more_revision
@@ -231,36 +213,18 @@ class ReasonerBase:
         return candidate
 
     def batch_abduce(
-        self, pred_prob, pred_pseudo_label, Y, max_revision=-1, require_more_revision=0
+        self, pred_probs, pred_pseudo_labels, Ys, max_revision=-1, require_more_revision=0
     ):
         """
-        Perform abduction on the given data in batches.
-
-        Parameters
-        ----------
-        pred_prob : list
-            List of probabilities for predicted results.
-        pred_pseudo_label : list
-            List of predicted pseudo labels.
-        Y : list
-            List of ground truths for the predicted results.
-        max_revision : int or float, optional
-            Maximum number of revisions to use. If float, represents the fraction of total revisions to use.
-            If -1, use all revisions. Defaults to -1.
-        require_more_revision : int, optional
-            Number of additional revisions to require. Defaults to 0.
-
-        Returns
-        -------
-        list
-            The abduced revisions in batches.
+        Perform abductive reasoning on the given prediction data in batches.
+        For detailed information, refer to `abduce`.
         """
         return [
             self.abduce(
-                _pred_prob, _pred_pseudo_label, _Y, max_revision, require_more_revision
+                pred_prob, pred_pseudo_label, Y, max_revision, require_more_revision
             )
-            for _pred_prob, _pred_pseudo_label, _Y in zip(
-                pred_prob, pred_pseudo_label, Y
+            for pred_prob, pred_pseudo_label, Y in zip(
+                pred_probs, pred_pseudo_labels, Ys
             )
         ]
 
@@ -539,7 +503,7 @@ if __name__ == "__main__":
         def __init__(self, kb, dist_func="hamming"):
             super().__init__(kb, dist_func, use_zoopt=True)
 
-        def _revise_by_idxs(self, pred_res, y, all_revision_flag, idxs):
+        def _revise_at_idxs(self, pred_res, y, all_revision_flag, idxs):
             pred = []
             k = []
             revision_flag = []
@@ -548,7 +512,7 @@ if __name__ == "__main__":
                 k.append(y[idx])
                 revision_flag += list(all_revision_flag[idx])
             revision_idx = np.where(np.array(revision_flag) != 0)[0]
-            candidate = self.revise_by_idx(pred, k, revision_idx)
+            candidate = self.revise_at_idx(pred, k, revision_idx)
             return candidate
 
         def zoopt_revision_score(self, symbol_num, pred_res, pred_prob, y, sol):
@@ -563,7 +527,7 @@ if __name__ == "__main__":
                 for idx in range(-1, len(pred_res)):
                     if (not idx in idxs) and (idx >= 0):
                         idxs.append(idx)
-                    candidate = self._revise_by_idxs(
+                    candidate = self._revise_at_idxs(
                         pred_res, y, all_revision_flag, idxs
                     )
                     if len(candidate) == 0:
