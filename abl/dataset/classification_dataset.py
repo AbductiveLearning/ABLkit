@@ -1,6 +1,7 @@
+from typing import Any, Callable, List, Tuple
+
 import torch
 from torch.utils.data import Dataset
-from typing import List, Any, Tuple, Callable
 
 
 class ClassificationDataset(Dataset):

@@ -1,5 +1,6 @@
-import numpy as np
 from itertools import chain
+
+import numpy as np
 
 
 def flatten(nested_list):

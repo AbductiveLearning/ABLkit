@@ -1,18 +1,18 @@
 import os
 from collections import defaultdict
+
 import torch
 from torch.utils.data import DataLoader
 
-from abl.reasoning import ReasonerBase
-from abl.learning import ABLModel, BasicNN
 from abl.bridge import SimpleBridge
-from abl.evaluation import BaseMetric
 from abl.dataset import BridgeDataset, RegressionDataset
+from abl.evaluation import BaseMetric
+from abl.learning import ABLModel, BasicNN
+from abl.reasoning import ReasonerBase
 from abl.utils import print_log
-
-from examples.hed.utils import gen_mappings, InfiniteSampler
-from examples.models.nn import SymbolNetAutoencoder
 from examples.hed.datasets.get_hed import get_pretrain_data
+from examples.hed.utils import InfiniteSampler, gen_mappings
+from examples.models.nn import SymbolNetAutoencoder
 
 
 class HEDBridge(SimpleBridge):

@@ -1,6 +1,7 @@
 import torchvision
 from torchvision.transforms import transforms
 
+
 def get_data(file, img_dataset, get_pseudo_label):
     X = []
     if get_pseudo_label:

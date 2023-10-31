@@ -1,10 +1,9 @@
 from abc import ABCMeta, abstractmethod
-from typing import Any, List, Tuple, Optional, Union
+from typing import Any, List, Optional, Tuple, Union
 
 from ..learning import ABLModel
 from ..reasoning import ReasonerBase
 from ..structures import ListData
-
 
 DataSet = Tuple[List[List[Any]], Optional[List[List[Any]]], List[List[Any]]]
 
@@ -37,6 +36,7 @@ class BaseBridge(metaclass=ABCMeta):
     @abstractmethod
     def abduce_pseudo_label(self, data_samples: ListData) -> List[List[Any]]:
         """Placeholder for abduce pseudo labels."""
+        pass
 
     @abstractmethod
     def idx_to_pseudo_label(self, data_samples: ListData) -> List[List[Any]]:

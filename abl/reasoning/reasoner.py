@@ -1,12 +1,8 @@
 import numpy as np
-from zoopt import Dimension, Objective, Parameter, Opt
-from ..utils.utils import (
-    confidence_dist,
-    flatten,
-    reform_idx,
-    hamming_dist,
-    calculate_revision_num,
-)
+from zoopt import Dimension, Objective, Opt, Parameter
+
+from ..utils.utils import (calculate_revision_num, confidence_dist, flatten,
+                           hamming_dist, reform_idx)
 
 
 class ReasonerBase:

@@ -1,2 +1,2 @@
+from .kb import KBBase, ground_KB, prolog_KB
 from .reasoner import ReasonerBase
-from .kb import KBBase, prolog_KB

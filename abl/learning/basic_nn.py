@@ -10,14 +10,15 @@
 #
 # ================================================================#
 
-import torch
-import numpy
-from torch.utils.data import DataLoader
-from ..utils.logger import print_log
-from ..dataset import ClassificationDataset
-
 import os
-from typing import List, Any, T, Optional, Callable, Tuple
+from typing import Any, Callable, List, Optional, T, Tuple
+
+import numpy
+import torch
+from torch.utils.data import DataLoader
+
+from ..dataset import ClassificationDataset
+from ..utils.logger import print_log
 
 
 class BasicNN:

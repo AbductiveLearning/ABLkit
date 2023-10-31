@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import sys
 import os
 import re
+import sys
 
 if not 'READTHEDOCS' in os.environ:
     sys.path.insert(0, os.path.abspath('..'))
@@ -10,7 +10,6 @@ sys.path.append(os.path.abspath('./ABL/'))
 
 # from sphinx.locale import _
 from sphinx_rtd_theme import __version__
-
 
 project = u'ABL'
 slug = re.sub(r'\W+', '-', project.lower())

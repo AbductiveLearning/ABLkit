@@ -1,5 +1,6 @@
+from typing import Any, List, Tuple
+
 from torch.utils.data import Dataset
-from typing import List, Any, Tuple
 
 
 class BridgeDataset(Dataset):

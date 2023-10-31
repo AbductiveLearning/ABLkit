@@ -1,23 +1,15 @@
-from abc import ABC, abstractmethod
 import bisect
-import numpy as np
-
+from abc import ABC, abstractmethod
 from collections import defaultdict
-from itertools import product, combinations
-
-from ..utils.utils import (
-    flatten,
-    reform_idx,
-    hamming_dist,
-    check_equal,
-    to_hashable,
-    hashable_to_list,
-)
-
+from functools import lru_cache
+from itertools import combinations, product
 from multiprocessing import Pool
 
-from functools import lru_cache
+import numpy as np
 import pyswip
+
+from ..utils.utils import (check_equal, flatten, hamming_dist,
+                           hashable_to_list, reform_idx, to_hashable)
 
 
 class KBBase(ABC):
