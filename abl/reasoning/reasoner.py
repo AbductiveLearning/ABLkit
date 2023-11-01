@@ -1,6 +1,6 @@
 import numpy as np
 from zoopt import Dimension, Objective, Parameter, Opt
-from ..utils.utils import (
+from abl.utils.utils import (
     confidence_dist,
     flatten,
     reform_idx,
@@ -23,7 +23,7 @@ class ReasonerBase:
         | `"confidence"`. Any other options will raise a `NotImplementedError`. For 
         detailed explanations of these options, refer to `_get_cost_list`.
     mapping : dict, optional
-        A mapping from label to index. If not provided, a default order-based mapping is 
+        A mapping from index to label. If not provided, a default order-based mapping is 
         created.
     use_zoopt : bool, optional
         Whether to use the Zoopt library during abductive reasoning. Default to False.
@@ -44,6 +44,7 @@ class ReasonerBase:
             if not isinstance(mapping, dict):
                 raise TypeError("mapping should be dict")
             self.mapping = mapping
+        self.remapping = dict(zip(self.mapping.values(), self.mapping.keys()))
 
     def _get_one_candidate(self, pred_pseudo_label, pred_prob, candidates):
         """
@@ -57,7 +58,7 @@ class ReasonerBase:
             Predicted pseudo label to be used for selecting a candidate.
         pred_prob : List[List[Any]]
             Predicted probabilities of the prediction (Each sublist contains the probability 
-            values of all pseudo labels).
+            distribution over all pseudo labels).
         candidates : List[List[Any]]
             Multiple candidate abduction results. 
         """
@@ -85,7 +86,7 @@ class ReasonerBase:
             Predicted pseudo label.
         pred_prob : List[List[Any]]
             Predicted probabilities of the prediction (Each sublist contains the probability 
-            values of all pseudo labels). Used when distance function is "confidence".
+            distribution over all pseudo labels). Used when distance function is "confidence".
         candidates : List[List[Any]]
             Multiple candidate abduction results.
         """
@@ -93,7 +94,7 @@ class ReasonerBase:
             return hamming_dist(pred_pseudo_label, candidates)
 
         elif self.dist_func == "confidence":
-            candidates = [[self.mapping[x] for x in c] for c in candidates]
+            candidates = [[self.remapping[x] for x in c] for c in candidates]
             return confidence_dist(pred_prob, candidates)
 
 
@@ -112,7 +113,7 @@ class ReasonerBase:
             Predicted pseudo label.
         pred_prob : List[List[Any]]
             Predicted probabilities of the prediction (Each sublist contains the probability 
-            values of all pseudo labels).
+            distribution over all pseudo labels).
         y : Any
             Ground truth.
         max_revision_num : int
@@ -177,7 +178,7 @@ class ReasonerBase:
         ----------
         pred_prob : List[List[Any]]
             Predicted probabilities of the prediction (Each sublist contains the probability 
-            values of all pseudo labels).
+            distribution over all pseudo labels).
         pred_pseudo_label : List[Any]
             Predicted pseudo label.
         y : any
@@ -193,7 +194,7 @@ class ReasonerBase:
         Returns
         -------
         List[Any]
-            The revised pseudo label through abductive reasoning, which is consistent with the
+            A revised pseudo label through abductive reasoning, which is consistent with the
             knowledge base.
         """
         symbol_num = len(flatten(pred_pseudo_label))
