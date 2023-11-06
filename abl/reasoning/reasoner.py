@@ -1,6 +1,6 @@
 import numpy as np
 from zoopt import Dimension, Objective, Parameter, Opt
-from ..utils.utils import (
+from abl.utils.utils import (
     confidence_dist,
     flatten,
     reform_idx,
@@ -60,7 +60,7 @@ class ReasonerBase:
             Predicted probabilities of the prediction (Each sublist contains the probability 
             distribution over all pseudo labels).
         candidates : List[List[Any]]
-            Multiple candidate abduction results. 
+            Multiple consistent candidates. 
         """
         if len(candidates) == 0:
             return []
@@ -88,7 +88,7 @@ class ReasonerBase:
             Predicted probabilities of the prediction (Each sublist contains the probability 
             distribution over all pseudo labels). Used when distance function is "confidence".
         candidates : List[List[Any]]
-            Multiple candidate abduction results.
+            Multiple consistent candidates.
         """
         if self.dist_func == "hamming":
             return hamming_dist(pred_pseudo_label, candidates)
@@ -115,7 +115,7 @@ class ReasonerBase:
             Predicted probabilities of the prediction (Each sublist contains the probability 
             distribution over all pseudo labels).
         y : Any
-            Ground truth for the result (after passing through the logic part).
+            Ground truth for the logical result.
         max_revision_num : int
             Specifies the maximum number of revisions allowed.
         """
@@ -162,7 +162,7 @@ class ReasonerBase:
         pred_pseudo_label : List[Any]
             Predicted pseudo label.
         y : Any
-            Ground truth for the result (after passing through the logic part).
+            Ground truth for the logical result.
         revision_idx : array-like
             Indices of where revisions should be made to the predicted pseudo label.
         """
@@ -182,7 +182,7 @@ class ReasonerBase:
         pred_pseudo_label : List[Any]
             Predicted pseudo label.
         y : Any
-            Ground truth for the result (after passing through the logic part).
+            Ground truth for the logical result.
         max_revision : int or float, optional
             The upper limit on the number of revisions. If float, denotes the fraction of the 
             total length that can be revised. A value of -1 implies no restriction on the number 
@@ -456,7 +456,7 @@ if __name__ == "__main__":
         print()
 
     print("HWF_KB with GKB, max_err=0.1")
-    kb = HWF_ground_KB(GKB_len_list=[1, 3, 5, 7], max_err=0.1)
+    kb = HWF_ground_KB(GKB_len_list=[1, 3, 5], max_err=0.1)
     reasoner = ReasonerBase(kb, "hamming")
     test_hwf(reasoner)
 
