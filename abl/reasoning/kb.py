@@ -5,7 +5,7 @@ import numpy as np
 from collections import defaultdict
 from itertools import product, combinations
 
-from ..utils.utils import flatten, reform_idx, hamming_dist, check_equal, to_hashable, hashable_to_list
+from ..utils.utils import flatten, reform_idx, hamming_dist, to_hashable, hashable_to_list
 
 from multiprocessing import Pool
 
@@ -100,7 +100,7 @@ class KBBase(ABC):
             candidate = pred_pseudo_label.copy()
             for i, idx in enumerate(revision_idx):
                 candidate[idx] = c[i]
-            if check_equal(self.logic_forward(candidate), y, self.max_err):
+            if abs(self.logic_forward(candidate) - y) <= self.max_err:
                 candidates.append(candidate)
         return candidates
 

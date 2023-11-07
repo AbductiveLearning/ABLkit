@@ -1,11 +1,10 @@
 import numpy as np
 from zoopt import Dimension, Objective, Parameter, Opt
-from abl.utils.utils import (
+from ..utils.utils import (
     confidence_dist,
     flatten,
     reform_idx,
     hamming_dist,
-    calculate_revision_num,
 )
 
 
@@ -168,6 +167,24 @@ class ReasonerBase:
         """
         return self.kb.revise_at_idx(pred_pseudo_label, y, revision_idx)
 
+    def _get_max_revision_num(max_revision, symbol_num):
+        """
+        Get the maximum revision number according to input `max_revision`.
+        """
+        if not isinstance(max_revision, (int, float)):
+            raise TypeError("Parameter must be of type int or float.")
+
+        if max_revision == -1:
+            return symbol_num
+        elif isinstance(max_revision, float):
+            if not (0 <= max_revision <= 1):
+                raise ValueError("If max_revision is a float, it must be between 0 and 1.")
+            return round(symbol_num * max_revision)
+        else:
+            if max_revision < 0:
+                raise ValueError("If max_revision is an int, it must be non-negative.")
+            return max_revision
+    
     def abduce(
         self, pred_prob, pred_pseudo_label, y, max_revision=-1, require_more_revision=0
     ):
@@ -198,7 +215,7 @@ class ReasonerBase:
             knowledge base.
         """
         symbol_num = len(flatten(pred_pseudo_label))
-        max_revision_num = calculate_revision_num(max_revision, symbol_num)
+        max_revision_num = self._get_max_revision_num(max_revision, symbol_num)
 
         if self.use_zoopt:
             solution = self.zoopt_get_solution(
