@@ -174,38 +174,6 @@ def hashable_to_list(x):
     return x
 
 
-def calculate_revision_num(parameter, total_length):
-    """
-    Convert a float parameter to an integer, based on a total length.
-
-    Parameters
-    ----------
-    parameter : int or float
-        The parameter to convert. If float, it should be between 0 and 1.
-        If int, it should be non-negative. If -1, it will be replaced with total_length.
-    total_length : int
-        The total length to calculate the parameter from if it's a fraction.
-
-    Returns
-    -------
-    int
-        The calculated parameter.
-    """
-    if not isinstance(parameter, (int, float)):
-        raise TypeError("Parameter must be of type int or float.")
-
-    if parameter == -1:
-        return total_length
-    elif isinstance(parameter, float):
-        if not (0 <= parameter <= 1):
-            raise ValueError("If parameter is a float, it must be between 0 and 1.")
-        return round(total_length * parameter)
-    else:
-        if parameter < 0:
-            raise ValueError("If parameter is an int, it must be non-negative.")
-        return parameter
-
-
 if __name__ == "__main__":
     A = np.array(
         [
