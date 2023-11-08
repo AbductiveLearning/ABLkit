@@ -384,7 +384,7 @@ if __name__ == "__main__":
 
         def logic_forward(self, formula):
             if not self._valid_candidate(formula):
-                return np.inf
+                return None
             mapping = {str(i): str(i) for i in range(1, 10)}
             mapping.update({"+": "+", "-": "-", "times": "*", "div": "/"})
             formula = [mapping[f] for f in formula]
@@ -412,7 +412,7 @@ if __name__ == "__main__":
 
         def logic_forward(self, formula):
             if not self._valid_candidate(formula):
-                return np.inf
+                return None
             mapping = {str(i): str(i) for i in range(1, 10)}
             mapping.update({"+": "+", "-": "-", "times": "*", "div": "/"})
             formula = [mapping[f] for f in formula]

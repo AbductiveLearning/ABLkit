@@ -81,6 +81,15 @@ class KBBase(ABC):
                                                 to_hashable(y), 
                                                 max_revision_num, require_more_revision)
     
+    def _check_equal(self, logic_result, y):
+        """
+        Check whether the logical result of a candidate is equal to the ground truth
+        (or, within the maximum error allowed).
+        """
+        if logic_result == None:
+            return False
+        return abs(logic_result - y) <= self.max_err
+         
     def revise_at_idx(self, pred_pseudo_label, y, revision_idx):
         """
         Revise the predicted pseudo label at specified index positions.
@@ -100,7 +109,7 @@ class KBBase(ABC):
             candidate = pred_pseudo_label.copy()
             for i, idx in enumerate(revision_idx):
                 candidate[idx] = c[i]
-            if abs(self.logic_forward(candidate) - y) <= self.max_err:
+            if self._check_equal(self.logic_forward(candidate), y):
                 candidates.append(candidate)
         return candidates
 
@@ -144,7 +153,7 @@ class KBBase(ABC):
         """   
         candidates = []
         for revision_num in range(len(pred_pseudo_label) + 1):
-            if revision_num == 0 and abs(self.logic_forward(pred_pseudo_label) - y) <= self.max_err:
+            if revision_num == 0 and self._check_equal(self.logic_forward(pred_pseudo_label), y):
                 candidates.append(pred_pseudo_label)
             elif revision_num > 0:
                 candidates.extend(self._revision(revision_num, pred_pseudo_label, y))
@@ -218,7 +227,7 @@ class ground_KB(KBBase):
         for post_x in post_x_it:
             x = (pre_x,) + post_x
             y = self.logic_forward(x)
-            if y is not np.inf:
+            if y is not None:
                 XY_list.append((x, y))
         return XY_list
 
