@@ -144,9 +144,7 @@ class KBBase(ABC):
         """   
         candidates = []
         for revision_num in range(len(pred_pseudo_label) + 1):
-            if revision_num == 0 and check_equal(self.logic_forward(pred_pseudo_label), 
-                                                 y, 
-                                                 self.max_err):
+            if revision_num == 0 and abs(self.logic_forward(pred_pseudo_label) - y) <= self.max_err:
                 candidates.append(pred_pseudo_label)
             elif revision_num > 0:
                 candidates.extend(self._revision(revision_num, pred_pseudo_label, y))
@@ -170,7 +168,15 @@ class KBBase(ABC):
         pred_pseudo_label = hashable_to_list(pred_pseudo_label)
         y = hashable_to_list(y)
         return self._abduce_by_search(pred_pseudo_label, y, max_revision_num, require_more_revision)
- 
+
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__} is a KB with "
+            f"pseudo_label_list={self.pseudo_label_list!r}, "
+            f"max_err={self.max_err!r}, "
+            f"use_cache={self.use_cache!r}."
+        )
+    
        
 class ground_KB(KBBase):
     """
@@ -279,6 +285,16 @@ class ground_KB(KBBase):
                             for key in key_list[low_key:high_key]
                             for candidate in potential_candidates[key]]
             return all_candidates
+    
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__} is a KB with "
+            f"pseudo_label_list={self.pseudo_label_list!r}, "
+            f"max_err={self.max_err!r}, "
+            f"use_cache={self.use_cache!r}, "
+            f"and has a prebuilt GKB with "
+            f"GKB_len_list={self.GKB_len_list!r}."
+        )
 
 
 class prolog_KB(KBBase):
@@ -301,8 +317,9 @@ class prolog_KB(KBBase):
     """
     def __init__(self, pseudo_label_list, pl_file):
         super().__init__(pseudo_label_list)
+        self.pl_file = pl_file
         self.prolog = pyswip.Prolog()
-        self.prolog.consult(pl_file)
+        self.prolog.consult(self.pl_file)
 
     def logic_forward(self, pseudo_labels):
         """
@@ -361,3 +378,11 @@ class prolog_KB(KBBase):
             candidate = reform_idx(candidate, save_pred_pseudo_label)
             candidates.append(candidate)
         return candidates
+
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__} is a KB with "
+            f"pseudo_label_list={self.pseudo_label_list!r}, "
+            f"defined by "
+            f"Prolog file {self.pl_file!r}."
+        )

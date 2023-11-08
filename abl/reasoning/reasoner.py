@@ -167,7 +167,7 @@ class ReasonerBase:
         """
         return self.kb.revise_at_idx(pred_pseudo_label, y, revision_idx)
 
-    def _get_max_revision_num(max_revision, symbol_num):
+    def _get_max_revision_num(self, max_revision, symbol_num):
         """
         Get the maximum revision number according to input `max_revision`.
         """
