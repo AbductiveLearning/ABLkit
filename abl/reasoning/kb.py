@@ -1,16 +1,15 @@
 from abc import ABC, abstractmethod
 import bisect
-import numpy as np
-
 from collections import defaultdict
 from itertools import product, combinations
+from multiprocessing import Pool
+from functools import lru_cache
+
+import numpy as np
+import pyswip
 
 from ..utils.utils import flatten, reform_idx, hamming_dist, to_hashable, hashable_to_list
 
-from multiprocessing import Pool
-
-from functools import lru_cache
-import pyswip
 
 class KBBase(ABC):
     """
@@ -23,7 +22,7 @@ class KBBase(ABC):
     max_err : float, optional
         The upper tolerance limit when comparing the similarity between a candidate's logical 
         result and the ground truth. Especially relevant for regression problems where exact 
-        matches might not be feasible. Default to 0.
+        matches might not be feasible. Defaults to 1e-10.
     use_cache : bool, optional
         Whether to use a cache for previously abduced candidates to speed up subsequent 
         operations. Defaults to True.
@@ -36,7 +35,7 @@ class KBBase(ABC):
     perform logical reasoning). After that, other operations (e.g. how to perform abductive 
     reasoning) will be automatically set up. 
     """
-    def __init__(self, pseudo_label_list, max_err=0, use_cache=True):
+    def __init__(self, pseudo_label_list, max_err=1e-10, use_cache=True):
         if not isinstance(pseudo_label_list, list):
             raise TypeError("pseudo_label_list should be list")
         self.pseudo_label_list = pseudo_label_list
@@ -70,7 +69,7 @@ class KBBase(ABC):
         Returns
         -------
         List[List[Any]]
-            A list of candidates, i.e. revised pseudo label that are consistent with the 
+            A list of candidates, i.e. revised pseudo labels that are consistent with the 
             knowledge base.
         """
         if not self.use_cache:
@@ -191,7 +190,7 @@ class KBBase(ABC):
         )
     
        
-class ground_KB(KBBase):
+class GroundKB(KBBase):
     """
     Knowledge base with a ground KB (GKB). Ground KB is a knowledge base prebuilt upon 
     class initialization, stroing all potential candidates along with their respective 
@@ -310,7 +309,7 @@ class ground_KB(KBBase):
         )
 
 
-class prolog_KB(KBBase):
+class PrologKB(KBBase):
     """
     Knowledge base given by a prolog (pl) file.
 
