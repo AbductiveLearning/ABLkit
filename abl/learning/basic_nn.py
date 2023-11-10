@@ -100,9 +100,7 @@ class BasicNN:
             loss_value = self.train_epoch(data_loader)
             if self.save_interval is not None and (epoch + 1) % self.save_interval == 0:
                 if self.save_dir is None:
-                    raise ValueError(
-                        "save_dir should not be None if save_interval is not None."
-                    )
+                    raise ValueError("save_dir should not be None if save_interval is not None.")
                 self.save(epoch + 1)
             if self.stop_loss is not None and loss_value < self.stop_loss:
                 break
@@ -192,16 +190,14 @@ class BasicNN:
 
         with torch.no_grad():
             results = []
-            for data, _ in data_loader:
+            for data in data_loader:
                 data = data.to(device)
                 out = model(data)
                 results.append(out)
 
         return torch.cat(results, axis=0)
 
-    def predict(
-        self, data_loader: DataLoader = None, X: List[Any] = None
-    ) -> numpy.ndarray:
+    def predict(self, data_loader: DataLoader = None, X: List[Any] = None) -> numpy.ndarray:
         """
         Predict the class of the input data.
 
@@ -219,12 +215,12 @@ class BasicNN:
         """
 
         if data_loader is None:
-            data_loader = self._data_loader(X)
+            if self.transform is not None:
+                X = [self.transform(x) for x in X]
+            data_loader = DataLoader(X, batch_size=self.batch_size)
         return self._predict(data_loader).argmax(axis=1).cpu().numpy()
 
-    def predict_proba(
-        self, data_loader: DataLoader = None, X: List[Any] = None
-    ) -> numpy.ndarray:
+    def predict_proba(self, data_loader: DataLoader = None, X: List[Any] = None) -> numpy.ndarray:
         """
         Predict the probability of each class for the input data.
 
@@ -242,7 +238,9 @@ class BasicNN:
         """
 
         if data_loader is None:
-            data_loader = self._data_loader(X)
+            if self.transform is not None:
+                X = [self.transform(x) for x in X]
+            data_loader = DataLoader(X, batch_size=self.batch_size)
         return self._predict(data_loader).softmax(axis=1).cpu().numpy()
 
     def _score(self, data_loader) -> Tuple[float, float]:
@@ -314,15 +312,14 @@ class BasicNN:
         if data_loader is None:
             data_loader = self._data_loader(X, y)
         mean_loss, accuracy = self._score(data_loader)
-        print_log(
-            f"mean loss: {mean_loss:.3f}, accuray: {accuracy:.3f}", logger="current"
-        )
+        print_log(f"mean loss: {mean_loss:.3f}, accuray: {accuracy:.3f}", logger="current")
         return accuracy
 
     def _data_loader(
         self,
         X: List[Any],
         y: List[int] = None,
+        shuffle: bool = True,
     ) -> DataLoader:
         """
         Generate a DataLoader for user-provided input and target data.
@@ -351,7 +348,7 @@ class BasicNN:
         data_loader = DataLoader(
             dataset,
             batch_size=self.batch_size,
-            shuffle=True,
+            shuffle=shuffle,
             num_workers=int(self.num_workers),
             collate_fn=self.collate_fn,
         )
@@ -369,14 +366,13 @@ class BasicNN:
             The path to save the model, by default None.
         """
         if self.save_dir is None and save_path is None:
-            raise ValueError(
-                "'save_dir' and 'save_path' should not be None simultaneously."
-            )
+            raise ValueError("'save_dir' and 'save_path' should not be None simultaneously.")
 
-        if save_path is None:
-            save_path = os.path.join(
-                self.save_dir, f"model_checkpoint_epoch_{epoch_id}.pth"
-            )
+        if save_path is not None:
+            if not os.path.exists(os.path.dirname(save_path)):
+                os.makedirs(os.path.dirname(save_path))
+        else:
+            save_path = os.path.join(self.save_dir, f"model_checkpoint_epoch_{epoch_id}.pth")
             if not os.path.exists(self.save_dir):
                 os.makedirs(self.save_dir)
 
