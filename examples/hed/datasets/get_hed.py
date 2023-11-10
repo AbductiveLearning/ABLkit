@@ -1,11 +1,12 @@
 import os
-import cv2
-import torch
-import torchvision
 import pickle
-import numpy as np
 import random
 from collections import defaultdict
+
+import cv2
+import numpy as np
+import torch
+import torchvision
 from torch.utils.data import Dataset
 from torchvision.transforms import transforms
 
