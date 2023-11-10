@@ -1,4 +1,4 @@
-from typing import Callable, Optional, Sequence
+from typing import Optional, Sequence
 
 from .base_metric import BaseMetric
 
