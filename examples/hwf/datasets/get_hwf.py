@@ -1,10 +1,10 @@
-import os
 import json
+import os.path as osp
 
 from PIL import Image
 from torchvision.transforms import transforms
 
-CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
+CURRENT_DIR = osp.abspath(osp.dirname(__file__))
 
 img_transform = transforms.Compose(
     [transforms.ToTensor(), transforms.Normalize((0.5,), (1,))]
@@ -15,7 +15,7 @@ def get_data(file, get_pseudo_label):
     X, Y = [], []
     if get_pseudo_label:
         Z = []
-    img_dir = os.path.join(CURRENT_DIR, "data/Handwritten_Math_Symbols/")
+    img_dir = osp.join(CURRENT_DIR, "data/Handwritten_Math_Symbols/")
     with open(file) as f:
         data = json.load(f)
         for idx in range(len(data)):
@@ -40,8 +40,8 @@ def get_data(file, get_pseudo_label):
 
 def get_hwf(train=True, get_gt_pseudo_label=False):
     if train:
-        file = os.path.join(CURRENT_DIR, "data/expr_train.json")
+        file = osp.join(CURRENT_DIR, "data/expr_train.json")
     else:
-        file = os.path.join(CURRENT_DIR, "data/expr_test.json")
+        file = osp.join(CURRENT_DIR, "data/expr_test.json")
 
     return get_data(file, get_gt_pseudo_label)
