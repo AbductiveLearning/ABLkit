@@ -15,7 +15,7 @@ class AddKB(SearchBasedKB):
     def get_key(self, data_sample: ListData):
         return (data_sample.to_tuple("pred_pseudo_label"), data_sample["Y"][0])
 
-    def entail(self, data_sample: ListData, y: Any):
+    def check_equal(self, data_sample: ListData, y: Any):
         return self.logic_forward(data_sample) == y
 
     def logic_forward(self, data_sample):

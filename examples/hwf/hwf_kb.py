@@ -32,7 +32,7 @@ class HWF_KB(GroundKB):
         data_sample["Y"] = [eval("".join(formula))]
         return data_sample["Y"][0]
 
-    def entail(self, data_sample: ListData, y: Any):
+    def check_equal(self, data_sample: ListData, y: Any):
         if not self._valid_candidate(data_sample):
             return False
         formula = data_sample["pred_pseudo_label"][0]

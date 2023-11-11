@@ -53,8 +53,8 @@ class SearchBasedKB(BaseKB, ABC):
         )
 
     @abstractmethod
-    def entail(self, data_sample: ListData, y: Any):
-        """Placeholder for entail."""
+    def check_equal(self, data_sample: ListData, y: Any):
+        """Placeholder for check_equal."""
         pass
 
     def abduce_candidates(
@@ -75,7 +75,7 @@ class SearchBasedKB(BaseKB, ABC):
             for i, idx in enumerate(revision_idx):
                 candidate[idx] = c[i]
             new_data_sample["pred_pseudo_label"][0] = candidate
-            if self.entail(new_data_sample, new_data_sample["Y"][0]):
+            if self.check_equal(new_data_sample, new_data_sample["Y"][0]):
                 candidates.append(candidate)
         return candidates
 
