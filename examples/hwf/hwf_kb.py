@@ -56,10 +56,10 @@ class HWF_KB(GroundKB):
                 Y.extend(part_Y)
         if Y and isinstance(Y[0], (int, float)):
             X, Y = zip(*sorted(zip(X, Y), key=lambda pair: pair[1]))
-        base = {}
+        GKB = {}
         for x, y in zip(X, Y):
-            base.setdefault(len(x), defaultdict(list))[y].append(x)
-        return base
+            GKB.setdefault(len(x), defaultdict(list))[y].append(x)
+        return GKB
 
     @staticmethod
     def get_key(data_sample: ListData) -> Hashable:
@@ -68,9 +68,9 @@ class HWF_KB(GroundKB):
     def key2candidates(self, key: Hashable) -> List[List[Any]]:
         equation_len, y = key
         if self.max_err == 0:
-            return self.base[equation_len][y]
+            return self.GKB[equation_len][y]
         else:
-            potential_candidates = self.base[equation_len]
+            potential_candidates = self.GKB[equation_len]
             key_list = list(potential_candidates.keys())
             key_idx = bisect.bisect_left(key_list, y)
 

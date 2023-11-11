@@ -9,7 +9,7 @@ from .base_kb import BaseKB
 class GroundKB(BaseKB, ABC):
     def __init__(self, pseudo_label_list: List) -> None:
         super().__init__(pseudo_label_list)
-        self.base = self.construct_base()
+        self.GKB = self.construct_base()
 
     @abstractmethod
     def construct_base(self) -> dict:
@@ -20,7 +20,7 @@ class GroundKB(BaseKB, ABC):
         pass
 
     def key2candidates(self, key: Hashable) -> List[List[Any]]:
-        return self.base[key]
+        return self.GKB[key]
 
     def filter_candidates(
         self,
@@ -49,4 +49,13 @@ class GroundKB(BaseKB, ABC):
             max_revision_num=max_revision_num,
             require_more_revision=require_more_revision,
             candidates=candidates,
+        )
+
+    # TODO: When the output is excessively long, use ellipses as a substitute.
+    def __repr__(self):
+        return (
+            f"<{self.__class__.__name__}(\n"
+            f"    pseudo_label_list: {self.pseudo_label_list!r}\n"
+            f"    GKB: {self.GKB!r}\n"
+            f") at {hex(id(self))}>"
         )
