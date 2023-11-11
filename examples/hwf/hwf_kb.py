@@ -26,7 +26,7 @@ class HWF_KB(GroundKB):
 
     def logic_forward(self, data_sample: ListData):
         if not self._valid_candidate(data_sample):
-            return np.inf
+            return None
         formula = data_sample["pred_pseudo_label"][0]
         formula = [self.label2evaluable[f] for f in formula]
         data_sample["Y"] = [eval("".join(formula))]
@@ -112,7 +112,7 @@ class HWF_KB(GroundKB):
             x = (pre_x,) + post_x
             data_sample = ListData(pred_pseudo_label=[x])
             y = self.logic_forward(data_sample)
-            if y is not np.inf:
+            if y is not None:
                 XY_list.append((x, y))
         return XY_list
 
