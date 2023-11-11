@@ -7,8 +7,8 @@ from .base_kb import BaseKB
 
 
 class GroundKB(BaseKB, ABC):
-    def __init__(self, pseudo_label_list):
-        self.pseudo_label_list = pseudo_label_list
+    def __init__(self, pseudo_label_list: List) -> None:
+        super().__init__(pseudo_label_list)
         self.base = self.construct_base()
 
     @abstractmethod
@@ -19,7 +19,6 @@ class GroundKB(BaseKB, ABC):
     def get_key(self, data_sample: ListData) -> Hashable:
         pass
 
-    @abstractmethod
     def key2candidates(self, key: Hashable) -> List[List[Any]]:
         return self.base[key]
 

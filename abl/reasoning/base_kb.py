@@ -1,16 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple, Union
-
-import numpy as np
 
 from ..structures import ListData
 
 
 class BaseKB(ABC):
-    @abstractmethod
-    def logic_forward(self, data_sample: ListData):
-        """Placeholder for the forward reasoning of the knowledge base."""
-        pass
+    def __init__(self, pseudo_label_list) -> None:
+        self.pseudo_label_list = pseudo_label_list
 
     @abstractmethod
     def abduce_candidates(self, data_sample: ListData):

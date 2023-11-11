@@ -16,7 +16,7 @@ class HWF_KB(GroundKB):
         self,
         pseudo_label_list=["1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "-", "times", "div"],
         GKB_len_list=[1, 3, 5, 7],
-        max_err=1e-3,
+        max_err=1e-10,
     ):
         self.GKB_len_list = GKB_len_list
         self.max_err = max_err

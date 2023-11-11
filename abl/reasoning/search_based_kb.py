@@ -36,24 +36,21 @@ class SearchBasedKB(BaseKB, ABC):
         use_cache: bool = True,
         cache_root: Optional[str] = None,
     ) -> None:
-        self.pseudo_label_list = pseudo_label_list
+        super().__init__(pseudo_label_list)
         self.search_strategy = search_strategy
         self.use_cache = use_cache
-        if self.use_cache and getattr(self, "get_key") is getattr(SearchBasedKB, "get_key", None):
-            raise NotImplementedError("If use_cache is True, get_key should be implemented.")
+        if self.use_cache:
+            if not hasattr(self, "get_key"):
+                raise NotImplementedError("If use_cache is True, get_key should be implemented.")
+            key_func = self.get_key
+        else:
+            key_func = lambda x: x
         self.cache = Cache[ListData, List[List[Any]]](
             func=self._abduce_by_search,
             cache=use_cache,
             cache_root=cache_root,
-            key_func=lambda x: self.get_key(x),
+            key_func=key_func,
         )
-
-    @abstractmethod
-    def get_key(self, data_sample: ListData):
-        """
-        If 'use_cache' is set to 'True', this method should be implemented.
-        """
-        pass
 
     @abstractmethod
     def entail(self, data_sample: ListData, y: Any):
