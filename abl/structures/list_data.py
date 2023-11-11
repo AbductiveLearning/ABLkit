@@ -121,7 +121,7 @@ class ListData(BaseDataElement):
         ) at 0x7f203542feb0>
     """
 
-    def __setattr__(self, name: str, value: Sized):
+    def __setattr__(self, name: str, value: list):
         """setattr is only used to set data.
 
         The value must have the attribute of `__len__` and have the same length
@@ -137,7 +137,7 @@ class ListData(BaseDataElement):
                 )
 
         else:
-            assert isinstance(value, Sized), "value must contain `__len__` attribute"
+            assert isinstance(value, list), "value must be of type `list`"
 
             if len(self) > 0:
                 assert len(value) == len(self), (
