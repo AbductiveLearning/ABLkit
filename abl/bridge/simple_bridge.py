@@ -114,7 +114,6 @@ class SimpleBridge(BaseBridge):
             self.predict(sub_data_samples)
             self.idx_to_pseudo_label(sub_data_samples)
 
-            sub_data_samples.set_metainfo(dict(logic_forward=self.abducer.kb.logic_forward))
             for metric in self.metric_list:
                 metric.process(sub_data_samples)
 
