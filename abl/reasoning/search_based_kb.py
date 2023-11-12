@@ -1,51 +1,24 @@
 from abc import ABC, abstractmethod
-from itertools import combinations, product
-from typing import Any, Callable, Generator, List, Optional, Tuple, Union
+from itertools import product
+from typing import Any, List, Tuple, Union
 
 import numpy
 
 from ..structures import ListData
-from ..utils import Cache
 from .base_kb import BaseKB
-from .search_engine import incremental_search_strategy
 
 
 class SearchBasedKB(BaseKB, ABC):
     def __init__(
         self,
         pseudo_label_list: List,
-        search_strategy: Callable[[ListData, int, int], Generator] = incremental_search_strategy,
-        use_cache: bool = True,
-        cache_file: Optional[str] = None,
-        cache_size: int = 4096,
     ) -> None:
         super().__init__(pseudo_label_list)
-        self.search_strategy = search_strategy
-        self.use_cache = use_cache
-        self.cache_file = cache_file
-        if self.use_cache:
-            if not hasattr(self, "get_key"):
-                raise NotImplementedError("If use_cache is True, get_key should be implemented.")
-            key_func = self.get_key
-        else:
-            key_func = lambda x: x
-        self.cache = Cache[ListData, List[List[Any]]](
-            func=self._abduce_by_search,
-            cache=self.use_cache,
-            cache_file=self.cache_file,
-            key_func=key_func,
-            max_size=cache_size,
-        )
 
     @abstractmethod
     def check_equal(self, data_sample: ListData, y: Any):
         """Placeholder for check_equal."""
         pass
-
-    def abduce_candidates(
-        self, data_sample: ListData, max_revision_num: int, require_more_revision: int = 0
-    ):
-        return self.cache.get(data_sample, max_revision_num, require_more_revision)
 
     def revise_at_idx(
         self,
@@ -62,28 +35,6 @@ class SearchBasedKB(BaseKB, ABC):
             new_data_sample["pred_pseudo_label"][0] = candidate
             if self.check_equal(new_data_sample, new_data_sample["Y"][0]):
                 candidates.append(candidate)
-        return candidates
-
-    def _abduce_by_search(
-        self, data_sample: ListData, max_revision_num: int, require_more_revision: int = 0
-    ):
-        candidates = []
-        gen = self.search_strategy(
-            data_sample,
-            max_revision_num=max_revision_num,
-            require_more_revision=require_more_revision,
-        )
-        send_signal = True
-        for revision_idx in gen:
-            candidates.extend(self.revise_at_idx(data_sample, revision_idx))
-            if len(candidates) > 0 and send_signal:
-                try:
-                    revision_idx = gen.send("success")
-                    candidates.extend(self.revise_at_idx(data_sample, revision_idx))
-                    send_signal = False
-                except StopIteration:
-                    break
-
         return candidates
 
     # TODO: When the output is excessively long, use ellipses as a substitute.

@@ -1,11 +1,12 @@
-from typing import Any, List, Mapping
+from typing import Any, List, Mapping, Optional
 
 import numpy as np
 
 from ..structures import ListData
-from ..utils.utils import calculate_revision_num, confidence_dist, hamming_dist
+from ..utils import (Cache, calculate_revision_num, confidence_dist,
+                     hamming_dist)
 from .base_kb import BaseKB
-from .search_engine import BaseSearchEngine, BFS
+from .search_engine import BFS, BaseSearchEngine
 
 
 class ReasonerBase:
@@ -13,8 +14,11 @@ class ReasonerBase:
         self,
         kb: BaseKB,
         dist_func: str = "confidence",
-        mapping: Mapping = None,
-        search_engine: BaseSearchEngine = None,
+        mapping: Optional[Mapping] = None,
+        search_engine: Optional[BaseSearchEngine] = None,
+        use_cache: bool = False,
+        cache_file: Optional[str] = None,
+        cache_size: Optional[int] = 4096,
     ):
         """
         Base class for all reasoner in the ABL system.
@@ -68,6 +72,22 @@ class ReasonerBase:
             else:
                 self.search_engine = search_engine
 
+        self.use_cache = use_cache
+        self.cache_file = cache_file
+        if self.use_cache:
+            if not hasattr(self, "get_key"):
+                raise NotImplementedError("If use_cache is True, get_key should be implemented.")
+            key_func = self.get_key
+        else:
+            key_func = lambda x: x
+        self.cache = Cache[ListData, List[List[Any]]](
+            func=self.abduce,
+            cache=self.use_cache,
+            cache_file=self.cache_file,
+            key_func=key_func,
+            max_size=cache_size,
+        )
+
     def _get_dist_list(self, data_sample: ListData, candidates: List[List[Any]]):
         """
         Get the list of costs between each pseudo label and candidate.
@@ -93,7 +113,7 @@ class ReasonerBase:
             candidates = [[self.remapping[x] for x in c] for c in candidates]
             return confidence_dist(data_sample["pred_prob"][0], candidates)
 
-    def select_one_candidate(self, data_sample: ListData, candidates: List[List[Any]]):
+    def select(self, data_sample: ListData, candidates: List[List[Any]]):
         """
         Get one candidate. If multiple candidates exist, return the one with minimum cost.
 
@@ -179,7 +199,7 @@ class ReasonerBase:
                 "The kb should either implement abduce_candidates or revise_at_idx."
             )
 
-        candidate = self.select_one_candidate(data_sample, candidates)
+        candidate = self.select(data_sample, candidates)
         return candidate
 
     def batch_abduce(
@@ -211,7 +231,7 @@ class ReasonerBase:
             The abduced revisions in batches.
         """
         abduced_pseudo_label = [
-            self.abduce(
+            self.cache.get(
                 data_sample,
                 max_revision=max_revision,
                 require_more_revision=require_more_revision,
@@ -220,12 +240,3 @@ class ReasonerBase:
         ]
         data_samples.abduced_pseudo_label = abduced_pseudo_label
         return abduced_pseudo_label
-
-    # def _batch_abduce_helper(self, args):
-    #     z, prob, y, max_revision, require_more_revision = args
-    #     return self.abduce((z, prob, y), max_revision, require_more_revision)
-
-    # def batch_abduce(self, Z, Y, max_revision=-1, require_more_revision=0):
-    #     with Pool(processes=os.cpu_count()) as pool:
-    #         results = pool.map(self._batch_abduce_helper, [(z, prob, y, max_revision, require_more_revision) for z, prob, y in zip(Z['cls'], Z['prob'], Y)])
-    #     return results
