@@ -34,12 +34,13 @@ class SearchBasedKB(BaseKB, ABC):
         pseudo_label_list: List,
         search_strategy: Callable[[ListData, int, int], Generator] = incremental_search_strategy,
         use_cache: bool = True,
-        cache_root: Optional[str] = None,
+        cache_file: Optional[str] = None,
+        cache_size: int = 4096
     ) -> None:
         super().__init__(pseudo_label_list)
         self.search_strategy = search_strategy
         self.use_cache = use_cache
-        self.cache_root = cache_root
+        self.cache_file = cache_file
         if self.use_cache:
             if not hasattr(self, "get_key"):
                 raise NotImplementedError("If use_cache is True, get_key should be implemented.")
@@ -48,9 +49,10 @@ class SearchBasedKB(BaseKB, ABC):
             key_func = lambda x: x
         self.cache = Cache[ListData, List[List[Any]]](
             func=self._abduce_by_search,
-            cache=use_cache,
-            cache_root=cache_root,
+            cache=self.use_cache,
+            cache_file=self.cache_file,
             key_func=key_func,
+            max_size=cache_size,
         )
 
     @abstractmethod
