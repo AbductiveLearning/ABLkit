@@ -3,4 +3,4 @@ from .ground_kb import GroundKB
 from .prolog_based_kb import PrologBasedKB
 from .reasoner import ReasonerBase
 from .search_based_kb import SearchBasedKB
-from .search_engine import BFS, BaseSearchEngine, Zoopt
+from .search_engine import BFS, BaseSearchEngine

@@ -12,7 +12,7 @@ class BFS(BaseSearchEngine):
         pass
 
     def generator(
-        data_sample: ListData, max_revision_num: int, require_more_revision: int = 0
+        self, data_sample: ListData, max_revision_num: int, require_more_revision: int = 0
     ) -> Union[List, Tuple, numpy.ndarray]:
         symbol_num = data_sample["symbol_num"]
         max_revision_num = min(max_revision_num, symbol_num)
