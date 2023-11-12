@@ -43,10 +43,15 @@ class KBBase(ABC):
         self.use_cache = use_cache            
 
     @abstractmethod
-    def logic_forward(self, pseudo_labels):
+    def logic_forward(self, pseudo_label):
         """
         How to perform (deductive) logical reasoning, i.e. matching each pseudo label to 
         their logical result. Users are required to provide this.
+        
+        Parameters
+        ----------
+        pred_pseudo_label : List[Any]
+            Pseudo label.
         """
         pass
 
@@ -72,13 +77,13 @@ class KBBase(ABC):
             A list of candidates, i.e. revised pseudo labels that are consistent with the 
             knowledge base.
         """
-        if not self.use_cache:
-            return self._abduce_by_search(pred_pseudo_label, y, 
-                                          max_revision_num, require_more_revision)
-        else:    
+        if self.use_cache:
             return self._abduce_by_search_cache(to_hashable(pred_pseudo_label), 
                                                 to_hashable(y), 
                                                 max_revision_num, require_more_revision)
+        else:    
+            return self._abduce_by_search(pred_pseudo_label, y, 
+                                          max_revision_num, require_more_revision)
     
     def _check_equal(self, logic_result, y):
         """
@@ -172,7 +177,7 @@ class KBBase(ABC):
             candidates.extend(self._revision(revision_num, pred_pseudo_label, y))
         return candidates
     
-    @lru_cache(maxsize=None)
+    @lru_cache(maxsize=4096)
     def _abduce_by_search_cache(self, pred_pseudo_label, y, max_revision_num, require_more_revision):
         """
         `_abduce_by_search` with cache.
@@ -193,7 +198,7 @@ class KBBase(ABC):
 class GroundKB(KBBase):
     """
     Knowledge base with a ground KB (GKB). Ground KB is a knowledge base prebuilt upon 
-    class initialization, stroing all potential candidates along with their respective 
+    class initialization, storing all potential candidates along with their respective 
     logical result. Ground KB can accelerate abductive reasoning in `abduce_candidates`. 
 
     Parameters
@@ -213,7 +218,7 @@ class GroundKB(KBBase):
     After that, other operations (e.g. auto-construction of GKB, and how to perform 
     abductive reasoning) will be automatically set up.
     """
-    def __init__(self, pseudo_label_list, GKB_len_list, max_err=0):
+    def __init__(self, pseudo_label_list, GKB_len_list, max_err=1e-10):
         super().__init__(pseudo_label_list, max_err)
         if not isinstance(GKB_len_list, list):
             raise TypeError("GKB_len_list should be list")

@@ -18,9 +18,9 @@ class ReasonerBase:
         The knowledge base to be used for reasoning.
     dist_func : str, optional
         The distance function to be used when determining the cost list between each 
-        candidate and the given prediction. Valid options include: `"hamming"` (default) 
-        | `"confidence"`. Any other options will raise a `NotImplementedError`. For 
-        detailed explanations of these options, refer to `_get_cost_list`.
+        candidate and the given prediction. Valid options include: `"hamming"` |  
+        `"confidence"` (default). For detailed explanations of these options, refer to 
+        `_get_cost_list`.
     mapping : dict, optional
         A mapping from index to label. If not provided, a default order-based mapping is 
         created.
@@ -28,16 +28,16 @@ class ReasonerBase:
         Whether to use the Zoopt library during abductive reasoning. Defaults to False.
     """
         
-    def __init__(self, kb, dist_func="hamming", mapping=None, use_zoopt=False):
-        if not (dist_func == "hamming" or dist_func == "confidence"):
-            raise NotImplementedError  
+    def __init__(self, kb, dist_func="confidence", mapping=None, use_zoopt=False):
+        if dist_func not in ["hamming", "confidence"]:
+            raise NotImplementedError("Valid options for dist_func include \"hamming\" and \"confidence\"")
 
         self.kb = kb
         self.dist_func = dist_func
         self.use_zoopt = use_zoopt
         if mapping is None:
             self.mapping = {
-                label: index for index, label in enumerate(self.kb.pseudo_label_list)
+                index: label for index, label in enumerate(self.kb.pseudo_label_list)
             }
         else:
             if not isinstance(mapping, dict):
