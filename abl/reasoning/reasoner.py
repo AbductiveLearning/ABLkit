@@ -1,6 +1,6 @@
 import numpy as np
 from zoopt import Dimension, Objective, Parameter, Opt
-from ..utils.utils import (
+from abl.utils.utils import (
     confidence_dist,
     flatten,
     reform_idx,
@@ -14,12 +14,12 @@ class ReasonerBase:
 
     Parameters
     ----------
-    kb :
+    kb : class KBBase
         The knowledge base to be used for reasoning.
     dist_func : str, optional
         The distance function to be used when determining the cost list between each 
-        candidate and the given prediction. Valid options include: `"hamming"` |  
-        `"confidence"` (default). For detailed explanations of these options, refer to 
+        candidate and the given prediction. Valid options include: "hamming" |  
+        "confidence" (default). For detailed explanations of these options, refer to 
         `_get_cost_list`.
     mapping : dict, optional
         A mapping from index to label. If not provided, a default order-based mapping is 
@@ -42,6 +42,11 @@ class ReasonerBase:
         else:
             if not isinstance(mapping, dict):
                 raise TypeError("mapping should be dict")
+            for key, value in mapping.items():  
+                if not isinstance(key, int):  
+                    raise ValueError("All keys in the mapping must be integers")  
+                if value not in self.kb.pseudo_label_list:  
+                    raise ValueError("All values in the mapping must be in the pseudo_label_list")  
             self.mapping = mapping
         self.remapping = dict(zip(self.mapping.values(), self.mapping.keys()))
 

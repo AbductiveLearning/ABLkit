@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import bisect
+import os
 from collections import defaultdict
 from itertools import product, combinations
 from multiprocessing import Pool
@@ -8,7 +9,7 @@ from functools import lru_cache
 import numpy as np
 import pyswip
 
-from ..utils.utils import flatten, reform_idx, hamming_dist, to_hashable, hashable_to_list
+from abl.utils.utils import flatten, reform_idx, hamming_dist, to_hashable, restore_from_hashable
 
 
 class KBBase(ABC):
@@ -21,8 +22,9 @@ class KBBase(ABC):
         List of possible pseudo labels.
     max_err : float, optional
         The upper tolerance limit when comparing the similarity between a candidate's logical 
-        result and the ground truth. Especially relevant for regression problems where exact 
-        matches might not be feasible. Defaults to 1e-10.
+        result. This is only applicable when the logical result is of a numerical type. 
+        This is particularly relevant for regression problems where exact matches might not be 
+        feasible. Defaults to 1e-10. 
     use_cache : bool, optional
         Whether to use a cache for previously abduced candidates to speed up subsequent 
         operations. Defaults to True.
@@ -88,7 +90,7 @@ class KBBase(ABC):
     def _check_equal(self, logic_result, y):
         """
         Check whether the logical result of a candidate is equal to the ground truth
-        (or, within the maximum error allowed).
+        (or, within the maximum error allowed for numerical results).
         """
         if logic_result == None:
             return False
@@ -182,8 +184,8 @@ class KBBase(ABC):
         """
         `_abduce_by_search` with cache.
         """
-        pred_pseudo_label = hashable_to_list(pred_pseudo_label)
-        y = hashable_to_list(y)
+        pred_pseudo_label = restore_from_hashable(pred_pseudo_label)
+        y = restore_from_hashable(y)
         return self._abduce_by_search(pred_pseudo_label, y, max_revision_num, require_more_revision)
 
     def __repr__(self):
@@ -285,13 +287,11 @@ class GroundKB(KBBase):
     
     def _find_candidate_GKB(self, pred_pseudo_label, y):
         """
-        Retrieve consistent candidates from the prebuilt GKB. If `max_err` is greater 
-        than 0, return all candidates whose logical results fall within the 
+        Retrieve consistent candidates from the prebuilt GKB. For numerical logical results, 
+        return all candidates whose logical results fall within the 
         [y - max_err, y + max_err] range.
         """
-        if self.max_err == 0:
-            return self.GKB[len(pred_pseudo_label)][y]
-        else:
+        if isinstance(y, (int, float)):
             potential_candidates = self.GKB[len(pred_pseudo_label)]
             key_list = list(potential_candidates.keys())
             
@@ -302,6 +302,10 @@ class GroundKB(KBBase):
                             for key in key_list[low_key:high_key]
                             for candidate in potential_candidates[key]]
             return all_candidates
+        
+        else:
+            return self.GKB[len(pred_pseudo_label)][y]
+            
     
     def __repr__(self):
         return (
@@ -316,34 +320,42 @@ class GroundKB(KBBase):
 
 class PrologKB(KBBase):
     """
-    Knowledge base given by a prolog (pl) file.
-
+    Knowledge base provided by a Prolog (.pl) file.
+    
     Parameters
     ----------
     pseudo_label_list : list
         Refer to class `KBBase`.
     pl_file : 
-        Prolog file containing the KB.
+        Prolog file containing the KB. 
     max_err : float, optional
         Refer to class `KBBase`.
     
     Notes
     -----
-    Users can also inherit from this class to build their own knowledge base. When using 
-    this class, users are only required to provide the `pl_file`.
+    Users can instantiate this class to build their own knowledge base. During the 
+    instantiation, users are only required to provide the `pseudo_label_list` and `pl_file`.
+    To use the default logic forward and abductive reasoning methods in this class, in the 
+    Prolog (.pl) file, there needs to be a rule which is strictly formatted as 
+    `logic_forward(Pseudo_labels, Res).`, e.g., `logic_forward([A,B], C) :- C is A+B`.
+    For specifics, refer to the `logic_forward` and `get_query_string` functions in this 
+    class. Users are also welcome to override related functions for more flexible support.
     """
     def __init__(self, pseudo_label_list, pl_file):
         super().__init__(pseudo_label_list)
         self.pl_file = pl_file
         self.prolog = pyswip.Prolog()
+        
+        if not os.path.exists(self.pl_file):
+            raise FileNotFoundError(f"The Prolog file {self.pl_file} does not exist.")
         self.prolog.consult(self.pl_file)
 
     def logic_forward(self, pseudo_labels):
         """
         Consult prolog with the query `logic_forward(pseudo_labels, Res).`, and set the 
         returned `Res` as the logical results. To use this default function, there must be 
-        a Prolog `log_forward` method in the pl file to perform logical. reasoning. Otherwise, 
-        users would override this function.
+        a Prolog `log_forward` method in the pl file to perform logical. reasoning.  
+        Otherwise, users would override this function.
         """
         result = list(self.prolog.query("logic_forward(%s, Res)." % pseudo_labels))[0]['Res']
         if result == 'true':
