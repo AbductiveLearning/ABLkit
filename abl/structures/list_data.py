@@ -314,6 +314,8 @@ class ListData(BaseDataElement):
     def __len__(self) -> int:
         """int: The length of ListData."""
         if len(self._data_fields) > 0:
-            return len(self.values()[0])
+            one_element = next(iter(self._data_fields))
+            return len(getattr(self, one_element))
+            # return len(self.values()[0])
         else:
             return 0
