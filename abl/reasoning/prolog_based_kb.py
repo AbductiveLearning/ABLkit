@@ -4,8 +4,6 @@ from typing import Any, Generator, List, Tuple, Union
 import numpy as np
 import pyswip
 
-from abl.structures import ListData
-
 from ..structures import ListData
 from .base_kb import BaseKB
 
@@ -44,6 +42,3 @@ class PrologBasedKB(BaseKB, ABC):
     def revise_at_idx(self, data_sample: ListData, revision_idx: Union[List, Tuple, np.ndarray]):
         query_res = self.logic_forward(data_sample, revision_idx)
         return self.postprocess(query_res, data_sample, revision_idx)
-
-    def abduce_candidates(self, data_sample: ListData):
-        return super().abduce_candidates(data_sample)
