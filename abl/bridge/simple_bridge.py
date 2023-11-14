@@ -24,10 +24,8 @@ class SimpleBridge(BaseBridge):
     # TODO: add abducer.mapping to the property of SimpleBridge
 
     def predict(self, data_samples: ListData) -> Tuple[List[ndarray], List[ndarray]]:
-        pred_res = self.model.predict(data_samples)
-        data_samples.pred_idx = pred_res["label"]
-        data_samples.pred_prob = pred_res["prob"]
-        return data_samples["pred_idx"], data_samples["pred_prob"]
+        self.model.predict(data_samples)
+        return data_samples["pred_idx"], data_samples.get("pred_prob", None)
 
     def abduce_pseudo_label(
         self,

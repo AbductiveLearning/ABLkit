@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Hashable, List
 
-from abl.structures import ListData
-
+from ..structures import ListData
 from .base_kb import BaseKB
 
 

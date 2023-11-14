@@ -11,13 +11,14 @@
 # ================================================================#
 
 import os
+import logging
 from typing import Any, Callable, List, Optional, T, Tuple
 
 import numpy
 import torch
 from torch.utils.data import DataLoader
 
-from ..dataset import ClassificationDataset
+from ..dataset import ClassificationDataset, PredictionDataset
 from ..utils.logger import print_log
 
 
@@ -197,7 +198,12 @@ class BasicNN:
 
         return torch.cat(results, axis=0)
 
-    def predict(self, data_loader: DataLoader = None, X: List[Any] = None) -> numpy.ndarray:
+    def predict(
+        self,
+        data_loader: DataLoader = None,
+        X: List[Any] = None,
+        test_transform: Callable[..., Any] = None,
+    ) -> numpy.ndarray:
         """
         Predict the class of the input data.
 
@@ -215,12 +221,29 @@ class BasicNN:
         """
 
         if data_loader is None:
-            if self.transform is not None:
-                X = [self.transform(x) for x in X]
-            data_loader = DataLoader(X, batch_size=self.batch_size)
+            if test_transform is None:
+                print_log(
+                    "Transform used in the training phase will be used in prediction.",
+                    "current",
+                    level=logging.WARNING,
+                )
+                dataset = PredictionDataset(X, self.transform)
+            else:
+                dataset = PredictionDataset(X, test_transform)
+            data_loader = DataLoader(
+                dataset,
+                batch_size=self.batch_size,
+                num_workers=int(self.num_workers),
+                collate_fn=self.collate_fn,
+            )
         return self._predict(data_loader).argmax(axis=1).cpu().numpy()
 
-    def predict_proba(self, data_loader: DataLoader = None, X: List[Any] = None) -> numpy.ndarray:
+    def predict_proba(
+        self,
+        data_loader: DataLoader = None,
+        X: List[Any] = None,
+        test_transform: Callable[..., Any] = None,
+    ) -> numpy.ndarray:
         """
         Predict the probability of each class for the input data.
 
@@ -238,9 +261,21 @@ class BasicNN:
         """
 
         if data_loader is None:
-            if self.transform is not None:
-                X = [self.transform(x) for x in X]
-            data_loader = DataLoader(X, batch_size=self.batch_size)
+            if test_transform is None:
+                print_log(
+                    "Transform used in the training phase will be used in prediction.",
+                    "current",
+                    level=logging.WARNING,
+                )
+                dataset = PredictionDataset(X, self.transform)
+            else:
+                dataset = PredictionDataset(X, test_transform)
+            data_loader = DataLoader(
+                dataset,
+                batch_size=self.batch_size,
+                num_workers=int(self.num_workers),
+                collate_fn=self.collate_fn,
+            )
         return self._predict(data_loader).softmax(axis=1).cpu().numpy()
 
     def _score(self, data_loader) -> Tuple[float, float]:
