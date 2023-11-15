@@ -10,7 +10,7 @@ import numpy as np
 import pyswip
 
 from ..utils.utils import flatten, reform_idx, hamming_dist, to_hashable, restore_from_hashable
-
+from ..utils.cache import abl_cache
 
 class KBBase(ABC):
     """
@@ -179,7 +179,7 @@ class KBBase(ABC):
             candidates.extend(self._revision(revision_num, pred_pseudo_label, y))
         return candidates
     
-    @lru_cache(maxsize=4096)
+    @abl_cache(max_size=4096)
     def _abduce_by_search_cache(self, pred_pseudo_label, y, max_revision_num, require_more_revision):
         """
         `_abduce_by_search` with cache.
