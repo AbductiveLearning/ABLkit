@@ -3,6 +3,7 @@ from os import PathLike
 from typing import Callable, Generic, Hashable, TypeVar, Union
 
 from .logger import print_log
+from .utils import to_hashable
 
 K = TypeVar("K")
 T = TypeVar("T")
@@ -13,7 +14,6 @@ class Cache(Generic[K, T]):
     def __init__(
         self,
         func: Callable[[K], T],
-        cache: bool = True,
         cache_file: Union[None, str, PathLike] = None,
         key_func: Callable[[K], Hashable] = lambda x: x,
         max_size: int = 4096,
@@ -27,23 +27,15 @@ class Cache(Generic[K, T]):
         """
         self.func = func
         self.key_func = key_func
-        self.cache = cache
-        if cache is True or cache_file is not None:
-            print_log("Caching is activated", logger="current")
-            self._init_cache(cache_file, max_size)
-            self.first = self.get_from_dict
-        else:
-            self.first = self.func
 
-    def __getitem__(self, item: K, *args) -> T:
-        return self.first(item, *args)
+        self._init_cache(cache_file, max_size)
 
-    def invalidate(self):
+    def __getitem__(self, obj, *args) -> T:
+        return self.get_from_dict(obj, *args)
+
+    def clear_cache(self):
         """Invalidate entire cache."""
         self.cache_dict.clear()
-        if self.cache_file:
-            for p in self.cache_root.iterdir():
-                p.unlink()
 
     def _init_cache(self, cache_file, max_size):
         self.cache = True
@@ -66,13 +58,10 @@ class Cache(Generic[K, T]):
                     link = [last, self.root, cache_key, result]
                     last[NEXT] = self.root[PREV] = self.cache_dict[cache_key] = link
 
-    def get(self, obj, item: K, *args) -> T:
-        return self.first(obj, item, *args)
-
-    def get_from_dict(self, obj, item: K, *args) -> T:
+    def get_from_dict(self, obj, *args) -> T:
         """Implements dict based cache."""
-        # result = self.func(obj, item, *args)
-        cache_key = (self.key_func(item), *args)
+        pred_pseudo_label, y, *res_args = args
+        cache_key = (self.key_func(pred_pseudo_label), self.key_func(y), *res_args)
         link = self.cache_dict.get(cache_key)
         if link is not None:
             # Move the link to the front of the circular queue
@@ -87,7 +76,7 @@ class Cache(Generic[K, T]):
             return result
         self.misses += 1
 
-        result = self.func(obj, item, *args)
+        result = self.func(obj, *args)
 
         if self.full:
             # Use the old root to store the new key and result.
@@ -113,16 +102,18 @@ class Cache(Generic[K, T]):
 
 
 def abl_cache(
-    cache: bool = True,
     cache_file: Union[None, str, PathLike] = None,
-    key_func: Callable[[K], Hashable] = lambda x: x,
+    key_func: Callable[[K], Hashable] = to_hashable,
     max_size: int = 4096,
 ):
     def decorator(func):
-        cache_instance = Cache(func, cache, cache_file, key_func, max_size)
+        cache_instance = Cache(func, cache_file, key_func, max_size)
 
-        def wrapper(self, *args, **kwargs):
-            return cache_instance.get(self, *args, **kwargs)
+        def wrapper(obj, *args):
+            if obj.use_cache:
+                return cache_instance.get_from_dict(obj, *args)
+            else:
+                return func(obj, *args)
 
         return wrapper
 
