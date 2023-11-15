@@ -39,12 +39,24 @@ class KBBase(ABC):
     reasoning) will be automatically set up.
     """
 
-    def __init__(self, pseudo_label_list, max_err=1e-10, use_cache=True):
+    def __init__(
+        self,
+        pseudo_label_list,
+        max_err=1e-10,
+        use_cache=True,
+        cache_file=None,
+        key_func=to_hashable,
+        max_cache_size=4096,
+    ):
         if not isinstance(pseudo_label_list, list):
             raise TypeError("pseudo_label_list should be list")
         self.pseudo_label_list = pseudo_label_list
         self.max_err = max_err
+
         self.use_cache = use_cache
+        self.cache_file = cache_file
+        self.key_func = key_func
+        self.max_cache_size = max_cache_size
 
     @abstractmethod
     def logic_forward(self, pseudo_label):
@@ -137,7 +149,7 @@ class KBBase(ABC):
             new_candidates.extend(candidates)
         return new_candidates
 
-    @abl_cache(max_size=4096)
+    @abl_cache()
     def _abduce_by_search(self, pred_pseudo_label, y, max_revision_num, require_more_revision):
         """
         Perform abductive reasoning by exhastive search. Specifically, begin with 0 and
