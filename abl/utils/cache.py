@@ -1,9 +1,9 @@
 import pickle
-from os import PathLike
-from typing import Callable, Generic, Hashable, TypeVar, Union
+import os
+import os.path as osp
+from typing import Callable, Generic, TypeVar
 
-from .logger import print_log
-from .utils import to_hashable
+from .logger import print_log, ABLLogger
 
 K = TypeVar("K")
 T = TypeVar("T")
@@ -98,6 +98,14 @@ class Cache(Generic[K, T]):
             last[NEXT] = self.root[PREV] = self.cache_dict[cache_key] = link
             if isinstance(self.max_size, int):
                 self.full = len(self.cache_dict) >= self.max_size
+            if self.full:
+                log_dir = ABLLogger.get_current_instance().log_dir
+                cache_dir = osp.join(log_dir, "cache")
+                os.makedirs(cache_dir, exist_ok=True)
+                cache_path = osp.join(cache_dir, "cache.pth")
+                with open(cache_path, "wb") as file:
+                    pickle.dump(self.cache_dict, file, protocol=pickle.HIGHEST_PROTOCOL)
+                print_log(f"Cache will be saved to {cache_path}", logger="current")
         return result
 
 
