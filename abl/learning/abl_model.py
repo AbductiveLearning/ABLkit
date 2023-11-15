@@ -69,11 +69,11 @@ class ABLModel:
         if hasattr(model, "predict_proba"):
             prob = model.predict_proba(X=data_X)
             label = prob.argmax(axis=1)
-            prob = reform_idx(prob, data_samples["X"])
+            prob = reform_idx(prob, data_samples.X)
         else:
             prob = None
             label = model.predict(X=data_X)
-        label = reform_idx(label, data_samples["X"])
+        label = reform_idx(label, data_samples.X)
 
         data_samples.pred_idx = label
         if prob is not None:
