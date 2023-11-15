@@ -192,7 +192,7 @@ def to_hashable(x):
     return x
 
 
-def hashable_to_list(x):
+def restore_from_hashable(x):
     """
     Convert a nested tuple back to a nested list.
 
@@ -208,7 +208,7 @@ def hashable_to_list(x):
         otherwise the original input.
     """
     if isinstance(x, tuple):
-        return [hashable_to_list(item) for item in x]
+        return [restore_from_hashable(item) for item in x]
     return x
 
 

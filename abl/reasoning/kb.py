@@ -9,7 +9,7 @@ from functools import lru_cache
 import numpy as np
 import pyswip
 
-from abl.utils.utils import flatten, reform_idx, hamming_dist, to_hashable, restore_from_hashable
+from ..utils.utils import flatten, reform_idx, hamming_dist, to_hashable, restore_from_hashable
 
 
 class KBBase(ABC):

@@ -1,6 +1,6 @@
 import numpy as np
 from zoopt import Dimension, Objective, Parameter, Opt
-from abl.utils.utils import (
+from ..utils.utils import (
     confidence_dist,
     flatten,
     reform_idx,
@@ -191,7 +191,7 @@ class ReasonerBase:
             return max_revision
     
     def abduce(
-        self, pred_prob, pred_pseudo_label, y, max_revision=-1, require_more_revision=0
+        self, data_sample, max_revision=-1, require_more_revision=0
     ):
         """
         Perform abductive reasoning on the given prediction data.
@@ -219,9 +219,13 @@ class ReasonerBase:
             A revised pseudo label through abductive reasoning, which is consistent with the
             knowledge base.
         """
-        symbol_num = len(flatten(pred_pseudo_label))
+        symbol_num = data_sample.elements_num("pred_pseudo_label")
         max_revision_num = self._get_max_revision_num(max_revision, symbol_num)
-
+        
+        pred_pseudo_label = data_sample.pred_pseudo_label[0]
+        pred_prob = data_sample.pred_prob[0]
+        y = data_sample.Y[0]
+        
         if self.use_zoopt:
             solution = self.zoopt_get_solution(
                 symbol_num, pred_pseudo_label, pred_prob, y, max_revision_num
@@ -237,20 +241,18 @@ class ReasonerBase:
         return candidate
 
     def batch_abduce(
-        self, pred_probs, pred_pseudo_labels, Ys, max_revision=-1, require_more_revision=0
+        self, data_samples, max_revision=-1, require_more_revision=0
     ):
         """
         Perform abductive reasoning on the given prediction data in batches.
         For detailed information, refer to `abduce`.
         """
-        return [
-            self.abduce(
-                pred_prob, pred_pseudo_label, Y, max_revision, require_more_revision
-            )
-            for pred_prob, pred_pseudo_label, Y in zip(
-                pred_probs, pred_pseudo_labels, Ys
-            )
+        abduced_pseudo_label = [
+            self.abduce(data_sample, max_revision, require_more_revision)
+                for data_sample in data_samples
         ]
+        data_samples.abduced_pseudo_label = abduced_pseudo_label
+        return abduced_pseudo_label
 
     # def _batch_abduce_helper(self, args):
     #     z, prob, y, max_revision, require_more_revision = args

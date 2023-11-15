@@ -1,11 +1,11 @@
 from typing import Optional, Sequence
 
-from ..reasoning import BaseKB
+from ..reasoning import KBBase
 from .base_metric import BaseMetric
 
 
 class SemanticsMetric(BaseMetric):
-    def __init__(self, kb: BaseKB = None, prefix: Optional[str] = None) -> None:
+    def __init__(self, kb: KBBase = None, prefix: Optional[str] = None) -> None:
         super().__init__(prefix)
         self.kb = kb
 
