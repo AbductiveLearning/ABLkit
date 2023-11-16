@@ -222,9 +222,9 @@ class ReasonerBase:
         symbol_num = data_sample.elements_num("pred_pseudo_label")
         max_revision_num = self._get_max_revision_num(max_revision, symbol_num)
         
-        pred_pseudo_label = data_sample.pred_pseudo_label[0]
-        pred_prob = data_sample.pred_prob[0]
-        y = data_sample.Y[0]
+        pred_pseudo_label = data_sample.pred_pseudo_label
+        pred_prob = data_sample.pred_prob
+        y = data_sample.Y
         
         if self.use_zoopt:
             solution = self.zoopt_get_solution(

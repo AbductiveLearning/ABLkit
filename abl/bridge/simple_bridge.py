@@ -25,7 +25,7 @@ class SimpleBridge(BaseBridge):
 
     def predict(self, data_samples: ListData) -> Tuple[List[ndarray], List[ndarray]]:
         self.model.predict(data_samples)
-        return data_samples.pred_idx, data_samples.get("pred_prob", None)
+        return data_samples.pred_idx, data_samples.pred_prob
 
     def abduce_pseudo_label(
         self,
