@@ -12,8 +12,8 @@ class SemanticsMetric(BaseMetric):
     def process(self, data_samples: Sequence[dict]) -> None:
         pred_psedudo_label_list = data_samples.pred_pseudo_label
         y_list = data_samples.Y
-        for pred_psedudo_label, y in zip(pred_psedudo_label_list, y_list):
-            if self.kb._check_equal(self.kb.logic_forward(pred_psedudo_label), y):
+        for pred_pseudo_label, y in zip(pred_psedudo_label_list, y_list):
+            if self.kb._check_equal(self.kb.logic_forward(pred_pseudo_label), y):
                 self.results.append(1)
             else:
                 self.results.append(0)
