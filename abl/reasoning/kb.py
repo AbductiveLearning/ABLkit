@@ -44,7 +44,6 @@ class KBBase(ABC):
         pseudo_label_list,
         max_err=1e-10,
         use_cache=True,
-        cache_file=None,
         key_func=to_hashable,
         max_cache_size=4096,
     ):
@@ -54,7 +53,6 @@ class KBBase(ABC):
         self.max_err = max_err
 
         self.use_cache = use_cache
-        self.cache_file = cache_file
         self.key_func = key_func
         self.max_cache_size = max_cache_size
 
