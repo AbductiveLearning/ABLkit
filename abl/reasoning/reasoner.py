@@ -3,7 +3,7 @@ from zoopt import Dimension, Objective, Parameter, Opt
 from ..utils.utils import (
     confidence_dist,
     flatten,
-    reform_idx,
+    reform_list,
     hamming_dist,
 )
 
@@ -542,7 +542,7 @@ if __name__ == "__main__":
             return candidate
 
         def zoopt_revision_score(self, symbol_num, pred_res, pred_prob, y, sol):
-            all_revision_flag = reform_idx(sol.get_x(), pred_res)
+            all_revision_flag = reform_list(sol.get_x(), pred_res)
             lefted_idxs = [i for i in range(len(pred_res))]
             candidate_size = []
             while lefted_idxs:

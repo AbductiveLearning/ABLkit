@@ -31,7 +31,7 @@ def flatten(nested_list):
     return list(chain.from_iterable(nested_list))
 
 
-def reform_idx(flattened_list, structured_list):
+def reform_list(flattened_list, structured_list):
     """
     Reform the index based on structured_list structure.
 

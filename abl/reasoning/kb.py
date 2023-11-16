@@ -9,7 +9,7 @@ from functools import lru_cache
 import numpy as np
 import pyswip
 
-from ..utils.utils import flatten, reform_idx, hamming_dist, to_hashable, restore_from_hashable
+from ..utils.utils import flatten, reform_list, hamming_dist, to_hashable, restore_from_hashable
 from ..utils.cache import abl_cache
 
 
@@ -390,7 +390,7 @@ class PrologKB(KBBase):
 
         for idx in revision_idx:
             revision_pred_pseudo_label[idx] = "P" + str(idx)
-        revision_pred_pseudo_label = reform_idx(revision_pred_pseudo_label, pred_pseudo_label)
+        revision_pred_pseudo_label = reform_list(revision_pred_pseudo_label, pred_pseudo_label)
 
         regex = r"'P\d+'"
         return re.sub(regex, lambda x: x.group().replace("'", ""), str(revision_pred_pseudo_label))
@@ -423,7 +423,7 @@ class PrologKB(KBBase):
             candidate = pred_pseudo_label.copy()
             for i, idx in enumerate(revision_idx):
                 candidate[idx] = c[i]
-            candidate = reform_idx(candidate, save_pred_pseudo_label)
+            candidate = reform_list(candidate, save_pred_pseudo_label)
             candidates.append(candidate)
         return candidates
 

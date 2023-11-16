@@ -66,7 +66,8 @@ class BasicNN:
         num_workers: int = 0,
         save_interval: Optional[int] = None,
         save_dir: Optional[str] = None,
-        transform: Callable[..., Any] = None,
+        train_transform: Callable[..., Any] = None,
+        test_transform: Callable[..., Any] = None,
         collate_fn: Callable[[List[T]], Any] = None,
     ) -> None:
         self.model = model.to(device)
@@ -79,8 +80,17 @@ class BasicNN:
         self.num_workers = num_workers
         self.save_interval = save_interval
         self.save_dir = save_dir
-        self.transform = transform
+        self.train_transform = train_transform
+        self.test_transform = test_transform
         self.collate_fn = collate_fn
+
+        if self.train_transform is not None and self.test_transform is None:
+            print_log(
+                "Transform used in the training phase will be used in prediction.",
+                "current",
+                level=logging.WARNING,
+            )
+            self.test_transform = self.train_transform
 
     def _fit(self, data_loader) -> float:
         """
@@ -198,12 +208,7 @@ class BasicNN:
 
         return torch.cat(results, axis=0)
 
-    def predict(
-        self,
-        data_loader: DataLoader = None,
-        X: List[Any] = None,
-        test_transform: Callable[..., Any] = None,
-    ) -> numpy.ndarray:
+    def predict(self, data_loader: DataLoader = None, X: List[Any] = None) -> numpy.ndarray:
         """
         Predict the class of the input data.
 
@@ -221,15 +226,7 @@ class BasicNN:
         """
 
         if data_loader is None:
-            if test_transform is None:
-                print_log(
-                    "Transform used in the training phase will be used in prediction.",
-                    "current",
-                    level=logging.WARNING,
-                )
-                dataset = PredictionDataset(X, self.transform)
-            else:
-                dataset = PredictionDataset(X, test_transform)
+            dataset = PredictionDataset(X, self.test_transform)
             data_loader = DataLoader(
                 dataset,
                 batch_size=self.batch_size,
@@ -238,12 +235,7 @@ class BasicNN:
             )
         return self._predict(data_loader).argmax(axis=1).cpu().numpy()
 
-    def predict_proba(
-        self,
-        data_loader: DataLoader = None,
-        X: List[Any] = None,
-        test_transform: Callable[..., Any] = None,
-    ) -> numpy.ndarray:
+    def predict_proba(self, data_loader: DataLoader = None, X: List[Any] = None) -> numpy.ndarray:
         """
         Predict the probability of each class for the input data.
 
@@ -261,15 +253,7 @@ class BasicNN:
         """
 
         if data_loader is None:
-            if test_transform is None:
-                print_log(
-                    "Transform used in the training phase will be used in prediction.",
-                    "current",
-                    level=logging.WARNING,
-                )
-                dataset = PredictionDataset(X, self.transform)
-            else:
-                dataset = PredictionDataset(X, test_transform)
+            dataset = PredictionDataset(X, self.test_transform)
             data_loader = DataLoader(
                 dataset,
                 batch_size=self.batch_size,
@@ -379,7 +363,7 @@ class BasicNN:
         if not (len(y) == len(X)):
             raise ValueError("X and y should have equal length.")
 
-        dataset = ClassificationDataset(X, y, transform=self.transform)
+        dataset = ClassificationDataset(X, y, transform=self.train_transform)
         data_loader = DataLoader(
             dataset,
             batch_size=self.batch_size,
