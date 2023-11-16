@@ -15,13 +15,13 @@ class SimpleBridge(BaseBridge):
     def __init__(
         self,
         model: ABLModel,
-        abducer: ReasonerBase,
+        reasoner: ReasonerBase,
         metric_list: List[BaseMetric],
     ) -> None:
-        super().__init__(model, abducer)
+        super().__init__(model, reasoner)
         self.metric_list = metric_list
 
-    # TODO: add abducer.mapping to the property of SimpleBridge
+    # TODO: add reasoner.mapping to the property of SimpleBridge
 
     def predict(self, data_samples: ListData) -> Tuple[List[ndarray], List[ndarray]]:
         self.model.predict(data_samples)
@@ -33,14 +33,14 @@ class SimpleBridge(BaseBridge):
         max_revision: int = -1,
         require_more_revision: int = 0,
     ) -> List[List[Any]]:
-        self.abducer.batch_abduce(data_samples, max_revision, require_more_revision)
+        self.reasoner.batch_abduce(data_samples, max_revision, require_more_revision)
         return data_samples.abduced_pseudo_label
 
     def idx_to_pseudo_label(
         self, data_samples: ListData, mapping: Optional[Dict] = None
     ) -> List[List[Any]]:
         if mapping is None:
-            mapping = self.abducer.mapping
+            mapping = self.reasoner.mapping
         pred_idx = data_samples.pred_idx
         data_samples.pred_pseudo_label = [
             [mapping[_idx] for _idx in sub_list] for sub_list in pred_idx
@@ -51,7 +51,7 @@ class SimpleBridge(BaseBridge):
         self, data_samples: ListData, mapping: Optional[Dict] = None
     ) -> List[List[Any]]:
         if mapping is None:
-            mapping = self.abducer.remapping
+            mapping = self.reasoner.remapping
         abduced_idx = [
             [mapping[_abduced_pseudo_label] for _abduced_pseudo_label in sub_list]
             for sub_list in data_samples.abduced_pseudo_label

@@ -9,22 +9,22 @@ DataSet = Tuple[List[List[Any]], Optional[List[List[Any]]], List[List[Any]]]
 
 
 class BaseBridge(metaclass=ABCMeta):
-    def __init__(self, model: ABLModel, abducer: ReasonerBase) -> None:
+    def __init__(self, model: ABLModel, reasoner: ReasonerBase) -> None:
         if not isinstance(model, ABLModel):
             raise TypeError(
                 "Expected an instance of ABLModel, but received type: {}".format(
                     type(model)
                 )
             )
-        if not isinstance(abducer, ReasonerBase):
+        if not isinstance(reasoner, ReasonerBase):
             raise TypeError(
                 "Expected an instance of ReasonerBase, but received type: {}".format(
-                    type(abducer)
+                    type(reasoner)
                 )
             )
 
         self.model = model
-        self.abducer = abducer
+        self.reasoner = reasoner
 
     @abstractmethod
     def predict(

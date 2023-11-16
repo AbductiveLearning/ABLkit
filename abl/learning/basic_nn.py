@@ -92,7 +92,7 @@ class BasicNN:
             )
             self.test_transform = self.train_transform
 
-    def _fit(self, data_loader) -> float:
+    def _fit(self, data_loader: DataLoader) -> float:
         """
         Internal method to fit the model on data for n epochs, with early stopping.
 
@@ -180,7 +180,7 @@ class BasicNN:
 
         return total_loss / total_num
 
-    def _predict(self, data_loader) -> torch.Tensor:
+    def _predict(self, data_loader: DataLoader) -> torch.Tensor:
         """
         Internal method to predict the outputs given a DataLoader.
 
@@ -262,7 +262,7 @@ class BasicNN:
             )
         return self._predict(data_loader).softmax(axis=1).cpu().numpy()
 
-    def _score(self, data_loader) -> Tuple[float, float]:
+    def _score(self, data_loader: DataLoader) -> Tuple[float, float]:
         """
         Internal method to compute loss and accuracy for the data provided through a DataLoader.
 
@@ -334,12 +334,7 @@ class BasicNN:
         print_log(f"mean loss: {mean_loss:.3f}, accuray: {accuracy:.3f}", logger="current")
         return accuracy
 
-    def _data_loader(
-        self,
-        X: List[Any],
-        y: List[int] = None,
-        shuffle: bool = True,
-    ) -> DataLoader:
+    def _data_loader(self, X: List[Any], y: List[int] = None, shuffle: bool = True) -> DataLoader:
         """
         Generate a DataLoader for user-provided input and target data.
 
