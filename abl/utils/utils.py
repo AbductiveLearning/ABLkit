@@ -144,34 +144,6 @@ def block_sample(X, Z, Y, sample_num, seg_idx):
     return (data[start_idx:end_idx] for data in (X, Z, Y))
 
 
-def check_equal(a, b, max_err=0):
-    """
-    Check whether two numbers a and b are equal within a maximum allowable error.
-
-    Parameters
-    ----------
-    a, b : int or float
-        The numbers to compare.
-    max_err : int or float, optional
-        The maximum allowable absolute difference between a and b for them to be considered equal.
-        Default is 0, meaning the numbers must be exactly equal.
-
-    Returns
-    -------
-    bool
-        True if a and b are equal within the allowable error, False otherwise.
-
-    Raises
-    ------
-    TypeError
-        If a or b are not of type int or float.
-    """
-    if not (isinstance(a, (int, float)) and isinstance(b, (int, float))):
-        raise TypeError("Input values must be int or float.")
-
-    return abs(a - b) <= max_err
-
-
 def to_hashable(x):
     """
     Convert a nested list to a nested tuple so it is hashable.
