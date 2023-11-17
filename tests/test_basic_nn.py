@@ -35,6 +35,13 @@ class TestBasicNN(object):
         assert len(predictions) == len(X)
         assert numpy.isin(predictions, list(range(10))).all()
 
+    # Test predict_proba method
+    def test_predict_proba(self, basic_nn_instance):
+        X = list(torch.randn(32, 1, 28, 28))
+        predict_proba = basic_nn_instance.predict_proba(X=X)
+        assert len(predict_proba) == len(X)
+        assert ((0 <= predict_proba) & (predict_proba <= 1)).all()
+
     # Test score method
     def test_score(self, basic_nn_instance):
         X = torch.randn(32, 1, 28, 28)
