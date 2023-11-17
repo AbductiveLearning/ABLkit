@@ -1,4 +1,5 @@
-from typing import Optional, Sequence, Callable
+from typing import Optional, Sequence
+
 from .base_metric import BaseMetric
 
 
@@ -7,9 +8,9 @@ class SymbolMetric(BaseMetric):
         super().__init__(prefix)
 
     def process(self, data_samples: Sequence[dict]) -> None:
-        pred_pseudo_label = data_samples["pred_pseudo_label"]
+        pred_pseudo_label = data_samples.pred_pseudo_label
 
-        gt_pseudo_label = data_samples["gt_pseudo_label"]
+        gt_pseudo_label = data_samples.gt_pseudo_label
 
         if not len(pred_pseudo_label) == len(gt_pseudo_label):
             raise ValueError("lengthes of pred_pseudo_label and gt_pseudo_label should be equal")

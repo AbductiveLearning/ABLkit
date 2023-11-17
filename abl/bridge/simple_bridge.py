@@ -1,104 +1,119 @@
-from ..learning import ABLModel
-from ..reasoning import ReasonerBase
-from ..evaluation import BaseMetric
-from .base_bridge import BaseBridge
-from typing import List, Union, Any, Tuple, Dict, Optional
+import os.path as osp
+from typing import Any, Dict, List, Optional, Tuple, Union
+
 from numpy import ndarray
 
-from torch.utils.data import DataLoader
-from ..dataset import BridgeDataset
-from ..utils.logger import print_log
+from ..evaluation import BaseMetric
+from ..learning import ABLModel
+from ..reasoning import ReasonerBase
+from ..structures import ListData
+from ..utils import print_log
+from .base_bridge import BaseBridge, DataSet
 
 
 class SimpleBridge(BaseBridge):
     def __init__(
         self,
         model: ABLModel,
-        abducer: ReasonerBase,
+        reasoner: ReasonerBase,
         metric_list: List[BaseMetric],
     ) -> None:
-        super().__init__(model, abducer)
+        super().__init__(model, reasoner)
         self.metric_list = metric_list
 
-    def predict(self, X) -> Tuple[List[List[Any]], ndarray]:
-        pred_res = self.model.predict(X)
-        pred_idx, pred_prob = pred_res["label"], pred_res["prob"]
-        return pred_idx, pred_prob
-    
+    # TODO: add reasoner.mapping to the property of SimpleBridge
+
+    def predict(self, data_samples: ListData) -> Tuple[List[ndarray], List[ndarray]]:
+        self.model.predict(data_samples)
+        return data_samples.pred_idx, data_samples.pred_prob
+
     def abduce_pseudo_label(
         self,
-        pred_prob: ndarray,
-        pred_pseudo_label: List[List[Any]],
-        Y: List[Any],
+        data_samples: ListData,
         max_revision: int = -1,
         require_more_revision: int = 0,
     ) -> List[List[Any]]:
-        return self.abducer.batch_abduce(pred_prob, pred_pseudo_label, Y, max_revision, require_more_revision)
+        self.reasoner.batch_abduce(data_samples, max_revision, require_more_revision)
+        return data_samples.abduced_pseudo_label
 
     def idx_to_pseudo_label(
-        self, idx: List[List[Any]], mapping: Dict = None
+        self, data_samples: ListData, mapping: Optional[Dict] = None
     ) -> List[List[Any]]:
         if mapping is None:
-            mapping = self.abducer.mapping
-        return [[mapping[_idx] for _idx in sub_list] for sub_list in idx]
+            mapping = self.reasoner.mapping
+        pred_idx = data_samples.pred_idx
+        data_samples.pred_pseudo_label = [
+            [mapping[_idx] for _idx in sub_list] for sub_list in pred_idx
+        ]
+        return data_samples.pred_pseudo_label
 
     def pseudo_label_to_idx(
-        self, pseudo_label: List[List[Any]], mapping: Dict = None
+        self, data_samples: ListData, mapping: Optional[Dict] = None
     ) -> List[List[Any]]:
         if mapping is None:
-            mapping = self.abducer.remapping
-        return [
-            [mapping[_pseudo_label] for _pseudo_label in sub_list]
-            for sub_list in pseudo_label
+            mapping = self.reasoner.remapping
+        abduced_idx = [
+            [mapping[_abduced_pseudo_label] for _abduced_pseudo_label in sub_list]
+            for sub_list in data_samples.abduced_pseudo_label
         ]
+        data_samples.abduced_idx = abduced_idx
+        return data_samples.abduced_idx
+
+    def data_preprocess(self, X: List[Any], gt_pseudo_label: List[Any], Y: List[Any]) -> ListData:
+        data_samples = ListData()
+
+        data_samples.X = X
+        data_samples.gt_pseudo_label = gt_pseudo_label
+        data_samples.Y = Y
+
+        return data_samples
 
     def train(
         self,
-        train_data: Tuple[List[List[Any]], Optional[List[List[Any]]], List[List[Any]]],
-        epochs: int = 50,
-        batch_size: Union[int, float] = -1,
+        train_data: Union[ListData, DataSet],
+        loops: int = 50,
+        segment_size: Union[int, float] = -1,
         eval_interval: int = 1,
+        save_interval: Optional[int] = None,
+        save_dir: Optional[str] = None,
     ):
-        dataset = BridgeDataset(*train_data)
-        data_loader = DataLoader(
-            dataset,
-            batch_size=batch_size,
-            collate_fn=lambda data_list: [list(data) for data in zip(*data_list)],
-        )
+        if isinstance(train_data, ListData):
+            data_samples = train_data
+        else:
+            data_samples = self.data_preprocess(*train_data)
 
-        for epoch in range(epochs):
-            for seg_idx, (X, Z, Y) in enumerate(data_loader):
-                pred_idx, pred_prob = self.predict(X)
-                pred_pseudo_label = self.idx_to_pseudo_label(pred_idx)
-                abduced_pseudo_label = self.abduce_pseudo_label(
-                    pred_prob, pred_pseudo_label, Y
-                )
-                abduced_label = self.pseudo_label_to_idx(abduced_pseudo_label)
-                loss = self.model.train(X, abduced_label)
+        for loop in range(loops):
+            for seg_idx in range((len(data_samples) - 1) // segment_size + 1):
+                sub_data_samples = data_samples[
+                    seg_idx * segment_size : (seg_idx + 1) * segment_size
+                ]
+                self.predict(sub_data_samples)
+                self.idx_to_pseudo_label(sub_data_samples)
+                self.abduce_pseudo_label(sub_data_samples)
+                self.pseudo_label_to_idx(sub_data_samples)
+                loss = self.model.train(sub_data_samples)
 
                 print_log(
-                    f"Epoch(train) [{epoch + 1}] [{(seg_idx + 1):3}/{len(data_loader)}] model loss is {loss:.5f}",
+                    f"loop(train) [{loop + 1}/{loops}] segment(train) [{(seg_idx + 1)}/{(len(data_samples) - 1) // segment_size + 1}] model loss is {loss:.5f}",
                     logger="current",
                 )
 
-            if (epoch + 1) % eval_interval == 0 or epoch == epochs - 1:
-                print_log(f"Evaluation start: Epoch(val) [{epoch}]", logger="current")
+            if (loop + 1) % eval_interval == 0 or loop == loops - 1:
+                print_log(f"Evaluation start: loop(val) [{loop + 1}]", logger="current")
                 self.valid(train_data)
 
-    def _valid(self, data_loader):
-        for X, Z, Y in data_loader:
-            pred_idx, pred_prob = self.predict(X)
-            pred_pseudo_label = self.idx_to_pseudo_label(pred_idx)
-            data_samples = dict(
-                pred_idx=pred_idx,
-                pred_prob=pred_prob,
-                pred_pseudo_label=pred_pseudo_label,
-                gt_pseudo_label=Z,
-                Y=Y,
-                logic_forward=self.abducer.kb.logic_forward,
-            )
-            for metric in self.metric_list:
-                metric.process(data_samples)
+            if save_interval is not None and ((loop + 1) % save_interval == 0 or loop == loops - 1):
+                print_log(f"Saving model: loop(save) [{loop + 1}]", logger="current")
+                self.model.save(
+                    save_path=osp.join(save_dir, f"model_checkpoint_loop_{loop + 1}.pth")
+                )
+
+    def _valid(self, data_samples: ListData) -> None:
+        self.predict(data_samples)
+        self.idx_to_pseudo_label(data_samples)
+
+        for metric in self.metric_list:
+            metric.process(data_samples)
 
         res = dict()
         for metric in self.metric_list:
@@ -108,14 +123,12 @@ class SimpleBridge(BaseBridge):
             msg += k + f": {v:.3f} "
         print_log(msg, logger="current")
 
-    def valid(self, valid_data, batch_size=1000):
-        dataset = BridgeDataset(*valid_data)
-        data_loader = DataLoader(
-            dataset,
-            batch_size=batch_size,
-            collate_fn=lambda data_list: [list(data) for data in zip(*data_list)],
-        )
-        self._valid(data_loader)
+    def valid(self, valid_data: Union[ListData, DataSet]) -> None:
+        if not isinstance(valid_data, ListData):
+            data_samples = self.data_preprocess(*valid_data)
+        else:
+            data_samples = valid_data
+        self._valid(data_samples)
 
-    def test(self, test_data, batch_size=1000):
-        self.valid(test_data, batch_size)
+    def test(self, test_data: Union[ListData, DataSet]) -> None:
+        self.valid(test_data)

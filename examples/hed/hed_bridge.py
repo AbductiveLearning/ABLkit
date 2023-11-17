@@ -19,17 +19,17 @@ class HEDBridge(SimpleBridge):
     def __init__(
         self,
         model: ABLModel,
-        abducer: ReasonerBase,
+        reasoner: ReasonerBase,
         metric_list: BaseMetric,
     ) -> None:
-        super().__init__(model, abducer, metric_list)
+        super().__init__(model, reasoner, metric_list)
 
     def pretrain(self, weights_dir):
         if not os.path.exists(os.path.join(weights_dir, "pretrain_weights.pth")):
             print_log("Pretrain Start", logger="current")
 
             cls_autoencoder = SymbolNetAutoencoder(
-                num_classes=len(self.abducer.kb.pseudo_label_list)
+                num_classes=len(self.reasoner.kb.pseudo_label_list)
             )
             device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
             criterion = torch.nn.MSELoss()
@@ -74,7 +74,7 @@ class HEDBridge(SimpleBridge):
         max_revision=-1,
         require_more_revision=0,
     ):
-        return self.abducer.abduce(
+        return self.reasoner.abduce(
             (pred_label, pred_prob, pseudo_label, Y),
             max_revision,
             require_more_revision,
@@ -86,8 +86,8 @@ class HEDBridge(SimpleBridge):
         pred_pseudo_label_list = []
         abduced_pseudo_label_list = []
         for _mapping in candidate_mappings:
-            self.abducer.mapping = _mapping
-            self.abducer.set_remapping()
+            self.reasoner.mapping = _mapping
+            self.reasoner.set_remapping()
             pred_pseudo_label = self.label_to_pseudo_label(pred_label)
             abduced_pseudo_label = self.abduce_pseudo_label(
                 pred_label, pred_prob, pred_pseudo_label, Y, 20
@@ -100,8 +100,8 @@ class HEDBridge(SimpleBridge):
 
         max_revisible_instances = max(mapping_score)
         return_idx = mapping_score.index(max_revisible_instances)
-        self.abducer.mapping = candidate_mappings[return_idx]
-        self.abducer.set_remapping()
+        self.reasoner.mapping = candidate_mappings[return_idx]
+        self.reasoner.set_remapping()
         return abduced_pseudo_label_list[return_idx]
 
     def check_training_impact(self, filtered_X, filtered_abduced_label, X):
@@ -137,7 +137,7 @@ class HEDBridge(SimpleBridge):
         pred_pseudo_label = self.label_to_pseudo_label(pred_label)
         consistent_num = sum(
             [
-                self.abducer.kb.consist_rule(instance, rule)
+                self.reasoner.kb.consist_rule(instance, rule)
                 for instance in pred_pseudo_label
             ]
         )
@@ -159,11 +159,11 @@ class HEDBridge(SimpleBridge):
                 pred_pseudo_label = self.label_to_pseudo_label(pred_label)
                 consistent_instance = []
                 for instance in pred_pseudo_label:
-                    if self.abducer.kb.logic_forward([instance]):
+                    if self.reasoner.kb.logic_forward([instance]):
                         consistent_instance.append(instance)
 
                 if len(consistent_instance) != 0:
-                    rule = self.abducer.abduce_rules(consistent_instance)
+                    rule = self.reasoner.abduce_rules(consistent_instance)
                     if rule != None:
                         rules.append(rule)
                         break
@@ -280,7 +280,7 @@ class HEDBridge(SimpleBridge):
                     else:
                         if equation_len == min_len:
                             print_log(
-                                "Learned mapping is: " + str(self.abducer.mapping),
+                                "Learned mapping is: " + str(self.reasoner.mapping),
                                 logger="current",
                             )
                             self.model.load(load_path="./weights/pretrain_weights.pth")

@@ -1,8 +1,8 @@
+import logging
 from abc import ABCMeta, abstractmethod
 from typing import Any, List, Optional, Sequence
-from ..utils import print_log
 
-import logging
+from ..utils import print_log
 
 
 class BaseMetric(metaclass=ABCMeta):
