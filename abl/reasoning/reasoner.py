@@ -1,6 +1,6 @@
 import numpy as np
 from zoopt import Dimension, Objective, Parameter, Opt
-from abl.utils.utils import (
+from ..utils.utils import (
     confidence_dist,
     flatten,
     reform_list,
@@ -114,7 +114,7 @@ class ReasonerBase:
         symbol_num : int
             Number of total symbols.
         data_sample : ListData
-            
+
         max_revision_num : int
             Specifies the maximum number of revisions allowed.
         """
