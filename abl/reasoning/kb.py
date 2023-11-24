@@ -9,7 +9,7 @@ from functools import lru_cache
 import numpy as np
 import pyswip
 
-from ..utils.utils import flatten, reform_list, hamming_dist, to_hashable, restore_from_hashable
+from ..utils.utils import flatten, reform_list, hamming_dist, to_hashable
 from ..utils.cache import abl_cache
 
 
@@ -20,15 +20,23 @@ class KBBase(ABC):
     Parameters
     ----------
     pseudo_label_list : list
-        List of possible pseudo labels.
+        List of possible pseudo labels. It's recommended to arrange the pseudo labels in this 
+        list so that each aligns with its corresponding index in the base model: the first with 
+        the 0th index, the second with the 1st, and so forth.
     max_err : float, optional
         The upper tolerance limit when comparing the similarity between a candidate's logical
         result. This is only applicable when the logical result is of a numerical type.
         This is particularly relevant for regression problems where exact matches might not be
         feasible. Defaults to 1e-10.
     use_cache : bool, optional
-        Whether to use a cache for previously abduced candidates to speed up subsequent
+        Whether to use abl_cache for previously abduced candidates to speed up subsequent
         operations. Defaults to True.
+    key_func : func, optional
+        A function employed for hashing in abl_cache. This is only operational when use_cache 
+        is set to True. Defaults to to_hashable.
+    max_cache_size: int, optional
+        The maximum cache size in abl_cache. This is only operational when use_cache is set to
+        True. Defaults to 4096.
 
     Notes
     -----
@@ -65,7 +73,7 @@ class KBBase(ABC):
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo label.
+            Pseudo label sample.
         """
         pass
 
@@ -76,11 +84,11 @@ class KBBase(ABC):
         Parameters
         ----------
         pseudo_label : List[Any]
-            Predicted pseudo label.
+            Pseudo label sample (to be revised by abductive reasoning).
         y : any
-            Ground truth for the logical result.
+            Ground truth of the logical result for the sample.
         max_revision_num : int
-            The upper limit on the number of revisions.
+            The upper limit on the number of revised labels for each sample.
         require_more_revision : int, optional
             Specifies additional number of revisions permitted beyond the minimum required.
             Defaults to 0.
@@ -108,16 +116,16 @@ class KBBase(ABC):
 
     def revise_at_idx(self, pseudo_label, y, revision_idx):
         """
-        Revise the predicted pseudo label at specified index positions.
+        Revise the pseudo label at specified index positions.
 
         Parameters
         ----------
         pseudo_label : List[Any]
-            Predicted pseudo label.
+            Pseudo label sample (to be revised).
         y : Any
-            Ground truth for the logical result.
+            Ground truth of the logical result for the sample.
         revision_idx : array-like
-            Indices of where revisions should be made to the predicted pseudo label.
+            Indices of where revisions should be made to the pseudo label sample.
         """
         candidates = []
         abduce_c = product(self.pseudo_label_list, repeat=len(revision_idx))
@@ -152,9 +160,9 @@ class KBBase(ABC):
         Parameters
         ----------
         pseudo_label : List[Any]
-            Predicted pseudo label.
+            Pseudo label sample (to be revised).
         y : Any
-            Ground truth for the logical result.
+            Ground truth of the logical result for the sample.
         max_revision_num : int
             The upper limit on the number of revisions.
         require_more_revision : int
@@ -394,7 +402,7 @@ class PrologKB(KBBase):
 
     def revise_at_idx(self, pseudo_label, y, revision_idx):
         """
-        Revise the predicted pseudo label at specified index positions by querying Prolog.
+        Revise the pseudo label sample at specified index positions by querying Prolog.
         This is an overridden function. For more information about the parameters, refer to
         the function of the same name in class `KBBase`.
         """

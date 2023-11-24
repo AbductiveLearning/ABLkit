@@ -22,8 +22,8 @@ class ReasonerBase:
         "confidence" (default). For detailed explanations of these options, refer to 
         `_get_cost_list`.
     mapping : dict, optional
-        A mapping from index to label. If not provided, a default order-based mapping is 
-        created.
+        A mapping from index in the base model to label. If not provided, a default 
+        order-based mapping is created.
     use_zoopt : bool, optional
         Whether to use the Zoopt library during abductive reasoning. Defaults to False.
     """
@@ -58,11 +58,8 @@ class ReasonerBase:
         
         Parameters
         ----------
-        pred_pseudo_label : List[Any]
-            Predicted pseudo label to be used for selecting a candidate.
-        pred_prob : List[List[Any]]
-            Predicted probabilities of the prediction (Each sublist contains the probability 
-            distribution over all pseudo labels).
+        data_sample : ListData
+            Data sample.
         candidates : List[List[Any]]
             Multiple consistent candidates. 
         """
@@ -77,20 +74,18 @@ class ReasonerBase:
     
     def _get_cost_list(self, data_sample, candidates):
         """
-        Get the list of costs between each candidate and the given prediction. The list is 
+        Get the list of costs between each candidate and the given data sample. The list is 
         calculated based on one of the following distance functions:
         - "hamming": Directly calculates the Hamming distance between the predicted pseudo 
-                     label and candidate.
+                     label in the data sample and candidate.
         - "confidence": Calculates the distance between the prediction and candidate based 
-                        on confidence derived from the predicted probability.
+                        on confidence derived from the predicted probability in the data 
+                        sample.
         
         Parameters
         ----------
-        pred_pseudo_label : List[Any]
-            Predicted pseudo label.
-        pred_prob : List[List[Any]]
-            Predicted probabilities of the prediction (Each sublist contains the probability 
-            distribution over all pseudo labels). Used when distance function is "confidence".
+        data_sample : ListData
+            Data sample.
         candidates : List[List[Any]]
             Multiple consistent candidates.
         """
@@ -114,7 +109,7 @@ class ReasonerBase:
         symbol_num : int
             Number of total symbols.
         data_sample : ListData
-
+            Data sample.
         max_revision_num : int
             Specifies the maximum number of revisions allowed.
         """
@@ -154,14 +149,12 @@ class ReasonerBase:
     
     def revise_at_idx(self, data_sample, revision_idx):
         """
-        Revise the predicted pseudo label at specified index positions.
+        Revise the pseudo label in the data sample at specified index positions.
 
         Parameters
         ----------
-        pred_pseudo_label : List[Any]
-            Predicted pseudo label.
-        y : Any
-            Ground truth for the logical result.
+        data_sample : ListData
+            Data sample.
         revision_idx : array-like
             Indices of where revisions should be made to the predicted pseudo label.
         """
@@ -197,17 +190,12 @@ class ReasonerBase:
         self, data_sample, max_revision=-1, require_more_revision=0
     ):
         """
-        Perform abductive reasoning on the given prediction data.
+        Perform abductive reasoning on the given data sample.
 
         Parameters
         ----------
-        pred_prob : List[List[Any]]
-            Predicted probabilities of the prediction (Each sublist contains the probability 
-            distribution over all pseudo labels).
-        pred_pseudo_label : List[Any]
-            Predicted pseudo label.
-        y : Any
-            Ground truth for the logical result.
+        data_sample : ListData
+            Data sample.
         max_revision : int or float, optional
             The upper limit on the number of revisions. If float, denotes the fraction of the 
             total length that can be revised. A value of -1 implies no restriction on the number 
@@ -243,7 +231,7 @@ class ReasonerBase:
         self, data_samples, max_revision=-1, require_more_revision=0
     ):
         """
-        Perform abductive reasoning on the given prediction data in batches.
+        Perform abductive reasoning on the given prediction data samples.
         For detailed information, refer to `abduce`.
         """
         abduced_pseudo_label = [
@@ -259,330 +247,3 @@ class ReasonerBase:
         return self.batch_abduce(
             pred_prob, pred_pseudo_label, Y, max_revision, require_more_revision
         )
-
-
-
-
-if __name__ == "__main__":
-    from kb import KBBase, GroundKB, PrologKB
-    from abl.structures import ListData
-    
-    ################################
-    # Test for MNIST Add reasoning # 
-    ################################
-
-    class AddKB(KBBase):
-        def __init__(self, pseudo_label_list=list(range(10)),
-                           use_cache=True):
-            super().__init__(pseudo_label_list, use_cache=use_cache)
-
-        def logic_forward(self, nums):
-            return sum(nums)
-        
-    class AddGroundKB(GroundKB, AddKB):
-        def __init__(self, pseudo_label_list=list(range(10)), 
-                           GKB_len_list=[2]):
-            super().__init__(pseudo_label_list, GKB_len_list)
-
-
-        def logic_forward(self, nums):
-            return sum(nums)
-        
-        
-        def logic_forward(self, nums):
-            return sum(nums)
-        
-    def test_add(reasoner):
-        # favor 1 in first one
-        prob1 = [[0, 0.99, 0, 0, 0, 0, 0, 0.01, 0, 0],
-                [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]]
-        
-        # favor 7 in first one
-        prob2 = [[0, 0.01, 0, 0, 0, 0, 0, 0.99, 0, 0],
-                [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]]
-        
-        data_samples_add = ListData()
-        data_samples_add.pred_pseudo_label = [[1, 1], [1, 1], [1, 1], [1, 1]]
-        data_samples_add.pred_prob = [prob1, prob2, prob1, prob2]
-        data_samples_add.Y = [8, 8, 17, 10]
-        
-        res = reasoner.batch_abduce(data_samples_add, max_revision=1, require_more_revision=0)
-        print(res)
-        res = reasoner.batch_abduce(data_samples_add, max_revision=1, require_more_revision=1)
-        print(res) 
-        res = reasoner.batch_abduce(data_samples_add, max_revision=2, require_more_revision=0)
-        print(res)
-        res = reasoner.batch_abduce(data_samples_add, max_revision=2, require_more_revision=1)
-        print(res) # due to more revision allowed, for the 4th, it will favor [7,3] over [1,9]
-        print()
-
-    print("AddGroundKB:")
-    kb = AddGroundKB()
-    reasoner = ReasonerBase(kb, "confidence")
-    test_add(reasoner)
-
-    print("AddKB:")
-    kb = AddKB()
-    reasoner = ReasonerBase(kb, "confidence")
-    test_add(reasoner)
-
-    print("AddKB, no cache")
-    kb = AddKB(use_cache=False)
-    reasoner = ReasonerBase(kb, "confidence")
-    test_add(reasoner)
-
-    print("PrologKB with add.pl:")
-    kb = PrologKB(pseudo_label_list=list(range(10)),
-                   pl_file="examples/mnist_add/datasets/add.pl")
-    reasoner = ReasonerBase(kb, "confidence")
-    test_add(reasoner)
-
-    print("PrologKB with add.pl using zoopt:")
-    kb = PrologKB(
-        pseudo_label_list=list(range(10)),
-        pl_file="examples/mnist_add/datasets/add.pl",
-    )
-    reasoner = ReasonerBase(kb, "confidence", use_zoopt=True)
-    test_add(reasoner)
-    
-    ################################
-    #### Test for HWF reasoning #### 
-    ################################
-    
-    class HwfKB(KBBase):
-        def __init__(
-            self,
-            pseudo_label_list=["1", "2", "3", "4", "5", "6", "7", "8", "9",
-                               "+", "-", "times", "div"],
-            max_err=1e-3,
-            use_cache=False,
-        ):
-            super().__init__(pseudo_label_list, max_err, use_cache)
-
-        def _valid_candidate(self, formula):
-            if len(formula) % 2 == 0:
-                return False
-            for i in range(len(formula)):
-                if i % 2 == 0 and formula[i] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-                    return False
-                if i % 2 != 0 and formula[i] not in ["+", "-", "times", "div"]:
-                    return False
-            return True
-
-        def logic_forward(self, formula):
-            if not self._valid_candidate(formula):
-                return None
-            mapping = {str(i): str(i) for i in range(1, 10)}
-            mapping.update({"+": "+", "-": "-", "times": "*", "div": "/"})
-            formula = [mapping[f] for f in formula]
-            return eval("".join(formula))
-    
-    class HwfGroundKB(GroundKB, HwfKB):
-        def __init__(
-            self,
-            pseudo_label_list=["1", "2", "3", "4", "5", "6", "7", "8", "9",
-                               "+", "-", "times", "div"],
-            GKB_len_list=[1, 3, 5, 7],
-            max_err=1e-3,
-        ):
-            super().__init__(pseudo_label_list, GKB_len_list, max_err)
-
-
-        def _valid_candidate(self, formula):
-            if len(formula) % 2 == 0:
-                return False
-            for i in range(len(formula)):
-                if i % 2 == 0 and formula[i] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-                    return False
-                if i % 2 != 0 and formula[i] not in ["+", "-", "times", "div"]:
-                    return False
-            return True
-    
-        def _valid_candidate(self, formula):
-            if len(formula) % 2 == 0:
-                return False
-            for i in range(len(formula)):
-                if i % 2 == 0 and formula[i] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-                    return False
-                if i % 2 != 0 and formula[i] not in ["+", "-", "times", "div"]:
-                    return False
-            return True
-
-
-        def logic_forward(self, formula):
-            if not self._valid_candidate(formula):
-                return None
-            mapping = {str(i): str(i) for i in range(1, 10)}
-            mapping.update({"+": "+", "-": "-", "times": "*", "div": "/"})
-            formula = [mapping[f] for f in formula]
-            return eval("".join(formula))
-    
-    
-        def logic_forward(self, formula):
-            if not self._valid_candidate(formula):
-                return None
-            mapping = {str(i): str(i) for i in range(1, 10)}
-            mapping.update({"+": "+", "-": "-", "times": "*", "div": "/"})
-            formula = [mapping[f] for f in formula]
-            return eval("".join(formula))
-    
-    def test_hwf(reasoner):
-        data_samples_hwf = ListData()
-        data_samples_hwf.pred_pseudo_label = [["5", "+", "2"], ["5", "+", "9"], ["5", "+", "9"], ["5", "-", "8", "8", "8"]]
-        data_samples_hwf.pred_prob = [None, None, None, None]
-        data_samples_hwf.Y = [3, 64, 65, 3.17]
-        
-        res = reasoner.batch_abduce(data_samples_hwf, max_revision=3, require_more_revision=0)
-        print(res)
-        res = reasoner.batch_abduce(data_samples_hwf, max_revision=0.5, require_more_revision=3)
-        print(res)
-        res = reasoner.batch_abduce(data_samples_hwf, max_revision=0.9, require_more_revision=0)
-        print(res)
-        print()
-    
-
-    print("HwfGroundKB, max_err=0.1:")
-    kb = HwfGroundKB(GKB_len_list=[1, 3, 5], max_err=0.1)
-    reasoner = ReasonerBase(kb, "hamming")
-    test_hwf(reasoner)
-
-    print("HwfKB, max_err=0.1:")
-    kb = HwfKB(max_err=0.1)
-    reasoner = ReasonerBase(kb, "hamming")
-    test_hwf(reasoner)
-
-    print("HwfGroundKB, max_err=1:")
-    kb = HwfGroundKB(GKB_len_list=[1, 3, 5], max_err=1)
-    reasoner = ReasonerBase(kb, "hamming")
-    test_hwf(reasoner)
-
-    print("HwfKB, max_err=1:")
-    kb = HwfKB(max_err=1)
-    reasoner = ReasonerBase(kb, "hamming")
-    test_hwf(reasoner)
-    
-    
-    ################################
-    #### Test for HED reasoning #### 
-    ################################
-    
-    
-    class HedKB(PrologKB):
-        def __init__(self, pseudo_label_list, pl_file):
-            super().__init__(pseudo_label_list, pl_file)
-
-        def consist_rule(self, exs, rules):
-            rules = str(rules).replace("'", "")
-            pl_query = "eval_inst_feature(%s, %s)." % (exs, rules)
-            return len(list(self.prolog.query(pl_query))) != 0
-
-        def abduce_rules(self, pseudo_labels):
-            pl_query = "consistent_inst_feature(%s, X)." % pseudo_labels
-            prolog_result = list(self.prolog.query(pl_query))
-            if len(prolog_result) == 0:
-                return None
-            prolog_rules = prolog_result[0]["X"]
-            rules = [rule.value for rule in prolog_rules]
-            return rules
-
-    class HedReasoner(ReasonerBase):
-        def __init__(self, kb, dist_func="hamming"):
-            super().__init__(kb, dist_func, use_zoopt=True)
-
-        def _revise_at_idxs(self, pseudo_labels, ys, all_revision_flag, idxs):
-            data_sample = ListData()
-            data_sample.pred_pseudo_label = []
-            data_sample.Y = []
-            revision_flag = []
-            for idx in idxs:
-                data_sample.pred_pseudo_label.append(pseudo_labels[idx])
-                data_sample.Y.append(ys[idx])
-                revision_flag += list(all_revision_flag[idx])
-            revision_idx = np.where(np.array(revision_flag) != 0)[0]
-            candidate = self.revise_at_idx(data_sample, revision_idx)
-            return candidate
-
-        def zoopt_revision_score(self, symbol_num, data_sample, sol):
-            pseudo_labels = data_sample.pred_pseudo_label
-            ys = data_sample.Y
-            
-            all_revision_flag = reform_list(sol.get_x(), pseudo_labels)
-            lefted_idxs = [i for i in range(len(pseudo_labels))]
-            candidate_size = []
-            while lefted_idxs:
-                idxs = []
-                idxs.append(lefted_idxs.pop(0))
-                max_candidate_idxs = []
-                found = False
-                for idx in range(-1, len(pseudo_labels)):
-                    if (not idx in idxs) and (idx >= 0):
-                        idxs.append(idx)
-                    candidate = self._revise_at_idxs(
-                        pseudo_labels, ys, all_revision_flag, idxs
-                    )
-                    if len(candidate) == 0:
-                        if len(idxs) > 1:
-                            idxs.pop()
-                    else:
-                        if len(idxs) > len(max_candidate_idxs):
-                            found = True
-                            max_candidate_idxs = idxs.copy()
-                removed = [i for i in lefted_idxs if i in max_candidate_idxs]
-                if found:
-                    candidate_size.append(len(removed) + 1)
-                    lefted_idxs = [
-                        i for i in lefted_idxs if i not in max_candidate_idxs
-                    ]
-            candidate_size.sort()
-            score = 0
-            import math
-
-            for i in range(0, len(candidate_size)):
-                score -= math.exp(-i) * candidate_size[i]
-            return score
-
-        def abduce_rules(self, pseudo_labels):
-            return self.kb.abduce_rules(pseudo_labels)
-
-    kb = HedKB(
-        pseudo_label_list=[1, 0, "+", "="],
-        pl_file="examples/hed/datasets/learn_add.pl",
-    )
-    reasoner = HedReasoner(kb)
-    consist_exs = [
-        [1, 1, "+", 0, "=", 1, 1],
-        [1, "+", 1, "=", 1, 0],
-        [0, "+", 0, "=", 0],
-    ]
-    inconsist_exs1 = [
-        [1, 1, "+", 0, "=", 1, 1],
-        [1, "+", 1, "=", 1, 0],
-        [0, "+", 0, "=", 0],
-        [0, "+", 0, "=", 1],
-    ]
-    inconsist_exs2 = [[1, "+", 0, "=", 0], [1, "=", 1, "=", 0], [0, "=", 0, "=", 1, 1]]
-    rules = ["my_op([0], [0], [0])", "my_op([1], [1], [1, 0])"]
-
-    print("HedKB logic forward:")
-    print(kb.logic_forward(consist_exs), end=" ")
-    print(kb.logic_forward(inconsist_exs1), kb.logic_forward(inconsist_exs2))
-    print()
-    print("HedKB consist rule:")
-    print(kb.consist_rule([1, "+", 1, "=", 1, 0], rules), end=" ")
-    print(kb.consist_rule([1, "+", 1, "=", 1, 1], rules))
-    print()
-
-    data_sample_hed = ListData()
-    data_sample_hed.pred_pseudo_label = [consist_exs, inconsist_exs1, inconsist_exs2]
-    data_sample_hed.pred_prob = [[None] * len(consist_exs), [None] * len(inconsist_exs1), [None] * len(inconsist_exs2)]
-    data_sample_hed.Y = [[None] * len(consist_exs), [None] * len(inconsist_exs1), [None] * len(inconsist_exs2)]
-
-    print("HedReasoner abduce")
-    res = reasoner.batch_abduce(data_sample_hed)
-    for r in res:
-        print(r)
-    print()
-
-    print("HedReasoner abduce rules")
-    abduced_rules = reasoner.abduce_rules(consist_exs)
-    print(abduced_rules)
