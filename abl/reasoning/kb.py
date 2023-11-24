@@ -317,13 +317,22 @@ class GroundKB(KBBase):
             return self.GKB[len(pseudo_label)][y]
 
     def __repr__(self):
+        GKB_info_parts = []
+        for i in self.GKB_len_list:
+            num_candidates = len(self.GKB[i]) if i in self.GKB else 0
+            GKB_info_parts.append(f"{num_candidates} candidates of length {i}")
+        GKB_info = ", ".join(GKB_info_parts)
+            
         return (
             f"{self.__class__.__name__} is a KB with "
             f"pseudo_label_list={self.pseudo_label_list!r}, "
             f"max_err={self.max_err!r}, "
-            f"use_cache={self.use_cache!r}, "
-            f"and has a prebuilt GKB with "
-            f"GKB_len_list={self.GKB_len_list!r}."
+            f"use_cache={self.use_cache!r}. "
+            f"It has a prebuilt GKB with "
+            f"GKB_len_list={self.GKB_len_list!r}, "
+            f"and there are "
+            f"{GKB_info}"
+            f" in the GKB."
         )
 
 
