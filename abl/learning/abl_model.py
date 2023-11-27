@@ -24,24 +24,6 @@ class ABLModel:
     ----------
     base_model : Machine Learning Model
         The base model to use for training and prediction.
-
-    Attributes
-    ----------
-    classifier_list : List[Any]
-        A list of classifiers.
-
-    Methods
-    -------
-    predict(X: List[List[Any]], mapping: Optional[Dict] = None) -> Dict
-        Predict the labels and probabilities for the given data.
-    valid(X: List[List[Any]], Y: List[Any]) -> float
-        Calculate the accuracy score for the given data.
-    train(X: List[List[Any]], Y: List[Any]) -> float
-        Train the model on the given data.
-    save(*args, **kwargs) -> None
-        Save the model to a file.
-    load(*args, **kwargs) -> None
-        Load the model from a file.
     """
 
     def __init__(self, base_model: Any) -> None:
@@ -56,8 +38,8 @@ class ABLModel:
 
         Parameters
         ----------
-        X : List[List[Any]]
-            The data to predict on.
+        data_samples : ListData
+            A batch of data to predict on.
 
         Returns
         -------
@@ -86,10 +68,8 @@ class ABLModel:
 
         Parameters
         ----------
-        X : List[List[Any]]
-            The data to train on.
-        Y : List[Any]
-            The true labels for the given data.
+        data_samples : ListData
+            A batch of data to train on, which typically contains the data, `X`, and the corresponding labels, `abduced_idx`.
 
         Returns
         -------
