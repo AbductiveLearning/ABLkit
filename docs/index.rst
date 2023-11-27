@@ -1,16 +1,22 @@
-.. include:: README.rst
+.. ABL-Package documentation master file, created by
+   sphinx-quickstart on Mon Nov 27 13:13:16 2023.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to ABL-Package's documentation!
+=======================================
 
 .. toctree::
-   :caption: Tutorial of ABL
-   :maxdepth: 2
+   :maxdepth: 4
+   :caption: Contents:
 
-   ABL/Abductive Learning.rst
-   ABL/Quick Start.rst
-   ABL/Test.md
+   abl
+   setup
 
-.. toctree::
-   :caption: Examples
-   :maxdepth: 2
 
-   Examples/MNISTadd.rst
+Indices and tables
+==================
 
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
