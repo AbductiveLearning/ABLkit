@@ -1,10 +1,7 @@
-abl.utils package
-=================
+abl.utils
+==================
 
-Submodules
-----------
-
-abl.utils.cache module
+abl.utils.cache
 ----------------------
 
 .. automodule:: abl.utils.cache
@@ -12,7 +9,7 @@ abl.utils.cache module
    :undoc-members:
    :show-inheritance:
 
-abl.utils.logger module
+abl.utils.logger
 -----------------------
 
 .. automodule:: abl.utils.logger
@@ -20,7 +17,7 @@ abl.utils.logger module
    :undoc-members:
    :show-inheritance:
 
-abl.utils.manager module
+abl.utils.manager
 ------------------------
 
 .. automodule:: abl.utils.manager
@@ -28,16 +25,13 @@ abl.utils.manager module
    :undoc-members:
    :show-inheritance:
 
-abl.utils.utils module
+abl.utils.utils
 ----------------------
 
 .. automodule:: abl.utils.utils
    :members:
    :undoc-members:
    :show-inheritance:
-
-Module contents
----------------
 
 .. automodule:: abl.utils
    :members:

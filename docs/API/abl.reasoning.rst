@@ -1,10 +1,7 @@
-abl.reasoning package
-=====================
+abl.reasoning
+==================
 
-Submodules
-----------
-
-abl.reasoning.kb module
+abl.reasoning.kb
 -----------------------
 
 .. automodule:: abl.reasoning.kb
@@ -12,7 +9,7 @@ abl.reasoning.kb module
    :undoc-members:
    :show-inheritance:
 
-abl.reasoning.reasoner module
+abl.reasoning.reasoner
 -----------------------------
 
 .. automodule:: abl.reasoning.reasoner
@@ -20,8 +17,6 @@ abl.reasoning.reasoner module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
 
 .. automodule:: abl.reasoning
    :members:

@@ -1,10 +1,7 @@
-abl.evaluation package
-======================
+abl.evaluation
+==================
 
-Submodules
-----------
-
-abl.evaluation.base\_metric module
+abl.evaluation.base\_metric
 ----------------------------------
 
 .. automodule:: abl.evaluation.base_metric
@@ -12,7 +9,7 @@ abl.evaluation.base\_metric module
    :undoc-members:
    :show-inheritance:
 
-abl.evaluation.semantics\_metric module
+abl.evaluation.semantics\_metric
 ---------------------------------------
 
 .. automodule:: abl.evaluation.semantics_metric
@@ -20,7 +17,7 @@ abl.evaluation.semantics\_metric module
    :undoc-members:
    :show-inheritance:
 
-abl.evaluation.symbol\_metric module
+abl.evaluation.symbol\_metric
 ------------------------------------
 
 .. automodule:: abl.evaluation.symbol_metric
@@ -28,8 +25,6 @@ abl.evaluation.symbol\_metric module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
 
 .. automodule:: abl.evaluation
    :members:

@@ -1,10 +1,7 @@
-abl.learning package
-====================
+abl.learning
+==================
 
-Submodules
-----------
-
-abl.learning.abl\_model module
+abl.learning.abl\_model
 ------------------------------
 
 .. automodule:: abl.learning.abl_model
@@ -12,7 +9,7 @@ abl.learning.abl\_model module
    :undoc-members:
    :show-inheritance:
 
-abl.learning.basic\_nn module
+abl.learning.basic\_nn
 -----------------------------
 
 .. automodule:: abl.learning.basic_nn
@@ -20,8 +17,6 @@ abl.learning.basic\_nn module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
 
 .. automodule:: abl.learning
    :members:

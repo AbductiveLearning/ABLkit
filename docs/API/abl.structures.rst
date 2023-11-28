@@ -1,10 +1,7 @@
-abl.structures package
-======================
+abl.structures
+==================
 
-Submodules
-----------
-
-abl.structures.base\_data\_element module
+abl.structures.base\_data\_element
 -----------------------------------------
 
 .. automodule:: abl.structures.base_data_element
@@ -12,16 +9,13 @@ abl.structures.base\_data\_element module
    :undoc-members:
    :show-inheritance:
 
-abl.structures.list\_data module
+abl.structures.list\_data
 --------------------------------
 
 .. automodule:: abl.structures.list_data
    :members:
    :undoc-members:
    :show-inheritance:
-
-Module contents
----------------
 
 .. automodule:: abl.structures
    :members:

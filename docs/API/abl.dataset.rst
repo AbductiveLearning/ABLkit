@@ -1,10 +1,8 @@
-abl.dataset package
-===================
-
-Submodules
+abl.dataset
+==================
 ----------
 
-abl.dataset.bridge\_dataset module
+abl.dataset.bridge\_dataset
 ----------------------------------
 
 .. automodule:: abl.dataset.bridge_dataset
@@ -12,7 +10,7 @@ abl.dataset.bridge\_dataset module
    :undoc-members:
    :show-inheritance:
 
-abl.dataset.classification\_dataset module
+abl.dataset.classification\_dataset
 ------------------------------------------
 
 .. automodule:: abl.dataset.classification_dataset
@@ -20,7 +18,7 @@ abl.dataset.classification\_dataset module
    :undoc-members:
    :show-inheritance:
 
-abl.dataset.prediction\_dataset module
+abl.dataset.prediction\_dataset
 --------------------------------------
 
 .. automodule:: abl.dataset.prediction_dataset
@@ -28,7 +26,7 @@ abl.dataset.prediction\_dataset module
    :undoc-members:
    :show-inheritance:
 
-abl.dataset.regression\_dataset module
+abl.dataset.regression\_dataset
 --------------------------------------
 
 .. automodule:: abl.dataset.regression_dataset
@@ -36,8 +34,6 @@ abl.dataset.regression\_dataset module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
 
 .. automodule:: abl.dataset
    :members:

@@ -1,10 +1,7 @@
-abl.bridge package
+abl.bridge
 ==================
 
-Submodules
-----------
-
-abl.bridge.base\_bridge module
+abl.bridge.base\_bridge
 ------------------------------
 
 .. automodule:: abl.bridge.base_bridge
@@ -12,16 +9,13 @@ abl.bridge.base\_bridge module
    :undoc-members:
    :show-inheritance:
 
-abl.bridge.simple\_bridge module
+abl.bridge.simple\_bridge
 --------------------------------
 
 .. automodule:: abl.bridge.simple_bridge
    :members:
    :undoc-members:
    :show-inheritance:
-
-Module contents
----------------
 
 .. automodule:: abl.bridge
    :members:
