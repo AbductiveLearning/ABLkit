@@ -12,7 +12,8 @@
    :maxdepth: 2
    :caption: A Brief Introduction to ABL-Package 
 
-   Brief-Introduction/Introduction
+   Brief-Introduction/Components
+   Brief-Introduction/Usage
 
 .. toctree::
    :maxdepth: 2
