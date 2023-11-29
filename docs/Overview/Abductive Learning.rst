@@ -1,15 +1,20 @@
 Abductive Learning
 ==================
 
+Integrating the Power of Machine Learning and Logical Reasoning
+---------------------------------------------------------------
+
 Traditional supervised machine learning, e.g. classification, is
-predominantly data-driven. Here, a set of training examples
-:math:`\left\{\left(x_1, y_1\right), \ldots,\left(x_m, y_m\right)\right\}`
-is given, where :math:`x_i \in \mathcal{X}` is the :math:`i`-th training
+predominantly data-driven, as shown in the below figure. 
+Here, a set of training examples :math:`\left\{\left(x_1, y_1\right), 
+\ldots,\left(x_m, y_m\right)\right\}` is given, 
+where :math:`x_i \in \mathcal{X}` is the :math:`i`-th training
 instance, :math:`y_i \in \mathcal{Y}` is the corresponding ground-truth
 label. These data are then used to train a classifier model :math:`f:
 \mathcal{X} \mapsto \mathcal{Y}` to accurately predict the unseen data.
 
-（可能加一张图，比如左边是ML，右边是ML+KB）
+.. image:: ../img/ML.jpg
+   :width: 600px
 
 In **Abductive Learning (ABL)**, we assume that, in addition to data as
 examples, there is also a knowledge base :math:`\mathcal{KB}` containing
@@ -30,21 +35,22 @@ The process of ABL is as follows:
 3. Conduct joint reasoning with :math:`\mathcal{KB}` to find any
    inconsistencies. If found, the logical facts that lead to minimal 
    inconsistency can be identified.
-4. Modify the identified facts through abductive reasoning, returning 
-   revised logical facts :math:`\Delta(\mathcal{O})` which are
+4. Modify the identified facts through **abductive reasoning** (or, **abduction**), 
+   returning revised logical facts :math:`\Delta(\mathcal{O})` which are
    compatible with :math:`\mathcal{KB}`.
 5. These revised logical facts are converted back to the form of
-   pseudo-labels, and used for further learning of the classifier.
-6. As a result, the classifier is updated and replaces the previous one
+   pseudo-labels, and used like ground-truth labels in conventional 
+   supervised learning to train a new classifier.
+6. The new classifier will then be adopted to replace the previous one
    in the next iteration.
 
-This process is repeated until the classifier is no longer updated, or
+This above process repeats until the classifier is no longer updated, or
 the logical facts :math:`\mathcal{O}` are compatible with the knowledge
 base.
 
 The following figure illustrates this process:
 
-一张图
+.. image:: ../img/ABL.jpg
 
 We can observe that in the above figure, the left half involves machine
 learning, while the right half involves logical reasoning. Thus, the
@@ -57,4 +63,20 @@ model.
 What is Abductive Reasoning?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Abductive reasoning, also known as abduction, refers to the process of
+selectively inferring certain facts and hypotheses that explain
+phenomena and observations based on background knowledge. Unlike
+deductive reasoning, which leads to definitive conclusions, abductive
+reasoning may arrive at conclusions that are plausible but not conclusively
+proven. It is often described as an ‘inference to the best explanation.’
 
+In Abductive Learning, given :math:`\mathcal{KB}` (typically expressed
+in first-order logic clauses), one can perform deductive reasoning as
+well as abductive reasoning. Deductive reasoning allows deriving
+:math:`b` from :math:`a` only where :math:`b` is a formal logical
+consequence of :math:`a`, while abductive reasoning allows inferring
+:math:`a` as an explanation of :math:`b` (as a result of this inference,
+abduction allows the precondition :math:`a` to be abducted from the
+consequence :math:`b`). Put simply, deductive reasoning and abductive
+reasoning differ in which end, left or right, of the proposition
+“:math:`a\models b`” serves as conclusion.
