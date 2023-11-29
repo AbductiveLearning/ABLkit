@@ -1,7 +1,7 @@
 .. include:: README.rst
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Overview
 
    Overview/Abductive Learning
@@ -9,14 +9,14 @@
    Overview/Installation
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: A Brief Introduction
 
    Brief-Introduction/Components
    Brief-Introduction/Usage
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Examples
 
    Examples/MNISTAdd
@@ -37,7 +37,7 @@
    API/abl.utils
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: References
 
    References
