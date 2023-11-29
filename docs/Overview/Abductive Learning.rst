@@ -1,13 +1,15 @@
 Abductive Learning
 ==================
 
-Traditional supervised machine learning, e.g. classification, is
+Traditional supervised machine learning, e.g. classification, is
 predominantly data-driven. Here, a set of training examples
 :math:`\left\{\left(x_1, y_1\right), \ldots,\left(x_m, y_m\right)\right\}`
 is given, where :math:`x_i \in \mathcal{X}` is the :math:`i`-th training
 instance, :math:`y_i \in \mathcal{Y}` is the corresponding ground-truth
 label. These data are then used to train a classifier model :math:`f:
 \mathcal{X} \mapsto \mathcal{Y}` to accurately predict the unseen data.
+
+（可能加一张图，比如左边是ML，右边是ML+KB）
 
 In **Abductive Learning (ABL)**, we assume that, in addition to data as
 examples, there is also a knowledge base :math:`\mathcal{KB}` containing
