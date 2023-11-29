@@ -12,10 +12,15 @@ from .manager import ManagerMixin, _accquire_lock, _release_lock
 
 
 class FilterDuplicateWarning(logging.Filter):
-    """Filter the repeated warning message.
+    """
+    Filter for eliminating repeated warning messages in logging.
 
-    Args:
-        name (str): name of the filter.
+    This filter checks for duplicate warning messages and allows only the first occurrence of each message to be logged, filtering out subsequent duplicates.
+
+    Parameters
+    ----------
+    name : str, optional
+        The name of the filter, by default "abl".
     """
 
     def __init__(self, name: str = "abl"):
@@ -41,27 +46,28 @@ class FilterDuplicateWarning(logging.Filter):
 
 
 class ABLFormatter(logging.Formatter):
-    """Colorful format for ABLLogger. If the log level is error, the logger will
+    """
+    Colorful format for ABLLogger. If the log level is error, the logger will
     additionally output the location of the code.
 
-    Args:
-        color (bool): Whether to use colorful format. filehandler is not
-            allowed to use color format, otherwise it will be garbled.
-        blink (bool): Whether to blink the ``INFO`` and ``DEBUG`` logging
-            level.
-        **kwargs: Keyword arguments passed to
-            :meth:`logging.Formatter.__init__`.
+    Parameters
+    ----------
+    color : bool
+        Whether to use colorful format. filehandler is not
+        allowed to use color format, otherwise it will be garbled.
+    blink : bool
+        Whether to blink the ``INFO`` and ``DEBUG`` logging
+        level.
+    kwargs : dict
+        Keyword arguments passed to
+        :meth:`logging.Formatter.__init__`.
     """
 
-    _color_mapping: dict = dict(
-        ERROR="red", WARNING="yellow", INFO="white", DEBUG="green"
-    )
+    _color_mapping: dict = dict(ERROR="red", WARNING="yellow", INFO="white", DEBUG="green")
 
     def __init__(self, color: bool = True, blink: bool = False, **kwargs):
         super().__init__(**kwargs)
-        assert not (
-            not color and blink
-        ), "blink should only be available when color is True"
+        assert not (not color and blink), "blink should only be available when color is True"
         # Get prefix format according to color.
         error_prefix = self._get_prefix("ERROR", color, blink=True)
         warn_prefix = self._get_prefix("WARNING", color, blink=True)
@@ -79,15 +85,22 @@ class ABLFormatter(logging.Formatter):
         self.debug_format = f"%(asctime)s - %(name)s - {debug_prefix} - %(" "message)s"
 
     def _get_prefix(self, level: str, color: bool, blink=False) -> str:
-        """Get the prefix of the target log level.
+        """
+        Get the prefix of the target log level.
 
-        Args:
-            level (str): log level.
-            color (bool): Whether to get colorful prefix.
-            blink (bool): Whether the prefix will blink.
+        Parameters
+        ----------
+        level : str
+            Log level.
+        color : bool
+            Whether to get a colorful prefix.
+        blink : bool, optional
+            Whether the prefix will blink.
 
-        Returns:
-            str: The plain or colorful prefix.
+        Returns
+        -------
+        str
+            The plain or colorful prefix.
         """
         if color:
             attrs = ["underline"]
@@ -99,15 +112,19 @@ class ABLFormatter(logging.Formatter):
         return prefix
 
     def format(self, record: LogRecord) -> str:
-        """Override the `logging.Formatter.format`` method `. Output the
+        """
+        Override the ``logging.Formatter.format`` method. Output the
         message according to the specified log level.
 
-        Args:
-            record (LogRecord): A LogRecord instance represents an event being
-                logged.
+        Parameters
+        ----------
+        record : LogRecord
+            A LogRecord instance representing an event being logged.
 
-        Returns:
-            str: Formatted result.
+        Returns
+        -------
+        str
+            Formatted result.
         """
         if record.levelno == logging.ERROR:
             self._style._fmt = self.err_format
@@ -123,54 +140,48 @@ class ABLFormatter(logging.Formatter):
 
 
 class ABLLogger(Logger, ManagerMixin):
-    """Formatted logger used to record messages.
+    """
+    Formatted logger used to record messages with different log levels and features.
 
-    ``ABLLogger`` can create formatted logger to log message with different
-    log levels and get instance in the same way as ``ManagerMixin``.
-    ``ABLLogger`` has the following features:
+    `ABLLogger` provides a formatted logger that can log messages with different
+    log levels. It allows the creation of logger instances in a similar manner to `ManagerMixin`.
+    The logger has features like distributed log storage and colored terminal output for different log levels.
 
-    - Distributed log storage, ``ABLLogger`` can choose whether to save log of
-      different ranks according to `log_file`.
-    - Message with different log levels will have different colors and format
-      when displayed on terminal.
+    Parameters
+    ----------
+    name : str
+        Global instance name.
+    logger_name : str, optional
+        `name` attribute of `logging.Logger` instance. Defaults to 'abl'.
+    log_file : str, optional
+        The log filename. If specified, a `FileHandler` will be added to the logger. Defaults to None.
+    log_level : Union[int, str]
+        The log level of the handler. Defaults to 'INFO'.
+        If log level is 'DEBUG', distributed logs will be saved during distributed training.
+    file_mode : str
+        The file mode used to open log file. Defaults to 'w'.
 
-    Note:
-        - The `name` of logger and the ``instance_name`` of ``ABLLogger`` could
-          be different. We can only get ``ABLLogger`` instance by
-          ``ABLLogger.get_instance`` but not ``logging.getLogger``. This feature
-          ensures ``ABLLogger`` will not be incluenced by third-party logging
-          config.
-        - Different from ``logging.Logger``, ``ABLLogger`` will not log warning
-          or error message without ``Handler``.
+    Notes
+    -----
+    - The `name` of the logger and the `instance_name` of `ABLLogger` could be different.
+      `ABLLogger` instances are retrieved using `ABLLogger.get_instance`, not `logging.getLogger`.
+      This ensures `ABLLogger` is not influenced by third-party logging configurations.
+    - Unlike `logging.Logger`, `ABLLogger` will not log warning or error messages without `Handler`.
 
-    Examples:
-        >>> logger = ABLLogger.get_instance(name='ABLLogger',
-        >>>                                logger_name='Logger')
-        >>> # Although logger has name attribute just like `logging.Logger`
-        >>> # We cannot get logger instance by `logging.getLogger`.
-        >>> assert logger.name == 'Logger'
-        >>> assert logger.instance_name = 'ABLLogger'
-        >>> assert id(logger) != id(logging.getLogger('Logger'))
-        >>> # Get logger that do not store logs.
-        >>> logger1 = ABLLogger.get_instance('logger1')
-        >>> # Get logger only save rank0 logs.
-        >>> logger2 = ABLLogger.get_instance('logger2', log_file='out.log')
-        >>> # Get logger only save multiple ranks logs.
-        >>> logger3 = ABLLogger.get_instance('logger3', log_file='out.log',
-        >>>                                 distributed=True)
-
-    Args:
-        name (str): Global instance name.
-        logger_name (str): ``name`` attribute of ``Logging.Logger`` instance.
-            If `logger_name` is not defined, defaults to 'abl'.
-        log_file (str, optional): The log filename. If specified, a
-            ``FileHandler`` will be added to the logger. Defaults to None.
-        log_level (str): The log level of the handler. Defaults to
-            'INFO'. If log level is 'DEBUG', distributed logs will be saved
-            during distributed training.
-        file_mode (str): The file mode used to open log file. Defaults to 'w'.
-        distributed (bool): Whether to save distributed logs, Defaults to
-            false.
+    Examples
+    --------
+    >>> logger = ABLLogger.get_instance(name='ABLLogger', logger_name='Logger')
+    >>> # Although logger has a name attribute like `logging.Logger`
+    >>> # We cannot get logger instance by `logging.getLogger`.
+    >>> assert logger.name == 'Logger'
+    >>> assert logger.instance_name == 'ABLLogger'
+    >>> assert id(logger) != id(logging.getLogger('Logger'))
+    >>> # Get logger that does not store logs.
+    >>> logger1 = ABLLogger.get_instance('logger1')
+    >>> # Get logger only save rank0 logs.
+    >>> logger2 = ABLLogger.get_instance('logger2', log_file='out.log')
+    >>> # Get logger only save multiple ranks logs.
+    >>> logger3 = ABLLogger.get_instance('logger3', log_file='out.log', distributed=True)
     """
 
     def __init__(
@@ -179,7 +190,7 @@ class ABLLogger(Logger, ManagerMixin):
         logger_name="abl",
         log_file: Optional[str] = None,
         log_level: Union[int, str] = "INFO",
-        file_mode: str = "w"
+        file_mode: str = "w",
     ):
         Logger.__init__(self, logger_name)
         ManagerMixin.__init__(self, name)
@@ -196,6 +207,7 @@ class ABLLogger(Logger, ManagerMixin):
 
         if log_file is None:
             import time
+
             local_time = time.strftime("%Y%m%d_%H_%M_%S", time.localtime())
 
             _log_dir = os.path.join("results", local_time)
@@ -205,9 +217,7 @@ class ABLLogger(Logger, ManagerMixin):
             log_file = osp.join(_log_dir, local_time + ".log")
 
         file_handler = logging.FileHandler(log_file, file_mode)
-        file_handler.setFormatter(
-            ABLFormatter(color=False, datefmt="%Y/%m/%d %H:%M:%S")
-        )
+        file_handler.setFormatter(ABLFormatter(color=False, datefmt="%Y/%m/%d %H:%M:%S"))
         file_handler.setLevel(log_level)
         file_handler.addFilter(FilterDuplicateWarning(logger_name))
         self.handlers.append(file_handler)
@@ -216,52 +226,54 @@ class ABLLogger(Logger, ManagerMixin):
     @property
     def log_file(self):
         return self._log_file
-    
+
     @property
     def log_dir(self):
         return self._log_dir
 
     @classmethod
     def get_current_instance(cls) -> "ABLLogger":
-        """Get latest created ``ABLLogger`` instance.
+        """
+        Get the latest created `ABLLogger` instance.
 
-        :obj:`ABLLogger` can call :meth:`get_current_instance` before any
-        instance has been created, and return a logger with the instance name
-        "abl".
-
-        Returns:
-            ABLLogger: Configured logger instance.
+        Returns
+        -------
+        ABLLogger
+            The latest created `ABLLogger` instance. If no instance has been created,
+            returns a logger with the instance name "abl".
         """
         if not cls._instance_dict:
             cls.get_instance("abl")
         return super().get_current_instance()
 
     def callHandlers(self, record: LogRecord) -> None:
-        """Pass a record to all relevant handlers.
+        """
+        Pass a record to all relevant handlers.
 
-        Override ``callHandlers`` method in ``logging.Logger`` to avoid
-        multiple warning messages in DDP mode. Loop through all handlers of
-        the logger instance and its parents in the logger hierarchy. If no
-        handler was found, the record will not be output.
+        Override the `callHandlers` method in `logging.Logger` to avoid
+        multiple warning messages in DDP mode. This method loops through all
+        handlers of the logger instance and its parents in the logger hierarchy.
 
-        Args:
-            record (LogRecord): A ``LogRecord`` instance contains logged
-                message.
+        Parameters
+        ----------
+        record : LogRecord
+            A `LogRecord` instance containing the logged message.
         """
         for handler in self.handlers:
             if record.levelno >= handler.level:
                 handler.handle(record)
 
     def setLevel(self, level):
-        """Set the logging level of this logger.
+        """
+        Set the logging level of this logger.
 
-        If ``logging.Logger.selLevel`` is called, all ``logging.Logger``
-        instances managed by ``logging.Manager`` will clear the cache. Since
-        ``ABLLogger`` is not managed by ``logging.Manager`` anymore,
-        ``ABLLogger`` should override this method to clear caches of all
-        ``ABLLogger`` instance which is managed by :obj:`ManagerMixin`.
+        Override the `setLevel` method to clear caches of all `ABLLogger` instances
+        managed by `ManagerMixin`. The level must be an int or a str.
 
-        level must be an int or a str.
+        Parameters
+        ----------
+        level : Union[int, str]
+            The logging level to set.
         """
         self.level = logging._checkLevel(level)
         _accquire_lock()
@@ -271,25 +283,24 @@ class ABLLogger(Logger, ManagerMixin):
         _release_lock()
 
 
-def print_log(
-    msg, logger: Optional[Union[Logger, str]] = None, level=logging.INFO
-) -> None:
-    """Print a log message.
+def print_log(msg, logger: Optional[Union[Logger, str]] = None, level=logging.INFO) -> None:
+    """
+    Print a log message using the specified logger or a default method.
 
-    Args:
-        msg (str): The message to be logged.
-        logger (Logger or str, optional): If the type of logger is
-        ``logging.Logger``, we directly use logger to log messages.
-            Some special loggers are:
+    This function logs a message with a given logger, if provided, or prints it using the standard `print` function. It supports special logger types such as 'silent' and 'current'.
 
-            - "silent": No message will be printed.
-            - "current": Use latest created logger to log message.
-            - other str: Instance name of logger. The corresponding logger
-              will log message if it has been created, otherwise ``print_log``
-              will raise a `ValueError`.
-            - None: The `print()` method will be used to print log messages.
-        level (int): Logging level. Only available when `logger` is a Logger
-            object, "current", or a created logger instance name.
+    Parameters
+    ----------
+    msg : str
+        The message to be logged.
+    logger : Optional[Union[Logger, str]], optional
+        The logger to use for logging the message. It can be a `logging.Logger` instance, a string specifying the logger name, 'silent', 'current', or None. If None, the `print` method is used.
+        - 'silent': No message will be printed.
+        - 'current': Use the latest created logger to log the message.
+        - other str: The instance name of the logger. A `ValueError` is raised if the logger has not been created.
+        - None: The `print()` method is used for logging.
+    level : int, optional
+        The logging level. This is only applicable when `logger` is a Logger object, 'current', or a named logger instance. The default is `logging.INFO`.
     """
     if logger is None:
         print(msg)
