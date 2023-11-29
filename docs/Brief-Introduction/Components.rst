@@ -1,4 +1,4 @@
-ABL-Package Components
+Components
 ==================
 
 .. contents:: Table of Contents

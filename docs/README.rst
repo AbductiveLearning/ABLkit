@@ -1,16 +1,18 @@
 ABL-Package
-^^^^^^
+===========
 
-ABL(Abductive Learning) is ...
+ABL-Package is an open source library for Abductive Learning that supports building a model leveraging information from both data and (logical) domain knowledge. Using ABL-Package, users may form a dual-driven (data & knowledge driven) learning system, integrating and balancing the use of machine learning and logical reasoning in a unified model.
+
+插一张图片
 
 Installation
--------------
+------------
 
 ABL is distributed on PyPI and can be installed with ``pip``:
 
 .. code:: console
 
-   $ pip install ABL
+   $ pip install abl
 
 Alternatively, to install ABL by source code, download this project and sequentially run following commands in your terminal/command line.
 
