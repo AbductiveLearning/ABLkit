@@ -3,53 +3,16 @@ Use ABL-Package Step by Step
 
 Using ABL-Package for your learning tasks contains five steps
 
--  Build the reasoning part
 -  Build the machine learning part
+-  Build the reasoning part
 -  Build datasets and evaluation metrics
--  Bridge the reasoning and machine learning parts
+-  Bridge the machine learning and reasoning parts
 -  Use ``Bridge.train`` and ``Bridge.test`` to train and test
-
-Build the reasoning part
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-In ABL-Package, the reasoning part is wrapped in the ``ReasonerBase`` class. In order to create an instance of this class, we first need to inherit the ``KBBase`` class to customize our knowledge base. Arguments of the ``__init__`` method of the knowledge base should at least contain ``pseudo_label_list`` which is a list of all pseudo labels. The ``logic_forward`` method of ``KBBase`` is an abstract method and we need to instantiate this method in our sub-class to give the ability of deduction to the knowledge base. In general, we can customize our knowledge base by
-
-.. code:: python
-
-    class MyKB(KBBase):
-        def __init__(self, pseudo_label_list):
-            super().__init__(pseudo_label_list)
-        
-        def logic_forward(self, *args, **kwargs):
-            # Deduction implementation...
-            return deduction_result
-
-Aside from the knowledge base, the instantiation of the ``ReasonerBase`` also needs to set an extra argument called ``dist_func``, which is the consistency measure used to select the best candidate from all candidates. In general, we can instantiate our reasoner by
-
-.. code:: python
-
-    kb = MyKB(pseudo_label_list)
-    reasoner = ReasonerBase(kb, dist_func="hamming")
-
-In the MNIST Add example, the reasoner looks like
-
-.. code:: python
-
-    class AddKB(KBBase):
-        def __init__(self, pseudo_label_list): 
-            super().__init__(pseudo_label_list)
-
-        # Implement the deduction function
-        def logic_forward(self, nums):
-            return sum(nums)
-
-    kb = AddKB(pseudo_label_list=list(range(10)))    
-    reasoner = ReasonerBase(kb, dist_func="confidence")
 
 Build the machine learning part
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Next, we build the machine learning part, which needs to be wrapped in the ``ABLModel`` class. We can use machine learning models from scikit-learn or based on PyTorch to create an instance of ``ABLModel``. 
+First, we build the machine learning part, which needs to be wrapped in the ``ABLModel`` class. We can use machine learning models from scikit-learn or based on PyTorch to create an instance of ``ABLModel``. 
 
 - for a scikit-learn model, we can directly use the model to create an instance of ``ABLModel``. For example, we can customize our machine learning model by
 
@@ -94,6 +57,43 @@ In the MNIST Add example, the machine learning model looks like
     )
     model = ABLModel(base_model)
 
+Build the reasoning part
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Next, we build the reasoning part. In ABL-Package, the reasoning part is wrapped in the ``ReasonerBase`` class. In order to create an instance of this class, we first need to inherit the ``KBBase`` class to customize our knowledge base. Arguments of the ``__init__`` method of the knowledge base should at least contain ``pseudo_label_list`` which is a list of all pseudo labels. The ``logic_forward`` method of ``KBBase`` is an abstract method and we need to instantiate this method in our sub-class to give the ability of deduction to the knowledge base. In general, we can customize our knowledge base by
+
+.. code:: python
+
+    class MyKB(KBBase):
+        def __init__(self, pseudo_label_list):
+            super().__init__(pseudo_label_list)
+        
+        def logic_forward(self, *args, **kwargs):
+            # Deduction implementation...
+            return deduction_result
+
+Aside from the knowledge base, the instantiation of the ``ReasonerBase`` also needs to set an extra argument called ``dist_func``, which is the consistency measure used to select the best candidate from all candidates. In general, we can instantiate our reasoner by
+
+.. code:: python
+
+    kb = MyKB(pseudo_label_list)
+    reasoner = ReasonerBase(kb, dist_func="hamming")
+
+In the MNIST Add example, the reasoner looks like
+
+.. code:: python
+
+    class AddKB(KBBase):
+        def __init__(self, pseudo_label_list): 
+            super().__init__(pseudo_label_list)
+
+        # Implement the deduction function
+        def logic_forward(self, nums):
+            return sum(nums)
+
+    kb = AddKB(pseudo_label_list=list(range(10)))    
+    reasoner = ReasonerBase(kb, dist_func="confidence")
+
 Build datasets and evaluation metrics
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -117,11 +117,11 @@ In the case of MNIST Add example, the metric definition looks like
 
     metric_list = [SymbolMetric(prefix="mnist_add"), SemanticsMetric(kb=kb, prefix="mnist_add")]
 
-Bridge the reasoning and machine learning parts
+Bridge the machine learning and reasoning parts
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We next need to bridge the reasoning and machine learning parts. In ABL-Package, the ``BaseBridge`` class gives necessary abstract interface definitions to bridge the two parts and ``SimpleBridge`` provides a basic implementation. 
-We build a bridge with previously defined ``reasoner``, ``model``, and ``metric_list`` as follows:
+We next need to bridge the machine learning and reasoning parts. In ABL-Package, the ``BaseBridge`` class gives necessary abstract interface definitions to bridge the two parts and ``SimpleBridge`` provides a basic implementation. 
+We build a bridge with previously defined ``model``, ``reasoner``, and ``metric_list`` as follows:
 
 .. code:: python
 

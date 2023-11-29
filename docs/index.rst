@@ -5,8 +5,8 @@
    :caption: Overview
 
    Overview/Abductive Learning
-   Overview/Quick Start
    Overview/Installation
+   Overview/Quick Start
 
 .. toctree::
    :maxdepth: 1
