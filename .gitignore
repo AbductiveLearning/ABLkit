@@ -1,5 +1,4 @@
 *.pyc
-*.jpg
 *.png
 *.pk
 *.pth
@@ -8,5 +7,6 @@
 results
 raw/
 abl.egg-info/
+examples/**/*.jpg
 .idea/
 build/
