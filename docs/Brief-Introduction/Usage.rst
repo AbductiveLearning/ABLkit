@@ -42,7 +42,7 @@ In the MNIST Add example, the machine learning model looks like
 
 .. code:: python
 
-    cls = LeNet5(num_classes=len(kb.pseudo_label_list))
+    cls = LeNet5(num_classes=10)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(cls.parameters(), lr=0.001, betas=(0.9, 0.99))
