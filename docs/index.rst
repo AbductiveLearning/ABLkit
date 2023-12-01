@@ -6,8 +6,18 @@
 
    Overview/Abductive Learning
    Overview/Installation
-   Overview/Quick Start
-   Overview/Usage
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Introduction to ABL-Package
+
+   Intro/Basics
+   Intro/Quick Start
+   Intro/Datasets
+   Intro/Learning
+   Intro/Reasoning
+   Intro/Evaluation
+   Intro/Bridge
 
 .. toctree::
    :maxdepth: 1
@@ -16,7 +26,6 @@
    Examples/MNISTAdd
    Examples/HWF
    Examples/HED
-
 
 .. toctree::
    :maxdepth: 1

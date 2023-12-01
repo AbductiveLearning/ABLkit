@@ -1,9 +1,6 @@
 Abductive Learning
 ==================
 
-Integrating the Power of Machine Learning and Logical Reasoning
----------------------------------------------------------------
-
 Traditional supervised machine learning, e.g. classification, is
 predominantly data-driven, as shown in the below figure. 
 Here, a set of training examples :math:`\left\{\left(x_1, y_1\right), 
@@ -61,23 +58,19 @@ is dual-driven by both data and domain knowledge, integrating and
 balancing the use of machine learning and logical reasoning in a unified
 model.
 
-What is Abductive Reasoning?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. admonition:: What is Abductive Reasoning?
 
-Abductive reasoning, also known as abduction, refers to the process of
-selectively inferring certain facts and hypotheses that explain
-phenomena and observations based on background knowledge. Unlike
-deductive reasoning, which leads to definitive conclusions, abductive
-reasoning may arrive at conclusions that are plausible but not conclusively
-proven. It is often described as an ‘inference to the best explanation.’
+   Abductive reasoning, also known as abduction, refers to the process of
+   selectively inferring certain facts and hypotheses that explain
+   phenomena and observations based on background knowledge. Unlike
+   deductive reasoning, which leads to definitive conclusions, abductive
+   reasoning may arrive at conclusions that are plausible but not conclusively
+   proven.
 
-In Abductive Learning, given :math:`\mathcal{KB}` (typically expressed
-in first-order logic clauses), one can perform deductive reasoning as
-well as abductive reasoning. Deductive reasoning allows deriving
-:math:`b` from :math:`a` only where :math:`b` is a formal logical
-consequence of :math:`a`, while abductive reasoning allows inferring
-:math:`a` as an explanation of :math:`b` (as a result of this inference,
-abduction allows the precondition :math:`a` to be abducted from the
-consequence :math:`b`). Put simply, deductive reasoning and abductive
-reasoning differ in which end, right or left, of the proposition
-“:math:`a\models b`” serves as conclusion.
+   In Abductive Learning, given :math:`\mathcal{KB}` (typically expressed
+   in first-order logic clauses), one can perform both deductive and 
+   abductive reasoning. Deductive reasoning allows deriving
+   :math:`b` from :math:`a`, while abductive reasoning allows inferring
+   :math:`a` as an explanation of :math:`b`. In other words, 
+   deductive reasoning and abductive reasoning differ in which end, 
+   right or left, of the proposition “:math:`a\models b`” serves as conclusion.

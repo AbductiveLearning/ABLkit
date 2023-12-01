@@ -24,8 +24,10 @@ where ``X`` is the input of the machine learning model,
 
 In the ``get_mnist_add`` above, the return values are tuples of ``(X, gt_pseudo_label, Y)``.
 
-Machine Learning (Map input to pseudo labels)
----------------------------------------------
+Read more about `prepare datasets <Datasets.html>`_.
+
+Build Machine Learning Models
+-----------------------------
 
 We use a simple LeNet5 model to recognize the pseudo labels (numbers) in the images. 
 We first build the model and define its corresponding criterion and optimizer for training.
@@ -49,6 +51,8 @@ Afterward, we wrap it in ``ABLModel``.
 
     base_model = BasicNN(cls, criterion, optimizer, device)
     model = ABLModel(base_model)
+
+Read more about `build machine learning models <Learning.html>`_.
 
 Reasoning (Map pseudo labels to reasoning results)
 --------------------------------------------------
@@ -76,20 +80,14 @@ how to minimize the inconsistency between the knowledge base and machine learnin
 
 .. code:: python
 
-    reasoner = ReasonerBase(kb, dist_func="confidence")    
+    reasoner = ReasonerBase(kb, dist_func="confidence")  
+
+Read more about `build the reasoning part <Reasoning.html>`_.  
 
 Bridge Machine Learning and Reasoning
 -------------------------------------
 
-First, we use ``SimpleBridge`` to combine machine learning and reasoning together,
-setting the stage for subsequent integrated training, validation, and testing.
-
-.. code:: python
-
-    from abl.bridge import SimpleBridge
-
-
-Next, we define the metrics to measure accuracy during validation and testing.
+Before bridging, we first define the metrics to measure accuracy during validation and testing.
 
 .. code:: python
 
@@ -97,9 +95,19 @@ Next, we define the metrics to measure accuracy during validation and testing.
 
     metric_list = [SymbolMetric(prefix="mnist_add"), SemanticsMetric(kb=kb, prefix="mnist_add")]
 
+
+Now, we may use ``SimpleBridge`` to combine machine learning and reasoning together,
+setting the stage for subsequent integrated training, validation, and testing.
+
+.. code:: python
+
+    from abl.bridge import SimpleBridge
+
 Finally, we proceed with testing and training.
 
 .. code:: python
 
     bridge.train(train_data, loops=5, segment_size=10000)
     bridge.test(test_data)
+
+Read more about `defining evaluation metrics <Evaluation.html>`_ and `bridge machine learning and reasoning <Bridge.html>`_.
