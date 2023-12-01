@@ -13,19 +13,20 @@ model.
 Installation
 ------------
 
-ABL is distributed on PyPI and can be installed with ``pip``:
+ABL is distributed on `PyPI <https://pypi.org/>`__ and can be installed with ``pip``:
 
 .. code:: console
 
    $ pip install abl
 
-Alternatively, to install ABL by source code, download this project and 
+Alternatively, to install ABL by source code, 
 sequentially run following commands in your terminal/command line.
 
 .. code:: console
 
-    $ python setup.py build
-    $ python setup.py install
+    $ git clone https://github.com/AbductiveLearning/ABL-Package.git
+    $ cd ABL-Package
+    $ pip install -v -e .
 
 
 Releases

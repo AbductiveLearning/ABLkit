@@ -51,6 +51,7 @@ base.
 The following figure illustrates this process:
 
 .. image:: ../img/ABL.jpg
+   :width: 800px
 
 We can observe that in the above figure, the left half involves machine
 learning, while the right half involves logical reasoning. Thus, the
@@ -78,5 +79,5 @@ consequence of :math:`a`, while abductive reasoning allows inferring
 :math:`a` as an explanation of :math:`b` (as a result of this inference,
 abduction allows the precondition :math:`a` to be abducted from the
 consequence :math:`b`). Put simply, deductive reasoning and abductive
-reasoning differ in which end, left or right, of the proposition
+reasoning differ in which end, right or left, of the proposition
 “:math:`a\models b`” serves as conclusion.

@@ -7,13 +7,7 @@
    Overview/Abductive Learning
    Overview/Installation
    Overview/Quick Start
-
-.. toctree::
-   :maxdepth: 1
-   :caption: A Brief Introduction
-
-   Brief-Introduction/Components
-   Brief-Introduction/Usage
+   Overview/Usage
 
 .. toctree::
    :maxdepth: 1

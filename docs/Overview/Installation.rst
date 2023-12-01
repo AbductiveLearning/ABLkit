@@ -1,19 +1,17 @@
 Installation
 ==================
 
-Case a: If you develop and run ``abl`` directly, install it from source:
+ABL is distributed on `PyPI <https://pypi.org/>`__ and can be installed with ``pip``:
 
-.. code-block:: bash
+.. code:: console
 
-    git clone https://github.com/AbductiveLearning/ABL-Package.git
-    cd ABL-Package
-    pip install -v -e .
-    # "-v" means verbose, or more output
-    # "-e" means installing a project in editable mode,
-    # thus any local modifications made to the code will take effect without reinstallation.
+   $ pip install abl
 
-Case b: If you use ``abl`` as a dependency or third-party package, install it with pip:
+Alternatively, to install ABL by source code, 
+sequentially run following commands in your terminal/command line.
 
-.. code-block:: bash
+.. code:: console
 
-    pip install abl
+    $ git clone https://github.com/AbductiveLearning/ABL-Package.git
+    $ cd ABL-Package
+    $ pip install -v -e .

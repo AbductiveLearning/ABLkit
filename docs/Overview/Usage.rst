@@ -10,7 +10,7 @@ Using ABL-Package for your learning tasks contains five steps
 -  Use ``Bridge.train`` and ``Bridge.test`` to train and test
 
 Build the machine learning part
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------
 
 First, we build the machine learning part, which needs to be wrapped in the ``ABLModel`` class. We can use machine learning models from scikit-learn or based on PyTorch to create an instance of ``ABLModel``. 
 
@@ -58,7 +58,7 @@ In the MNIST Add example, the machine learning model looks like
     model = ABLModel(base_model)
 
 Build the reasoning part
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 Next, we build the reasoning part. In ABL-Package, the reasoning part is wrapped in the ``ReasonerBase`` class. In order to create an instance of this class, we first need to inherit the ``KBBase`` class to customize our knowledge base. Arguments of the ``__init__`` method of the knowledge base should at least contain ``pseudo_label_list`` which is a list of all pseudo labels. The ``logic_forward`` method of ``KBBase`` is an abstract method and we need to instantiate this method in our sub-class to give the ability of deduction to the knowledge base. In general, we can customize our knowledge base by
 
