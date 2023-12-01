@@ -1,13 +1,40 @@
 Use ABL-Package Step by Step
-=============================
+============================
 
-Using ABL-Package for your learning tasks contains five steps
+In a typical Abductive Learning process, as illustrated below, 
+data inputs are first mapped to pseudo labels through a machine learning model. 
+These pseudo labels then pass through a knowledge base :math:`\mathcal{KB}`
+to obtain the logical result by deductive reasoning. During training, 
+alongside the aforementioned forward flow (i.e., prediction --> deduction reasoning), 
+there also exists a reverse flow, which starts from the logical result and 
+involves abductive reasoning to generate pseudo labels. 
+Subsequently, these labels are processed to minimize inconsistencies with machine learning, 
+which in turn revise the outcomes of the machine learning model, and then 
+fed back into the machine learning model for further training. 
+To implement this process, the following four steps are necessary:
 
--  Build the machine learning part
--  Build the reasoning part
--  Build datasets and evaluation metrics
--  Bridge the machine learning and reasoning parts
--  Use ``Bridge.train`` and ``Bridge.test`` to train and test
+.. image:: img/ABL-Package.jpg
+
+1. Prepare datasets
+
+    Prepare the data's input, ground truth for pseudo labels (optional), and ground truth for logical results.
+
+2. Build machine learning part
+
+    Build a model that defines how to map input to pseudo labels. 
+    And use ``ABLModel`` to encapsulate the model.
+
+3. Build the reasoning part
+
+    Build a knowledge base by creating a subclass of ``KBBase``,
+    and instantiate a ``ReasonerBase`` for minimizing of inconsistencies 
+    between the knowledge base and pseudo labels.
+
+4. Bridge machine learning and reasoning so as to train and test
+
+    Use ``SimpleBridge`` to bridge the machine learning and reasoning part
+    for integrated training and testing. Before training or testing, we also have 
+    to define the metrics for measuring accuracy by inheriting ``BaseMetric``.
 
 Build the machine learning part
 --------------------------------
@@ -95,7 +122,7 @@ In the MNIST Add example, the reasoner looks like
     reasoner = ReasonerBase(kb, dist_func="confidence")
 
 Build datasets and evaluation metrics
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------
 
 Next, we need to build datasets and evaluation metrics for training and validation. ABL-Package assumes data to be in the form of ``(X, gt_pseudo_label, Y)`` where ``X`` is the input of the machine learning model, ``Y`` is the ground truth of the reasoning result and ``gt_pseudo_label`` is the ground truth label of each element in ``X``. ``X`` should be of type ``List[List[Any]]``, ``Y`` should be of type ``List[Any]`` and ``gt_pseudo_label`` can be ``None`` or of the type ``List[List[Any]]``. 
 
@@ -118,7 +145,7 @@ In the case of MNIST Add example, the metric definition looks like
     metric_list = [SymbolMetric(prefix="mnist_add"), SemanticsMetric(kb=kb, prefix="mnist_add")]
 
 Bridge the machine learning and reasoning parts
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------------------
 
 We next need to bridge the machine learning and reasoning parts. In ABL-Package, the ``BaseBridge`` class gives necessary abstract interface definitions to bridge the two parts and ``SimpleBridge`` provides a basic implementation. 
 We build a bridge with previously defined ``model``, ``reasoner``, and ``metric_list`` as follows:
@@ -130,7 +157,7 @@ We build a bridge with previously defined ``model``, ``reasoner``, and ``metric_
 In the MNIST Add example, the bridge creation looks the same.
 
 Use ``Bridge.train`` and ``Bridge.test`` to train and test
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------------------------------
 
 ``BaseBridge.train`` and ``BaseBridge.test`` trigger the training and testing processes, respectively.
 
