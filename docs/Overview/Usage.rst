@@ -13,7 +13,7 @@ which in turn revise the outcomes of the machine learning model, and then
 fed back into the machine learning model for further training. 
 To implement this process, the following four steps are necessary:
 
-.. image:: img/ABL-Package.jpg
+.. image:: img/ABLPackage.jpg
 
 1. Prepare datasets
 
