@@ -22,7 +22,7 @@ where ``X`` is the input of the machine learning model,
     train_data = get_mnist_add(train=True, get_pseudo_label=True)
     test_data = get_mnist_add(train=False, get_pseudo_label=True)
 
-In the above ``get_mnist_add``, the return values are tuples of ``(X, gt_pseudo_label, Y)``.
+In the ``get_mnist_add`` above, the return values are tuples of ``(X, gt_pseudo_label, Y)``.
 
 Machine Learning (Map input to pseudo labels)
 ---------------------------------------------
@@ -71,7 +71,7 @@ obtained by machine learning.
 
     kb = AddKB(pseudo_label_list=list(range(10)))
 
-Then we define a reasoner, which defines 
+Then, we define a reasoner, which defines 
 how to minimize the inconsistency between the knowledge base and machine learning.
 
 .. code:: python
@@ -81,7 +81,7 @@ how to minimize the inconsistency between the knowledge base and machine learnin
 Bridge Machine Learning and Reasoning
 -------------------------------------
 
-First, we use `SimpleBridge` to combine machine learning and reasoning together,
+First, we use ``SimpleBridge`` to combine machine learning and reasoning together,
 setting the stage for subsequent integrated training, validation, and testing.
 
 .. code:: python
