@@ -5,16 +5,17 @@ from torch.utils.data import Dataset
 
 
 class RegressionDataset(Dataset):
-    def __init__(self, X: List[Any], Y: List[Any]):
-        """Initialize a basic dataset.
+    """
+    Dataset used for regression task.
 
-        Parameters
-        ----------
-        X : List[Any]
-            A list of objects representing the input data.
-        Y : List[Any]
-            A list of objects representing the output data.
-        """
+    Parameters
+    ----------
+    X : List[Any]
+        A list of objects representing the input data.
+    Y : List[Any]
+        A list of objects representing the output data.
+    """
+    def __init__(self, X: List[Any], Y: List[Any]):
         if (not isinstance(X, list)) or (not isinstance(Y, list)):
             raise ValueError("X and Y should be of type list.")
         if len(X) != len(Y):
