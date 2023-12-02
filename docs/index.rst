@@ -12,7 +12,7 @@
    :caption: Introduction to ABL-Package
 
    Intro/Basics
-   Intro/Quick Start
+   Intro/QuickStart
    Intro/Datasets
    Intro/Learning
    Intro/Reasoning
