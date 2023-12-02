@@ -3,21 +3,20 @@ Abductive Learning
 
 Traditional supervised machine learning, e.g. classification, is
 predominantly data-driven, as shown in the below figure. 
-Here, a set of training examples :math:`\left\{\left(x_1, y_1\right), 
-\ldots,\left(x_m, y_m\right)\right\}` is given, 
-where :math:`x_i \in \mathcal{X}` is the :math:`i`-th training
-instance, :math:`y_i \in \mathcal{Y}` is the corresponding ground-truth
-label. These data are then used to train a classifier model :math:`f:
-\mathcal{X} \mapsto \mathcal{Y}` to accurately predict the unseen data.
+Here, a set of data examples is given, 
+where the input serving as training
+instance, and the ouput serving as the corresponding ground-truth
+label. These data are then used to train a classifier model :math:`f` 
+to accurately predict the unseen data input.
 
 .. image:: ../img/ML.png
    :width: 600px
 
 In **Abductive Learning (ABL)**, we assume that, in addition to data as
 examples, there is also a knowledge base :math:`\mathcal{KB}` containing
-domain knowledge at our disposal. We aim for the classifier :math:`f:
-\mathcal{X} \mapsto \mathcal{Y}` to make correct predictions on unseen 
-data, and meanwhile, the logical facts grounded by
+domain knowledge at our disposal. We aim for the classifier :math:`f` 
+to make correct predictions on data input :math:`\{x_1,\dots,x_m\}`, 
+and meanwhile, the logical facts grounded by
 :math:`\left\{f(\boldsymbol{x}_1), \ldots, f(\boldsymbol{x}_m)\right\}`
 should be compatible with :math:`\mathcal{KB}`.
 
