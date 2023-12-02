@@ -13,7 +13,7 @@ which in turn revise the outcomes of the machine learning model, and then
 fed back into the machine learning model for further training. 
 To implement this process, the following four steps are necessary:
 
-.. image:: ../img/ABL-Package.jpg
+.. image:: ../img/ABL-Package.png
 
 1. Prepare datasets
 
@@ -38,7 +38,3 @@ To implement this process, the following four steps are necessary:
 
     Use ``SimpleBridge`` to bridge the machine learning and reasoning part
     for integrated training and testing. 
-
-
-
-

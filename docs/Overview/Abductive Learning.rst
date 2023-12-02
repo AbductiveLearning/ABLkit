@@ -10,7 +10,7 @@ instance, :math:`y_i \in \mathcal{Y}` is the corresponding ground-truth
 label. These data are then used to train a classifier model :math:`f:
 \mathcal{X} \mapsto \mathcal{Y}` to accurately predict the unseen data.
 
-.. image:: ../img/ML.jpg
+.. image:: ../img/ML.png
    :width: 600px
 
 In **Abductive Learning (ABL)**, we assume that, in addition to data as
@@ -47,7 +47,7 @@ base.
 
 The following figure illustrates this process:
 
-.. image:: ../img/ABL.jpg
+.. image:: ../img/ABL.png
    :width: 800px
 
 We can observe that in the above figure, the left half involves machine

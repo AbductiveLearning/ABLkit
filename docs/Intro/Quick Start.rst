@@ -54,8 +54,8 @@ Afterward, we wrap it in ``ABLModel``.
 
 Read more about `build machine learning models <Learning.html>`_.
 
-Reasoning (Map pseudo labels to reasoning results)
---------------------------------------------------
+Build the Reasoning Part
+------------------------
 
 First, we build a knowledge base that defines how to deduce 
 logical results (i.e., calculate summation) from the pseudo labels 
