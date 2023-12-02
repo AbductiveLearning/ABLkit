@@ -4,8 +4,8 @@ Learn the Basics
 Modules in ABL-Package
 ----------------------
 
-The ABL-Package is an implementation of Abductive Learning, designed to
-harmoniously integrate and balance the use of machine learning and
+ABL-Package is an implementation of `Abductive Learning <../Overview/Abductive-Learning.html>`_, 
+designed to harmoniously integrate and balance the use of machine learning and
 logical reasoning within a unified model. As depicted below, the
 ABL-Package comprises three primary modules: **Data**, **Learning**, and
 **Reasoning**, corresponding to the three pivotal components in current

@@ -4,7 +4,7 @@
    :maxdepth: 1
    :caption: Overview
 
-   Overview/Abductive Learning
+   Overview/Abductive-Learning
    Overview/Installation
 
 .. toctree::
