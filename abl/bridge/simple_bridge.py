@@ -21,39 +21,25 @@ class SimpleBridge(BaseBridge):
         super().__init__(model, reasoner)
         self.metric_list = metric_list
 
-    # TODO: add reasoner.mapping to the property of SimpleBridge
-
     def predict(self, data_samples: ListData) -> Tuple[List[ndarray], List[ndarray]]:
         self.model.predict(data_samples)
         return data_samples.pred_idx, data_samples.pred_prob
 
-    def abduce_pseudo_label(
-        self,
-        data_samples: ListData,
-        max_revision: int = -1,
-        require_more_revision: int = 0,
-    ) -> List[List[Any]]:
-        self.reasoner.batch_abduce(data_samples, max_revision, require_more_revision)
+    def abduce_pseudo_label(self, data_samples: ListData) -> List[List[Any]]:
+        self.reasoner.batch_abduce(data_samples)
         return data_samples.abduced_pseudo_label
 
-    def idx_to_pseudo_label(
-        self, data_samples: ListData, mapping: Optional[Dict] = None
-    ) -> List[List[Any]]:
-        if mapping is None:
-            mapping = self.reasoner.mapping
+    def idx_to_pseudo_label(self, data_samples: ListData) -> List[List[Any]]:
         pred_idx = data_samples.pred_idx
         data_samples.pred_pseudo_label = [
-            [mapping[_idx] for _idx in sub_list] for sub_list in pred_idx
+            [self.reasoner.mapping[_idx] for _idx in sub_list] 
+            for sub_list in pred_idx
         ]
         return data_samples.pred_pseudo_label
 
-    def pseudo_label_to_idx(
-        self, data_samples: ListData, mapping: Optional[Dict] = None
-    ) -> List[List[Any]]:
-        if mapping is None:
-            mapping = self.reasoner.remapping
+    def pseudo_label_to_idx(self, data_samples: ListData) -> List[List[Any]]:
         abduced_idx = [
-            [mapping[_abduced_pseudo_label] for _abduced_pseudo_label in sub_list]
+            [self.reasoner.remapping[_abduced_pseudo_label] for _abduced_pseudo_label in sub_list]
             for sub_list in data_samples.abduced_pseudo_label
         ]
         data_samples.abduced_idx = abduced_idx
