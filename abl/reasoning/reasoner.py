@@ -204,7 +204,7 @@ class ReasonerBase:
         if self.use_zoopt:
             solution = self.zoopt_get_solution(symbol_num, data_sample, max_revision_num)
             revision_idx = np.where(solution != 0)[0]
-            candidates = self.self.kb.revise_at_idx(data_sample.pred_pseudo_label, 
+            candidates = self.kb.revise_at_idx(data_sample.pred_pseudo_label, 
                                                     data_sample.Y, 
                                                     revision_idx)
         else:
