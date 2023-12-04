@@ -1,14 +1,14 @@
 `Learn the Basics <Basics.html>`_ ||
-`Quick Start <QuickStart.html>`_ ||
+`Quick Start <Quick-Start.html>`_ ||
 `Dataset & Data Structure <Datasets.html>`_ ||
-**Machine Learning Part** ||
+**Learning Part** ||
 `Reasoning Part <Reasoning.html>`_ ||
 `Evaluation Metrics <Evaluation.html>`_ ||
 `Bridge <Bridge.html>`_
 
 
-Machine Learning Part
-=====================
+Learning Part
+=============
 
 ``ABLModel`` class serves as a unified interface to all machine learning models. Its constructor, the ``__init__`` method, takes a singular argument, ``base_model``. This argument denotes the fundamental machine learning model, which must implement the ``fit`` and ``predict`` methods.
 

@@ -1,7 +1,7 @@
 `Learn the Basics <Basics.html>`_ ||
-`Quick Start <QuickStart.html>`_ ||
+`Quick Start <Quick-Start.html>`_ ||
 **Dataset & Data Structure** ||
-`Machine Learning Part <Learning.html>`_ ||
+`Learning Part <Learning.html>`_ ||
 `Reasoning Part <Reasoning.html>`_ ||
 `Evaluation Metrics <Evaluation.html>`_ ||
 `Bridge <Bridge.html>`_

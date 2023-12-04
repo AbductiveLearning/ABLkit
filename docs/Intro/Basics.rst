@@ -1,7 +1,7 @@
 **Learn the Basics** ||
-`Quick Start <QuickStart.html>`_ ||
+`Quick Start <Quick-Start.html>`_ ||
 `Dataset & Data Structure <Datasets.html>`_ ||
-`Machine Learning Part <Learning.html>`_ ||
+`Learning Part <Learning.html>`_ ||
 `Reasoning Part <Reasoning.html>`_ ||
 `Evaluation Metrics <Evaluation.html>`_ ||
 `Bridge <Bridge.html>`_ 
@@ -64,7 +64,7 @@ involves abductive reasoning to generate pseudo labels.
 Subsequently, these labels are processed to minimize inconsistencies with machine learning, 
 which in turn revise the outcomes of the machine learning model, and then 
 fed back into the machine learning model for further training. 
-To implement this process, the following four steps are necessary:
+To implement this process, the following five steps are necessary:
 
 .. image:: ../img/usage.png
 
@@ -75,12 +75,13 @@ To implement this process, the following four steps are necessary:
 2. Build machine learning part
 
     Build a model that defines how to map input to pseudo labels. 
-    And use ``ABLModel`` to encapsulate the model.
+    Then, use ``ABLModel`` to encapsulate the model.
 
 3. Build the reasoning part
 
-    Build a knowledge base by creating a subclass of ``KBBase``,
-    and instantiate a ``ReasonerBase`` for minimizing of inconsistencies 
+    Build a knowledge base by building a subclass of ``KBBase``, defining how to 
+    map pseudo labels to logical results.
+    Also, instantiate a ``ReasonerBase`` for minimizing of inconsistencies 
     between the knowledge base and pseudo labels.
 
 4. Define Evaluation Metrics
