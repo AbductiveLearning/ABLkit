@@ -10,7 +10,8 @@ label. These data are then used to train a classifier model :math:`f`
 to accurately predict the unseen data input.
 
 .. image:: ../img/ML.png
-   :width: 600px
+   :align: center
+   :width: 300px
 
 In **Abductive Learning (ABL)**, we assume that, in addition to data as
 examples, there is also a knowledge base :math:`\mathcal{KB}` containing
