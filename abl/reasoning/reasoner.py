@@ -18,9 +18,11 @@ class ReasonerBase:
         The knowledge base to be used for reasoning.
     dist_func : str, optional
         The distance function to be used when determining the cost list between each 
-        candidate and the given prediction. Valid options include: "hamming" |  
-        "confidence" (default). For detailed explanations of these options, refer to 
-        `_get_cost_list`.
+        candidate and the given prediction. Valid options include: "confidence" (default) | 
+        "hamming". For "confidence", it calculates the distance between the prediction 
+        and candidate based on confidence derived from the predicted probability in the 
+        data sample.For "hamming", it directly calculates the Hamming distance between 
+        the predicted pseudo label in the data sample and candidate.
     mapping : dict, optional
         A mapping from index in the base model to label. If not provided, a default 
         order-based mapping is created.
@@ -79,7 +81,12 @@ class ReasonerBase:
         data_sample : ListData
             Data sample.
         candidates : List[List[Any]]
-            Multiple consistent candidates. 
+            Multiple compatible candidates. 
+        
+        Returns
+        -------
+        List[Any]
+            A selected candidate.
         """
         if len(candidates) == 0:
             return []
@@ -105,7 +112,7 @@ class ReasonerBase:
         data_sample : ListData
             Data sample.
         candidates : List[List[Any]]
-            Multiple consistent candidates.
+            Multiple compatible candidates.
         """
         if self.dist_func == "hamming":
             return hamming_dist(data_sample.pred_pseudo_label, candidates)
@@ -195,7 +202,7 @@ class ReasonerBase:
         Returns
         -------
         List[Any]
-            A revised pseudo label through abductive reasoning, which is consistent with the
+            A revised pseudo label through abductive reasoning, which is compatible with the
             knowledge base.
         """
         symbol_num = data_sample.elements_num("pred_pseudo_label")

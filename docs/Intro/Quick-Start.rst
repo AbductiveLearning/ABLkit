@@ -152,7 +152,7 @@ Then, we create a reasoner. Aside from the knowledge base, the instantiation of 
 
    from abl.reasoning import ReasonerBase
    
-   reasoner = ReasonerBase(kb, dist_func="confidence")
+   reasoner = ReasonerBase(kb)
 
 Read more about `building the reasoning part <Reasoning.html>`_. 
 

@@ -57,6 +57,8 @@ is dual-driven by both data and domain knowledge, integrating and
 balancing the use of machine learning and logical reasoning in a unified
 model.
 
+.. _abd:
+
 .. admonition:: What is Abductive Reasoning?
 
    Abductive reasoning, also known as abduction, refers to the process of

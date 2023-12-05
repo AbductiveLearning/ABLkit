@@ -25,7 +25,7 @@ class KBBase(ABC):
         the 0th index, the second with the 1st, and so forth.
     max_err : float, optional
         The upper tolerance limit when comparing the similarity between a candidate's logical
-        result. This is only applicable when the logical result is of a numerical type.
+        result and the ground truth. This is only applicable when the logical result is of a numerical type.
         This is particularly relevant for regression problems where exact matches might not be
         feasible. Defaults to 1e-10.
     use_cache : bool, optional
@@ -77,9 +77,9 @@ class KBBase(ABC):
         """
         pass
 
-    def abduce_candidates(self, pseudo_label, y, max_revision_num, require_more_revision=0):
+    def abduce_candidates(self, pseudo_label, y, max_revision_num, require_more_revision):
         """
-        Perform abductive reasoning to get a candidate consistent with the knowledge base.
+        Perform abductive reasoning to get a candidate compatible with the knowledge base.
 
         Parameters
         ----------
@@ -89,14 +89,13 @@ class KBBase(ABC):
             Ground truth of the logical result for the sample.
         max_revision_num : int
             The upper limit on the number of revised labels for each sample.
-        require_more_revision : int, optional
+        require_more_revision : int
             Specifies additional number of revisions permitted beyond the minimum required.
-            Defaults to 0.
 
         Returns
         -------
         List[List[Any]]
-            A list of candidates, i.e. revised pseudo labels that are consistent with the
+            A list of candidates, i.e. revised pseudo labels that are compatible with the
             knowledge base.
         """
         return self._abduce_by_search(pseudo_label, y, max_revision_num, require_more_revision)
@@ -105,6 +104,11 @@ class KBBase(ABC):
         """
         Check whether the logical result of a candidate is equal to the ground truth
         (or, within the maximum error allowed for numerical results).
+        
+        Returns
+        -------
+        bool
+            The result of the check.
         """
         if logic_result == None:
             return False
@@ -126,6 +130,12 @@ class KBBase(ABC):
             Ground truth of the logical result for the sample.
         revision_idx : array-like
             Indices of where revisions should be made to the pseudo label sample.
+        
+        Returns
+        -------
+        List[List[Any]]
+            A list of candidates, i.e. revised pseudo labels that are compatible with the
+            knowledge base.
         """
         candidates = []
         abduce_c = product(self.pseudo_label_list, repeat=len(revision_idx))
@@ -140,7 +150,7 @@ class KBBase(ABC):
     def _revision(self, revision_num, pseudo_label, y):
         """
         For a specified number of pseudo label to revise, iterate through all possible
-        indices to find any candidates that are consistent with the knowledge base.
+        indices to find any candidates that are compatible with the knowledge base.
         """
         new_candidates = []
         revision_idx_list = combinations(range(len(pseudo_label)), revision_num)
@@ -155,7 +165,7 @@ class KBBase(ABC):
         """
         Perform abductive reasoning by exhastive search. Specifically, begin with 0 and
         continuously increase the number of pseudo labels to revise, until candidates
-        that are consistent with the knowledge base are found.
+        that are compatible with the knowledge base are found.
 
         Parameters
         ----------
@@ -166,14 +176,14 @@ class KBBase(ABC):
         max_revision_num : int
             The upper limit on the number of revisions.
         require_more_revision : int
-            If larger than 0, then after having found any candidates consistent with the
+            If larger than 0, then after having found any candidates compatible with the
             knowledge base, continue to increase the number pseudo labels to revise to
-            get more possible consistent candidates.
+            get more possible compatible candidates.
 
         Returns
         -------
         List[List[Any]]
-            A list of candidates, i.e. revised pseudo label that are consistent with the
+            A list of candidates, i.e. revised pseudo label that are compatible with the
             knowledge base.
         """
         candidates = []
@@ -271,13 +281,28 @@ class GroundKB(KBBase):
             X, Y = zip(*sorted(zip(X, Y), key=lambda pair: pair[1]))
         return X, Y
 
-    def abduce_candidates(self, pseudo_label, y, max_revision_num, require_more_revision=0):
+    def abduce_candidates(self, pseudo_label, y, max_revision_num, require_more_revision):
         """
-        Perform abductive reasoning by directly retrieving consistent candidates from
+        Perform abductive reasoning by directly retrieving compatible candidates from
         the prebuilt GKB. In this way, the time-consuming exhaustive search can be
         avoided.
-        This is an overridden function. For more information about the parameters and
-        returns, refer to the function of the same name in class `KBBase`.
+        
+        Parameters
+        ----------
+        pseudo_label : List[Any]
+            Pseudo label sample (to be revised by abductive reasoning).
+        y : any
+            Ground truth of the logical result for the sample.
+        max_revision_num : int
+            The upper limit on the number of revised labels for each sample.
+        require_more_revision : int, optional
+            Specifies additional number of revisions permitted beyond the minimum required.
+
+        Returns
+        -------
+        List[List[Any]]
+            A list of candidates, i.e. revised pseudo labels that are compatible with the
+            knowledge base.
         """
         if self.GKB == {} or len(pseudo_label) not in self.GKB_len_list:
             return []
@@ -295,7 +320,7 @@ class GroundKB(KBBase):
 
     def _find_candidate_GKB(self, pseudo_label, y):
         """
-        Retrieve consistent candidates from the prebuilt GKB. For numerical logical results,
+        Retrieve compatible candidates from the prebuilt GKB. For numerical logical results,
         return all candidates whose logical results fall within the
         [y - max_err, y + max_err] range.
         """
@@ -375,6 +400,11 @@ class PrologKB(KBBase):
         returned `Res` as the logical results. To use this default function, there must be
         a Prolog `log_forward` method in the pl file to perform logical. reasoning.
         Otherwise, users would override this function.
+        
+        Parameters
+        ----------
+        pseudo_label : List[Any]
+            Pseudo label sample.
         """
         result = list(self.prolog.query("logic_forward(%s, Res)." % pseudo_labels))[0]["Res"]
         if result == "true":
@@ -398,10 +428,23 @@ class PrologKB(KBBase):
 
     def get_query_string(self, pseudo_label, y, revision_idx):
         """
-        Consult prolog with `logic_forward([kept_labels, Revise_labels], Res).`, and set
-        the returned `Revise_labels` together with the kept labels as the candidates. This is
-        a default fuction for demo, users would override this function to adapt to their own
-        Prolog file.
+        Get the query to be used for consulting Prolog.
+        This is a default fuction for demo, users would override this function to adapt to their own
+        Prolog file. In this demo function, return query `logic_forward([kept_labels, Revise_labels], Res).`.
+        
+        Parameters
+        ----------
+        pseudo_label : List[Any]
+            Pseudo label sample (to be revised by abductive reasoning).
+        y : any
+            Ground truth of the logical result for the sample.
+        revision_idx : array-like
+            Indices of where revisions should be made to the pseudo label sample.
+            
+        Returns
+        -------
+        str
+            A string of the query.
         """
         query_string = "logic_forward("
         query_string += self._revision_pseudo_label(pseudo_label, revision_idx)
@@ -412,8 +455,21 @@ class PrologKB(KBBase):
     def revise_at_idx(self, pseudo_label, y, revision_idx):
         """
         Revise the pseudo label sample at specified index positions by querying Prolog.
-        This is an overridden function. For more information about the parameters, refer to
-        the function of the same name in class `KBBase`.
+        
+        Parameters
+        ----------
+        pseudo_label : List[Any]
+            Pseudo label sample (to be revised).
+        y : Any
+            Ground truth of the logical result for the sample.
+        revision_idx : array-like
+            Indices of where revisions should be made to the pseudo label sample.
+        
+        Returns
+        -------
+        List[List[Any]]
+            A list of candidates, i.e. revised pseudo labels that are compatible with the
+            knowledge base.
         """
         candidates = []
         query_string = self.get_query_string(pseudo_label, y, revision_idx)

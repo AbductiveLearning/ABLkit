@@ -72,7 +72,7 @@ To implement this process, the following five steps are necessary:
 
     Prepare the data's input, ground truth for pseudo labels (optional), and ground truth for logical results.
 
-2. Build machine learning part
+2. Build the learning part
 
     Build a model that defines how to map input to pseudo labels. 
     Then, use ``ABLModel`` to encapsulate the model.
