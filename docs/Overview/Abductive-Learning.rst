@@ -3,27 +3,26 @@ Abductive Learning
 
 Traditional supervised machine learning, e.g. classification, is
 predominantly data-driven, as shown in the below figure. 
-Here, a set of data examples is given, 
-where the input serving as training
-instance, and the ouput serving as the corresponding ground-truth
-label. These data are then used to train a classifier model :math:`f` 
-to accurately predict the unseen data input.
+Here, a set of data examples is given, including training instances 
+:math:`\{x_1,\dots,x_m'}` and corresponding ground-truth labels :math:`\{\text{label}(x_1),\dots,\text{label}(x_m)'}`. 
+These data are then used to train a classifier model :math:`f`, 
+aiming to accurately predict the unseen data instances.
 
 .. image:: ../img/ML.png
    :align: center
    :width: 300px
 
-In **Abductive Learning (ABL)**, we assume that, in addition to data as
-examples, there is also a knowledge base :math:`\mathcal{KB}` containing
+In **Abductive Learning (ABL)**, we assume that, in addition to data, 
+there is also a knowledge base :math:`\mathcal{KB}` containing
 domain knowledge at our disposal. We aim for the classifier :math:`f` 
-to make correct predictions on data input :math:`\{x_1,\dots,x_m\}`, 
-and meanwhile, the logical facts grounded by
+to make correct predictions on data instances :math:`\{x_1,\dots,x_m\}`, 
+and meanwhile, the logical facts grounded by the prediction
 :math:`\left\{f(\boldsymbol{x}_1), \ldots, f(\boldsymbol{x}_m)\right\}`
 should be compatible with :math:`\mathcal{KB}`.
 
 The process of ABL is as follows:
 
-1. Upon receiving data inputs :math:`\left\{x_1,\dots,x_m\right\}`,
+1. Upon receiving data instances :math:`\left\{x_1,\dots,x_m\right\}` as input,
    pseudo-labels
    :math:`\left\{f(\boldsymbol{x}_1), \ldots, f(\boldsymbol{x}_m)\right\}`
    are predicted by a data-driven classifier model.

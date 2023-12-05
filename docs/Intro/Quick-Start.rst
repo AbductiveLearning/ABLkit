@@ -118,7 +118,7 @@ Afterward, we wrap the ``base_model`` into ``ABLModel``.
 
     model = ABLModel(base_model)
 
-Read more about `building the machine learning part <Learning.html>`_.
+Read more about `building the learning part <Learning.html>`_.
 
 Building the Reasoning Part
 ---------------------------

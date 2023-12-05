@@ -429,7 +429,7 @@ class PrologKB(KBBase):
     def get_query_string(self, pseudo_label, y, revision_idx):
         """
         Get the query to be used for consulting Prolog.
-        This is a default fuction for demo, users would override this function to adapt to their own
+        This is a default function for demo, users would override this function to adapt to their own
         Prolog file. In this demo function, return query `logic_forward([kept_labels, Revise_labels], Res).`.
         
         Parameters

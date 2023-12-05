@@ -10,7 +10,7 @@
 Evaluation Metrics
 ==================
 
-ABL-Package seperates the evaluation process as na independent class from the ``BaseBridge`` which accounts for training and testing. To customize our own metrics, we need to inherit from ``BaseMetric`` and implement the ``process`` and ``compute_metrics`` methods. The ``process`` method accepts a batch of model prediction. After processing this batch, we save the information to ``self.results`` property. The input results of ``compute_metrics`` is all the information saved in ``process`` and it uses these information to calculate and return a dict that holds the evaluation results. 
+ABL-Package seperates the evaluation process as an independent class from the ``BaseBridge`` which accounts for training and testing. To customize our own metrics, we need to inherit from ``BaseMetric`` and implement the ``process`` and ``compute_metrics`` methods. The ``process`` method accepts a batch of model prediction. After processing this batch, we save the information to ``self.results`` property. The input results of ``compute_metrics`` is all the information saved in ``process`` and it uses these information to calculate and return a dict that holds the evaluation results. 
 
 We provide two basic metrics, namely ``SymbolMetric`` and ``SemanticsMetric``, which are used to evaluate the accuracy of the machine learning model's predictions and the accuracy of the ``logic_forward`` results, respectively. Using ``SymbolMetric`` as an example, the following code shows how to implement a custom metrics.
 
