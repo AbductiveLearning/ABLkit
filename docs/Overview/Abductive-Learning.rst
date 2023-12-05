@@ -4,7 +4,7 @@ Abductive Learning
 Traditional supervised machine learning, e.g. classification, is
 predominantly data-driven, as shown in the below figure. 
 Here, a set of data examples is given, including training instances 
-:math:`\{x_1,\dots,x_m'}` and corresponding ground-truth labels :math:`\{\text{label}(x_1),\dots,\text{label}(x_m)'}`. 
+:math:`\{x_1,\dots,x_m\}` and corresponding ground-truth labels :math:`\{\text{label}(x_1),\dots,\text{label}(x_m)\}`. 
 These data are then used to train a classifier model :math:`f`, 
 aiming to accurately predict the unseen data instances.
 
