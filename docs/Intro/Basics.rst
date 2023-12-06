@@ -57,9 +57,9 @@ Use ABL-Package Step by Step
 In a typical Abductive Learning process, as illustrated below, 
 data inputs are first mapped to pseudo labels through a machine learning model. 
 These pseudo labels then pass through a knowledge base :math:`\mathcal{KB}`
-to obtain the logical result by deductive reasoning. During training, 
+to obtain the reasoning result by deductive reasoning. During training, 
 alongside the aforementioned forward flow (i.e., prediction --> deduction reasoning), 
-there also exists a reverse flow, which starts from the logical result and 
+there also exists a reverse flow, which starts from the reasoning result and 
 involves abductive reasoning to generate pseudo labels. 
 Subsequently, these labels are processed to minimize inconsistencies with machine learning, 
 which in turn revise the outcomes of the machine learning model, and then 
@@ -70,7 +70,7 @@ To implement this process, the following five steps are necessary:
 
 1. Prepare datasets
 
-    Prepare the data's input, ground truth for pseudo labels (optional), and ground truth for logical results.
+    Prepare the data's input, ground truth for pseudo labels (optional), and ground truth for reasoning results.
 
 2. Build the learning part
 
@@ -80,7 +80,7 @@ To implement this process, the following five steps are necessary:
 3. Build the reasoning part
 
     Build a knowledge base by building a subclass of ``KBBase``, defining how to 
-    map pseudo labels to logical results.
+    map pseudo labels to reasoning results.
     Also, instantiate a ``ReasonerBase`` for minimizing of inconsistencies 
     between the knowledge base and pseudo labels.
 

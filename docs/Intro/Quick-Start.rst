@@ -123,8 +123,11 @@ Read more about `building the learning part <Learning.html>`_.
 Building the Reasoning Part
 ---------------------------
 
-To build the reasoning part, we first create a class that inherits from ``KBBase`` to define the knowledge base.
-We pass the list of pseudo labels to the ``__init__`` function and specify how to deduce logical results in the ``logic_forward`` function.
+To build the reasoning part, we first Build a knowledge base by
+creating a subclass of ``KBBase``, which defines how to map pseudo 
+labels to reasoning results. In the subclass, we initialize the 
+``pseudo_label_list`` parameter and override the ``logic_forward`` 
+function specifying how to perform (deductive) reasoning.
 
 .. code:: python
 
@@ -146,7 +149,10 @@ Out:
 
    AddKB is a KB with pseudo_label_list=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], max_err=1e-10, use_cache=True.
 
-Then, we create a reasoner. Aside from the knowledge base, the instantiation of ``ReasonerBase`` also needs to set an extra argument called ``dist_func``, which measures the consistency between the knowledge base and machine learning.
+Then, we create a reasoner by defining an instance of class
+``ReasonerBase`` and passing the knowledge base as an parameter.
+The reasoner can be used to minimize inconsistencies between the 
+knowledge base and the prediction from the learning part. 
 
 .. code:: python
 

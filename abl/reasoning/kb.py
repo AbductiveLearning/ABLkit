@@ -24,8 +24,8 @@ class KBBase(ABC):
         list so that each aligns with its corresponding index in the base model: the first with 
         the 0th index, the second with the 1st, and so forth.
     max_err : float, optional
-        The upper tolerance limit when comparing the similarity between a candidate's logical
-        result and the ground truth. This is only applicable when the logical result is of a numerical type.
+        The upper tolerance limit when comparing the similarity between a candidate's reasoning
+        result and the ground truth. This is only applicable when the reasoning result is of a numerical type.
         This is particularly relevant for regression problems where exact matches might not be
         feasible. Defaults to 1e-10.
     use_cache : bool, optional
@@ -68,7 +68,7 @@ class KBBase(ABC):
     def logic_forward(self, pseudo_label):
         """
         How to perform (deductive) logical reasoning, i.e. matching each pseudo label to
-        their logical result. Users are required to provide this.
+        their reasoning result. Users are required to provide this.
 
         Parameters
         ----------
@@ -86,7 +86,7 @@ class KBBase(ABC):
         pseudo_label : List[Any]
             Pseudo label sample (to be revised by abductive reasoning).
         y : any
-            Ground truth of the logical result for the sample.
+            Ground truth of the reasoning result for the sample.
         max_revision_num : int
             The upper limit on the number of revised labels for each sample.
         require_more_revision : int
@@ -102,7 +102,7 @@ class KBBase(ABC):
 
     def _check_equal(self, logic_result, y):
         """
-        Check whether the logical result of a candidate is equal to the ground truth
+        Check whether the reasoning result of a candidate is equal to the ground truth
         (or, within the maximum error allowed for numerical results).
         
         Returns
@@ -127,7 +127,7 @@ class KBBase(ABC):
         pseudo_label : List[Any]
             Pseudo label sample (to be revised).
         y : Any
-            Ground truth of the logical result for the sample.
+            Ground truth of the reasoning result for the sample.
         revision_idx : array-like
             Indices of where revisions should be made to the pseudo label sample.
         
@@ -172,7 +172,7 @@ class KBBase(ABC):
         pseudo_label : List[Any]
             Pseudo label sample (to be revised).
         y : Any
-            Ground truth of the logical result for the sample.
+            Ground truth of the reasoning result for the sample.
         max_revision_num : int
             The upper limit on the number of revisions.
         require_more_revision : int
@@ -219,7 +219,7 @@ class GroundKB(KBBase):
     """
     Knowledge base with a ground KB (GKB). Ground KB is a knowledge base prebuilt upon
     class initialization, storing all potential candidates along with their respective
-    logical result. Ground KB can accelerate abductive reasoning in `abduce_candidates`.
+    reasoning result. Ground KB can accelerate abductive reasoning in `abduce_candidates`.
 
     Parameters
     ----------
@@ -292,7 +292,7 @@ class GroundKB(KBBase):
         pseudo_label : List[Any]
             Pseudo label sample (to be revised by abductive reasoning).
         y : any
-            Ground truth of the logical result for the sample.
+            Ground truth of the reasoning result for the sample.
         max_revision_num : int
             The upper limit on the number of revised labels for each sample.
         require_more_revision : int, optional
@@ -320,8 +320,8 @@ class GroundKB(KBBase):
 
     def _find_candidate_GKB(self, pseudo_label, y):
         """
-        Retrieve compatible candidates from the prebuilt GKB. For numerical logical results,
-        return all candidates whose logical results fall within the
+        Retrieve compatible candidates from the prebuilt GKB. For numerical reasoning results,
+        return all candidates whose reasoning results fall within the
         [y - max_err, y + max_err] range.
         """
         if isinstance(y, (int, float)):
@@ -397,8 +397,8 @@ class PrologKB(KBBase):
     def logic_forward(self, pseudo_labels):
         """
         Consult prolog with the query `logic_forward(pseudo_labels, Res).`, and set the
-        returned `Res` as the logical results. To use this default function, there must be
-        a Prolog `log_forward` method in the pl file to perform logical. reasoning.
+        returned `Res` as the reasoning results. To use this default function, there must be
+        a `logic_forward` method in the pl file to perform reasoning.
         Otherwise, users would override this function.
         
         Parameters
@@ -437,7 +437,7 @@ class PrologKB(KBBase):
         pseudo_label : List[Any]
             Pseudo label sample (to be revised by abductive reasoning).
         y : any
-            Ground truth of the logical result for the sample.
+            Ground truth of the reasoning result for the sample.
         revision_idx : array-like
             Indices of where revisions should be made to the pseudo label sample.
             
@@ -461,7 +461,7 @@ class PrologKB(KBBase):
         pseudo_label : List[Any]
             Pseudo label sample (to be revised).
         y : Any
-            Ground truth of the logical result for the sample.
+            Ground truth of the reasoning result for the sample.
         revision_idx : array-like
             Indices of where revisions should be made to the pseudo label sample.
         
