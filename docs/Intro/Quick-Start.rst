@@ -59,7 +59,7 @@ Out:
 
    Length of X List[List[Any]]: 30000
    Length of gt_pseudo_label List[List[Any]]: 30000
-   Length of gt_pseudo_label List[Any]: 30000
+   Length of Y List[Any]: 30000
 
    Structure of X: [['Tensor', 'Tensor'], ['Tensor', 'Tensor'], ['Tensor', 'Tensor']]                   
    Structure of gt_pseudo_label: [['int', 'int'], ['int', 'int'], ['int', 'int']]
@@ -123,7 +123,7 @@ Read more about `building the learning part <Learning.html>`_.
 Building the Reasoning Part
 ---------------------------
 
-To build the reasoning part, we first Build a knowledge base by
+To build the reasoning part, we first build a knowledge base by
 creating a subclass of ``KBBase``, which defines how to map pseudo 
 labels to reasoning results. In the subclass, we initialize the 
 ``pseudo_label_list`` parameter and override the ``logic_forward`` 
