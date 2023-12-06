@@ -57,6 +57,7 @@ class SimpleBridge(BaseBridge):
     def train(
         self,
         train_data: Union[ListData, DataSet],
+        val_data: Optional[Union[ListData, DataSet]] = None,
         loops: int = 50,
         segment_size: Union[int, float] = -1,
         eval_interval: int = 1,
@@ -86,7 +87,10 @@ class SimpleBridge(BaseBridge):
 
             if (loop + 1) % eval_interval == 0 or loop == loops - 1:
                 print_log(f"Evaluation start: loop(val) [{loop + 1}]", logger="current")
-                self.valid(train_data)
+                if val_data is not None:
+                    self.valid(val_data)
+                else:
+                    self.valid(train_data)
 
             if save_interval is not None and ((loop + 1) % save_interval == 0 or loop == loops - 1):
                 print_log(f"Saving model: loop(save) [{loop + 1}]", logger="current")

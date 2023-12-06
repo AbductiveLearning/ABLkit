@@ -1,5 +1,6 @@
 import os
 from collections import defaultdict
+from typing import Any, List
 import torch
 from torch.utils.data import DataLoader
 
@@ -8,6 +9,7 @@ from abl.learning import ABLModel, BasicNN
 from abl.bridge import SimpleBridge
 from abl.evaluation import BaseMetric
 from abl.dataset import BridgeDataset, RegressionDataset
+from abl.structures import ListData
 from abl.utils import print_log
 
 from examples.hed.utils import gen_mappings, InfiniteSampler
@@ -59,54 +61,35 @@ class HEDBridge(SimpleBridge):
                 "model": cls_autoencoder.base_model.state_dict(),
             }
 
-            torch.save(
-                save_parma_dic, os.path.join(weights_dir, "pretrain_weights.pth")
-            )
+            torch.save(save_parma_dic, os.path.join(weights_dir, "pretrain_weights.pth"))
 
         self.model.load(load_path=os.path.join(weights_dir, "pretrain_weights.pth"))
 
-    def abduce_pseudo_label(
-        self,
-        pred_label,
-        pred_prob,
-        pseudo_label,
-        Y,
-        max_revision=-1,
-        require_more_revision=0,
-    ):
-        return self.reasoner.abduce(
-            (pred_label, pred_prob, pseudo_label, Y),
-            max_revision,
-            require_more_revision,
-        )
-
-    def select_mapping_and_abduce(self, pred_label, pred_prob, Y):
+    def abduce_pseudo_label(self, data_samples: ListData):
         candidate_mappings = gen_mappings([0, 1, 2, 3], ["+", "=", 0, 1])
         mapping_score = []
-        pred_pseudo_label_list = []
         abduced_pseudo_label_list = []
         for _mapping in candidate_mappings:
             self.reasoner.mapping = _mapping
-            self.reasoner.set_remapping()
-            pred_pseudo_label = self.label_to_pseudo_label(pred_label)
-            abduced_pseudo_label = self.abduce_pseudo_label(
-                pred_label, pred_prob, pred_pseudo_label, Y, 20
-            )
-            mapping_score.append(
-                len(abduced_pseudo_label) - abduced_pseudo_label.count([])
-            )
-            pred_pseudo_label_list.append(pred_pseudo_label)
+            self.reasoner.remapping = dict(zip(_mapping.values(), _mapping.keys()))
+            self.idx_to_pseudo_label(data_samples)
+            abduced_pseudo_label = self.reasoner.abduce(data_samples)
+            mapping_score.append(len(abduced_pseudo_label) - abduced_pseudo_label.count([]))
             abduced_pseudo_label_list.append(abduced_pseudo_label)
 
         max_revisible_instances = max(mapping_score)
         return_idx = mapping_score.index(max_revisible_instances)
         self.reasoner.mapping = candidate_mappings[return_idx]
-        self.reasoner.set_remapping()
-        return abduced_pseudo_label_list[return_idx]
+        self.reasoner.mapping = dict(
+            zip(self.reasoner.mapping.values(), self.reasoner.mapping.keys())
+        )
+        data_samples.abduced_pseudo_label = abduced_pseudo_label_list[return_idx]
 
-    def check_training_impact(self, filtered_X, filtered_abduced_label, X):
-        character_accuracy = self.model.valid(filtered_X, filtered_abduced_label)
-        revisible_ratio = len(filtered_X) / len(X)
+        return data_samples.abduced_pseudo_label
+
+    def check_training_impact(self, filtered_data_samples, data_samples):
+        character_accuracy = self.model.valid(filtered_data_samples)
+        revisible_ratio = len(filtered_data_samples.X) / len(data_samples.X)
         print_log(
             f"Revisible ratio is {revisible_ratio:.3f}, Character accuracy is {character_accuracy:.3f}",
             logger="current",
@@ -136,10 +119,7 @@ class HEDBridge(SimpleBridge):
         pred_label, _ = self.predict(X)
         pred_pseudo_label = self.label_to_pseudo_label(pred_label)
         consistent_num = sum(
-            [
-                self.reasoner.kb.consist_rule(instance, rule)
-                for instance in pred_pseudo_label
-            ]
+            [self.reasoner.kb.consist_rule(instance, rule) for instance in pred_pseudo_label]
         )
         return consistent_num / len(X)
 
@@ -178,12 +158,13 @@ class HEDBridge(SimpleBridge):
         return rules
 
     @staticmethod
-    def filter_empty(X, Z):
-        filtered_X, filtered_Z = [], []
-        for x, z in zip(X, Z):
-            if len(z) > 0:
-                filtered_X.append(x), filtered_Z.append(z)
-        return (filtered_X, filtered_Z)
+    def filter_empty(data_samples: ListData):
+        consistent_dix = [
+            i
+            for i in range(len(data_samples.abduced_pseudo_label))
+            if len(data_samples.abduced_pseudo_label[i]) > 0
+        ]
+        return data_samples[consistent_dix]
 
     @staticmethod
     def select_rules(rule_dict):
@@ -203,79 +184,49 @@ class HEDBridge(SimpleBridge):
                 add_nums_dict[add_nums] = r
         return list(rule_dict)
 
-    def train(
-        self,
-        train_data,
-        val_data,
-        select_num=10,
-        min_len=5,
-        max_len=8,
-    ):
+    def idx_to_pseudo_label(self, data_samples: ListData) -> List[List[Any]]:
+        return super().idx_to_pseudo_label(data_samples)
+
+    def train(self, train_data, val_data, segment_size=10, min_len=5, max_len=8):
         for equation_len in range(min_len, max_len):
             print_log(
                 f"============== equation_len: {equation_len}-{equation_len + 1} ================",
                 logger="current",
             )
 
-            train_X = train_data[1][equation_len] + train_data[1][equation_len + 1]
-            train_Y = [None] * len(train_X)
-            dataset = BridgeDataset(train_X, None, train_Y)
-            sampler = InfiniteSampler(len(dataset))
-            data_loader = DataLoader(
-                dataset,
-                sampler=sampler,
-                batch_size=select_num,
-                collate_fn=lambda data_list: [list(data) for data in zip(*data_list)],
-            )
-
-            condition_num = 0
-            for seg_idx, (X, Z, Y) in enumerate(data_loader):
-                pred_label, pred_prob = self.predict(X)
-                if equation_len == min_len:
-                    abduced_pseudo_label = self.select_mapping_and_abduce(
-                        pred_label, pred_prob, Y
-                    )
-                else:
-                    pred_pseudo_label = self.label_to_pseudo_label(pred_label)
-                    abduced_pseudo_label = self.abduce_pseudo_label(
-                        pred_label, pred_prob, pred_pseudo_label, Y, 20
-                    )
-                filtered_X, filtered_abduced_pseudo_label = self.filter_empty(
-                    X, abduced_pseudo_label
-                )
-                if len(filtered_X) == 0:
-                    continue
-                filtered_abduced_label = self.pseudo_label_to_label(
-                    filtered_abduced_pseudo_label
-                )
-                min_loss = self.model.train(filtered_X, filtered_abduced_label)
+            X = train_data[1][equation_len] + train_data[1][equation_len + 1]
+            Y = [None] * len(X)
+            data_samples = self.data_preprocess(X, None, Y)
+            sampler = InfiniteSampler(len(data_samples))
+            for seg_idx, select_idx in enumerate(sampler):
+                sub_data_samples = data_samples[select_idx]
+                self.predict(sub_data_samples)
+                # self.idx_to_pseudo_label(sub_data_samples)
+                self.abduce_pseudo_label(sub_data_samples)
+                filtered_sub_data_samples = self.filter_empty(sub_data_samples)
+                self.pseudo_label_to_idx(filtered_sub_data_samples)
+                loss = self.model.train(filtered_sub_data_samples)
 
                 print_log(
-                    f"Equation Len(train) [{equation_len}] Segment Index [{seg_idx + 1}] minimal_loss is {min_loss:.5f}",
+                    f"Equation Len(train) [{equation_len}] Segment Index [{seg_idx + 1}] model loss is {loss:.5f}",
                     logger="current",
                 )
 
-                if self.check_training_impact(filtered_X, filtered_abduced_label, X):
+                if self.check_training_impact(filtered_sub_data_samples, sub_data_samples):
                     condition_num += 1
                 else:
                     condition_num = 0
 
                 if condition_num >= 5:
-                    print_log(
-                        f"Now checking if we can go to next course", logger="current"
-                    )
+                    print_log(f"Now checking if we can go to next course", logger="current")
                     rules = self.get_rules_from_data(
-                        dataset, samples_per_rule=3, samples_num=50
+                        data_samples, samples_per_rule=3, samples_num=50
                     )
-                    print_log(
-                        f"Learned rules from data: " + str(rules), logger="current"
-                    )
+                    print_log(f"Learned rules from data: " + str(rules), logger="current")
 
                     seems_good = self.check_rule_quality(rules, val_data, equation_len)
                     if seems_good:
-                        self.model.save(
-                            save_path=f"./weights/eq_len_{equation_len}.pth"
-                        )
+                        self.model.save(save_path=f"./weights/eq_len_{equation_len}.pth")
                         break
                     else:
                         if equation_len == min_len:
@@ -285,8 +236,83 @@ class HEDBridge(SimpleBridge):
                             )
                             self.model.load(load_path="./weights/pretrain_weights.pth")
                         else:
-                            self.model.load(
-                                load_path=f"./weights/eq_len_{equation_len - 1}.pth"
-                            )
+                            self.model.load(load_path=f"./weights/eq_len_{equation_len - 1}.pth")
                         condition_num = 0
                         print_log("Reload Model and retrain", logger="current")
+
+    # def train(
+    #     self,
+    #     train_data,
+    #     val_data,
+    #     segment_size=10,
+    #     min_len=5,
+    #     max_len=8,
+    # ):
+    #     for equation_len in range(min_len, max_len):
+    #         print_log(
+    #             f"============== equation_len: {equation_len}-{equation_len + 1} ================",
+    #             logger="current",
+    #         )
+
+    #         train_X = train_data[1][equation_len] + train_data[1][equation_len + 1]
+    #         train_Y = [None] * len(train_X)
+    #         # data_samples = self.data_preprocess(train_X, None, train_Y)
+
+    #         dataset = BridgeDataset(train_X, None, train_Y)
+    #         sampler = InfiniteSampler(len(dataset))
+    #         data_loader = DataLoader(
+    #             dataset,
+    #             sampler=sampler,
+    #             batch_size=segment_size,
+    #             collate_fn=lambda data_list: [list(data) for data in zip(*data_list)],
+    #         )
+
+    #         condition_num = 0
+
+    #         for seg_idx, (X, Z, Y) in enumerate(data_loader):
+    #             pred_label, pred_prob = self.predict(ListData(X=X))
+    #             if equation_len == min_len:
+    #                 abduced_pseudo_label = self.select_mapping_and_abduce(pred_label, pred_prob, Y)
+    #             else:
+    #                 pred_pseudo_label = self.label_to_pseudo_label(pred_label)
+    #                 abduced_pseudo_label = self.abduce_pseudo_label(
+    #                     pred_label, pred_prob, pred_pseudo_label, Y, 20
+    #                 )
+    #             filtered_X, filtered_abduced_pseudo_label = self.filter_empty(
+    #                 X, abduced_pseudo_label
+    #             )
+    #             if len(filtered_X) == 0:
+    #                 continue
+    #             filtered_abduced_label = self.pseudo_label_to_label(filtered_abduced_pseudo_label)
+    #             min_loss = self.model.train(filtered_X, filtered_abduced_label)
+
+    #             print_log(
+    #                 f"Equation Len(train) [{equation_len}] Segment Index [{seg_idx + 1}] minimal_loss is {min_loss:.5f}",
+    #                 logger="current",
+    #             )
+
+    #             if self.check_training_impact(filtered_X, filtered_abduced_label, X):
+    #                 condition_num += 1
+    #             else:
+    #                 condition_num = 0
+
+    #             if condition_num >= 5:
+    #                 print_log(f"Now checking if we can go to next course", logger="current")
+    #                 rules = self.get_rules_from_data(dataset, samples_per_rule=3, samples_num=50)
+    #                 print_log(f"Learned rules from data: " + str(rules), logger="current")
+
+    #                 seems_good = self.check_rule_quality(rules, val_data, equation_len)
+    #                 if seems_good:
+    #                     self.model.save(save_path=f"./weights/eq_len_{equation_len}.pth")
+    #                     break
+    #                 else:
+    #                     if equation_len == min_len:
+    #                         print_log(
+    #                             "Learned mapping is: " + str(self.reasoner.mapping),
+    #                             logger="current",
+    #                         )
+    #                         self.model.load(load_path="./weights/pretrain_weights.pth")
+    #                     else:
+    #                         self.model.load(load_path=f"./weights/eq_len_{equation_len - 1}.pth")
+    #                     condition_num = 0
+    #                     print_log("Reload Model and retrain", logger="current")

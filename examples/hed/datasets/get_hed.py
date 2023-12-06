@@ -1,19 +1,18 @@
 import os
+import os.path as osp
 import cv2
-import torch
-import torchvision
 import pickle
 import numpy as np
 import random
+
 from collections import defaultdict
-from torch.utils.data import Dataset
 from torchvision.transforms import transforms
+
+CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
 def get_data(img_dataset, train):
-    transform = transforms.Compose([transforms.ToTensor()])
-    X = []
-    Y = []
+    X, Y = [], []
     if train:
         positive = img_dataset["train:positive"]
         negative = img_dataset["train:negative"]
@@ -39,15 +38,12 @@ def get_data(img_dataset, train):
 def get_pretrain_data(labels, image_size=(28, 28, 1)):
     transform = transforms.Compose([transforms.ToTensor()])
     X = []
+    img_dir = osp.join(CURRENT_DIR, "mnist_images")
     for label in labels:
-        label_path = os.path.join(
-            "./datasets/mnist_images", label
-        )
+        label_path = osp.join(img_dir, label)
         img_path_list = os.listdir(label_path)
         for img_path in img_path_list:
-            img = cv2.imread(
-                os.path.join(label_path, img_path), cv2.IMREAD_GRAYSCALE
-            )
+            img = cv2.imread(osp.join(label_path, img_path), cv2.IMREAD_GRAYSCALE)
             img = cv2.resize(img, (image_size[1], image_size[0]))
             X.append(np.array(img, dtype=np.float32))
 
@@ -56,24 +52,6 @@ def get_pretrain_data(labels, image_size=(28, 28, 1)):
 
     X = [transform(img) for img in X]
     return X, Y
-
-
-# def get_pretrain_data(train_data, image_size=(28, 28, 1)):
-#     X = []
-#     for label in [0, 1]:
-#         for _, equation_list in train_data[label].items():
-#             for equation in equation_list:
-#                 X = X + equation
-
-#     X = np.array(X)
-#     index = np.array(list(range(len(X))))
-#     np.random.shuffle(index)
-#     X = X[index]
-
-#     X = [img for img in X]
-#     Y = [img.copy().reshape(image_size[0] * image_size[1] * image_size[2]) for img in X]
-
-#     return X, Y
 
 
 def divide_equations_by_len(equations, labels):
@@ -104,22 +82,15 @@ def split_equation(equations_by_len, prop_train, prop_val):
 
 
 def get_hed(dataset="mnist", train=True):
-
     if dataset == "mnist":
-        with open(
-            "./datasets/mnist_equation_data_train_len_26_test_len_26_sys_2_.pk",
-            "rb",
-        ) as f:
-            img_dataset = pickle.load(f)
+        file = osp.join(CURRENT_DIR, "mnist_equation_data_train_len_26_test_len_26_sys_2_.pk")
     elif dataset == "random":
-        with open(
-            "./datasets/random_equation_data_train_len_26_test_len_26_sys_2_.pk",
-            "rb",
-        ) as f:
-            img_dataset = pickle.load(f)
+        file = osp.join(CURRENT_DIR, "random_equation_data_train_len_26_test_len_26_sys_2_.pk")
     else:
-        raise Exception("Undefined dataset")
+        raise ValueError("Undefined dataset")
 
+    with open(file, "rb") as f:
+        img_dataset = pickle.load(f)
     X, _, Y = get_data(img_dataset, train)
     equations_by_len = divide_equations_by_len(X, Y)
 

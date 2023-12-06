@@ -58,9 +58,8 @@ class TestPrologKB(object):
     
     def test_logic_forward_pl2(self, kb_hed):
         consist_exs = [
-            [1, 1, "+", 0, "=", 1, 1],
-            [1, "+", 1, "=", 1, 0],
-            [0, "+", 0, "=", 0],
+            [1, "+", 1, "=", 0],
+            [1, "+", 1, "=", 1],
         ]
         inconsist_exs = [
             [1, 1, "+", 0, "=", 1, 1],

@@ -12,7 +12,8 @@ class InfiniteSampler(sampler.Sampler):
         while True:
             order = np.random.permutation(self.num_samples)
             for i in range(self.num_samples):
-                yield order[i]
+                yield order[i: i + 10]
+                i += 10
 
     def __len__(self):
         return None

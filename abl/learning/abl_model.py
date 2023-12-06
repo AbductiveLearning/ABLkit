@@ -79,6 +79,25 @@ class ABLModel:
         data_X = data_samples.flatten("X")
         data_y = data_samples.flatten("abduced_idx")
         return self.base_model.fit(X=data_X, y=data_y)
+    
+    def valid(self, data_samples: ListData) -> float:
+        """
+        Validate the model on the given data.
+
+        Parameters
+        ----------
+        data_samples : ListData
+            A batch of data to train on, which typically contains the data, `X`, and the corresponding labels, `abduced_idx`.
+
+        Returns
+        -------
+        float
+            The accuracy the trained model.
+        """
+        data_X = data_samples.flatten("X")
+        data_y = data_samples.flatten("abduced_idx")
+        score = self.base_model.score(X=data_X, y=data_y)
+        return score
 
     def _model_operation(self, operation: str, *args, **kwargs):
         model = self.base_model

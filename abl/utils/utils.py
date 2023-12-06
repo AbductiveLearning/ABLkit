@@ -22,10 +22,10 @@ def flatten(nested_list):
     TypeError
         If the input object is not a list.
     """
-    if not isinstance(nested_list, list):
-        raise TypeError("Input must be of type list.")
+    # if not isinstance(nested_list, list):
+    #     raise TypeError("Input must be of type list.")
 
-    if not nested_list or not isinstance(nested_list[0], (list, tuple)):
+    if not isinstance(nested_list, list) or not isinstance(nested_list[0], (list, tuple)):
         return nested_list
 
     return list(chain.from_iterable(nested_list))
