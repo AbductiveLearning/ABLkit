@@ -1,15 +1,3 @@
-# coding: utf-8
-# ================================================================#
-#   Copyright (C) 2020 Freecss All rights reserved.
-#
-#   File Name     ：basic_model.py
-#   Author        ：freecss
-#   Email         ：karlfreecss@gmail.com
-#   Created Date  ：2020/11/21
-#   Description   ：
-#
-# ================================================================#
-
 import os
 import logging
 from typing import Any, Callable, List, Optional, T, Tuple

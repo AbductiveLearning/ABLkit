@@ -1,14 +1,3 @@
-# coding: utf-8
-# ================================================================#
-#   Copyright (C) 2020 Freecss All rights reserved.
-#
-#   File Name     ：models.py
-#   Author        ：freecss
-#   Email         ：karlfreecss@gmail.com
-#   Created Date  ：2020/04/02
-#   Description   ：
-#
-# ================================================================#
 import pickle
 from typing import Any, Dict
 

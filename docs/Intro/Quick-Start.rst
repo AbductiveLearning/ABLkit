@@ -72,7 +72,7 @@ ABL-Package offers several `dataset classes <../API/abl.dataset.html>`_ for diff
 
 Read more about `preparing datasets <Datasets.html>`_.
 
-Building the Machine Learning Part
+Building the Learning Part
 ----------------------------------
 
 To build the machine learning part, we need to wrap our machine learning model into the ``ABLModel`` class. The machine learning model can either be a scikit-learn model or a PyTorch neural network. We use a simple LeNet5 in the MNIST Add example.
@@ -141,13 +141,6 @@ function specifying how to perform (deductive) reasoning.
          return sum(nums)
 
    kb = AddKB(pseudo_label_list=list(range(10)))
-   print(kb)
-
-Out:
-
-.. code-block:: none
-
-   AddKB is a KB with pseudo_label_list=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], max_err=1e-10, use_cache=True.
 
 Then, we create a reasoner by defining an instance of class
 ``ReasonerBase`` and passing the knowledge base as an parameter.
@@ -178,10 +171,10 @@ In the case of MNIST Add example, the metric definition looks like
 
 Read more about `building evaluation metrics <Evaluation.html>`_
 
-Bridging Machine Learning and Reasoning
+Bridging Learning and Reasoning
 ---------------------------------------
 
-Now, we use ``SimpleBridge`` to combine machine learning and reasoning together.
+Now, we use ``SimpleBridge`` to combine learning and reasoning in a unified model.
 
 .. code:: python
 
@@ -189,7 +182,7 @@ Now, we use ``SimpleBridge`` to combine machine learning and reasoning together.
 
    bridge = SimpleBridge(model, reasoner, metric_list)
 
-Finally, we proceed with testing and training.
+Finally, we proceed with training and testing.
 
 .. code:: python
 
