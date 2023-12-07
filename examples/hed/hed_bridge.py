@@ -65,7 +65,7 @@ class HEDBridge(SimpleBridge):
 
         self.model.load(load_path=os.path.join(weights_dir, "pretrain_weights.pth"))
 
-    def abduce_pseudo_label(self, data_samples: ListData):
+    def select_mapping_and_abduce(self, data_samples: ListData):
         candidate_mappings = gen_mappings([0, 1, 2, 3], ["+", "=", 0, 1])
         mapping_score = []
         abduced_pseudo_label_list = []
@@ -80,11 +80,15 @@ class HEDBridge(SimpleBridge):
         max_revisible_instances = max(mapping_score)
         return_idx = mapping_score.index(max_revisible_instances)
         self.reasoner.mapping = candidate_mappings[return_idx]
-        self.reasoner.mapping = dict(
+        self.reasoner.remapping = dict(
             zip(self.reasoner.mapping.values(), self.reasoner.mapping.keys())
         )
         data_samples.abduced_pseudo_label = abduced_pseudo_label_list[return_idx]
 
+        return data_samples.abduced_pseudo_label
+
+    def abduce_pseudo_label(self, data_samples: ListData):
+        self.reasoner.abduce(data_samples)
         return data_samples.abduced_pseudo_label
 
     def check_training_impact(self, filtered_data_samples, data_samples):
@@ -100,8 +104,8 @@ class HEDBridge(SimpleBridge):
         return False
 
     def check_rule_quality(self, rule, val_data, equation_len):
-        val_X_true = val_data[1][equation_len] + val_data[1][equation_len + 1]
-        val_X_false = val_data[0][equation_len] + val_data[0][equation_len + 1]
+        val_X_true = self.data_preprocess(val_data[1], equation_len)
+        val_X_false = self.data_preprocess(val_data[0], equation_len)
 
         true_ratio = self.calc_consistent_ratio(val_X_true, rule)
         false_ratio = self.calc_consistent_ratio(val_X_false, rule)
@@ -115,28 +119,23 @@ class HEDBridge(SimpleBridge):
             return True
         return False
 
-    def calc_consistent_ratio(self, X, rule):
-        pred_label, _ = self.predict(X)
-        pred_pseudo_label = self.label_to_pseudo_label(pred_label)
+    def calc_consistent_ratio(self, data_samples, rule):
+        self.predict(data_samples)
+        pred_pseudo_label = self.idx_to_pseudo_label(data_samples)
         consistent_num = sum(
             [self.reasoner.kb.consist_rule(instance, rule) for instance in pred_pseudo_label]
         )
-        return consistent_num / len(X)
+        return consistent_num / len(data_samples.X)
 
-    def get_rules_from_data(self, train_data, samples_per_rule, samples_num):
+    def get_rules_from_data(self, data_samples, samples_per_rule, samples_num):
         rules = []
-        sampler = InfiniteSampler(len(train_data))
-        data_loader = DataLoader(
-            train_data,
-            sampler=sampler,
-            batch_size=samples_per_rule,
-            collate_fn=lambda data_list: [list(data) for data in zip(*data_list)],
-        )
+        sampler = InfiniteSampler(len(data_samples), batch_size=samples_per_rule)
 
         for _ in range(samples_num):
-            for X, Y, Z in data_loader:
-                pred_label, _ = self.predict(X)
-                pred_pseudo_label = self.label_to_pseudo_label(pred_label)
+            for select_idx in sampler:
+                sub_data_samples = data_samples[select_idx]
+                self.predict(sub_data_samples)
+                pred_pseudo_label = self.idx_to_pseudo_label(sub_data_samples)
                 consistent_instance = []
                 for instance in pred_pseudo_label:
                     if self.reasoner.kb.logic_forward([instance]):
@@ -184,8 +183,13 @@ class HEDBridge(SimpleBridge):
                 add_nums_dict[add_nums] = r
         return list(rule_dict)
 
-    def idx_to_pseudo_label(self, data_samples: ListData) -> List[List[Any]]:
-        return super().idx_to_pseudo_label(data_samples)
+    def data_preprocess(self, data, equation_len) -> ListData:
+        data_samples = ListData()
+        data_samples.X = data[equation_len] + data[equation_len + 1]
+        data_samples.gt_pseudo_label = None
+        data_samples.Y = [None] * len(data_samples.X)
+
+        return data_samples
 
     def train(self, train_data, val_data, segment_size=10, min_len=5, max_len=8):
         for equation_len in range(min_len, max_len):
@@ -194,15 +198,17 @@ class HEDBridge(SimpleBridge):
                 logger="current",
             )
 
-            X = train_data[1][equation_len] + train_data[1][equation_len + 1]
-            Y = [None] * len(X)
-            data_samples = self.data_preprocess(X, None, Y)
-            sampler = InfiniteSampler(len(data_samples))
+            condition_num = 0
+            data_samples = self.data_preprocess(train_data[1], equation_len)
+            sampler = InfiniteSampler(len(data_samples), batch_size=segment_size)
             for seg_idx, select_idx in enumerate(sampler):
                 sub_data_samples = data_samples[select_idx]
                 self.predict(sub_data_samples)
-                # self.idx_to_pseudo_label(sub_data_samples)
-                self.abduce_pseudo_label(sub_data_samples)
+                if equation_len == min_len:
+                    self.select_mapping_and_abduce(sub_data_samples)
+                else:
+                    self.idx_to_pseudo_label(sub_data_samples)
+                    self.abduce_pseudo_label(sub_data_samples)
                 filtered_sub_data_samples = self.filter_empty(sub_data_samples)
                 self.pseudo_label_to_idx(filtered_sub_data_samples)
                 loss = self.model.train(filtered_sub_data_samples)
@@ -239,80 +245,3 @@ class HEDBridge(SimpleBridge):
                             self.model.load(load_path=f"./weights/eq_len_{equation_len - 1}.pth")
                         condition_num = 0
                         print_log("Reload Model and retrain", logger="current")
-
-    # def train(
-    #     self,
-    #     train_data,
-    #     val_data,
-    #     segment_size=10,
-    #     min_len=5,
-    #     max_len=8,
-    # ):
-    #     for equation_len in range(min_len, max_len):
-    #         print_log(
-    #             f"============== equation_len: {equation_len}-{equation_len + 1} ================",
-    #             logger="current",
-    #         )
-
-    #         train_X = train_data[1][equation_len] + train_data[1][equation_len + 1]
-    #         train_Y = [None] * len(train_X)
-    #         # data_samples = self.data_preprocess(train_X, None, train_Y)
-
-    #         dataset = BridgeDataset(train_X, None, train_Y)
-    #         sampler = InfiniteSampler(len(dataset))
-    #         data_loader = DataLoader(
-    #             dataset,
-    #             sampler=sampler,
-    #             batch_size=segment_size,
-    #             collate_fn=lambda data_list: [list(data) for data in zip(*data_list)],
-    #         )
-
-    #         condition_num = 0
-
-    #         for seg_idx, (X, Z, Y) in enumerate(data_loader):
-    #             pred_label, pred_prob = self.predict(ListData(X=X))
-    #             if equation_len == min_len:
-    #                 abduced_pseudo_label = self.select_mapping_and_abduce(pred_label, pred_prob, Y)
-    #             else:
-    #                 pred_pseudo_label = self.label_to_pseudo_label(pred_label)
-    #                 abduced_pseudo_label = self.abduce_pseudo_label(
-    #                     pred_label, pred_prob, pred_pseudo_label, Y, 20
-    #                 )
-    #             filtered_X, filtered_abduced_pseudo_label = self.filter_empty(
-    #                 X, abduced_pseudo_label
-    #             )
-    #             if len(filtered_X) == 0:
-    #                 continue
-    #             filtered_abduced_label = self.pseudo_label_to_label(filtered_abduced_pseudo_label)
-    #             min_loss = self.model.train(filtered_X, filtered_abduced_label)
-
-    #             print_log(
-    #                 f"Equation Len(train) [{equation_len}] Segment Index [{seg_idx + 1}] minimal_loss is {min_loss:.5f}",
-    #                 logger="current",
-    #             )
-
-    #             if self.check_training_impact(filtered_X, filtered_abduced_label, X):
-    #                 condition_num += 1
-    #             else:
-    #                 condition_num = 0
-
-    #             if condition_num >= 5:
-    #                 print_log(f"Now checking if we can go to next course", logger="current")
-    #                 rules = self.get_rules_from_data(dataset, samples_per_rule=3, samples_num=50)
-    #                 print_log(f"Learned rules from data: " + str(rules), logger="current")
-
-    #                 seems_good = self.check_rule_quality(rules, val_data, equation_len)
-    #                 if seems_good:
-    #                     self.model.save(save_path=f"./weights/eq_len_{equation_len}.pth")
-    #                     break
-    #                 else:
-    #                     if equation_len == min_len:
-    #                         print_log(
-    #                             "Learned mapping is: " + str(self.reasoner.mapping),
-    #                             logger="current",
-    #                         )
-    #                         self.model.load(load_path="./weights/pretrain_weights.pth")
-    #                     else:
-    #                         self.model.load(load_path=f"./weights/eq_len_{equation_len - 1}.pth")
-    #                     condition_num = 0
-    #                     print_log("Reload Model and retrain", logger="current")
