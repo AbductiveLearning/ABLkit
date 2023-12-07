@@ -14,7 +14,7 @@ In ABL-Package, constructing the reasoning part involves two steps:
 
 1. Build a knowledge base by creating a subclass of ``KBBase``, which
    defines how to map pseudo labels to reasoning results.
-2. Define a reasoner by creating an instance of class ``ReasonerBase``
+2. Define a reasoner by creating an instance of class ``Reasoner``
    to minimize inconsistencies between the knowledge base and pseudo
    labels predicted by the learning part.
 
@@ -25,34 +25,34 @@ Build your knowledge base from `KBBase`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Generally, users can inherit from class ``KBBase`` to build your own
-knowledge base. For the user-built KB (an inherited subclass), it’s only
+knowledge base. For the user-built KB (an inherited subclass), it's only
 required to initialize the ``pseudo_label_list`` parameter
 and override the ``logic_forward`` function:
 
 -  **pseudo_label_list** is the list of possible pseudo labels (also,
    the output of the machine learning model).
 -  **logic_forward** defines how to perform (deductive) reasoning,
-   i.e. matching each pseudo label to their reasoning result.
+   i.e. matching each pseudo label to their reasoning result.
 
 After that, other operations, including how to perform abductive
 reasoning, will be **automatically** set up.
 
-MNIST Add example
-^^^^^^^^^^^^^^^^^
+MNIST Addition example
+^^^^^^^^^^^^^^^^^^^^^^
 
-As an example, the ``pseudo_label_list`` passed in MNIST Add is all the
+As an example, the ``pseudo_label_list`` passed in MNIST Addition is all the
 possible digits, namely, ``[0,1,2,...,9]``, and the ``logic_forward``
 is: “Add two pseudo labels to get the result.”. Therefore, the
-construction of the KB (``add_kb``) of MNIST Add would be:
+construction of the KB (``add_kb``) of MNIST Addition would be:
 
 .. code:: python
 
    class AddKB(KBBase):
-    def __init__(self, pseudo_label_list=list(range(10))):
-        super().__init__(pseudo_label_list)
+      def __init__(self, pseudo_label_list=list(range(10))):
+         super().__init__(pseudo_label_list)
 
-    def logic_forward(self, pseudo_labels):
-        return sum(pseudo_labels)
+      def logic_forward(self, pseudo_labels):
+         return sum(pseudo_labels)
 
    add_kb = AddKB()
 
@@ -65,7 +65,7 @@ You can also initialize the following parameters when building your
 knowledge base:
 
 -  **max_err** (float, optional), specifying the upper tolerance limit
-   when comparing the similarity between a candidate’s reasoning result
+   when comparing the similarity between a candidate's reasoning result
    and the ground truth during abductive reasoning. This is only
    applicable when the reasoning result is of a numerical type. This is
    particularly relevant for regression problems where exact matches
@@ -73,7 +73,7 @@ knowledge base:
 -  **use_cache** (bool, optional), indicating whether to use cache for
    previously abduced candidates to speed up subsequent abductive
    reasoning operations. Defaults to True. Defaults to True.
--  **max_cache_size** (int, optional), specifying the maximum cache
+-  **cache_size** (int, optional), specifying the maximum cache
    size. This is only operational when ``use_cache`` is set to True.
    Defaults to 4096.
 
@@ -82,13 +82,13 @@ Diverse choices for building knowledge base
 
 In addition to building your own knowledge base through inheriting from class 
 ``KBBase``, ABL-Package also offers several predefined subclasses of ``KBBase``, 
-which you can utilize to construct your knowledge base.
+which you can utilize to construct your knowledge base more conveniently.
 
 Build your Knowledge base from Prolog file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For users aiming to leverage knowledge base from an external Prolog file
-(which contain how to perform reasoning), they may directly creating an
+(which contains how to perform reasoning), they can directly create an
 instance of class ``PrologKB``. Specifically, upon instantiation of
 ``PrologKB``, users are required to provide the ``pseudo_label_list``
 and ``pl_file`` (the Prolog file).
@@ -104,10 +104,10 @@ abductive reasoning, will also be **automatically** set up.
    Otherwise, users might have to override ``logic_forward`` and
    ``get_query_string`` to allow for more adaptable usage.
 
-MNIST Add example (cont.)
-"""""""""""""""""""""""""
+MNIST Addition example (cont.)
+"""""""""""""""""""""""""""""""
 
-As an example, one can first write a Prolog file for the MNISTAdd
+As an example, one can first write a Prolog file for the MNIST Addition
 example as the following code, and then save it as ``add.pl``.
 
 .. code:: prolog
@@ -132,7 +132,7 @@ knowledge base. In this way, the knowledge built will have a Ground KB
 
 .. admonition:: What is Ground KB?
 
-   Ground KB is a knowledge base prebuilt upon class initialization,
+   `Ground KB <https://www.ijcai.org/proceedings/2021/250>`_ is a knowledge base prebuilt upon class initialization,
    storing all potential candidates along with their respective reasoning
    result. The key advantage of having a Ground KB is that it may
    accelerate abductive reasoning.
@@ -148,12 +148,12 @@ override the ``logic_forward`` function, and are allowed to pass other
 After that, other operations, including auto-construction of GKB, and
 how to perform abductive reasoning, will be **automatically** set up.
 
-MNIST Add example (cont.)
-"""""""""""""""""""""""""
+MNIST Addition example (cont.)
+"""""""""""""""""""""""""""""""
 
-As an example, the ``GKB_len_list`` for MNISTAdd should be ``[2]``,
+As an example, the ``GKB_len_list`` for MNIST Addition should be ``[2]``,
 since all pseudo labels in the example consist of two digits. Therefore,
-the construction of KB with GKB (``add_ground_kb``) of MNISTAdd would be
+the construction of KB with GKB (``add_ground_kb``) of MNIST Addition would be
 as follows. As mentioned, the difference between this and the previously
 built ``add_kb`` lies only in the base class from which it is inherited
 and whether an extra parameter ``GKB_len_list`` is passed.
@@ -193,7 +193,7 @@ for conducting abductive reasoning, where the parameters are:
 -  **max_revision_num**, an int value specifying the upper limit on the
    number of revised labels for each sample.
 -  **require_more_revision**, an int value specifiying additional number
-   of revisions permitted beyond the minimum required. (e.g. If we set
+   of revisions permitted beyond the minimum required. (e.g., If we set
    it to 0, even if ``max_revision_num`` is set to a high value, the
    method will only output candidates with the minimum possible
    revisions.)
@@ -201,29 +201,28 @@ for conducting abductive reasoning, where the parameters are:
 And it return a list of candidates (i.e., revised pseudo labels) that
 are all compatible with ``y``.
 
-MNIST Add example (cont.)
-^^^^^^^^^^^^^^^^^^^^^^^^^
+MNIST Addition example (cont.)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As an example, with MNIST Add, the candidates returned by
+As an example, with MNIST Addition, the candidates returned by
 ``add_kb.abduce_candidates`` would be as follows:
 
-+--------------+-------+--------------+---------------+----------------+
-| ``pseudo_    | ``y`` | ``max_re     | ``require_    | Output         |
-| label``      |       | vision_num`` | more_address``|                |
-+==============+=======+==============+===============+================+
-| [1,1]        | 8     | 1            | 0             | [[1,7], [7,1]] |
-+--------------+-------+--------------+---------------+----------------+
-| [1,1]        | 8     | 1            | 1             | [[1,7], [7,1]] |
-+--------------+-------+--------------+---------------+----------------+
-| [1,1]        | 8     | 2            | 0             | [[1,7], [7,1]] |
-+--------------+-------+--------------+---------------+----------------+
-| [1,1]        | 8     | 2            | 1             | [[1,7],        |
-|              |       |              |               | [7,1], [2,6],  |
-|              |       |              |               | [6,2], [3,5],  |
-|              |       |              |               | [5,3], [4,4]]  |
-+--------------+-------+--------------+---------------+----------------+
-| [1,1]        | 11    | 1            | 0             | []             |
-+--------------+-------+--------------+---------------+----------------+
++------------------+-------+----------------------+--------------------------+----------------+
+| ``pseudo_label`` | ``y`` | ``max_revision_num`` | ``require_more_address`` | Output         |
++==================+=======+======================+==========================+================+
+| [1,1]            | 8     | 1                    | 0                        | [[1,7], [7,1]] |
++------------------+-------+----------------------+--------------------------+----------------+
+| [1,1]            | 8     | 1                    | 1                        | [[1,7], [7,1]] |
++------------------+-------+----------------------+--------------------------+----------------+
+| [1,1]            | 8     | 2                    | 0                        | [[1,7], [7,1]] |
++------------------+-------+----------------------+--------------------------+----------------+
+| [1,1]            | 8     | 2                    | 1                        | [[1,7],        |
+|                  |       |                      |                          | [7,1], [2,6],  |
+|                  |       |                      |                          | [6,2], [3,5],  |
+|                  |       |                      |                          | [5,3], [4,4]]  |
++------------------+-------+----------------------+--------------------------+----------------+
+| [1,1]            | 11    | 1                    | 0                        | []             |
++------------------+-------+----------------------+--------------------------+----------------+
 
 .. _kb-abd-2:
 
@@ -231,16 +230,15 @@ As another example, if we set the ``max_err`` of ``AddKB`` to be 1
 instead of the default 1e-10, the tolerance limit for consistency will
 be higher, hence the candidates returned would be:
 
-+--------------+-------+--------------+---------------+----------------+
-| ``pseudo_    | ``y`` | ``max_re     | ``require_    | Output         |
-| label``      |       | vision_num`` | more_address``|                |
-+==============+=======+==============+===============+================+
-| [1,1]        | 8     | 1            | 0             | [[1,7], [7,1], |
-|              |       |              |               | [1,6], [6,1],  |
-|              |       |              |               | [1,8], [8,1]]  |
-+--------------+-------+--------------+---------------+----------------+
-| [1,1]        | 11    | 1            | 0             | [[1,9], [9,1]] |
-+--------------+-------+--------------+---------------+----------------+
++------------------+-------+----------------------+--------------------------+----------------+
+| ``pseudo_label`` | ``y`` | ``max_revision_num`` | ``require_more_address`` | Output         |
++==================+=======+======================+==========================+================+
+| [1,1]            | 8     | 1                    | 0                        | [[1,7], [7,1], |
+|                  |       |                      |                          | [1,6], [6,1],  |
+|                  |       |                      |                          | [1,8], [8,1]]  |
++------------------+-------+----------------------+--------------------------+----------------+
+| [1,1]            | 11    | 1                    | 0                        | [[1,9], [9,1]] |
++------------------+-------+----------------------+--------------------------+----------------+
 
 Step 2: Create a reasoner
 -------------------------
@@ -249,16 +247,16 @@ After building your knowledge base, the next step is defining a
 reasoner. Due to the indeterminism of abductive reasoning, there could
 be multiple candidates compatible to the knowledge base. When this
 happens, reasoner can minimize inconsistencies between the knowledge
-base and pseudo labels predicted by the learning part and return **only
+base and pseudo labels predicted by the learning part, and then return **only
 one** candidate which has highest consistency.
 
 You can create a reasoner simply by defining an instance of class
-``ReasonerBase`` and passing your knowledge base as an parameter. As an
-example for MNIST Add, the reasoner definition would be:
+``Reasoner`` and passing your knowledge base as an parameter. As an
+example for MNIST Addition, the reasoner definition would be:
 
 .. code:: python
 
-   reasoner_add = ReasonerBase(kb_add)
+   reasoner_add = Reasoner(kb_add)
 
 When instantiating, besides the required knowledge base, you may also
 specify:
@@ -272,7 +270,7 @@ specify:
    number of revisions permitted beyond the minimum required when
    performing :ref:`abductive reasoning in the knowledge base <kb-abd>`. Defaults to
    0.
--  **use_zoopt** (bool, optional), indicating whether to use the Zoopt.
+-  **use_zoopt** (bool, optional), indicating whether to use `ZOOpt library <https://github.com/polixir/ZOOpt>`_.
    It is a library for zeroth-order optimization that can be used to
    accelerate consistency minimization. Defaults to False.
 -  **dist_func** (str, optional), specifying the distance function to be
@@ -280,17 +278,17 @@ specify:
    candidate returned from knowledge base. Valid options include
    “confidence” (default) and “hamming”. For “confidence”, it calculates
    the distance between the prediction and candidate based on confidence
-   derived from the predicted probability in the data sample.For
+   derived from the predicted probability in the data sample. For
    “hamming”, it directly calculates the Hamming distance between the
    predicted pseudo label in the data sample and candidate.
 
-The main method implemented by ``ReasonerBase`` is
+The main method implemented by ``Reasoner`` is
 ``abduce(data_sample)``, which obtains the most consistent candidate.
 
-MNIST Add example (cont.)
-~~~~~~~~~~~~~~~~~~~~~~~~~
+MNIST Addition example (cont.)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As an example, consider these data samples for MNIST Add:
+As an example, consider these data samples for MNIST Addition:
 
 .. code:: python
 

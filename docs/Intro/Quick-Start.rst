@@ -18,7 +18,7 @@ Working with Data
 ABL-Package assumes data to be in the form of ``(X, gt_pseudo_label, Y)``  where ``X`` is the input of the machine learning model, 
 ``gt_pseudo_label`` is the ground truth label of each element in ``X`` and ``Y`` is the ground truth reasoning result of each instance in ``X``. 
 
-In the MNIST Add task, the data loading looks like
+In the MNIST Addition task, the data loading looks like
 
 .. code:: python
 
@@ -75,7 +75,7 @@ Read more about `preparing datasets <Datasets.html>`_.
 Building the Learning Part
 ----------------------------------
 
-To build the machine learning part, we need to wrap our machine learning model into the ``ABLModel`` class. The machine learning model can either be a scikit-learn model or a PyTorch neural network. We use a simple LeNet5 in the MNIST Add example.
+To build the machine learning part, we need to wrap our machine learning model into the ``ABLModel`` class. The machine learning model can either be a scikit-learn model or a PyTorch neural network. We use a simple LeNet5 in the MNIST Addition example.
 
 .. code:: python
 
@@ -143,15 +143,15 @@ function specifying how to perform (deductive) reasoning.
    kb = AddKB(pseudo_label_list=list(range(10)))
 
 Then, we create a reasoner by defining an instance of class
-``ReasonerBase`` and passing the knowledge base as an parameter.
+``Reasoner`` and passing the knowledge base as an parameter.
 The reasoner can be used to minimize inconsistencies between the 
 knowledge base and the prediction from the learning part. 
 
 .. code:: python
 
-   from abl.reasoning import ReasonerBase
+   from abl.reasoning import Reasoner
    
-   reasoner = ReasonerBase(kb)
+   reasoner = Reasoner(kb)
 
 Read more about `building the reasoning part <Reasoning.html>`_. 
 
@@ -161,7 +161,7 @@ Building Evaluation Metrics
 
 ABL-Package provides two basic metrics, namely ``SymbolMetric`` and ``SemanticsMetric``, which are used to evaluate the accuracy of the machine learning model's predictions and the accuracy of the ``logic_forward`` results, respectively.
 
-In the case of MNIST Add example, the metric definition looks like
+In the case of MNIST Addition example, the metric definition looks like
 
 .. code:: python
 
@@ -193,8 +193,8 @@ Training log would be similar to this:
 
 .. code-block:: none
 
-   2023/12/02 21:26:57 - abl - INFO - Abductive Learning on the MNIST Add example.
-   2023/12/02 21:32:20 - abl - INFO - Abductive Learning on the MNIST Add example.
+   2023/12/02 21:26:57 - abl - INFO - Abductive Learning on the MNIST Addition example.
+   2023/12/02 21:32:20 - abl - INFO - Abductive Learning on the MNIST Addition example.
    2023/12/02 21:32:51 - abl - INFO - loop(train) [1/5] segment(train) [1/3] model loss is 1.85589
    2023/12/02 21:32:56 - abl - INFO - loop(train) [1/5] segment(train) [2/3] model loss is 1.50332
    2023/12/02 21:33:02 - abl - INFO - loop(train) [1/5] segment(train) [3/3] model loss is 1.17501

@@ -28,6 +28,7 @@ extensions = [
     "recommonmark",
     "sphinx_markdown_tables",
     "sphinx.ext.napoleon",
+    "sphinx_copybutton",
 ]
 
 templates_path = ["_templates"]

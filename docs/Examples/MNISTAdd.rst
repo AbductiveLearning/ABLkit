@@ -1,7 +1,7 @@
-MNIST Add
-==================
+MNIST Addition
+==============
 
-MNIST Add was first introduced in [1] and the inputs of this task are pairs of MNIST images and the outputs are their sums. The dataset looks like this:
+MNIST Addition was first introduced in [1] and the inputs of this task are pairs of MNIST images and the outputs are their sums. The dataset looks like this:
 
 .. image:: ../img/image_1.jpg
    :width: 350px
