@@ -21,7 +21,7 @@ Learning Part
 
             self.base_model = base_model
 
-All scikit-learn models satisify this requiremnts, so we can directly use the model to create an instance of ``ABLModel``. For example, we can customize our machine learning model by
+All scikit-learn models satisify this requirements, so we can directly use the model to create an instance of ``ABLModel``. For example, we can customize our machine learning model by
 
 .. code:: python
 
@@ -36,6 +36,7 @@ For a PyTorch-based neural network, we first need to encapsulate it within a ``B
 .. code:: python
 
     # Load a PyTorch-based neural network
+    import torchvision
     cls = torchvision.models.resnet18(pretrained=True)
 
     # criterion and optimizer are used for training

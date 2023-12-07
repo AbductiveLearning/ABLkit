@@ -2,23 +2,23 @@ from abc import ABCMeta, abstractmethod
 from typing import Any, List, Optional, Tuple, Union
 
 from ..learning import ABLModel
-from ..reasoning import ReasonerBase
+from ..reasoning import Reasoner
 from ..structures import ListData
 
 DataSet = Tuple[List[List[Any]], Optional[List[List[Any]]], List[List[Any]]]
 
 
 class BaseBridge(metaclass=ABCMeta):
-    def __init__(self, model: ABLModel, reasoner: ReasonerBase) -> None:
+    def __init__(self, model: ABLModel, reasoner: Reasoner) -> None:
         if not isinstance(model, ABLModel):
             raise TypeError(
                 "Expected an instance of ABLModel, but received type: {}".format(
                     type(model)
                 )
             )
-        if not isinstance(reasoner, ReasonerBase):
+        if not isinstance(reasoner, Reasoner):
             raise TypeError(
-                "Expected an instance of ReasonerBase, but received type: {}".format(
+                "Expected an instance of Reasoner, but received type: {}".format(
                     type(reasoner)
                 )
             )

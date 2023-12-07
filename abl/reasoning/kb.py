@@ -34,8 +34,8 @@ class KBBase(ABC):
     key_func : func, optional
         A function employed for hashing in abl_cache. This is only operational when use_cache 
         is set to True. Defaults to to_hashable.
-    max_cache_size: int, optional
-        The maximum cache size in abl_cache. This is only operational when use_cache is set to
+    cache_size: int, optional
+        The cache size in abl_cache. This is only operational when use_cache is set to
         True. Defaults to 4096.
 
     Notes
@@ -53,7 +53,7 @@ class KBBase(ABC):
         max_err=1e-10,
         use_cache=True,
         key_func=to_hashable,
-        max_cache_size=4096,
+        cache_size=4096,
     ):
         if not isinstance(pseudo_label_list, list):
             raise TypeError("pseudo_label_list should be list")
@@ -62,7 +62,7 @@ class KBBase(ABC):
 
         self.use_cache = use_cache
         self.key_func = key_func
-        self.max_cache_size = max_cache_size
+        self.cache_size = cache_size
 
     @abstractmethod
     def logic_forward(self, pseudo_label):

@@ -36,7 +36,7 @@ class Cache(Generic[K, T]):
         self.cache = True
         self.cache_dict = dict()
         self.key_func = obj.key_func
-        self.max_size = obj.max_cache_size
+        self.max_size = obj.cache_size
 
         self.hits, self.misses = 0, 0
         self.full = False

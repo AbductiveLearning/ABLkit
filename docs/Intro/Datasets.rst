@@ -22,7 +22,7 @@ ABL-Package offers several `dataset classes <../API/abl.dataset.html>`_ for diff
 - ``Y``: List[Any]
     A list of objects representing the ground truth label of the reasoning result of each instance in ``X``.
 
-In the MNIST Add example, the data used for training looks like:
+In the MNIST Addition example, the data used for training looks like:
 
 .. image:: ../img/Datasets_1.png
    :width: 350px

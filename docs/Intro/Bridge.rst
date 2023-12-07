@@ -15,7 +15,7 @@ Bridging machine learning and reasoning to train the model is the fundamental id
 ``BaseBridge`` is an abstract class with the following initialization parameters:
 
 - ``model``: an object of type ``ABLModel``. Machine Learning part are wrapped in this object.
-- ``reasoner``: a object of type ``ReasonerBase``. Reasoning part are wrapped in this object.
+- ``reasoner``: a object of type ``Reasoner``. Reasoning part are wrapped in this object.
 
 ``BaseBridge`` has the following important methods that need to be overridden in subclasses:
 

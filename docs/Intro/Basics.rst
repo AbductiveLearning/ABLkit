@@ -41,7 +41,7 @@ learning. The class ``KBBase`` allows users to instantiate domain
 knowledge base. For diverse types of knowledge, we also offer
 implementations like ``GroundKB`` and ``PrologKB``, e.g., the latter
 enables knowledge base to be imported in the form of a Prolog files.
-Upon building the knowledge base, the class ``ReasonerBase`` is
+Upon building the knowledge base, the class ``Reasoner`` is
 responsible for minimizing the inconsistency between the knowledge base
 and learning models.
 
@@ -81,7 +81,7 @@ To implement this process, the following five steps are necessary:
 
     Build a knowledge base by building a subclass of ``KBBase``, defining how to 
     map pseudo labels to reasoning results.
-    Also, instantiate a ``ReasonerBase`` for minimizing of inconsistencies 
+    Also, instantiate a ``Reasoner`` for minimizing of inconsistencies 
     between the knowledge base and pseudo labels.
 
 4. Define Evaluation Metrics

@@ -5,7 +5,7 @@ from numpy import ndarray
 
 from ..evaluation import BaseMetric
 from ..learning import ABLModel
-from ..reasoning import ReasonerBase
+from ..reasoning import Reasoner
 from ..structures import ListData
 from ..utils import print_log
 from .base_bridge import BaseBridge, DataSet
@@ -15,7 +15,7 @@ class SimpleBridge(BaseBridge):
     def __init__(
         self,
         model: ABLModel,
-        reasoner: ReasonerBase,
+        reasoner: Reasoner,
         metric_list: List[BaseMetric],
     ) -> None:
         super().__init__(model, reasoner)

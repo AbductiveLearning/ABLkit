@@ -8,7 +8,7 @@ from ..utils.utils import (
 )
 
 
-class ReasonerBase:
+class Reasoner:
     """
     Base class for reasoner.
 
@@ -35,7 +35,7 @@ class ReasonerBase:
         Specifies additional number of revisions permitted beyond the minimum required
         when performing abductive reasoning. Defaults to 0.
     use_zoopt : bool, optional
-        Whether to use the Zoopt library during abductive reasoning. Defaults to False.
+        Whether to use ZOOpt library during abductive reasoning. Defaults to False.
     """
 
     def __init__(
@@ -124,7 +124,7 @@ class ReasonerBase:
 
     def zoopt_get_solution(self, symbol_num, data_sample, max_revision_num):
         """
-        Get the optimal solution using the Zoopt library. The solution is a list of
+        Get the optimal solution using ZOOpt library. The solution is a list of 
         boolean values, where '1' (True) indicates the indices chosen to be revised.
 
         Parameters
@@ -148,7 +148,7 @@ class ReasonerBase:
 
     def zoopt_revision_score(self, symbol_num, data_sample, sol):
         """
-        Get the revision score for a solution. A lower score suggests that the Zoopt library
+        Get the revision score for a solution. A lower score suggests that ZOOpt library 
         has a higher preference for this solution.
         """
         revision_idx = np.where(sol.get_x() != 0)[0]
