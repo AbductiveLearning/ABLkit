@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 from abl.learning import BasicNN
-from abl.reasoning import KBBase, GroundKB, PrologKB, ReasonerBase
+from abl.reasoning import KBBase, GroundKB, PrologKB, Reasoner
 from abl.structures import ListData
 from examples.models.nn import LeNet5
 
@@ -138,4 +138,4 @@ def kb_hed():
 
 @pytest.fixture
 def reasoner_instance(kb_add):
-    return ReasonerBase(kb_add, "confidence")
+    return Reasoner(kb_add, "confidence")
