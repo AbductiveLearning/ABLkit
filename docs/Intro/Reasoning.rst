@@ -10,6 +10,8 @@
 Reasoning part
 ===============
 
+In this section, we will look at how to build the reasoning part, which 
+leverage domain knowledge and perform deductive or abductive reasoning.
 In ABL-Package, building the reasoning part involves two steps:
 
 1. Build a knowledge base by creating a subclass of ``KBBase``, which
@@ -17,6 +19,10 @@ In ABL-Package, building the reasoning part involves two steps:
 2. Create a reasoner by instantiating the class ``Reasoner``
    to minimize inconsistencies between the knowledge base and pseudo
    labels predicted by the learning part.
+
+.. code:: python
+
+   from abl.reasoning import KBBase, GroundKB, PrologKB, Reasoner
 
 Building a knowledge base
 -------------------------
@@ -109,12 +115,13 @@ and ``pl_file`` (the Prolog file) in the ``__init__`` function.
 
 .. admonition:: What is a Prolog file?
 
-   A Prolog file is a script or source code file written in the Prolog language, 
-   which is a logic programming language where the logic is expressed in terms of 
-   relations, and represented as facts (basic assertions about some world) and 
+   A Prolog file (typically have the extension ``.pl``) is a script or source 
+   code file written in the Prolog language. Prolog is a logic programming language 
+   where the logic is represented as facts 
+   (basic assertions about some world) and 
    rules (logical statements that describe the relationships between facts). 
-   A computation is initiated by running a query over these relations.
-   Prolog files typically have the extension ``.pl``. See some Prolog examples 
+   A computation is initiated by running a query over these facts and rules. 
+   See some Prolog examples 
    in `SWISH <https://swish.swi-prolog.org/>`_. 
 
 After the instantiation, other operations, including how to perform
@@ -306,7 +313,8 @@ specify:
    predicted pseudo label in the data sample and candidate.
 
 The main method implemented by ``Reasoner`` is
-``abduce(data_sample)``, which obtains the most consistent candidate.
+``abduce(data_sample)``, which obtains the most consistent candidate 
+based on the distance function defined in ``dist_func``.
 
 MNIST Addition example (cont.)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -334,13 +342,27 @@ As an example, consider these data samples for MNIST Addition:
    sample2.Y = 8
 
 The compatible candidates after abductive reasoning for both samples
-would be ``[[1,7], [7,1]]``. However, when selecting only one candidate
-based on confidence, the output from ``reasoner_add.abduce`` would
-differ for each sample:
+would be ``[[1,7], [7,1]]``. However, when the reasoner call ``abduce`` 
+to select only one candidate based on the ``confidence`` distance function, 
+the output would differ for each sample:
 
-=============== ======
-``data_sample`` Output
-=============== ======
-sample1         [1,7]
-sample2         [7,1]
-=============== ======
+.. code:: python
+
+   reasoner_add = Reasoner(kb_add, dist_func="confidence")
+   candidate1 = reasoner_add.abduce(sample1)
+   candidate2 = reasoner_add.abduce(sample2)
+   print(f"The outputs for sample1 and sample2 are {candidate1} and {candidate2}, respectively.")
+
+Out:
+
+.. code:: none
+   :class: code-out
+
+   The outputs for sample1 and sample2 are [1,7] and [7,1], respectively.
+
+Specifically, as mentioned before, ``confidence`` calculates the distance between the data 
+sample and candidates based on the confidence derived from the predicted probability. 
+Take ``sample1`` as an example, the ``pred_prob`` in it indicates a higher 
+confidence that the first label should be "1" rather than "7". Therefore, among the 
+candidates [1,7] and [7,1], it would be closer to [1,7] (as its first label is "1").
+
