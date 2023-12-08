@@ -1,8 +1,9 @@
+from unittest.mock import Mock, create_autospec
+
 import numpy as np
 import pytest
 
 from abl.learning import ABLModel
-from unittest.mock import Mock, create_autospec
 
 
 class TestABLModel(object):

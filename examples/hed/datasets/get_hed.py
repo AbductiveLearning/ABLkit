@@ -1,11 +1,11 @@
 import os
 import os.path as osp
-import cv2
 import pickle
-import numpy as np
 import random
-
 from collections import defaultdict
+
+import cv2
+import numpy as np
 from torchvision.transforms import transforms
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))

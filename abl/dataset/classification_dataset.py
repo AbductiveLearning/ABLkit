@@ -15,16 +15,16 @@ class ClassificationDataset(Dataset):
     Y : List[int]
         The target data.
     transform : Callable[..., Any], optional
-        A function/transform that takes in an object and returns a transformed version. Defaults to None.
+        A function/transform that takes in an object and returns a transformed version.
+        Defaults to None.
     """
-    def __init__(
-        self, X: List[Any], Y: List[int], transform: Callable[..., Any] = None
-    ):
+
+    def __init__(self, X: List[Any], Y: List[int], transform: Callable[..., Any] = None):
         if (not isinstance(X, list)) or (not isinstance(Y, list)):
             raise ValueError("X and Y should be of type list.")
         if len(X) != len(Y):
             raise ValueError("Length of X and Y must be equal.")
-        
+
         self.X = X
         self.Y = torch.LongTensor(Y)
         self.transform = transform

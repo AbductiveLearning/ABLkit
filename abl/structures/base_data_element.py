@@ -224,9 +224,7 @@ class BaseDataElement:
             metainfo (dict): A dict contains the meta information
                 of image, such as ``img_shape``, ``scale_factor``, etc.
         """
-        assert isinstance(
-            metainfo, dict
-        ), f"metainfo should be a ``dict`` but got {type(metainfo)}"
+        assert isinstance(metainfo, dict), f"metainfo should be a ``dict`` but got {type(metainfo)}"
         meta = copy.deepcopy(metainfo)
         for k, v in meta.items():
             self.set_field(name=k, value=v, field_type="metainfo", dtype=None)
@@ -388,8 +386,7 @@ class BaseDataElement:
                 super().__setattr__(name, value)
             else:
                 raise AttributeError(
-                    f"{name} has been used as a "
-                    "private attribute, which is immutable."
+                    f"{name} has been used as a " "private attribute, which is immutable."
                 )
         else:
             self.set_field(name=name, value=value, field_type="data", dtype=None)
@@ -458,9 +455,7 @@ class BaseDataElement:
         functions."""
         assert field_type in ["metainfo", "data"]
         if dtype is not None:
-            assert isinstance(
-                value, dtype
-            ), f"{value} should be a {dtype} but got {type(value)}"
+            assert isinstance(value, dtype), f"{value} should be a {dtype} but got {type(value)}"
 
         if field_type == "metainfo":
             if name in self._data_fields:
@@ -571,8 +566,7 @@ class BaseDataElement:
     def to_dict(self) -> dict:
         """Convert BaseDataElement to dict."""
         return {
-            k: v.to_dict() if isinstance(v, BaseDataElement) else v
-            for k, v in self.all_items()
+            k: v.to_dict() if isinstance(v, BaseDataElement) else v for k, v in self.all_items()
         }
 
     def __repr__(self) -> str:

@@ -1,5 +1,5 @@
-import os
 import logging
+import os
 from typing import Any, Callable, List, Optional, T, Tuple
 
 import numpy
@@ -23,7 +23,8 @@ class BasicNN:
     optimizer : torch.optim.Optimizer
         The optimizer used for training.
     device : torch.device, optional
-        The device on which the model will be trained or used for prediction, by default torch.device("cpu").
+        The device on which the model will be trained or used for prediction,
+        by default torch.device("cpu").
     batch_size : int, optional
         The batch size used for training, by default 32.
     num_epochs : int, optional
@@ -37,9 +38,11 @@ class BasicNN:
     save_dir : Optional[str], optional
         The directory in which to save the model during training, by default None.
     train_transform : Callable[..., Any], optional
-        A function/transform that takes in an object and returns a transformed version used in the `fit` and `train_epoch` methods, by default None.
+        A function/transform that takes in an object and returns a transformed version used
+        in the `fit` and `train_epoch` methods, by default None.
     test_transform : Callable[..., Any], optional
-        A function/transform that takes in an object and returns a transformed version in the `predict`, `predict_proba` and `score` methods, , by default None.
+        A function/transform that takes in an object and returns a transformed version in the
+        `predict`, `predict_proba` and `score` methods, , by default None.
     collate_fn : Callable[[List[T]], Any], optional
         The function used to collate data, by default None.
     """

@@ -1,16 +1,15 @@
-from abc import ABC, abstractmethod
 import bisect
 import os
+from abc import ABC, abstractmethod
 from collections import defaultdict
-from itertools import product, combinations
+from itertools import combinations, product
 from multiprocessing import Pool
-from functools import lru_cache
 
 import numpy as np
 import pyswip
 
-from ..utils.utils import flatten, reform_list, hamming_dist, to_hashable
 from ..utils.cache import abl_cache
+from ..utils.utils import flatten, hamming_dist, reform_list, to_hashable
 
 
 class KBBase(ABC):
@@ -20,19 +19,19 @@ class KBBase(ABC):
     Parameters
     ----------
     pseudo_label_list : list
-        List of possible pseudo labels. It's recommended to arrange the pseudo labels in this 
-        list so that each aligns with its corresponding index in the base model: the first with 
+        List of possible pseudo labels. It's recommended to arrange the pseudo labels in this
+        list so that each aligns with its corresponding index in the base model: the first with
         the 0th index, the second with the 1st, and so forth.
     max_err : float, optional
-        The upper tolerance limit when comparing the similarity between a pseudo label sample's reasoning
-        result and the ground truth. This is only applicable when the reasoning result is of a numerical type.
-        This is particularly relevant for regression problems where exact matches might not be
-        feasible. Defaults to 1e-10.
+        The upper tolerance limit when comparing the similarity between a pseudo label sample's
+        reasoning result and the ground truth. This is only applicable when the reasoning
+        result is of a numerical type. This is particularly relevant for regression problems where
+        exact matches might not be feasible. Defaults to 1e-10.
     use_cache : bool, optional
         Whether to use abl_cache for previously abduced candidates to speed up subsequent
         operations. Defaults to True.
     key_func : func, optional
-        A function employed for hashing in abl_cache. This is only operational when use_cache 
+        A function employed for hashing in abl_cache. This is only operational when use_cache
         is set to True. Defaults to to_hashable.
     cache_size: int, optional
         The cache size in abl_cache. This is only operational when use_cache is set to
@@ -75,7 +74,6 @@ class KBBase(ABC):
         pseudo_label : List[Any]
             Pseudo label sample.
         """
-        pass
 
     def abduce_candidates(self, pseudo_label, y, max_revision_num, require_more_revision):
         """
@@ -104,7 +102,7 @@ class KBBase(ABC):
         """
         Check whether the reasoning result of a pseduo label sample is equal to the ground truth
         (or, within the maximum error allowed for numerical results).
-        
+
         Returns
         -------
         bool
@@ -130,7 +128,7 @@ class KBBase(ABC):
             Ground truth of the reasoning result for the sample.
         revision_idx : array-like
             Indices of where revisions should be made to the pseudo label sample.
-        
+
         Returns
         -------
         List[List[Any]]
@@ -149,8 +147,8 @@ class KBBase(ABC):
 
     def _revision(self, revision_num, pseudo_label, y):
         """
-        For a specified number of labels in a pseudo label sample to revise, iterate through all possible
-        indices to find any candidates that are compatible with the knowledge base.
+        For a specified number of labels in a pseudo label sample to revise, iterate through
+        all possible indices to find any candidates that are compatible with the knowledge base.
         """
         new_candidates = []
         revision_idx_list = combinations(range(len(pseudo_label)), revision_num)
@@ -164,8 +162,8 @@ class KBBase(ABC):
     def _abduce_by_search(self, pseudo_label, y, max_revision_num, require_more_revision):
         """
         Perform abductive reasoning by exhastive search. Specifically, begin with 0 and
-        continuously increase the number of labels in a pseudo label sample to revise, until candidates
-        that are compatible with the knowledge base are found.
+        continuously increase the number of labels in a pseudo label sample to revise, until
+        candidates that are compatible with the knowledge base are found.
 
         Parameters
         ----------
@@ -177,8 +175,8 @@ class KBBase(ABC):
             The upper limit on the number of revisions.
         require_more_revision : int
             If larger than 0, then after having found any candidates compatible with the
-            knowledge base, continue to increase the number of labels in a pseudo label sample to revise to
-            get more possible compatible candidates.
+            knowledge base, continue to increase the number of labels in a pseudo label sample to
+            revise to get more possible compatible candidates.
 
         Returns
         -------
@@ -286,7 +284,7 @@ class GroundKB(KBBase):
         Perform abductive reasoning by directly retrieving compatible candidates from
         the prebuilt GKB. In this way, the time-consuming exhaustive search can be
         avoided.
-        
+
         Parameters
         ----------
         pseudo_label : List[Any]
@@ -347,7 +345,7 @@ class GroundKB(KBBase):
             num_candidates = len(self.GKB[i]) if i in self.GKB else 0
             GKB_info_parts.append(f"{num_candidates} candidates of length {i}")
         GKB_info = ", ".join(GKB_info_parts)
-            
+
         return (
             f"{self.__class__.__name__} is a KB with "
             f"pseudo_label_list={self.pseudo_label_list!r}, "
@@ -400,7 +398,7 @@ class PrologKB(KBBase):
         returned `Res` as the reasoning results. To use this default function, there must be
         a `logic_forward` method in the pl file to perform reasoning.
         Otherwise, users would override this function.
-        
+
         Parameters
         ----------
         pseudo_label : List[Any]
@@ -429,9 +427,10 @@ class PrologKB(KBBase):
     def get_query_string(self, pseudo_label, y, revision_idx):
         """
         Get the query to be used for consulting Prolog.
-        This is a default function for demo, users would override this function to adapt to their own
-        Prolog file. In this demo function, return query `logic_forward([kept_labels, Revise_labels], Res).`.
-        
+        This is a default function for demo, users would override this function to adapt to
+        their own Prolog file. In this demo function, return query
+        `logic_forward([kept_labels, Revise_labels], Res).`.
+
         Parameters
         ----------
         pseudo_label : List[Any]
@@ -440,7 +439,7 @@ class PrologKB(KBBase):
             Ground truth of the reasoning result for the sample.
         revision_idx : array-like
             Indices of where revisions should be made to the pseudo label sample.
-            
+
         Returns
         -------
         str
@@ -448,14 +447,14 @@ class PrologKB(KBBase):
         """
         query_string = "logic_forward("
         query_string += self._revision_pseudo_label(pseudo_label, revision_idx)
-        key_is_none_flag = y is None or (type(y) == list and y[0] is None)
+        key_is_none_flag = y is None or (isinstance(y, list) and y[0] is None)
         query_string += ",%s)." % y if not key_is_none_flag else ")."
         return query_string
 
     def revise_at_idx(self, pseudo_label, y, revision_idx):
         """
         Revise the pseudo label sample at specified index positions by querying Prolog.
-        
+
         Parameters
         ----------
         pseudo_label : List[Any]
@@ -464,7 +463,7 @@ class PrologKB(KBBase):
             Ground truth of the reasoning result for the sample.
         revision_idx : array-like
             Indices of where revisions should be made to the pseudo label sample.
-        
+
         Returns
         -------
         List[List[Any]]

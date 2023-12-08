@@ -1,7 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import itertools
-from collections.abc import Sized
-from typing import Any, List, Union
+from typing import List, Union
 
 import numpy as np
 import torch

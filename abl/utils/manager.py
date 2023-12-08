@@ -6,7 +6,7 @@ from collections import OrderedDict
 from typing import Type, TypeVar
 
 _lock = threading.RLock()
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def _accquire_lock() -> None:
@@ -47,7 +47,7 @@ class ManagerMeta(type):
         cls._instance_dict = OrderedDict()
         params = inspect.getfullargspec(cls)
         params_names = params[0] if params[0] else []
-        assert 'name' in params_names, f'{cls} must have the `name` argument'
+        assert "name" in params_names, f"{cls} must have the `name` argument"
         super().__init__(*args)
 
 
@@ -72,9 +72,8 @@ class ManagerMixin(metaclass=ManagerMeta):
         name (str): Name of the instance. Defaults to ''.
     """
 
-    def __init__(self, name: str = '', **kwargs):
-        assert isinstance(name, str) and name, \
-            'name argument must be an non-empty string.'
+    def __init__(self, name: str = "", **kwargs):
+        assert isinstance(name, str) and name, "name argument must be an non-empty string."
         self._instance_name = name
 
     @classmethod
@@ -102,8 +101,7 @@ class ManagerMixin(metaclass=ManagerMeta):
             instance.
         """
         _accquire_lock()
-        assert isinstance(name, str), \
-            f'type of name should be str, but got {type(cls)}'
+        assert isinstance(name, str), f"type of name should be str, but got {type(cls)}"
         instance_dict = cls._instance_dict  # type: ignore
         # Get the instance by name.
         if name not in instance_dict:
@@ -111,9 +109,10 @@ class ManagerMixin(metaclass=ManagerMeta):
             instance_dict[name] = instance  # type: ignore
         elif kwargs:
             warnings.warn(
-                f'{cls} instance named of {name} has been created, '
-                'the method `get_instance` should not accept any other '
-                'arguments')
+                f"{cls} instance named of {name} has been created, "
+                "the method `get_instance` should not accept any other "
+                "arguments"
+            )
         # Get latest instantiated instance or root instance.
         _release_lock()
         return instance_dict[name]
@@ -141,8 +140,9 @@ class ManagerMixin(metaclass=ManagerMeta):
         _accquire_lock()
         if not cls._instance_dict:
             raise RuntimeError(
-                f'Before calling {cls.__name__}.get_current_instance(), you '
-                'should call get_instance(name=xxx) at least once.')
+                f"Before calling {cls.__name__}.get_current_instance(), you "
+                "should call get_instance(name=xxx) at least once."
+            )
         name = next(iter(reversed(cls._instance_dict)))
         _release_lock()
         return cls._instance_dict[name]

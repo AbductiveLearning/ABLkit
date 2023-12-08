@@ -1,6 +1,6 @@
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
 import torch.utils.data.sampler as sampler
 
 
@@ -13,7 +13,7 @@ class InfiniteSampler(sampler.Sampler):
         while True:
             order = np.random.permutation(self.num_samples)
             for i in range(self.num_samples):
-                yield order[i: i + self.batch_size]
+                yield order[i : i + self.batch_size]
                 i += self.batch_size
 
     def __len__(self):
@@ -58,7 +58,6 @@ def reduce_dimension(data):
         for equation_len in range(5, 27):
             equations = data[truth_value][equation_len]
             reduced_equations = [
-                [extract_feature(symbol_img) for symbol_img in equation]
-                for equation in equations
+                [extract_feature(symbol_img) for symbol_img in equation] for equation in equations
             ]
-            data[truth_value][equation_len] = reduced_equations 
+            data[truth_value][equation_len] = reduced_equations

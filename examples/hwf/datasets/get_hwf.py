@@ -1,14 +1,12 @@
-import os
 import json
+import os
 
 from PIL import Image
 from torchvision.transforms import transforms
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 
-img_transform = transforms.Compose(
-    [transforms.ToTensor(), transforms.Normalize((0.5,), (1,))]
-)
+img_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (1,))])
 
 
 def get_data(file, get_pseudo_label):

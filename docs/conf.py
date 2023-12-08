@@ -1,13 +1,11 @@
-import sys
 import os
 import re
+import sys
 
-if not "READTHEDOCS" in os.environ:
+
+if "READTHEDOCS" not in os.environ:
     sys.path.insert(0, os.path.abspath(".."))
 sys.path.append(os.path.abspath("./ABL/"))
-
-# from sphinx.locale import _
-from sphinx_rtd_theme import __version__
 
 
 project = "ABL"
@@ -48,8 +46,8 @@ pygments_style = "default"
 
 html_theme = "sphinx_rtd_theme"
 html_theme_options = {"display_version": True}
-html_static_path = ['_static']
-html_css_files = ['custom.css']
+html_static_path = ["_static"]
+html_css_files = ["custom.css"]
 # html_theme_path = ["../.."]
 # html_logo = "demo/static/logo-wordmark-light.svg"
 # html_show_sourcelink = True

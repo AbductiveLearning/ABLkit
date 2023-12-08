@@ -1,11 +1,7 @@
 import numpy as np
-from zoopt import Dimension, Objective, Parameter, Opt
-from ..utils.utils import (
-    confidence_dist,
-    flatten,
-    reform_list,
-    hamming_dist,
-)
+from zoopt import Dimension, Objective, Opt, Parameter
+
+from ..utils.utils import confidence_dist, hamming_dist
 
 
 class Reasoner:
@@ -124,7 +120,7 @@ class Reasoner:
 
     def zoopt_get_solution(self, symbol_num, data_sample, max_revision_num):
         """
-        Get the optimal solution using ZOOpt library. The solution is a list of 
+        Get the optimal solution using ZOOpt library. The solution is a list of
         boolean values, where '1' (True) indicates the indices chosen to be revised.
 
         Parameters
@@ -148,7 +144,7 @@ class Reasoner:
 
     def zoopt_revision_score(self, symbol_num, data_sample, sol):
         """
-        Get the revision score for a solution. A lower score suggests that ZOOpt library 
+        Get the revision score for a solution. A lower score suggests that ZOOpt library
         has a higher preference for this solution.
         """
         revision_idx = np.where(sol.get_x() != 0)[0]
@@ -198,7 +194,7 @@ class Reasoner:
         Returns
         -------
         List[Any]
-            A revised pseudo label sample through abductive reasoning, which is compatible 
+            A revised pseudo label sample through abductive reasoning, which is compatible
             with the knowledge base.
         """
         symbol_num = data_sample.elements_num("pred_pseudo_label")

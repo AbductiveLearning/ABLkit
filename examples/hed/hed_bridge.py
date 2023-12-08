@@ -1,20 +1,18 @@
 import os
 from collections import defaultdict
-from typing import Any, List
-import torch
-from torch.utils.data import DataLoader
 
-from abl.reasoning import ReasonerBase
-from abl.learning import ABLModel, BasicNN
+import torch
+
 from abl.bridge import SimpleBridge
+from abl.dataset import RegressionDataset
 from abl.evaluation import BaseMetric
-from abl.dataset import BridgeDataset, RegressionDataset
+from abl.learning import ABLModel, BasicNN
+from abl.reasoning import ReasonerBase
 from abl.structures import ListData
 from abl.utils import print_log
-
-from examples.hed.utils import gen_mappings, InfiniteSampler
-from examples.models.nn import SymbolNetAutoencoder
 from examples.hed.datasets.get_hed import get_pretrain_data
+from examples.hed.utils import InfiniteSampler, gen_mappings
+from examples.models.nn import SymbolNetAutoencoder
 
 
 class HEDBridge(SimpleBridge):
@@ -95,7 +93,8 @@ class HEDBridge(SimpleBridge):
         character_accuracy = self.model.valid(filtered_data_samples)
         revisible_ratio = len(filtered_data_samples.X) / len(data_samples.X)
         print_log(
-            f"Revisible ratio is {revisible_ratio:.3f}, Character accuracy is {character_accuracy:.3f}",
+            f"Revisible ratio is {revisible_ratio:.3f}, Character \
+                accuracy is {character_accuracy:.3f}",
             logger="current",
         )
 
@@ -111,7 +110,8 @@ class HEDBridge(SimpleBridge):
         false_ratio = self.calc_consistent_ratio(val_X_false, rule)
 
         print_log(
-            f"True consistent ratio is {true_ratio:.3f}, False inconsistent ratio is {1 - false_ratio:.3f}",
+            f"True consistent ratio is {true_ratio:.3f}, False inconsistent ratio \
+                is {1 - false_ratio:.3f}",
             logger="current",
         )
 
@@ -143,7 +143,7 @@ class HEDBridge(SimpleBridge):
 
                 if len(consistent_instance) != 0:
                     rule = self.reasoner.abduce_rules(consistent_instance)
-                    if rule != None:
+                    if rule is not None:
                         rules.append(rule)
                         break
 
@@ -214,7 +214,8 @@ class HEDBridge(SimpleBridge):
                 loss = self.model.train(filtered_sub_data_samples)
 
                 print_log(
-                    f"Equation Len(train) [{equation_len}] Segment Index [{seg_idx + 1}] model loss is {loss:.5f}",
+                    f"Equation Len(train) [{equation_len}] Segment Index [{seg_idx + 1}] \
+                        model loss is {loss:.5f}",
                     logger="current",
                 )
 
@@ -224,11 +225,11 @@ class HEDBridge(SimpleBridge):
                     condition_num = 0
 
                 if condition_num >= 5:
-                    print_log(f"Now checking if we can go to next course", logger="current")
+                    print_log("Now checking if we can go to next course", logger="current")
                     rules = self.get_rules_from_data(
                         data_samples, samples_per_rule=3, samples_num=50
                     )
-                    print_log(f"Learned rules from data: " + str(rules), logger="current")
+                    print_log("Learned rules from data: " + str(rules), logger="current")
 
                     seems_good = self.check_rule_quality(rules, val_data, equation_len)
                     if seems_good:

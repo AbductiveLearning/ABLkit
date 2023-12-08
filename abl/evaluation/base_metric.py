@@ -20,8 +20,10 @@ class BaseMetric(metaclass=ABCMeta):
             will be used instead. Default: None
     """
 
-    def __init__(self,
-                 prefix: Optional[str] = None,) -> None:
+    def __init__(
+        self,
+        prefix: Optional[str] = None,
+    ) -> None:
         self.results: List[Any] = []
         self.prefix = prefix or self.default_prefix
 
@@ -65,19 +67,17 @@ class BaseMetric(metaclass=ABCMeta):
         """
         if len(self.results) == 0:
             print_log(
-                f'{self.__class__.__name__} got empty `self.results`. Please '
-                'ensure that the processed results are properly added into '
-                '`self.results` in `process` method.',
-                logger='current',
-                level=logging.WARNING)
+                f"{self.__class__.__name__} got empty `self.results`. Please "
+                "ensure that the processed results are properly added into "
+                "`self.results` in `process` method.",
+                logger="current",
+                level=logging.WARNING,
+            )
 
         metrics = self.compute_metrics(self.results)
         # Add prefix to metric names
         if self.prefix:
-            metrics = {
-                '/'.join((self.prefix, k)): v
-                for k, v in metrics.items()
-            }
+            metrics = {"/".join((self.prefix, k)): v for k, v in metrics.items()}
 
         # reset the results list
         self.results.clear()

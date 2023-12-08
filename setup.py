@@ -1,4 +1,5 @@
 import os
+
 from setuptools import find_packages, setup
 
 
@@ -27,7 +28,13 @@ here = os.path.abspath(os.path.dirname(__file__))
 try:
     with open(os.path.join(here, "requirements.txt"), encoding="utf-8") as f:
         REQUIRED = f.read().split("\n")
-except:
+except FileNotFoundError:
+    # Handle the case where the file does not exist
+    print("requirements.txt file not found.")
+    REQUIRED = []
+except Exception as e:
+    # Handle other possible exceptions
+    print(f"An error occurred: {e}")
     REQUIRED = []
 
 EXTRAS = {
@@ -64,7 +71,7 @@ if __name__ == "__main__":
         install_requires=REQUIRED,
         extras_require=EXTRAS,
         classifiers=[
-            'Development Status :: 3 - Alpha',
+            "Development Status :: 3 - Alpha",
             "Intended Audience :: Science/Research",
             "Intended Audience :: Developers",
             "Programming Language :: Python",
@@ -74,4 +81,3 @@ if __name__ == "__main__":
             "Programming Language :: Python :: 3.8",
         ],
     )
- 

@@ -1,9 +1,4 @@
-import pickle
-import os
-import os.path as osp
 from typing import Callable, Generic, TypeVar
-
-from .logger import print_log, ABLLogger
 
 K = TypeVar("K")
 T = TypeVar("T")
@@ -73,7 +68,6 @@ class Cache(Generic[K, T]):
             # Empty the oldest link and make it the new root.
             self.root = oldroot[NEXT]
             oldkey = self.root[KEY]
-            oldresult = self.root[RESULT]
             self.root[KEY] = self.root[RESULT] = None
             # Now update the cache dictionary.
             del self.cache_dict[oldkey]

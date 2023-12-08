@@ -1,5 +1,5 @@
 import os.path as osp
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
 
 from numpy import ndarray
 
@@ -32,8 +32,7 @@ class SimpleBridge(BaseBridge):
     def idx_to_pseudo_label(self, data_samples: ListData) -> List[List[Any]]:
         pred_idx = data_samples.pred_idx
         data_samples.pred_pseudo_label = [
-            [self.reasoner.mapping[_idx] for _idx in sub_list] 
-            for sub_list in pred_idx
+            [self.reasoner.mapping[_idx] for _idx in sub_list] for sub_list in pred_idx
         ]
         return data_samples.pred_pseudo_label
 
@@ -81,7 +80,9 @@ class SimpleBridge(BaseBridge):
                 loss = self.model.train(sub_data_samples)
 
                 print_log(
-                    f"loop(train) [{loop + 1}/{loops}] segment(train) [{(seg_idx + 1)}/{(len(data_samples) - 1) // segment_size + 1}] model loss is {loss:.5f}",
+                    f"loop(train) [{loop + 1}/{loops}] segment(train) \
+                        [{(seg_idx + 1)}/{(len(data_samples) - 1) // segment_size + 1}] \
+                            model loss is {loss:.5f}",
                     logger="current",
                 )
 

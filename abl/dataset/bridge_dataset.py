@@ -13,11 +13,15 @@ class BridgeDataset(Dataset):
     gt_pseudo_label : List[List[Any]], optional
         A list of objects representing the ground truth label of each element in ``X``.
     Y : List[Any]
-        A list of objects representing the ground truth of the reasoning result of each instance in ``X``.
+        A list of objects representing the ground truth of the reasoning result of
+        each instance in ``X``.
     """
 
     def __init__(
-        self, X: List[List[Any]], gt_pseudo_label: Optional[List[List[Any]]], Y: List[Any]
+        self,
+        X: List[List[Any]],
+        gt_pseudo_label: Optional[List[List[Any]]],
+        Y: List[Any],
     ):
         if (not isinstance(X, list)) or (not isinstance(Y, list)):
             raise ValueError("X and Y should be of type list.")

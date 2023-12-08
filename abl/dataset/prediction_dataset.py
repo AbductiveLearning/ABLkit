@@ -13,8 +13,10 @@ class PredictionDataset(Dataset):
     X : List[Any]
         The input data.
     transform : Callable[..., Any], optional
-        A function/transform that takes in an object and returns a transformed version. Defaults to None.
+        A function/transform that takes in an object and returns a transformed version.
+        Defaults to None.
     """
+
     def __init__(self, X: List[Any], transform: Callable[..., Any] = None):
         if not isinstance(X, list):
             raise ValueError("X should be of type list.")

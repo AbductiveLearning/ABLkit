@@ -11,8 +11,8 @@
 # ================================================================#
 
 
-import torch
 import numpy as np
+import torch
 from torch import nn
 
 
@@ -84,9 +84,7 @@ class SymbolNetAutoencoder(nn.Module):
         self.base_model = SymbolNet(num_classes, image_size)
         self.softmax = nn.Softmax(dim=1)
         self.fc1 = nn.Sequential(nn.Linear(num_classes, 100), nn.ReLU())
-        self.fc2 = nn.Sequential(
-            nn.Linear(100, image_size[0] * image_size[1]), nn.ReLU()
-        )
+        self.fc2 = nn.Sequential(nn.Linear(100, image_size[0] * image_size[1]), nn.ReLU())
 
     def forward(self, x):
         x = self.base_model(x)

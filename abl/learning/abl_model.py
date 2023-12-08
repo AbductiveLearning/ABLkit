@@ -58,7 +58,8 @@ class ABLModel:
         Parameters
         ----------
         data_samples : ListData
-            A batch of data to train on, which typically contains the data, `X`, and the corresponding labels, `abduced_idx`.
+            A batch of data to train on, which typically contains the data, `X`, and the
+            corresponding labels, `abduced_idx`.
 
         Returns
         -------
@@ -68,7 +69,7 @@ class ABLModel:
         data_X = data_samples.flatten("X")
         data_y = data_samples.flatten("abduced_idx")
         return self.base_model.fit(X=data_X, y=data_y)
-    
+
     def valid(self, data_samples: ListData) -> float:
         """
         Validate the model on the given data.
@@ -76,7 +77,8 @@ class ABLModel:
         Parameters
         ----------
         data_samples : ListData
-            A batch of data to train on, which typically contains the data, `X`, and the corresponding labels, `abduced_idx`.
+            A batch of data to train on, which typically contains the data, `X`,
+            and the corresponding labels, `abduced_idx`.
 
         Returns
         -------
@@ -94,7 +96,7 @@ class ABLModel:
             method = getattr(model, operation)
             method(*args, **kwargs)
         else:
-            if not f"{operation}_path" in kwargs.keys():
+            if f"{operation}_path" not in kwargs.keys():
                 raise ValueError(f"'{operation}_path' should not be None")
             else:
                 try:
@@ -104,9 +106,10 @@ class ABLModel:
                     elif operation == "load":
                         with open(kwargs["load_path"], "rb") as file:
                             self.base_model = pickle.load(file)
-                except:
+                except (OSError, pickle.PickleError):
                     raise NotImplementedError(
-                        f"{type(model).__name__} object doesn't have the {operation} method and the default pickle-based {operation} method failed."
+                        f"{type(model).__name__} object doesn't have the {operation} method \
+                            and the default pickle-based {operation} method failed."
                     )
 
     def save(self, *args, **kwargs) -> None:

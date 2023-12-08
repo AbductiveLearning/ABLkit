@@ -15,7 +15,8 @@ class FilterDuplicateWarning(logging.Filter):
     """
     Filter for eliminating repeated warning messages in logging.
 
-    This filter checks for duplicate warning messages and allows only the first occurrence of each message to be logged, filtering out subsequent duplicates.
+    This filter checks for duplicate warning messages and allows only the first occurrence of
+    each message to be logged, filtering out subsequent duplicates.
 
     Parameters
     ----------
@@ -145,7 +146,8 @@ class ABLLogger(Logger, ManagerMixin):
 
     `ABLLogger` provides a formatted logger that can log messages with different
     log levels. It allows the creation of logger instances in a similar manner to `ManagerMixin`.
-    The logger has features like distributed log storage and colored terminal output for different log levels.
+    The logger has features like distributed log storage and colored terminal output for different
+    log levels.
 
     Parameters
     ----------
@@ -154,7 +156,8 @@ class ABLLogger(Logger, ManagerMixin):
     logger_name : str, optional
         `name` attribute of `logging.Logger` instance. Defaults to 'abl'.
     log_file : str, optional
-        The log filename. If specified, a `FileHandler` will be added to the logger. Defaults to None.
+        The log filename. If specified, a `FileHandler` will be added to the logger.
+        Defaults to None.
     log_level : Union[int, str]
         The log level of the handler. Defaults to 'INFO'.
         If log level is 'DEBUG', distributed logs will be saved during distributed training.
@@ -287,20 +290,25 @@ def print_log(msg, logger: Optional[Union[Logger, str]] = None, level=logging.IN
     """
     Print a log message using the specified logger or a default method.
 
-    This function logs a message with a given logger, if provided, or prints it using the standard `print` function. It supports special logger types such as 'silent' and 'current'.
+    This function logs a message with a given logger, if provided, or prints it using
+    the standard `print` function. It supports special logger types such as 'silent' and 'current'.
 
     Parameters
     ----------
     msg : str
         The message to be logged.
     logger : Optional[Union[Logger, str]], optional
-        The logger to use for logging the message. It can be a `logging.Logger` instance, a string specifying the logger name, 'silent', 'current', or None. If None, the `print` method is used.
+        The logger to use for logging the message. It can be a `logging.Logger` instance, a string
+        specifying the logger name, 'silent', 'current', or None. If None, the `print`
+        method is used.
         - 'silent': No message will be printed.
         - 'current': Use the latest created logger to log the message.
-        - other str: The instance name of the logger. A `ValueError` is raised if the logger has not been created.
+        - other str: The instance name of the logger. A `ValueError` is raised if the logger has not
+        been created.
         - None: The `print()` method is used for logging.
     level : int, optional
-        The logging level. This is only applicable when `logger` is a Logger object, 'current', or a named logger instance. The default is `logging.INFO`.
+        The logging level. This is only applicable when `logger` is a Logger object, 'current',
+        or a named logger instance. The default is `logging.INFO`.
     """
     if logger is None:
         print(msg)
