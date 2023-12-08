@@ -16,10 +16,16 @@ class TestKBBase(object):
         assert result == 3
 
     def test_revise_at_idx(self, kb_add):
-        result = kb_add.revise_at_idx([1, 2], 2, [0])
+        result = kb_add.revise_at_idx([0, 2], 2, [])
         assert result == [[0, 2]]
+        result = kb_add.revise_at_idx([1, 2], 2, [])
+        assert result == []
+        result = kb_add.revise_at_idx([1, 2], 2, [0, 1])
+        assert result == [[0, 2], [1, 1], [2, 0]]
 
     def test_abduce_candidates(self, kb_add):
+        result = kb_add.abduce_candidates([0, 1], 1, max_revision_num=2, require_more_revision=0)
+        assert result == [[0, 1]]
         result = kb_add.abduce_candidates([1, 2], 1, max_revision_num=2, require_more_revision=0)
         assert result == [[1, 0]]
 
