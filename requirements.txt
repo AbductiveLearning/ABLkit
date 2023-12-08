@@ -4,3 +4,4 @@ torch
 torchvision
 torchaudio
 zoopt
+termcolor
