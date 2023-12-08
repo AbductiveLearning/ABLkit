@@ -48,6 +48,8 @@ pygments_style = "default"
 
 html_theme = "sphinx_rtd_theme"
 html_theme_options = {"display_version": True}
+html_static_path = ['_static']
+html_css_files = ['custom.css']
 # html_theme_path = ["../.."]
 # html_logo = "demo/static/logo-wordmark-light.svg"
 # html_show_sourcelink = True

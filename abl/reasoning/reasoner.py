@@ -20,9 +20,9 @@ class Reasoner:
         The distance function to be used when determining the cost list between each
         candidate and the given prediction. Valid options include: "confidence" (default) |
         "hamming". For "confidence", it calculates the distance between the prediction
-        and candidate based on confidence derived from the predicted probability in the
-        data sample.For "hamming", it directly calculates the Hamming distance between
-        the predicted pseudo label in the data sample and candidate.
+        and the candidate based on confidence derived from the predicted probabilities in the
+        data sample. For "hamming", it directly calculates the Hamming distance between
+        the predicted pseudo label sample and the candidate.
     mapping : dict, optional
         A mapping from index in the base model to label. If not provided, a default
         order-based mapping is created.
@@ -198,8 +198,8 @@ class Reasoner:
         Returns
         -------
         List[Any]
-            A revised pseudo label through abductive reasoning, which is compatible with the
-            knowledge base.
+            A revised pseudo label sample through abductive reasoning, which is compatible 
+            with the knowledge base.
         """
         symbol_num = data_sample.elements_num("pred_pseudo_label")
         max_revision_num = self._get_max_revision_num(self.max_revision, symbol_num)

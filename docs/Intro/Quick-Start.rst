@@ -9,8 +9,7 @@
 Quick Start
 ===========
 
-
-This section runs through the API for the neural-symbolic task, MNITST Add. Refer to the links in each section to dive deeper.
+We use the MNIST Addition task as a quick start example. In this task, the inputs are pairs of MNIST handwritten images, and the outputs are their sums. Refer to the links in each section to dive deeper.
 
 Working with Data
 -----------------
@@ -56,6 +55,7 @@ ABL-Package assumes ``X`` to be of type ``List[List[Any]]``, ``gt_pseudo_label``
 Out:
 
 .. code-block:: none
+   :class: code-out
 
    Length of X List[List[Any]]: 30000
    Length of gt_pseudo_label List[List[Any]]: 30000
@@ -73,7 +73,7 @@ ABL-Package offers several `dataset classes <../API/abl.dataset.html>`_ for diff
 Read more about `preparing datasets <Datasets.html>`_.
 
 Building the Learning Part
-----------------------------------
+--------------------------
 
 To build the machine learning part, we need to wrap our machine learning model into the ``ABLModel`` class. The machine learning model can either be a scikit-learn model or a PyTorch neural network. We use a simple LeNet5 in the MNIST Addition example.
 
@@ -103,9 +103,10 @@ Aside from the network, we need to define a criterion, an optimizer, and a devic
    pred_prob = base_model.predict_proba(X=[torch.randn(1, 28, 28).to(device) for _ in range(32)])
    print(f"Shape of pred_prob : {pred_prob.shape}")
 
-Out:
+Out:  
 
 .. code-block:: none
+   :class: code-out
 
    Shape of pred_idx : (32,)
    Shape of pred_prob : (32, 10)
@@ -123,9 +124,9 @@ Read more about `building the learning part <Learning.html>`_.
 Building the Reasoning Part
 ---------------------------
 
-To build the reasoning part, we first build a knowledge base by
-creating a subclass of ``KBBase``, which defines how to map pseudo 
-labels to reasoning results. In the subclass, we initialize the 
+To build the reasoning part, we first define a knowledge base by
+creating a subclass of ``KBBase``, which specifies how to map a pseudo 
+label sample to its reasoning result. In the subclass, we initialize the 
 ``pseudo_label_list`` parameter and override the ``logic_forward`` 
 function specifying how to perform (deductive) reasoning.
 
@@ -142,7 +143,7 @@ function specifying how to perform (deductive) reasoning.
 
    kb = AddKB(pseudo_label_list=list(range(10)))
 
-Then, we create a reasoner by defining an instance of class
+Then, we create a reasoner by instantiating the class
 ``Reasoner`` and passing the knowledge base as an parameter.
 The reasoner can be used to minimize inconsistencies between the 
 knowledge base and the prediction from the learning part. 
@@ -160,8 +161,6 @@ Building Evaluation Metrics
 ---------------------------
 
 ABL-Package provides two basic metrics, namely ``SymbolMetric`` and ``SemanticsMetric``, which are used to evaluate the accuracy of the machine learning model's predictions and the accuracy of the ``logic_forward`` results, respectively.
-
-In the case of MNIST Addition example, the metric definition looks like
 
 .. code:: python
 
@@ -192,7 +191,8 @@ Finally, we proceed with training and testing.
 Training log would be similar to this:
 
 .. code-block:: none
-
+   :class: code-out
+   
    2023/12/02 21:26:57 - abl - INFO - Abductive Learning on the MNIST Addition example.
    2023/12/02 21:32:20 - abl - INFO - Abductive Learning on the MNIST Addition example.
    2023/12/02 21:32:51 - abl - INFO - loop(train) [1/5] segment(train) [1/3] model loss is 1.85589

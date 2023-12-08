@@ -24,8 +24,8 @@ AI: data, models, and knowledge.
 **Data** module manages the storage, operation, and evaluation of data.
 It first features class ``ListData`` (inherited from base class
 ``BaseDataElement``), which defines the data structures used in
-Abductive Learning, and comprises common data operations like addition,
-deletion, retrieval, and slicing. Additionally, a series of Evaluation
+Abductive Learning, and comprises common data operations like insertion,
+deletion, retrieval, slicing, etc. Additionally, a series of Evaluation
 Metrics, including class ``SymbolMetric`` and ``SemanticsMetric`` (both
 specialized metrics derived from base class ``BaseMetric``), outline
 methods for evaluating model quality from a data perspective.
@@ -37,7 +37,7 @@ model, which may incorporate models such as those based on Scikit-learn
 or a neural network framework using constructed by class ``BasicNN``.
 
 **Reasoning** module consists of the reasoning part of the Abductive
-learning. The class ``KBBase`` allows users to instantiate domain
+learning. The class ``KBBase`` allows users to define domain
 knowledge base. For diverse types of knowledge, we also offer
 implementations like ``GroundKB`` and ``PrologKB``, e.g., the latter
 enables knowledge base to be imported in the form of a Prolog files.
@@ -46,7 +46,7 @@ responsible for minimizing the inconsistency between the knowledge base
 and learning models.
 
 Finally, the integration of these three modules occurs through
-**Bridge** module, which featurs class ``SimpleBridge`` (inherited from base
+**Bridge** module, which features class ``SimpleBridge`` (inherited from base
 class ``BaseBridge``). Bridge module synthesize data, learning, and
 reasoning, and facilitate the training and testing of the entire
 Abductive Learning framework.
@@ -55,13 +55,14 @@ Use ABL-Package Step by Step
 ----------------------------
 
 In a typical Abductive Learning process, as illustrated below, 
-data inputs are first mapped to pseudo labels through a machine learning model. 
-These pseudo labels then pass through a knowledge base :math:`\mathcal{KB}`
+data inputs are first predicted by a machine learning model, and the outcomes are a pseudo label 
+sample (which consists of multiple pseudo labels). 
+These labels then pass through a knowledge base :math:`\mathcal{KB}`
 to obtain the reasoning result by deductive reasoning. During training, 
 alongside the aforementioned forward flow (i.e., prediction --> deduction reasoning), 
 there also exists a reverse flow, which starts from the reasoning result and 
-involves abductive reasoning to generate pseudo labels. 
-Subsequently, these labels are processed to minimize inconsistencies with machine learning, 
+involves abductive reasoning to generate possible pseudo label samples. 
+Subsequently, these samples are processed to minimize inconsistencies with machine learning, 
 which in turn revise the outcomes of the machine learning model, and then 
 fed back into the machine learning model for further training. 
 To implement this process, the following five steps are necessary:
@@ -74,15 +75,15 @@ To implement this process, the following five steps are necessary:
 
 2. Build the learning part
 
-    Build a model that defines how to map input to pseudo labels. 
+    Build a model that can predict inputs to pseudo labels. 
     Then, use ``ABLModel`` to encapsulate the model.
 
 3. Build the reasoning part
 
-    Build a knowledge base by building a subclass of ``KBBase``, defining how to 
-    map pseudo labels to reasoning results.
-    Also, instantiate a ``Reasoner`` for minimizing of inconsistencies 
-    between the knowledge base and pseudo labels.
+    Define a knowledge base by building a subclass of ``KBBase``, specifying how to 
+    map pseudo label samples to reasoning results.
+    Also, create a ``Reasoner`` for minimizing of inconsistencies 
+    between the knowledge base and the learning part.
 
 4. Define Evaluation Metrics
 
@@ -90,5 +91,5 @@ To implement this process, the following five steps are necessary:
 
 5. Bridge machine learning and reasoning
 
-    Use ``SimpleBridge`` to bridge the machine learning and reasoning part
+    Use ``SimpleBridge`` to bridge the learning and reasoning part
     for integrated training and testing. 

@@ -24,7 +24,7 @@ class KBBase(ABC):
         list so that each aligns with its corresponding index in the base model: the first with 
         the 0th index, the second with the 1st, and so forth.
     max_err : float, optional
-        The upper tolerance limit when comparing the similarity between a candidate's reasoning
+        The upper tolerance limit when comparing the similarity between a pseudo label sample's reasoning
         result and the ground truth. This is only applicable when the reasoning result is of a numerical type.
         This is particularly relevant for regression problems where exact matches might not be
         feasible. Defaults to 1e-10.
@@ -67,7 +67,7 @@ class KBBase(ABC):
     @abstractmethod
     def logic_forward(self, pseudo_label):
         """
-        How to perform (deductive) logical reasoning, i.e. matching each pseudo label to
+        How to perform (deductive) logical reasoning, i.e. matching each pseudo label sample to
         their reasoning result. Users are required to provide this.
 
         Parameters
@@ -95,14 +95,14 @@ class KBBase(ABC):
         Returns
         -------
         List[List[Any]]
-            A list of candidates, i.e. revised pseudo labels that are compatible with the
+            A list of candidates, i.e. revised pseudo label samples that are compatible with the
             knowledge base.
         """
         return self._abduce_by_search(pseudo_label, y, max_revision_num, require_more_revision)
 
     def _check_equal(self, logic_result, y):
         """
-        Check whether the reasoning result of a candidate is equal to the ground truth
+        Check whether the reasoning result of a pseduo label sample is equal to the ground truth
         (or, within the maximum error allowed for numerical results).
         
         Returns
@@ -120,7 +120,7 @@ class KBBase(ABC):
 
     def revise_at_idx(self, pseudo_label, y, revision_idx):
         """
-        Revise the pseudo label at specified index positions.
+        Revise the pseudo label sample at specified index positions.
 
         Parameters
         ----------
@@ -134,7 +134,7 @@ class KBBase(ABC):
         Returns
         -------
         List[List[Any]]
-            A list of candidates, i.e. revised pseudo labels that are compatible with the
+            A list of candidates, i.e. revised pseudo label samples that are compatible with the
             knowledge base.
         """
         candidates = []
@@ -149,7 +149,7 @@ class KBBase(ABC):
 
     def _revision(self, revision_num, pseudo_label, y):
         """
-        For a specified number of pseudo label to revise, iterate through all possible
+        For a specified number of labels in a pseudo label sample to revise, iterate through all possible
         indices to find any candidates that are compatible with the knowledge base.
         """
         new_candidates = []
@@ -164,7 +164,7 @@ class KBBase(ABC):
     def _abduce_by_search(self, pseudo_label, y, max_revision_num, require_more_revision):
         """
         Perform abductive reasoning by exhastive search. Specifically, begin with 0 and
-        continuously increase the number of pseudo labels to revise, until candidates
+        continuously increase the number of labels in a pseudo label sample to revise, until candidates
         that are compatible with the knowledge base are found.
 
         Parameters
@@ -177,13 +177,13 @@ class KBBase(ABC):
             The upper limit on the number of revisions.
         require_more_revision : int
             If larger than 0, then after having found any candidates compatible with the
-            knowledge base, continue to increase the number pseudo labels to revise to
+            knowledge base, continue to increase the number of labels in a pseudo label sample to revise to
             get more possible compatible candidates.
 
         Returns
         -------
         List[List[Any]]
-            A list of candidates, i.e. revised pseudo label that are compatible with the
+            A list of candidates, i.e. revised pseudo label samples that are compatible with the
             knowledge base.
         """
         candidates = []
@@ -226,7 +226,7 @@ class GroundKB(KBBase):
     pseudo_label_list : list
         Refer to class `KBBase`.
     GKB_len_list : list
-        List of possible lengths of pseudo label.
+        List of possible lengths for a pseudo label sample.
     max_err : float, optional
         Refer to class `KBBase`.
 
@@ -301,7 +301,7 @@ class GroundKB(KBBase):
         Returns
         -------
         List[List[Any]]
-            A list of candidates, i.e. revised pseudo labels that are compatible with the
+            A list of candidates, i.e. revised pseudo label samples that are compatible with the
             knowledge base.
         """
         if self.GKB == {} or len(pseudo_label) not in self.GKB_len_list:
@@ -468,7 +468,7 @@ class PrologKB(KBBase):
         Returns
         -------
         List[List[Any]]
-            A list of candidates, i.e. revised pseudo labels that are compatible with the
+            A list of candidates, i.e. revised pseudo label samples that are compatible with the
             knowledge base.
         """
         candidates = []
