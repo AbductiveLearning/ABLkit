@@ -2,6 +2,10 @@ import pytest
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from abl.learning import BasicNN
 from abl.reasoning import GroundKB, KBBase, PrologKB, Reasoner
