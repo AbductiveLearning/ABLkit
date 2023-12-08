@@ -1,4 +1,4 @@
-[![flake8 Lint](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/lint.yml/badge.svg?branch=Dev)](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/lint.yml)
+[![flake8 Lint](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/lint.yml/badge.svg?branch=Dev)](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/lint.yaml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![ABL-Package-CI](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/build-and-test.yaml/badge.svg?branch=Dev)](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/build-and-test.yaml)
 
