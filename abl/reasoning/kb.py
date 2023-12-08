@@ -110,7 +110,7 @@ class KBBase(ABC):
         bool
             The result of the check.
         """
-        if logic_result == None:
+        if logic_result is None:
             return False
 
         if isinstance(logic_result, (int, float)) and isinstance(y, (int, float)):
