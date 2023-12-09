@@ -1,6 +1,7 @@
-from typing import Optional, Sequence
+from typing import Optional
 
 from ..reasoning import KBBase
+from ..structures import ListData
 from .base_metric import BaseMetric
 
 
@@ -9,7 +10,7 @@ class SemanticsMetric(BaseMetric):
         super().__init__(prefix)
         self.kb = kb
 
-    def process(self, data_samples: Sequence[dict]) -> None:
+    def process(self, data_samples: ListData) -> None:
         pred_pseudo_label_list = data_samples.pred_pseudo_label
         y_list = data_samples.Y
         for pred_pseudo_label, y in zip(pred_pseudo_label_list, y_list):
@@ -18,7 +19,8 @@ class SemanticsMetric(BaseMetric):
             else:
                 self.results.append(0)
 
-    def compute_metrics(self, results: list) -> dict:
+    def compute_metrics(self) -> dict:
+        results = self.results
         metrics = dict()
         metrics["semantics_accuracy"] = sum(results) / len(results)
         return metrics

@@ -1,7 +1,8 @@
 import logging
 from abc import ABCMeta, abstractmethod
-from typing import Any, List, Optional, Sequence
+from typing import Any, List, Optional
 
+from ..structures import ListData
 from ..utils import print_log
 
 
@@ -28,22 +29,19 @@ class BaseMetric(metaclass=ABCMeta):
         self.prefix = prefix or self.default_prefix
 
     @abstractmethod
-    def process(self, data_samples: Sequence[dict]) -> None:
+    def process(self, data_samples: ListData) -> None:
         """Process one batch of data samples and predictions. The processed
         results should be stored in ``self.results``, which will be used to
         compute the metrics when all batches have been processed.
 
         Args:
-            data_samples (Sequence[dict]): A batch of outputs from
+            data_samples (ListData): A batch of outputs from
                 the model.
         """
 
     @abstractmethod
-    def compute_metrics(self, results: list) -> dict:
+    def compute_metrics(self) -> dict:
         """Compute the metrics from processed results.
-
-        Args:
-            results (list): The processed results of each batch.
 
         Returns:
             dict: The computed metrics. The keys are the names of the metrics,
@@ -53,13 +51,6 @@ class BaseMetric(metaclass=ABCMeta):
     def evaluate(self) -> dict:
         """Evaluate the model performance of the whole dataset after processing
         all batches.
-
-        Args:
-            size (int): Length of the entire validation dataset. When batch
-                size > 1, the dataloader may pad some data samples to make
-                sure all ranks have the same length of dataset slice. The
-                ``collect_results`` function will drop the padded data based on
-                this size.
 
         Returns:
             dict: Evaluation metrics dict on the val dataset. The keys are the
@@ -74,7 +65,7 @@ class BaseMetric(metaclass=ABCMeta):
                 level=logging.WARNING,
             )
 
-        metrics = self.compute_metrics(self.results)
+        metrics = self.compute_metrics()
         # Add prefix to metric names
         if self.prefix:
             metrics = {"/".join((self.prefix, k)): v for k, v in metrics.items()}
