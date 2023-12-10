@@ -58,12 +58,12 @@ class Reasoner:
             self.mapping = {index: label for index, label in enumerate(self.kb.pseudo_label_list)}
         else:
             if not isinstance(mapping, dict):
-                raise TypeError("mapping should be dict")
+                raise TypeError(f"mapping should be dict, got {type(mapping)}")
             for key, value in mapping.items():
                 if not isinstance(key, int):
-                    raise ValueError("All keys in the mapping must be integers")
+                    raise ValueError(f"All keys in the mapping must be integers, got {key}")
                 if value not in self.kb.pseudo_label_list:
-                    raise ValueError("All values in the mapping must be in the pseudo_label_list")
+                    raise ValueError(f"All values in the mapping must be in the pseudo_label_list, got {value}")
             self.mapping = mapping
         self.remapping = dict(zip(self.mapping.values(), self.mapping.keys()))
 
@@ -149,7 +149,7 @@ class Reasoner:
         """
         revision_idx = np.where(sol.get_x() != 0)[0]
         candidates = self.kb.revise_at_idx(
-            data_sample.pred_pseudo_label, data_sample.Y, revision_idx
+            data_sample.pred_pseudo_label, data_sample.Y, data_sample.X, revision_idx
         )
         if len(candidates) > 0:
             return np.min(self._get_cost_list(data_sample, candidates))
@@ -169,17 +169,17 @@ class Reasoner:
         Get the maximum revision number according to input `max_revision`.
         """
         if not isinstance(max_revision, (int, float)):
-            raise TypeError("Parameter must be of type int or float.")
+            raise TypeError(f"Parameter must be of type int or float, got {type(max_revision)}")
 
         if max_revision == -1:
             return symbol_num
         elif isinstance(max_revision, float):
             if not (0 <= max_revision <= 1):
-                raise ValueError("If max_revision is a float, it must be between 0 and 1.")
+                raise ValueError(f"If max_revision is a float, it must be between 0 and 1, but got {max_revision}")
             return round(symbol_num * max_revision)
         else:
             if max_revision < 0:
-                raise ValueError("If max_revision is an int, it must be non-negative.")
+                raise ValueError(f"If max_revision is an int, it must be non-negative, but got {max_revision}")
             return max_revision
 
     def abduce(self, data_sample):
@@ -204,14 +204,15 @@ class Reasoner:
             solution = self.zoopt_get_solution(symbol_num, data_sample, max_revision_num)
             revision_idx = np.where(solution != 0)[0]
             candidates = self.kb.revise_at_idx(
-                data_sample.pred_pseudo_label, data_sample.Y, revision_idx
+                data_sample.pred_pseudo_label, data_sample.Y, data_sample.X, revision_idx
             )
         else:
             candidates = self.kb.abduce_candidates(
-                data_sample.pred_pseudo_label,
-                data_sample.Y,
-                max_revision_num,
-                self.require_more_revision,
+                pseudo_label = data_sample.pred_pseudo_label,
+                y = data_sample.Y,
+                x = data_sample.X,
+                max_revision_num = max_revision_num,
+                require_more_revision = self.require_more_revision,
             )
 
         candidate = self._get_one_candidate(data_sample, candidates)

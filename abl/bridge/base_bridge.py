@@ -38,6 +38,15 @@ class BaseBridge(metaclass=ABCMeta):
     def pseudo_label_to_idx(self, data_samples: ListData) -> List[List[Any]]:
         """Placeholder for map symbol space to label space."""
 
+    def filter_pseudo_label(self, data_samples: ListData) -> List[List[Any]]:
+        '''Default filter function for pseudo label.'''
+        non_empty_idx = [
+            i for i in range(len(data_samples.abduced_pseudo_label))
+            if data_samples.abduced_pseudo_label[i]
+        ]
+        data_samples.update(data_samples[non_empty_idx])
+        return data_samples
+
     @abstractmethod
     def train(self, train_data: Union[ListData, DataSet]):
         """Placeholder for train loop of ABductive Learning."""

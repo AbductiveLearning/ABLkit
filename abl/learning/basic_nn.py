@@ -80,7 +80,7 @@ class BasicNN:
         if self.train_transform is not None and self.test_transform is None:
             print_log(
                 "Transform used in the training phase will be used in prediction.",
-                "current",
+                logger="current",
                 level=logging.WARNING,
             )
             self.test_transform = self.train_transform
@@ -99,7 +99,6 @@ class BasicNN:
         float
             The loss value of the trained model.
         """
-        loss_value = 1e9
         for epoch in range(self.num_epochs):
             loss_value = self.train_epoch(data_loader)
             if self.save_interval is not None and (epoch + 1) % self.save_interval == 0:
@@ -108,7 +107,8 @@ class BasicNN:
                 self.save(epoch + 1)
             if self.stop_loss is not None and loss_value < self.stop_loss:
                 break
-        return loss_value
+        print_log(f"model loss: {loss_value:.5f}", logger="current")
+        return self
 
     def fit(
         self, data_loader: DataLoader = None, X: List[Any] = None, y: List[int] = None

@@ -4,10 +4,13 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 from itertools import combinations, product
 from multiprocessing import Pool
+import inspect
+import logging
 
 import numpy as np
 import pyswip
 
+from ..utils.logger import print_log
 from ..utils.cache import abl_cache
 from ..utils.utils import flatten, hamming_dist, reform_list, to_hashable
 
@@ -55,16 +58,28 @@ class KBBase(ABC):
         cache_size=4096,
     ):
         if not isinstance(pseudo_label_list, list):
-            raise TypeError("pseudo_label_list should be list")
+            raise TypeError(f"pseudo_label_list should be list, got {type(pseudo_label_list)}")
         self.pseudo_label_list = pseudo_label_list
         self.max_err = max_err
 
         self.use_cache = use_cache
         self.key_func = key_func
         self.cache_size = cache_size
+        
+        argspec = inspect.getfullargspec(self.logic_forward)
+        self._num_args = len(argspec.args) - 1
+        if self._num_args==2 and self.use_cache: # If the logic_forward function has 2 arguments, then disable cache
+            self.use_cache = False
+            print_log(
+                "The logic_forward function has 2 arguments, so the cache is disabled. ",
+                logger="current",
+                level=logging.WARNING,
+            )
+            # TODO 添加半监督
+            # TODO 添加consistency measure+max_err容忍错误
 
     @abstractmethod
-    def logic_forward(self, pseudo_label):
+    def logic_forward(self, pseudo_label, x = None):
         """
         How to perform (deductive) logical reasoning, i.e. matching each pseudo label sample to
         their reasoning result. Users are required to provide this.
@@ -75,7 +90,7 @@ class KBBase(ABC):
             Pseudo label sample.
         """
 
-    def abduce_candidates(self, pseudo_label, y, max_revision_num, require_more_revision):
+    def abduce_candidates(self, pseudo_label, y, x, max_revision_num, require_more_revision):
         """
         Perform abductive reasoning to get a candidate compatible with the knowledge base.
 
@@ -85,6 +100,8 @@ class KBBase(ABC):
             Pseudo label sample (to be revised by abductive reasoning).
         y : any
             Ground truth of the reasoning result for the sample.
+        x : List[Any]
+            The corresponding input sample.
         max_revision_num : int
             The upper limit on the number of revised labels for each sample.
         require_more_revision : int
@@ -96,7 +113,7 @@ class KBBase(ABC):
             A list of candidates, i.e. revised pseudo label samples that are compatible with the
             knowledge base.
         """
-        return self._abduce_by_search(pseudo_label, y, max_revision_num, require_more_revision)
+        return self._abduce_by_search(pseudo_label, y, x, max_revision_num, require_more_revision)
 
     def _check_equal(self, logic_result, y):
         """
@@ -116,7 +133,7 @@ class KBBase(ABC):
         else:
             return logic_result == y
 
-    def revise_at_idx(self, pseudo_label, y, revision_idx):
+    def revise_at_idx(self, pseudo_label, y, x, revision_idx):
         """
         Revise the pseudo label sample at specified index positions.
 
@@ -126,6 +143,8 @@ class KBBase(ABC):
             Pseudo label sample (to be revised).
         y : Any
             Ground truth of the reasoning result for the sample.
+        x : List[Any]
+            The corresponding input sample.
         revision_idx : array-like
             Indices of where revisions should be made to the pseudo label sample.
 
@@ -141,11 +160,11 @@ class KBBase(ABC):
             candidate = pseudo_label.copy()
             for i, idx in enumerate(revision_idx):
                 candidate[idx] = c[i]
-            if self._check_equal(self.logic_forward(candidate), y):
+            if self._check_equal(self.logic_forward(candidate, *(x,) if self._num_args == 2 else ()), y):
                 candidates.append(candidate)
         return candidates
 
-    def _revision(self, revision_num, pseudo_label, y):
+    def _revision(self, revision_num, pseudo_label, y, x):
         """
         For a specified number of labels in a pseudo label sample to revise, iterate through
         all possible indices to find any candidates that are compatible with the knowledge base.
@@ -154,12 +173,12 @@ class KBBase(ABC):
         revision_idx_list = combinations(range(len(pseudo_label)), revision_num)
 
         for revision_idx in revision_idx_list:
-            candidates = self.revise_at_idx(pseudo_label, y, revision_idx)
+            candidates = self.revise_at_idx(pseudo_label, y, x, revision_idx)
             new_candidates.extend(candidates)
         return new_candidates
 
     @abl_cache()
-    def _abduce_by_search(self, pseudo_label, y, max_revision_num, require_more_revision):
+    def _abduce_by_search(self, pseudo_label, y, x, max_revision_num, require_more_revision):
         """
         Perform abductive reasoning by exhastive search. Specifically, begin with 0 and
         continuously increase the number of labels in a pseudo label sample to revise, until
@@ -171,6 +190,8 @@ class KBBase(ABC):
             Pseudo label sample (to be revised).
         y : Any
             Ground truth of the reasoning result for the sample.
+        x : List[Any]
+            The corresponding input sample.
         max_revision_num : int
             The upper limit on the number of revisions.
         require_more_revision : int
@@ -186,10 +207,10 @@ class KBBase(ABC):
         """
         candidates = []
         for revision_num in range(len(pseudo_label) + 1):
-            if revision_num == 0 and self._check_equal(self.logic_forward(pseudo_label), y):
+            if revision_num == 0 and self._check_equal(self.logic_forward(pseudo_label, *(x,) if self._num_args == 2 else ()), y):
                 candidates.append(pseudo_label)
             elif revision_num > 0:
-                candidates.extend(self._revision(revision_num, pseudo_label, y))
+                candidates.extend(self._revision(revision_num, pseudo_label, y, x))
             if len(candidates) > 0:
                 min_revision_num = revision_num
                 break
@@ -201,7 +222,7 @@ class KBBase(ABC):
         ):
             if revision_num > max_revision_num:
                 return candidates
-            candidates.extend(self._revision(revision_num, pseudo_label, y))
+            candidates.extend(self._revision(revision_num, pseudo_label, y, x))
         return candidates
 
     def __repr__(self):
@@ -240,7 +261,9 @@ class GroundKB(KBBase):
     def __init__(self, pseudo_label_list, GKB_len_list, max_err=1e-10):
         super().__init__(pseudo_label_list, max_err)
         if not isinstance(GKB_len_list, list):
-            raise TypeError("GKB_len_list should be list")
+            raise TypeError("GKB_len_list should be list, but got {type(GKB_len_list)}")
+        if self._num_args==2:
+            raise NotImplementedError(f"GroundKB only supports 1-argument logic_forward, but got {self._num_args}-argument logic_forward")
         self.GKB_len_list = GKB_len_list
         self.GKB = {}
         X, Y = self._get_GKB()
@@ -279,7 +302,7 @@ class GroundKB(KBBase):
             X, Y = zip(*sorted(zip(X, Y), key=lambda pair: pair[1]))
         return X, Y
 
-    def abduce_candidates(self, pseudo_label, y, max_revision_num, require_more_revision):
+    def abduce_candidates(self, pseudo_label, y, x, max_revision_num, require_more_revision):
         """
         Perform abductive reasoning by directly retrieving compatible candidates from
         the prebuilt GKB. In this way, the time-consuming exhaustive search can be
@@ -291,6 +314,8 @@ class GroundKB(KBBase):
             Pseudo label sample (to be revised by abductive reasoning).
         y : any
             Ground truth of the reasoning result for the sample.
+        x : List[Any]
+            The corresponding input sample (unused in GroundKB).
         max_revision_num : int
             The upper limit on the number of revised labels for each sample.
         require_more_revision : int, optional
@@ -451,7 +476,7 @@ class PrologKB(KBBase):
         query_string += ",%s)." % y if not key_is_none_flag else ")."
         return query_string
 
-    def revise_at_idx(self, pseudo_label, y, revision_idx):
+    def revise_at_idx(self, pseudo_label, y, x, revision_idx):
         """
         Revise the pseudo label sample at specified index positions by querying Prolog.
 
@@ -461,6 +486,8 @@ class PrologKB(KBBase):
             Pseudo label sample (to be revised).
         y : Any
             Ground truth of the reasoning result for the sample.
+        x : List[Any]
+            The corresponding input sample.
         revision_idx : array-like
             Indices of where revisions should be made to the pseudo label sample.
 

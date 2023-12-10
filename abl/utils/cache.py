@@ -42,7 +42,8 @@ class Cache(Generic[K, T]):
 
     def get_from_dict(self, obj, *args) -> T:
         """Implements dict based cache."""
-        pred_pseudo_label, y, *res_args = args
+        # x is not used in cache key
+        pred_pseudo_label, y, x, *res_args = args 
         cache_key = (self.key_func(pred_pseudo_label), self.key_func(y), *res_args)
         link = self.cache_dict.get(cache_key)
         if link is not None:
