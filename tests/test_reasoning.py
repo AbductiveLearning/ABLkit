@@ -14,19 +14,21 @@ class TestKBBase(object):
     def test_logic_forward(self, kb_add):
         result = kb_add.logic_forward([1, 2])
         assert result == 3
+        with pytest.raises(TypeError):
+            kb_add.logic_forward([1, 2], [0.1, -0.2, 0.2, -0.3])
 
     def test_revise_at_idx(self, kb_add):
-        result = kb_add.revise_at_idx([0, 2], 2, [])
+        result = kb_add.revise_at_idx([0, 2], 2, [0.1, -0.2, 0.2, -0.3], [])
         assert result == [[0, 2]]
-        result = kb_add.revise_at_idx([1, 2], 2, [])
+        result = kb_add.revise_at_idx([1, 2], 2, [0.1, -0.2, 0.2, -0.3], [])
         assert result == []
-        result = kb_add.revise_at_idx([1, 2], 2, [0, 1])
+        result = kb_add.revise_at_idx([1, 2], 2, [0.1, -0.2, 0.2, -0.3], [0, 1])
         assert result == [[0, 2], [1, 1], [2, 0]]
 
     def test_abduce_candidates(self, kb_add):
-        result = kb_add.abduce_candidates([0, 1], 1, max_revision_num=2, require_more_revision=0)
+        result = kb_add.abduce_candidates([0, 1], 1, [0.1, -0.2, 0.2, -0.3], max_revision_num=2, require_more_revision=0)
         assert result == [[0, 1]]
-        result = kb_add.abduce_candidates([1, 2], 1, max_revision_num=2, require_more_revision=0)
+        result = kb_add.abduce_candidates([1, 2], 1, [0.1, -0.2, 0.2, -0.3], max_revision_num=2, require_more_revision=0)
         assert result == [[1, 0]]
 
 
@@ -42,7 +44,7 @@ class TestGroundKB(object):
 
     def test_abduce_candidates_ground(self, kb_add_ground):
         result = kb_add_ground.abduce_candidates(
-            [1, 2], 1, max_revision_num=2, require_more_revision=0
+            [1, 2], 1, [0.1, -0.2, 0.2, -0.3], max_revision_num=2, require_more_revision=0
         )
         assert result == [(1, 0)]
 

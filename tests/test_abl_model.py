@@ -52,8 +52,8 @@ class TestABLModel(object):
         """Test the train method of the ABLModel class."""
         model = ABLModel(base_model_instance)
         list_data_instance.abduced_idx = [[1, 2], [3, 4], [5, 6]]
-        loss = model.train(list_data_instance)
-        assert isinstance(loss, float), "Training should return a float value indicating the loss."
+        ins = model.train(list_data_instance)
+        assert ins == model.base_model, "Training should return the base model instance."
 
     def test_ablmodel_save_load(self, base_model_instance, tmp_path):
         """Test the save method of the ABLModel class."""

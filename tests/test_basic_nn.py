@@ -5,7 +5,6 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 
-
 class TestBasicNN(object):
     @pytest.fixture
     def sample_data(self):
@@ -40,12 +39,12 @@ class TestBasicNN(object):
 
         # Test fit with direct data
         X, y = sample_data
-        loss = basic_nn_instance.fit(X=list(X), y=list(y))
-        assert isinstance(loss, float)
+        ins = basic_nn_instance.fit(X=list(X), y=list(y))
+        assert ins == basic_nn_instance
 
         # Test fit with DataLoader
-        loss = basic_nn_instance.fit(data_loader=sample_data_loader_with_label)
-        assert isinstance(loss, float)
+        ins = basic_nn_instance.fit(data_loader=sample_data_loader_with_label)
+        assert ins == basic_nn_instance
 
         # Test invalid fit method input
         with pytest.raises(ValueError):
