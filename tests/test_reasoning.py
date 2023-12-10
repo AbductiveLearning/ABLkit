@@ -85,7 +85,7 @@ class TestPrologKB(object):
         assert kb_hed.logic_forward(inconsist_exs) is False
 
     def test_revise_at_idx(self, kb_add_prolog):
-        result = kb_add_prolog.revise_at_idx([1, 2], 2, [0])
+        result = kb_add_prolog.revise_at_idx([1, 2], 2, [0.1, -0.2, 0.2, -0.3], [0])
         assert result == [[0, 2]]
 
 
