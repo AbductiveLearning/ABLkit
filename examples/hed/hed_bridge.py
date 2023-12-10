@@ -7,7 +7,7 @@ from abl.bridge import SimpleBridge
 from abl.dataset import RegressionDataset
 from abl.evaluation import BaseMetric
 from abl.learning import ABLModel, BasicNN
-from abl.reasoning import ReasonerBase
+from abl.reasoning import Reasoner
 from abl.structures import ListData
 from abl.utils import print_log
 from examples.hed.datasets.get_hed import get_pretrain_data
@@ -19,7 +19,7 @@ class HEDBridge(SimpleBridge):
     def __init__(
         self,
         model: ABLModel,
-        reasoner: ReasonerBase,
+        reasoner: Reasoner,
         metric_list: BaseMetric,
     ) -> None:
         super().__init__(model, reasoner, metric_list)
@@ -92,11 +92,11 @@ class HEDBridge(SimpleBridge):
     def check_training_impact(self, filtered_data_samples, data_samples):
         character_accuracy = self.model.valid(filtered_data_samples)
         revisible_ratio = len(filtered_data_samples.X) / len(data_samples.X)
-        print_log(
-            f"Revisible ratio is {revisible_ratio:.3f}, Character \
-                accuracy is {character_accuracy:.3f}",
-            logger="current",
+        log_string = (
+            f"Revisible ratio is {revisible_ratio:.3f}, Character "
+            f"accuracy is {character_accuracy:.3f}"
         )
+        print_log(log_string, logger="current")
 
         if character_accuracy >= 0.9 and revisible_ratio >= 0.9:
             return True
@@ -109,11 +109,11 @@ class HEDBridge(SimpleBridge):
         true_ratio = self.calc_consistent_ratio(val_X_true, rule)
         false_ratio = self.calc_consistent_ratio(val_X_false, rule)
 
-        print_log(
-            f"True consistent ratio is {true_ratio:.3f}, False inconsistent ratio \
-                is {1 - false_ratio:.3f}",
-            logger="current",
+        log_string = (
+            f"True consistent ratio is {true_ratio:.3f}, False inconsistent ratio "
+            f"is {1 - false_ratio:.3f}"
         )
+        print_log(log_string, logger="current")
 
         if true_ratio > 0.95 and false_ratio < 0.1:
             return True

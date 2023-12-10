@@ -15,7 +15,7 @@ Working with Data
 -----------------
 
 ABL-Package assumes data to be in the form of ``(X, gt_pseudo_label, Y)``  where ``X`` is the input of the machine learning model, 
-``gt_pseudo_label`` is the ground truth label of each element in ``X`` and ``Y`` is the ground truth reasoning result of each instance in ``X``. 
+``gt_pseudo_label`` is the ground truth label of each element in ``X`` and ``Y`` is the ground truth reasoning result of each instance in ``X``. Note that ``gt_pseudo_label`` is only used to evaluate the performance of the machine learning part but not to train the model. If elements in ``X`` are unlabeled, ``gt_pseudo_label`` can be ``None``.
 
 In the MNIST Addition task, the data loading looks like
 

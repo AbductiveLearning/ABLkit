@@ -15,7 +15,7 @@ class ClassificationDataset(Dataset):
     Y : List[int]
         The target data.
     transform : Callable[..., Any], optional
-        A function/transform that takes in an object and returns a transformed version.
+        A function/transform that takes an object and returns a transformed version.
         Defaults to None.
     """
 

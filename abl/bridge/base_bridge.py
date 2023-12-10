@@ -5,8 +5,6 @@ from ..learning import ABLModel
 from ..reasoning import Reasoner
 from ..structures import ListData
 
-DataSet = Tuple[List[List[Any]], Optional[List[List[Any]]], List[List[Any]]]
-
 
 class BaseBridge(metaclass=ABCMeta):
     def __init__(self, model: ABLModel, reasoner: Reasoner) -> None:
@@ -24,19 +22,19 @@ class BaseBridge(metaclass=ABCMeta):
 
     @abstractmethod
     def predict(self, data_samples: ListData) -> Tuple[List[List[Any]], List[List[Any]]]:
-        """Placeholder for predict labels from input."""
+        """Placeholder for predicting labels from input."""
 
     @abstractmethod
     def abduce_pseudo_label(self, data_samples: ListData) -> List[List[Any]]:
-        """Placeholder for abduce pseudo labels."""
+        """Placeholder for abducing pseudo labels."""
 
     @abstractmethod
     def idx_to_pseudo_label(self, data_samples: ListData) -> List[List[Any]]:
-        """Placeholder for map label space to symbol space."""
+        """Placeholder for mapping indexes to pseudo labels."""
 
     @abstractmethod
     def pseudo_label_to_idx(self, data_samples: ListData) -> List[List[Any]]:
-        """Placeholder for map symbol space to label space."""
+        """Placeholder for mapping pseudo labels to indexes."""
 
     def filter_pseudo_label(self, data_samples: ListData) -> List[List[Any]]:
         '''Default filter function for pseudo label.'''
@@ -48,13 +46,22 @@ class BaseBridge(metaclass=ABCMeta):
         return data_samples
 
     @abstractmethod
-    def train(self, train_data: Union[ListData, DataSet]):
-        """Placeholder for train loop of ABductive Learning."""
+    def train(
+        self,
+        train_data: Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], List[Any]]],
+    ):
+        """Placeholder for training loop of ABductive Learning."""
 
     @abstractmethod
-    def valid(self, valid_data: Union[ListData, DataSet]) -> None:
+    def valid(
+        self,
+        valid_data: Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], List[Any]]],
+    ) -> None:
         """Placeholder for model test."""
 
     @abstractmethod
-    def test(self, test_data: Union[ListData, DataSet]) -> None:
+    def test(
+        self,
+        test_data: Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], List[Any]]],
+    ) -> None:
         """Placeholder for model validation."""

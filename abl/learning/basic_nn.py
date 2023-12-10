@@ -38,10 +38,10 @@ class BasicNN:
     save_dir : Optional[str], optional
         The directory in which to save the model during training, by default None.
     train_transform : Callable[..., Any], optional
-        A function/transform that takes in an object and returns a transformed version used
+        A function/transform that takes an object and returns a transformed version used
         in the `fit` and `train_epoch` methods, by default None.
     test_transform : Callable[..., Any], optional
-        A function/transform that takes in an object and returns a transformed version in the
+        A function/transform that takes an object and returns a transformed version in the
         `predict`, `predict_proba` and `score` methods, , by default None.
     collate_fn : Callable[[List[T]], Any], optional
         The function used to collate data, by default None.
