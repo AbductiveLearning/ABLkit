@@ -76,13 +76,12 @@ class SimpleBridge(BaseBridge):
                 self.predict(sub_data_samples)
                 self.idx_to_pseudo_label(sub_data_samples)
                 self.abduce_pseudo_label(sub_data_samples)
+                self.filter_pseudo_label(sub_data_samples)
                 self.pseudo_label_to_idx(sub_data_samples)
-                loss = self.model.train(sub_data_samples)
+                self.model.train(sub_data_samples)
 
                 print_log(
-                    f"loop(train) [{loop + 1}/{loops}] segment(train) \
-                        [{(seg_idx + 1)}/{(len(data_samples) - 1) // segment_size + 1}] \
-                            model loss is {loss:.5f}",
+                    f"loop(train) [{loop + 1}/{loops}] segment(train) [{(seg_idx + 1)}/{(len(data_samples) - 1) // segment_size + 1}]",
                     logger="current",
                 )
 
