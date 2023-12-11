@@ -94,7 +94,6 @@ class TestReaonser(object):
     def test_reasoner_init(self, reasoner_instance):
         assert reasoner_instance.dist_func == "confidence"
 
-class TestDistFunc(object):
     def test_invalid_predefined_dist_func(self, kb_add):
         with pytest.raises(NotImplementedError) as excinfo:
             Reasoner(kb_add, "invalid_dist_func")
@@ -118,14 +117,6 @@ class TestDistFunc(object):
         cost_list = np.array([np.random.rand() for _ in candidates])
         return np.append(cost_list, np.random.rand())
     
-    def invalid_dist3(self, data_sample, candidates):
-        cost_list = [np.random.rand() for _ in candidates]
-        return cost_list
-    
-    def invalid_dist4(self, data_sample, candidates):
-        cost_list = np.array(["invalid" for _ in candidates])
-        return cost_list
-    
     def test_invalid_user_defined_dist_func(self, kb_add, data_samples_add):
         with pytest.raises(ValueError) as excinfo:
             Reasoner(kb_add, self.invalid_dist1)
@@ -136,18 +127,6 @@ class TestDistFunc(object):
             reasoner = Reasoner(kb_add, self.invalid_dist2)
             reasoner.batch_abduce(data_samples_add)
         assert 'The length of the array returned by dist_func must be equal to the number of candidates' in str(
-            excinfo.value
-        )
-        with pytest.raises(TypeError) as excinfo:
-            reasoner = Reasoner(kb_add, self.invalid_dist3)
-            reasoner.batch_abduce(data_samples_add)
-        assert 'Expected dist_func to return a numpy.ndarray' in str(
-            excinfo.value
-        )
-        with pytest.raises(ValueError) as excinfo:
-            reasoner = Reasoner(kb_add, self.invalid_dist4)
-            reasoner.batch_abduce(data_samples_add)
-        assert 'Expected dist_func to return a numpy.ndarray with a numerical type' in str(
             excinfo.value
         )
 

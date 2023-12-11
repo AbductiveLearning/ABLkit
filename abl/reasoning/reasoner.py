@@ -19,11 +19,13 @@ class Reasoner:
         The knowledge base to be used for reasoning.
     dist_func : str or Callable, optional
         The distance function used to determine the cost list between each
-        candidate and the given prediction. It can be either a string representing a
-        predefined distance function or a callable function. The available predefined 
-        distance functions: 'hamming' | 'confidence'. 'hamming': directly calculates 
-        the Hamming distance between the predicted pseudo label in the data sample 
-        and each candidate, 'confidence': calculates the distance between the prediction 
+        candidate and the given prediction. The cost is also referred to as a consistency 
+        measure, wherein the candidate with lowest cost is selected as the final 
+        abduced label. It can be either a string representing a predefined distance 
+        function or a callable function. The available predefined distance functions: 
+        'hamming' | 'confidence'. 'hamming': directly calculates the Hamming 
+        distance between the predicted pseudo label in the data sample and each 
+        candidate, 'confidence': calculates the distance between the prediction 
         and each candidate based on confidence derived from the predicted probability 
         in the data sample. The callable function should have the signature 
         dist_func(data_sample, candidates) and must return a cost list. Each element 
@@ -83,17 +85,6 @@ class Reasoner:
         else:
             raise TypeError(
                 f"dist_func must be a string or a callable function, but got {type(dist_func)}."
-            )
-
-    def _check_valid_dist_output(self, cost_list, candidate_num):
-        if not isinstance(cost_list, np.ndarray):
-            raise TypeError(f"Expected dist_func to return a numpy.ndarray, but got {type(cost_list)}.")
-        if not cost_list.dtype.kind in "biufc":
-            raise ValueError(f"Expected dist_func to return a numpy.ndarray with a numerical type, but got dtype {cost_list.dtype}.")
-        if len(cost_list) != candidate_num:
-            raise ValueError(
-                f"The length of the array returned by dist_func must be equal to the number of candidates. "
-                f"Expected length {candidate_num}, but got {len(cost_list)}."
             )
 
     def _check_valid_mapping(self, mapping):
@@ -160,14 +151,16 @@ class Reasoner:
         """
         if self.dist_func == "hamming":
             return hamming_dist(data_sample.pred_pseudo_label, candidates)
-
         elif self.dist_func == "confidence":
             candidates = [[self.remapping[x] for x in c] for c in candidates]
             return confidence_dist(data_sample.pred_prob, candidates)
-
-        elif callable(self.dist_func):
+        else:
             cost_list = self.dist_func(data_sample, candidates)
-            self._check_valid_dist_output(cost_list, len(candidates))
+            if len(cost_list) != len(candidates):
+                raise ValueError(
+                    f"The length of the array returned by dist_func must be equal to the number of candidates. "
+                    f"Expected length {len(candidates)}, but got {len(cost_list)}."
+                )
             return cost_list
 
     def _zoopt_get_solution(
