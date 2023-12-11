@@ -1,23 +1,18 @@
+.. role:: hidden
+    :class: hidden-section
+
 abl.bridge
 ==================
 
-abl.bridge.base\_bridge
-------------------------------
+.. currentmodule:: abl.bridge
 
-.. automodule:: abl.bridge.base_bridge
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Bridge
+-------
 
-abl.bridge.simple\_bridge
---------------------------------
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+   :template: classtemplate.rst
 
-.. automodule:: abl.bridge.simple_bridge
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: abl.bridge
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   BaseBridge
+   SimpleBridge

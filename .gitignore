@@ -10,3 +10,4 @@ abl.egg-info/
 examples/**/*.jpg
 .idea/
 build/
+docs/API/generated/

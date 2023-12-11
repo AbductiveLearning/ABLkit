@@ -1,40 +1,17 @@
 abl.dataset
 ==================
 
-abl.dataset.bridge\_dataset
-----------------------------------
+.. currentmodule:: abl.dataset
 
-.. automodule:: abl.dataset.bridge_dataset
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Dataset
+-------
 
-abl.dataset.classification\_dataset
-------------------------------------------
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+   :template: classtemplate.rst
 
-.. automodule:: abl.dataset.classification_dataset
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-abl.dataset.prediction\_dataset
---------------------------------------
-
-.. automodule:: abl.dataset.prediction_dataset
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-abl.dataset.regression\_dataset
---------------------------------------
-
-.. automodule:: abl.dataset.regression_dataset
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-.. automodule:: abl.dataset
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   BridgeDataset
+   ClassificationDataset
+   PredictionDataset
+   RegressionDataset

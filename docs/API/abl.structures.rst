@@ -1,23 +1,15 @@
 abl.structures
 ==================
 
-abl.structures.base\_data\_element
------------------------------------------
+.. currentmodule:: abl.structures
 
-.. automodule:: abl.structures.base_data_element
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Data Structures
+----------------
 
-abl.structures.list\_data
---------------------------------
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+   :template: classtemplate.rst
 
-.. automodule:: abl.structures.list_data
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: abl.structures
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   BaseDataElement
+   ListData

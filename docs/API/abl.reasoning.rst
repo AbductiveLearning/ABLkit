@@ -1,24 +1,27 @@
 abl.reasoning
 ==================
 
-abl.reasoning.kb
------------------------
+.. currentmodule:: abl.reasoning
 
-.. automodule:: abl.reasoning.kb
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Reasoning
+---------
 
-abl.reasoning.reasoner
------------------------------
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+   :template: classtemplate.rst
 
-.. automodule:: abl.reasoning.reasoner
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   Reasoner
 
+Knowledge Base
+--------------
 
-.. automodule:: abl.reasoning
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+   :template: classtemplate.rst
+
+   KBBase
+   GroundKB
+   PrologKB
+

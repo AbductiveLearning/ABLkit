@@ -1,24 +1,15 @@
 abl.learning
 ==================
 
-abl.learning.abl\_model
-------------------------------
+.. currentmodule:: abl.learning
 
-.. automodule:: abl.learning.abl_model
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Learning
+--------
 
-abl.learning.basic\_nn
------------------------------
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+   :template: classtemplate.rst
 
-.. automodule:: abl.learning.basic_nn
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-.. automodule:: abl.learning
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   ABLModel
+   BasicNN

@@ -1,39 +1,40 @@
 abl.utils
-==================
+===========
 
-abl.utils.cache
-----------------------
+.. currentmodule:: abl.utils
 
-.. automodule:: abl.utils.cache
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Logger
+-------
 
-abl.utils.logger
------------------------
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+   :template: classtemplate.rst
 
-.. automodule:: abl.utils.logger
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   ABLLogger
 
-abl.utils.manager
-------------------------
+Cache
+------
 
-.. automodule:: abl.utils.manager
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+   :template: classtemplate.rst
 
-abl.utils.utils
-----------------------
+   Cache
+   abl_cache
 
-.. automodule:: abl.utils.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Utils
+------
 
-.. automodule:: abl.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+   :template: classtemplate.rst
+
+   calculate_revision_num
+   confidence_dist
+   flatten
+   hamming_dist
+   reform_list
+   to_hashable

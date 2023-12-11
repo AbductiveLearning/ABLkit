@@ -1,32 +1,16 @@
 abl.evaluation
 ==================
 
-abl.evaluation.base\_metric
-----------------------------------
+.. currentmodule:: abl.evaluation
 
-.. automodule:: abl.evaluation.base_metric
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Metrics
+-------
 
-abl.evaluation.semantics\_metric
----------------------------------------
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+   :template: classtemplate.rst
 
-.. automodule:: abl.evaluation.semantics_metric
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-abl.evaluation.symbol\_metric
-------------------------------------
-
-.. automodule:: abl.evaluation.symbol_metric
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-.. automodule:: abl.evaluation
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   BaseMetric
+   SymbolMetric
+   SemanticsMetric

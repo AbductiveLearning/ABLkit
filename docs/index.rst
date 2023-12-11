@@ -31,11 +31,11 @@
    :maxdepth: 1
    :caption: API
 
-   API/abl.bridge
    API/abl.dataset
-   API/abl.evaluation
    API/abl.learning
    API/abl.reasoning
+   API/abl.evaluation
+   API/abl.bridge
    API/abl.structures
    API/abl.utils
 
