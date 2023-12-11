@@ -1,6 +1,9 @@
 import numpy as np
 from zoopt import Dimension, Objective, Opt, Parameter
+from typing import Callable, Any, List, Optional
 
+from kb import KBBase
+from ..structures import ListData
 from ..utils.utils import confidence_dist, hamming_dist
 
 
@@ -12,16 +15,12 @@ class Reasoner:
     ----------
     kb : class KBBase
         The knowledge base to be used for reasoning.
-    dist_func : str, optional
+    dist_func : str or Callable, optional
         The distance function to be used when determining the cost list between each
-        candidate and the given prediction. Valid options include: "confidence" (default) |
-        "hamming". For "confidence", it calculates the distance between the prediction
-        and the candidate based on confidence derived from the predicted probabilities in the
-        data sample. For "hamming", it directly calculates the Hamming distance between
-        the predicted pseudo label sample and the candidate.
-    mapping : dict, optional
+        candidate and the given prediction. Defaults to "confidence".
+    mapping : Optional[dict], optional
         A mapping from index in the base model to label. If not provided, a default
-        order-based mapping is created.
+        order-based mapping is created. Defaults to None.
     max_revision : int or float, optional
         The upper limit on the number of revisions for each data sample when
         performing abductive reasoning. If float, denotes the fraction of the total
@@ -36,18 +35,13 @@ class Reasoner:
 
     def __init__(
         self,
-        kb,
-        dist_func="confidence",
-        mapping=None,
-        max_revision=-1,
-        require_more_revision=0,
-        use_zoopt=False,
+        kb: KBBase,
+        dist_func: str or Callable = "confidence",
+        mapping: Optional[dict] = None,
+        max_revision: int or float = -1,
+        require_more_revision: int = 0,
+        use_zoopt: bool = False,
     ):
-        if dist_func not in ["hamming", "confidence"]:
-            raise NotImplementedError(
-                'Valid options for dist_func include "hamming" and "confidence"'
-            )
-
         self.kb = kb
         self.dist_func = dist_func
         self.use_zoopt = use_zoopt
@@ -57,17 +51,24 @@ class Reasoner:
         if mapping is None:
             self.mapping = {index: label for index, label in enumerate(self.kb.pseudo_label_list)}
         else:
-            if not isinstance(mapping, dict):
-                raise TypeError(f"mapping should be dict, got {type(mapping)}")
-            for key, value in mapping.items():
-                if not isinstance(key, int):
-                    raise ValueError(f"All keys in the mapping must be integers, got {key}")
-                if value not in self.kb.pseudo_label_list:
-                    raise ValueError(f"All values in the mapping must be in the pseudo_label_list, got {value}")
+            self._check_valid_mapping(mapping)
             self.mapping = mapping
         self.remapping = dict(zip(self.mapping.values(), self.mapping.keys()))
 
-    def _get_one_candidate(self, data_sample, candidates):
+    def _check_valid_mapping(self, mapping):
+        if not isinstance(mapping, dict):
+            raise TypeError(f"mapping should be dict, got {type(mapping)}")
+        for key, value in mapping.items():
+            if not isinstance(key, int):
+                raise ValueError(f"All keys in the mapping must be integers, got {key}")
+            if value not in self.kb.pseudo_label_list:
+                raise ValueError(f"All values in the mapping must be in the pseudo_label_list, got {value}")
+    
+    def _get_one_candidate(
+        self, 
+        data_sample: ListData, 
+        candidates: List[List[Any]],
+    ) -> List[Any]:
         """
         Due to the nondeterminism of abductive reasoning, there could be multiple candidates
         satisfying the knowledge base. When this happens, return one candidate that has the
@@ -90,13 +91,19 @@ class Reasoner:
         elif len(candidates) == 1:
             return candidates[0]
         else:
-            cost_array = self._get_cost_list(data_sample, candidates)
+            cost_array = self.get_cost_list(data_sample, candidates)
             candidate = candidates[np.argmin(cost_array)]
             return candidate
 
-    def _get_cost_list(self, data_sample, candidates):
+    def get_cost_list(
+        self, 
+        data_sample: ListData, 
+        candidates: List[List[Any]],
+    ) -> np.ndarray:
         """
-        Get the list of costs between each candidate and the given data sample. The list is
+        Get the list of costs between each candidate and the given data sample. 
+        
+        The list is
         calculated based on one of the following distance functions:
         - "hamming": Directly calculates the Hamming distance between the predicted pseudo
                      label in the data sample and candidate.
@@ -110,6 +117,11 @@ class Reasoner:
             Data sample.
         candidates : List[List[Any]]
             Multiple compatible candidates.
+        
+        Returns
+        -------
+        np.ndarray
+            A Numpy array representing list of costs.
         """
         if self.dist_func == "hamming":
             return hamming_dist(data_sample.pred_pseudo_label, candidates)
@@ -117,8 +129,20 @@ class Reasoner:
         elif self.dist_func == "confidence":
             candidates = [[self.remapping[x] for x in c] for c in candidates]
             return confidence_dist(data_sample.pred_prob, candidates)
+        
+        elif callable(self.dist_func):
+            return self.dist_func(data_sample, candidates)
 
-    def zoopt_get_solution(self, symbol_num, data_sample, max_revision_num):
+        else:
+            raise ValueError("dist_func must be either a string or a callable function")
+
+
+    def _zoopt_get_solution(
+        self, 
+        symbol_num: int, 
+        data_sample: ListData, 
+        max_revision_num: int,
+    ) -> List[bool]:
         """
         Get the optimal solution using ZOOpt library. The solution is a list of
         boolean values, where '1' (True) indicates the indices chosen to be revised.
@@ -131,6 +155,11 @@ class Reasoner:
             Data sample.
         max_revision_num : int
             Specifies the maximum number of revisions allowed.
+            
+        Returns
+        -------
+        List[bool]
+            The solution for ZOOpt library.
         """
         dimension = Dimension(size=symbol_num, regs=[[0, 1]] * symbol_num, tys=[False] * symbol_num)
         objective = Objective(
@@ -142,21 +171,40 @@ class Reasoner:
         solution = Opt.min(objective, parameter).get_x()
         return solution
 
-    def zoopt_revision_score(self, symbol_num, data_sample, sol):
+    def zoopt_revision_score(
+        self, 
+        symbol_num: int, 
+        data_sample: ListData, 
+        sol: List[bool],
+    ) -> int:
         """
         Get the revision score for a solution. A lower score suggests that ZOOpt library
         has a higher preference for this solution.
+        
+        Parameters
+        ----------
+        symbol_num : int
+            Number of total symbols.
+        data_sample : ListData
+            Data sample.
+        sol: List[bool]
+            The solution for ZOOpt library.
+            
+        Returns
+        -------
+        int
+            The revision score for the solution.
         """
         revision_idx = np.where(sol.get_x() != 0)[0]
         candidates = self.kb.revise_at_idx(
             data_sample.pred_pseudo_label, data_sample.Y, data_sample.X, revision_idx
         )
         if len(candidates) > 0:
-            return np.min(self._get_cost_list(data_sample, candidates))
+            return np.min(self.get_cost_list(data_sample, candidates))
         else:
             return symbol_num
 
-    def _constrain_revision_num(self, solution, max_revision_num):
+    def _constrain_revision_num(self, solution: List[bool], max_revision_num: int) -> int:
         """
         Constrain that the total number of revisions chosen by the solution does not exceed
         maximum number of revisions allowed.
@@ -164,7 +212,7 @@ class Reasoner:
         x = solution.get_x()
         return max_revision_num - x.sum()
 
-    def _get_max_revision_num(self, max_revision, symbol_num):
+    def _get_max_revision_num(self, max_revision: int or float, symbol_num: int) -> int:
         """
         Get the maximum revision number according to input `max_revision`.
         """
@@ -182,7 +230,7 @@ class Reasoner:
                 raise ValueError(f"If max_revision is an int, it must be non-negative, but got {max_revision}")
             return max_revision
 
-    def abduce(self, data_sample):
+    def abduce(self, data_sample: ListData) -> List[Any]:
         """
         Perform abductive reasoning on the given data sample.
 
@@ -201,7 +249,7 @@ class Reasoner:
         max_revision_num = self._get_max_revision_num(self.max_revision, symbol_num)
 
         if self.use_zoopt:
-            solution = self.zoopt_get_solution(symbol_num, data_sample, max_revision_num)
+            solution = self._zoopt_get_solution(symbol_num, data_sample, max_revision_num)
             revision_idx = np.where(solution != 0)[0]
             candidates = self.kb.revise_at_idx(
                 data_sample.pred_pseudo_label, data_sample.Y, data_sample.X, revision_idx
@@ -218,7 +266,7 @@ class Reasoner:
         candidate = self._get_one_candidate(data_sample, candidates)
         return candidate
 
-    def batch_abduce(self, data_samples):
+    def batch_abduce(self, data_samples: ListData) -> List[List[Any]]:
         """
         Perform abductive reasoning on the given prediction data samples.
         For detailed information, refer to `abduce`.
@@ -227,5 +275,5 @@ class Reasoner:
         data_samples.abduced_pseudo_label = abduced_pseudo_label
         return abduced_pseudo_label
 
-    def __call__(self, data_samples):
+    def __call__(self, data_samples: ListData) -> List[List[Any]]:
         return self.batch_abduce(data_samples)
