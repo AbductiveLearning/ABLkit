@@ -82,6 +82,7 @@ def data_samples_add():
     ]
 
     data_samples_add = ListData()
+    data_samples_add.X = None
     data_samples_add.pred_pseudo_label = [[1, 1], [1, 1], [1, 1], [1, 1]]
     data_samples_add.pred_prob = [prob1, prob2, prob1, prob2]
     data_samples_add.Y = [8, 8, 17, 10]
@@ -91,6 +92,7 @@ def data_samples_add():
 @pytest.fixture
 def data_samples_hwf():
     data_samples_hwf = ListData()
+    data_samples_hwf.X = None
     data_samples_hwf.pred_pseudo_label = [
         ["5", "+", "2"],
         ["5", "+", "9"],
@@ -199,6 +201,14 @@ def kb_add_ground():
 def kb_add_prolog():
     kb = PrologKB(pseudo_label_list=list(range(10)), pl_file="examples/mnist_add/datasets/add.pl")
     return kb
+
+@pytest.fixture
+def kb_hwf1():
+    return HwfKB(max_err=0.1)
+
+@pytest.fixture
+def kb_hwf2():
+    return HwfKB(max_err=1)
 
 
 @pytest.fixture

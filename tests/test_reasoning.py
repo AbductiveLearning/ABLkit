@@ -1,4 +1,5 @@
 import pytest
+import numpy as np
 
 from abl.reasoning import PrologKB, Reasoner
 
@@ -93,15 +94,65 @@ class TestReaonser(object):
     def test_reasoner_init(self, reasoner_instance):
         assert reasoner_instance.dist_func == "confidence"
 
-    def test_invalid_dist_funce(kb_add):
+class TestDistFunc(object):
+    def test_invalid_predefined_dist_func(self, kb_add):
         with pytest.raises(NotImplementedError) as excinfo:
             Reasoner(kb_add, "invalid_dist_func")
-        assert 'Valid options for dist_func include "hamming" and "confidence"' in str(
+        assert 'Valid options for predefined dist_func include "hamming" and "confidence"' in str(
+            excinfo.value
+        )
+        
+    def random_dist(self, data_sample, candidates):
+        cost_list = np.array([np.random.rand() for _ in candidates])
+        return cost_list
+    
+    def test_user_defined_dist_func(self, kb_add):
+        reasoner = Reasoner(kb_add, self.random_dist)
+        assert reasoner.dist_func == self.random_dist
+    
+    def invalid_dist1(self, candidates):
+        cost_list = np.array([np.random.rand() for _ in candidates])
+        return cost_list
+    
+    def invalid_dist2(self, data_sample, candidates):
+        cost_list = np.array([np.random.rand() for _ in candidates])
+        return np.append(cost_list, np.random.rand())
+    
+    def invalid_dist3(self, data_sample, candidates):
+        cost_list = [np.random.rand() for _ in candidates]
+        return cost_list
+    
+    def invalid_dist4(self, data_sample, candidates):
+        cost_list = np.array(["invalid" for _ in candidates])
+        return cost_list
+    
+    def test_invalid_user_defined_dist_func(self, kb_add, data_samples_add):
+        with pytest.raises(ValueError) as excinfo:
+            Reasoner(kb_add, self.invalid_dist1)
+        assert 'User-defined dist_func must have exactly two parameters' in str(
+            excinfo.value
+        )
+        with pytest.raises(ValueError) as excinfo:
+            reasoner = Reasoner(kb_add, self.invalid_dist2)
+            reasoner.batch_abduce(data_samples_add)
+        assert 'The length of the array returned by dist_func must be equal to the number of candidates' in str(
+            excinfo.value
+        )
+        with pytest.raises(TypeError) as excinfo:
+            reasoner = Reasoner(kb_add, self.invalid_dist3)
+            reasoner.batch_abduce(data_samples_add)
+        assert 'Expected dist_func to return a numpy.ndarray' in str(
+            excinfo.value
+        )
+        with pytest.raises(ValueError) as excinfo:
+            reasoner = Reasoner(kb_add, self.invalid_dist4)
+            reasoner.batch_abduce(data_samples_add)
+        assert 'Expected dist_func to return a numpy.ndarray with a numerical type' in str(
             excinfo.value
         )
 
 
-class test_batch_abduce(object):
+class TestBatchAbduce(object):
     def test_batch_abduce_add(self, kb_add, data_samples_add):
         reasoner1 = Reasoner(kb_add, "confidence", max_revision=1, require_more_revision=0)
         reasoner2 = Reasoner(kb_add, "confidence", max_revision=1, require_more_revision=1)

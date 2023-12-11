@@ -243,10 +243,7 @@ class KBBase(ABC):
         """
         candidates = []
         for revision_num in range(len(pseudo_label) + 1):
-            if revision_num == 0 and self._check_equal(self.logic_forward(pseudo_label, *(x,) if self._num_args == 2 else ()), y):
-                candidates.append(pseudo_label)
-            elif revision_num > 0:
-                candidates.extend(self._revision(revision_num, pseudo_label, y, x))
+            candidates.extend(self._revision(revision_num, pseudo_label, y, x))
             if len(candidates) > 0:
                 min_revision_num = revision_num
                 break
@@ -559,7 +556,7 @@ class PrologKB(KBBase):
             knowledge base.
         """
         candidates = []
-        query_string = self.get_query_string(pseudo_label, y, revision_idx)
+        query_string = self.get_query_string(pseudo_label, y, x, revision_idx)
         save_pseudo_label = pseudo_label
         pseudo_label = flatten(pseudo_label)
         abduce_c = [list(z.values()) for z in self.prolog.query(query_string)]
