@@ -1,5 +1,5 @@
 import inspect
-from typing import Callable, Any, List, Optional
+from typing import Callable, Any, List, Optional, Union
 
 import numpy as np
 from zoopt import Dimension, Objective, Opt, Parameter
@@ -50,9 +50,9 @@ class Reasoner:
     def __init__(
         self,
         kb: KBBase,
-        dist_func: str or Callable = "confidence",
+        dist_func: Union[str, Callable] = "confidence",
         mapping: Optional[dict] = None,
-        max_revision: int or float = -1,
+        max_revision: Union[int, float] = -1,
         require_more_revision: int = 0,
         use_zoopt: bool = False,
     ):
