@@ -12,7 +12,10 @@ class ABLModel:
     Parameters
     ----------
     base_model : Machine Learning Model
-        The base model to use for training and prediction.
+        The base machine learning model used for training and prediction. This model should
+        implement the 'fit' and 'predict' methods. It's recommended, but not required,for the
+        model to also implement the 'predict_proba' method for generating probabilistic
+        predictions.
     """
 
     def __init__(self, base_model: Any) -> None:
@@ -115,11 +118,17 @@ class ABLModel:
     def save(self, *args, **kwargs) -> None:
         """
         Save the model to a file.
+
+        This method delegates to the 'save' method of self.base_model. The arguments passed to
+        this method should match those expected by the 'save' method of self.base_model.
         """
         self._model_operation("save", *args, **kwargs)
 
     def load(self, *args, **kwargs) -> None:
         """
         Load the model from a file.
+
+        This method delegates to the 'load' method of self.base_model. The arguments passed to
+        this method should match those expected by the 'load' method of self.base_model.
         """
         self._model_operation("load", *args, **kwargs)
