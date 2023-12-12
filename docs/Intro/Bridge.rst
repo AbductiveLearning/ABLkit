@@ -51,6 +51,18 @@ The fundamental part of the ``train`` method is as follows:
 .. code-block:: python
 
     def train(self, train_data, loops=50, segment_size=10000):
+        """
+        Parameters
+        ----------
+        train_data : Tuple[List[List[Any]], Optional[List[List[Any]]], List[Any]]]
+            Training data.
+        loops : int
+            Machine Learning part and Reasoning part will be iteratively optimized
+            for ``loops`` times.
+        segment_size:
+            Data will be split into segments of this size and data in each segment
+            will be used together to train the model.
+        """
         if isinstance(train_data, ListData):
             data_samples = train_data
         else:
