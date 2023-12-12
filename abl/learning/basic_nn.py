@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import logging
 import os
-from typing import Any, Callable, List, Optional, T, Tuple
+from typing import Any, Callable, List, Optional, Tuple
 
 import numpy
 import torch
@@ -18,7 +20,7 @@ class BasicNN:
     ----------
     model : torch.nn.Module
         The PyTorch model to be trained or used for prediction.
-    criterion : torch.nn.Module
+    loss_fn : torch.nn.Module
         The loss function used for training.
     optimizer : torch.optim.Optimizer
         The optimizer used for training.
@@ -34,7 +36,7 @@ class BasicNN:
     num_workers : int
         The number of workers used for loading data, by default 0.
     save_interval : Optional[int], optional
-        The interval at which to save the model during training, by default None.
+        The model will be saved every ``save_interval`` epochs during training, by default None.
     save_dir : Optional[str], optional
         The directory in which to save the model during training, by default None.
     train_transform : Callable[..., Any], optional
@@ -50,21 +52,48 @@ class BasicNN:
     def __init__(
         self,
         model: torch.nn.Module,
-        criterion: torch.nn.Module,
+        loss_fn: torch.nn.Module,
         optimizer: torch.optim.Optimizer,
         device: torch.device = torch.device("cpu"),
         batch_size: int = 32,
         num_epochs: int = 1,
-        stop_loss: Optional[float] = 0.01,
+        stop_loss: Optional[float] = 0.0001,
         num_workers: int = 0,
         save_interval: Optional[int] = None,
         save_dir: Optional[str] = None,
         train_transform: Callable[..., Any] = None,
         test_transform: Callable[..., Any] = None,
-        collate_fn: Callable[[List[T]], Any] = None,
+        collate_fn: Callable[[List[Any]], Any] = None,
     ) -> None:
+        if not isinstance(model, torch.nn.Module):
+            raise TypeError("model must be an instance of torch.nn.Module")
+        if not isinstance(loss_fn, torch.nn.Module):
+            raise TypeError("loss_fn must be an instance of torch.nn.Module")
+        if not isinstance(optimizer, torch.optim.Optimizer):
+            raise TypeError("optimizer must be an instance of torch.optim.Optimizer")
+        if not isinstance(device, torch.device):
+            raise TypeError("device must be an instance of torch.device")
+        if not isinstance(batch_size, int):
+            raise TypeError("batch_size must be an integer")
+        if not isinstance(num_epochs, int):
+            raise TypeError("num_epochs must be an integer")
+        if stop_loss is not None and not isinstance(stop_loss, float):
+            raise TypeError("stop_loss must be a float")
+        if not isinstance(num_workers, int):
+            raise TypeError("num_workers must be an integer")
+        if save_interval is not None and not isinstance(save_interval, int):
+            raise TypeError("save_interval must be an integer")
+        if save_dir is not None and not isinstance(save_dir, str):
+            raise TypeError("save_dir must be a string")
+        if train_transform is not None and not callable(train_transform):
+            raise TypeError("train_transform must be callable")
+        if test_transform is not None and not callable(test_transform):
+            raise TypeError("test_transform must be callable")
+        if collate_fn is not None and not callable(collate_fn):
+            raise TypeError("collate_fn must be callable")
+
         self.model = model.to(device)
-        self.criterion = criterion
+        self.loss_fn = loss_fn
         self.optimizer = optimizer
         self.device = device
         self.batch_size = batch_size
@@ -85,9 +114,10 @@ class BasicNN:
             )
             self.test_transform = self.train_transform
 
-    def _fit(self, data_loader: DataLoader) -> float:
+    def _fit(self, data_loader: DataLoader) -> BasicNN:
         """
-        Internal method to fit the model on data for n epochs, with early stopping.
+        Internal method to fit the model on data for self.num_epochs times,
+        with early stopping.
 
         Parameters
         ----------
@@ -96,9 +126,15 @@ class BasicNN:
 
         Returns
         -------
-        float
-            The loss value of the trained model.
+        BasicNN
+            The model itself after training.
         """
+        if not isinstance(data_loader, DataLoader):
+            raise TypeError(
+                f"data_loader must be an instance of torch.utils.data.DataLoader, "
+                f"but got {type(data_loader)}"
+            )
+
         for epoch in range(self.num_epochs):
             loss_value = self.train_epoch(data_loader)
             if self.save_interval is not None and (epoch + 1) % self.save_interval == 0:
@@ -112,9 +148,12 @@ class BasicNN:
 
     def fit(
         self, data_loader: DataLoader = None, X: List[Any] = None, y: List[int] = None
-    ) -> float:
+    ) -> BasicNN:
         """
-        Train the model.
+        Train the model for self.num_epochs times or until the average loss on one epoch
+        is less than self.stop_loss. It supports training with either a DataLoader
+        object (data_loader) or a pair of input data (X) and target labels (y). If both
+        data_loader and (X, y) are provided, the method will prioritize using the data_loader.
 
         Parameters
         ----------
@@ -127,9 +166,15 @@ class BasicNN:
 
         Returns
         -------
-        float
-            The loss value of the trained model.
+        BasicNN
+            The model itself after training.
         """
+        if data_loader is not None and X is not None:
+            print_log(
+                "data_loader will be used to train the model instead of X and y.",
+                logger="current",
+                level=logging.WARNING,
+            )
         if data_loader is None:
             if X is None:
                 raise ValueError("data_loader and X can not be None simultaneously.")
@@ -139,7 +184,7 @@ class BasicNN:
 
     def train_epoch(self, data_loader: DataLoader) -> float:
         """
-        Train the model for one epoch.
+        Train the model with an instance of DataLoader (data_loader) for one epoch.
 
         Parameters
         ----------
@@ -149,10 +194,10 @@ class BasicNN:
         Returns
         -------
         float
-            The loss value of the trained model.
+            The average loss on one epoch.
         """
         model = self.model
-        criterion = self.criterion
+        loss_fn = self.loss_fn
         optimizer = self.optimizer
         device = self.device
 
@@ -162,7 +207,7 @@ class BasicNN:
         for data, target in data_loader:
             data, target = data.to(device), target.to(device)
             out = model(data)
-            loss = criterion(out, target)
+            loss = loss_fn(out, target)
 
             optimizer.zero_grad()
             loss.backward()
@@ -187,6 +232,11 @@ class BasicNN:
         torch.Tensor
             Raw output from the model.
         """
+        if not isinstance(data_loader, DataLoader):
+            raise TypeError(
+                f"data_loader must be an instance of torch.utils.data.DataLoader, "
+                f"but got {type(data_loader)}"
+            )
         model = self.model
         device = self.device
 
@@ -203,7 +253,10 @@ class BasicNN:
 
     def predict(self, data_loader: DataLoader = None, X: List[Any] = None) -> numpy.ndarray:
         """
-        Predict the class of the input data.
+        Predict the class of the input data. This method supports prediction with either
+        a DataLoader object (data_loader) or a list of input data (X). If both data_loader
+        and X are provided, the method will predict the input data in data_loader
+        instead of X.
 
         Parameters
         ----------
@@ -218,6 +271,13 @@ class BasicNN:
             The predicted class of the input data.
         """
 
+        if data_loader is not None and X is not None:
+            print_log(
+                "Predict the class of input data in data_loader instead of X.",
+                logger="current",
+                level=logging.WARNING,
+            )
+
         if data_loader is None:
             dataset = PredictionDataset(X, self.test_transform)
             data_loader = DataLoader(
@@ -230,7 +290,10 @@ class BasicNN:
 
     def predict_proba(self, data_loader: DataLoader = None, X: List[Any] = None) -> numpy.ndarray:
         """
-        Predict the probability of each class for the input data.
+        Predict the probability of each class for the input data. This method supports
+        prediction with either a DataLoader object (data_loader) or a list of input data (X).
+        If both data_loader and X are provided, the method will predict the input data in
+        data_loader instead of X.
 
         Parameters
         ----------
@@ -244,6 +307,13 @@ class BasicNN:
         numpy.ndarray
             The predicted probability of each class for the input data.
         """
+
+        if data_loader is not None and X is not None:
+            print_log(
+                "Predict the class probability of input data in data_loader instead of X.",
+                logger="current",
+                level=logging.WARNING,
+            )
 
         if data_loader is None:
             dataset = PredictionDataset(X, self.test_transform)
@@ -270,8 +340,14 @@ class BasicNN:
             mean_loss: float, The mean loss of the model on the provided data.
             accuracy: float, The accuracy of the model on the provided data.
         """
+        if not isinstance(data_loader, DataLoader):
+            raise TypeError(
+                f"data_loader must be an instance of torch.utils.data.DataLoader, "
+                f"but got {type(data_loader)}"
+            )
+
         model = self.model
-        criterion = self.criterion
+        loss_fn = self.loss_fn
         device = self.device
 
         model.eval()
@@ -288,7 +364,7 @@ class BasicNN:
                     correct_num = (target == out.argmax(axis=1)).sum().item()
                 else:
                     correct_num = (target == (out > 0.5)).sum().item()
-                loss = criterion(out, target)
+                loss = loss_fn(out, target)
                 total_loss += loss.item() * data.size(0)
 
                 total_correct_num += correct_num
@@ -303,7 +379,9 @@ class BasicNN:
         self, data_loader: DataLoader = None, X: List[Any] = None, y: List[int] = None
     ) -> float:
         """
-        Validate the model.
+        Validate the model. It supports validation with either a DataLoader object (data_loader)
+        or a pair of input data (X) and ground truth labels (y). If both data_loader and
+        (X, y) are provided, the method will prioritize using the data_loader.
 
         Parameters
         ----------
@@ -321,15 +399,25 @@ class BasicNN:
         """
         print_log("Start machine learning model validation", logger="current")
 
+        if data_loader is not None and X is not None:
+            print_log(
+                "data_loader will be used to validate the model instead of X and y.",
+                logger="current",
+                level=logging.WARNING,
+            )
+
         if data_loader is None:
-            data_loader = self._data_loader(X, y)
+            if X is None or y is None:
+                raise ValueError("data_loader and (X, y) can not be None simultaneously.")
+            else:
+                data_loader = self._data_loader(X, y)
         mean_loss, accuracy = self._score(data_loader)
         print_log(f"mean loss: {mean_loss:.3f}, accuray: {accuracy:.3f}", logger="current")
         return accuracy
 
     def _data_loader(self, X: List[Any], y: List[int] = None, shuffle: bool = True) -> DataLoader:
         """
-        Generate a DataLoader for user-provided input and target data.
+        Generate a DataLoader for user-provided input data and target labels.
 
         Parameters
         ----------
@@ -365,7 +453,11 @@ class BasicNN:
 
     def save(self, epoch_id: int = 0, save_path: str = None) -> None:
         """
-        Save the model and the optimizer.
+        Save the model and the optimizer. User can either provide a save_path or specify
+        the epoch_id at which the model and optimizer is saved. if both save_path and
+        epoch_id are provided, save_path will be used. If only epoch_id is specified,
+        model and optimizer will be saved to the path f"model_checkpoint_epoch_{epoch_id}.pth"
+        under self.save_dir. save_path and epoch_id can not be None simultaneously.
 
         Parameters
         ----------
@@ -394,7 +486,7 @@ class BasicNN:
 
         torch.save(save_parma_dic, save_path)
 
-    def load(self, load_path: str = "") -> None:
+    def load(self, load_path: str) -> None:
         """
         Load the model and the optimizer.
 
