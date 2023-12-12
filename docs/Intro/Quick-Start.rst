@@ -75,7 +75,7 @@ Read more about `preparing datasets <Datasets.html>`_.
 Building the Learning Part
 --------------------------
 
-Learnig part is constructed by first defining a base machine learning model and then wrap it into the ``ABLModel`` class. 
+Learnig part is constructed by first defining a base machine learning model and then wrap it into an instance of ``ABLModel`` class. 
 The flexibility of ABL package allows the base model to be any machine learning model conforming to the scikit-learn style, which requires implementing the ``fit`` and ``predict`` methods, or a PyTorch-based neural network, provided it has defined the architecture and implemented the ``forward`` method.
 In the MNIST Addition example, we build a simple LeNet5 network as the base model.
 
@@ -113,7 +113,7 @@ Out:
    Shape of pred_idx : (32,)
    Shape of pred_prob : (32, 10)
 
-Afterward, we wrap the scikit-learn style model, ``base_model``, into an instance of ``ABLModel``. This class serves as a unified wrapper for all base models,  facilitating the learning part to train, test, and predict on instance-level data - such as equations in the MNIST Addition.
+Afterward, we wrap the scikit-learn style model, ``base_model``, into an instance of ``ABLModel``. This class serves as a unified wrapper for all base models,  facilitating the learning part to train, test, and predict on sample-level data - such as equations in the MNIST Addition task.
 
 .. code:: python
 

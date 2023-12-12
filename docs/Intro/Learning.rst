@@ -10,18 +10,13 @@
 Learning Part
 =============
 
-``ABLModel`` class serves as a unified interface to all machine learning models. Its constructor, the ``__init__`` method, takes a singular argument, ``base_model``. This argument denotes the fundamental machine learning model, which must implement the ``fit`` and ``predict`` methods.
+Learnig part is constructed by first defining a base machine learning model and then wrap it into an instance of ``ABLModel`` class. 
 
-.. code:: python
+The flexibility of ABL package allows the base model to be any machine learning model conforming to the scikit-learn style, which requires implementing the ``fit`` and ``predict`` methods, or a PyTorch-based neural network, provided it has defined the architecture and implemented the ``forward`` method. 
 
-    class ABLModel:
-        def __init__(self, base_model: Any) -> None:
-            if not (hasattr(base_model, "fit") and hasattr(base_model, "predict")):
-                raise NotImplementedError("The base_model should implement fit and predict methods.")
+Typically, base models are trained and make predictions on instance-level data, e.g. single images in the MNIST dataset, and therefore can not directly utilize sample-level data to train and predict, which is not suitable for most neural-symbolic tasks. ABL-Package provides the ``ABLModel`` to solve this problem. This class serves as a unified wrapper for all base models, which enables the learning part to train, test, and predict on sample-level data. The following two parts shows how to construct an ``ABLModel`` from a scikit-learn model and a PyTorch-based neural network, respectively.
 
-            self.base_model = base_model
-
-All scikit-learn models satisify this requirements, so we can directly use the model to create an instance of ``ABLModel``. For example, we can customize our machine learning model by
+For a scikit-learn model, we can directly use the model to create an instance of ``ABLModel``. For example, we can customize our machine learning model by
 
 .. code:: python
 
