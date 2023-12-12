@@ -32,14 +32,14 @@ class HEDBridge(SimpleBridge):
                 num_classes=len(self.reasoner.kb.pseudo_label_list)
             )
             device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-            criterion = torch.nn.MSELoss()
+            loss_fn = torch.nn.MSELoss()
             optimizer = torch.optim.RMSprop(
                 cls_autoencoder.parameters(), lr=0.001, alpha=0.9, weight_decay=1e-6
             )
 
             pretrain_model = BasicNN(
                 cls_autoencoder,
-                criterion,
+                loss_fn,
                 optimizer,
                 device,
                 save_interval=1,

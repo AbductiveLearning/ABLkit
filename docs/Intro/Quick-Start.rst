@@ -84,17 +84,17 @@ To build the machine learning part, we need to wrap our machine learning model i
    # The number of pseudo labels is 10
    cls = LeNet5(num_classes=10)
 
-Aside from the network, we need to define a criterion, an optimizer, and a device so as to create a ``BasicNN`` object. This class implements ``fit``, ``predict``, ``predict_proba`` and several other methods to enable the PyTorch-based neural network to work as a scikit-learn model.
+Aside from the network, we need to define a loss_fn, an optimizer, and a device so as to create a ``BasicNN`` object. This class implements ``fit``, ``predict``, ``predict_proba`` and several other methods to enable the PyTorch-based neural network to work as a scikit-learn model.
 
 .. code:: python
 
    import torch
    from abl.learning import BasicNN
 
-   criterion = torch.nn.CrossEntropyLoss()
+   loss_fn = torch.nn.CrossEntropyLoss()
    optimizer = torch.optim.Adam(cls.parameters(), lr=0.001, betas=(0.9, 0.99))
    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-   base_model = BasicNN(cls, criterion, optimizer, device)
+   base_model = BasicNN(cls, loss_fn, optimizer, device)
 
 .. code:: python
 

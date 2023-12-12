@@ -31,7 +31,7 @@
 **num_workers : int**
 + The number of workers used for loading data.
 
-**criterion : torch.nn.Module**
+**loss_fn : torch.nn.Module**
 + The loss function used for training.
 
 **optimizer : torch.nn.Module**
@@ -60,13 +60,13 @@
 > ```python
 > # Three necessary component
 > cls = LeNet5()
-> criterion = nn.CrossEntropyLoss()
+> loss_fn = nn.CrossEntropyLoss()
 > optimizer = torch.optim.Adam(cls.parameters())
 > 
 > # Initialize base_model
 > base_model = BasicModel(
 >     cls,
->     criterion,
+>     loss_fn,
 >     optimizer,
 >     torch.device("cuda:0"),
 >     batch_size=32,

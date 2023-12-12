@@ -66,7 +66,7 @@ class SymbolNet(nn.Module):
         num_features = 64 * (image_size[0] // 4 - 1) * (image_size[1] // 4 - 1)
         self.fc1 = nn.Sequential(nn.Linear(num_features, 120), nn.ReLU())
         self.fc2 = nn.Sequential(nn.Linear(120, 84), nn.ReLU())
-        self.fc3 = nn.Sequential(nn.Linear(84, num_classes), nn.Softmax(dim=1))
+        self.fc3 = nn.Sequential(nn.Linear(84, num_classes))
 
     def forward(self, x):
         x = self.conv1(x)

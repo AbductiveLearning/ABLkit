@@ -39,11 +39,11 @@ For a PyTorch-based neural network, we first need to encapsulate it within a ``B
     import torchvision
     cls = torchvision.models.resnet18(pretrained=True)
 
-    # criterion and optimizer are used for training
-    criterion = torch.nn.CrossEntropyLoss() 
+    # loss_fn and optimizer are used for training
+    loss_fn = torch.nn.CrossEntropyLoss() 
     optimizer = torch.optim.Adam(cls.parameters())
 
-    base_model = BasicNN(cls, criterion, optimizer)
+    base_model = BasicNN(cls, loss_fn, optimizer)
     model = ABLModel(base_model)
 
 Besides ``fit`` and ``predict``, ``BasicNN`` also implements the following methods:

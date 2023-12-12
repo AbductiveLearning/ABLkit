@@ -44,18 +44,18 @@ class LeNet5(nn.Module):
 @pytest.fixture
 def basic_nn_instance():
     model = LeNet5()
-    criterion = nn.CrossEntropyLoss()
+    loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters())
-    return BasicNN(model, criterion, optimizer)
+    return BasicNN(model, loss_fn, optimizer)
 
 
 # Fixture for base_model instance
 @pytest.fixture
 def base_model_instance():
     model = LeNet5()
-    criterion = nn.CrossEntropyLoss()
+    loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters())
-    return BasicNN(model, criterion, optimizer)
+    return BasicNN(model, loss_fn, optimizer)
 
 
 # Fixture for ListData instance

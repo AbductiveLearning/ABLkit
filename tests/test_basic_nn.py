@@ -27,7 +27,7 @@ class TestBasicNN(object):
     def test_initialization(self, basic_nn_instance):
         """Test initialization of the BasicNN class"""
         assert basic_nn_instance.model is not None
-        assert isinstance(basic_nn_instance.criterion, nn.Module)
+        assert isinstance(basic_nn_instance.loss_fn, nn.Module)
         assert isinstance(basic_nn_instance.optimizer, optim.Optimizer)
 
     def test_training_methods(self, basic_nn_instance, sample_data, sample_data_loader_with_label):
