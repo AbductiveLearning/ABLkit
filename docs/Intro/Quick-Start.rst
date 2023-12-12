@@ -28,7 +28,7 @@ In the MNIST Addition task, the data loading looks like
    train_data = get_mnist_add(train=True, get_pseudo_label=True)
    test_data = get_mnist_add(train=False, get_pseudo_label=True)
 
-ABL-Package assumes ``X`` to be of type ``List[List[Any]]``, ``gt_pseudo_label`` can be ``None`` or of the type ``List[List[Any]]`` and ``Y`` should be of type ``List[Any]``. 
+ABL-Package assumes ``X`` to be of type ``List[List[Any]]``, ``gt_pseudo_label`` can be ``None`` or of the type ``List[List[Any]]`` and ``Y`` should be of type ``List[Any]``. The following code shows the structure of the dataset used in MNIST Addition.
 
 .. code:: python
 
@@ -68,14 +68,16 @@ Out:
    Shape of X [C, H, W]: torch.Size([1, 28, 28])
 
 
-ABL-Package offers several `dataset classes <../API/abl.dataset.html>`_ for different usage, such as ``ClassificationDataset``, ``RegressionDataset`` and ``PredictionDataset``, while users are only required to organize the dataset into the aforementioned format. 
+ABL-Package provides several dataset classes for different purposes, including ``ClassificationDataset``, ``RegressionDataset``, and ``PredictionDataset``. However, it's not necessary to encapsulate data into these specific classes. Instead, we only need to structure our datasets in the aforementioned formats.
 
 Read more about `preparing datasets <Datasets.html>`_.
 
 Building the Learning Part
 --------------------------
 
-To build the machine learning part, we need to wrap our machine learning model into the ``ABLModel`` class. The machine learning model can either be a scikit-learn model or a PyTorch neural network. We use a simple LeNet5 in the MNIST Addition example.
+Learnig part is constructed by first defining a base machine learning model and then wrap it into the ``ABLModel`` class. 
+The flexibility of ABL package allows the base model to be any machine learning model conforming to the scikit-learn style, which requires implementing the ``fit`` and ``predict`` methods, or a PyTorch-based neural network, provided it has defined the architecture and implemented the ``forward`` method.
+In the MNIST Addition example, we build a simple LeNet5 network as the base model.
 
 .. code:: python
 
@@ -84,7 +86,7 @@ To build the machine learning part, we need to wrap our machine learning model i
    # The number of pseudo labels is 10
    cls = LeNet5(num_classes=10)
 
-Aside from the network, we need to define a loss_fn, an optimizer, and a device so as to create a ``BasicNN`` object. This class implements ``fit``, ``predict``, ``predict_proba`` and several other methods to enable the PyTorch-based neural network to work as a scikit-learn model.
+To facilitate uniform processing, ABL-Package provides the ``BasicNN`` class to convert PyTorch-based neural networks into a format similar to scikit-learn models. To construct a ``BasicNN`` instance, we need also define a loss function, an optimizer, and a device aside from the previous network.
 
 .. code:: python
 
@@ -111,7 +113,7 @@ Out:
    Shape of pred_idx : (32,)
    Shape of pred_prob : (32, 10)
 
-Afterward, we wrap the ``base_model`` into ``ABLModel``.
+Afterward, we wrap the scikit-learn style model, ``base_model``, into an instance of ``ABLModel``. This class serves as a unified wrapper for all base models,  facilitating the learning part to train, test, and predict on instance-level data - such as equations in the MNIST Addition.
 
 .. code:: python
 
@@ -185,38 +187,46 @@ Finally, we proceed with training and testing.
 
 .. code:: python
 
-   bridge.train(train_data, loops=5, segment_size=10000)
+   bridge.train(train_data, loops=5, segment_size=1/3)
    bridge.test(test_data)
 
 Training log would be similar to this:
 
 .. code-block:: none
    :class: code-out
-   
-   2023/12/02 21:26:57 - abl - INFO - Abductive Learning on the MNIST Addition example.
-   2023/12/02 21:32:20 - abl - INFO - Abductive Learning on the MNIST Addition example.
-   2023/12/02 21:32:51 - abl - INFO - loop(train) [1/5] segment(train) [1/3] model loss is 1.85589
-   2023/12/02 21:32:56 - abl - INFO - loop(train) [1/5] segment(train) [2/3] model loss is 1.50332
-   2023/12/02 21:33:02 - abl - INFO - loop(train) [1/5] segment(train) [3/3] model loss is 1.17501
-   2023/12/02 21:33:02 - abl - INFO - Evaluation start: loop(val) [1]
-   2023/12/02 21:33:07 - abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.350 mnist_add/semantics_accuracy: 0.254 
-   2023/12/02 21:33:07 - abl - INFO - Saving model: loop(save) [1]
-   2023/12/02 21:33:07 - abl - INFO - Checkpoints will be saved to results/20231202_21_26_57/weights/model_checkpoint_loop_1.pth
-   2023/12/02 21:33:13 - abl - INFO - loop(train) [2/5] segment(train) [1/3] model loss is 0.97188
-   2023/12/02 21:33:18 - abl - INFO - loop(train) [2/5] segment(train) [2/3] model loss is 0.85622
-   2023/12/02 21:33:24 - abl - INFO - loop(train) [2/5] segment(train) [3/3] model loss is 0.81511
-   2023/12/02 21:33:24 - abl - INFO - Evaluation start: loop(val) [2]
-   2023/12/02 21:33:29 - abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.546 mnist_add/semantics_accuracy: 0.399 
-   2023/12/02 21:33:29 - abl - INFO - Saving model: loop(save) [2]
-   ...
-   2023/12/02 21:34:17 - abl - INFO - loop(train) [5/5] segment(train) [1/3] model loss is 0.03935
-   2023/12/02 21:34:23 - abl - INFO - loop(train) [5/5] segment(train) [2/3] model loss is 0.03716
-   2023/12/02 21:34:28 - abl - INFO - loop(train) [5/5] segment(train) [3/3] model loss is 0.03346
-   2023/12/02 21:34:28 - abl - INFO - Evaluation start: loop(val) [5]
-   2023/12/02 21:34:33 - abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.993 mnist_add/semantics_accuracy: 0.986 
-   2023/12/02 21:34:33 - abl - INFO - Saving model: loop(save) [5]
-   2023/12/02 21:34:33 - abl - INFO - Checkpoints will be saved to results/20231202_21_26_57/weights/model_checkpoint_loop_5.pth
-   2023/12/02 21:34:34 - abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.989 mnist_add/semantics_accuracy: 0.978 
 
+   abl - INFO - Abductive Learning on the MNIST Add example.
+   abl - INFO - loop(train) [1/5] segment(train) [1/3] 
+   abl - INFO - model loss: 1.91761
+   abl - INFO - loop(train) [1/5] segment(train) [2/3] 
+   abl - INFO - model loss: 1.59485
+   abl - INFO - loop(train) [1/5] segment(train) [3/3] 
+   abl - INFO - model loss: 1.33183
+   abl - INFO - Evaluation start: loop(val) [1]
+   abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.450 mnist_add/semantics_accuracy: 0.237 
+   abl - INFO - Saving model: loop(save) [1]
+   abl - INFO - Checkpoints will be saved to results/work_dir/weights/model_checkpoint_loop_1.pth
+   abl - INFO - loop(train) [2/5] segment(train) [1/3] 
+   abl - INFO - model loss: 1.00664
+   abl - INFO - loop(train) [2/5] segment(train) [2/3] 
+   abl - INFO - model loss: 0.52233
+   abl - INFO - loop(train) [2/5] segment(train) [3/3] 
+   abl - INFO - model loss: 0.11282
+   abl - INFO - Evaluation start: loop(val) [2]
+   abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.976 mnist_add/semantics_accuracy: 0.954 
+   abl - INFO - Saving model: loop(save) [2]
+   abl - INFO - Checkpoints will be saved to results/work_dir/weights/model_checkpoint_loop_2.pth
+   ...
+   abl - INFO - loop(train) [5/5] segment(train) [1/3] 
+   abl - INFO - model loss: 0.04030
+   abl - INFO - loop(train) [5/5] segment(train) [2/3] 
+   abl - INFO - model loss: 0.03859
+   abl - INFO - loop(train) [5/5] segment(train) [3/3] 
+   abl - INFO - model loss: 0.03423
+   abl - INFO - Evaluation start: loop(val) [5]
+   abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.992 mnist_add/semantics_accuracy: 0.984 
+   abl - INFO - Saving model: loop(save) [5]
+   abl - INFO - Checkpoints will be saved to results/work_dir/weights/model_checkpoint_loop_5.pth
+   abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.987 mnist_add/semantics_accuracy: 0.975 
 
 Read more about `bridging machine learning and reasoning <Bridge.html>`_.

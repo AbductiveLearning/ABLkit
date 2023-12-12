@@ -70,8 +70,23 @@ class SimpleBridge(BaseBridge):
         else:
             data_samples = self.data_preprocess(*train_data)
 
+        if isinstance(segment_size, int) and segment_size == 0:
+            raise ValueError("segment_size should be positive.")
+
+        if isinstance(segment_size, float):
+            if 0 < segment_size <= 1:
+                segment_size = int(segment_size * len(data_samples))
+            else:
+                raise ValueError("segment_size should be in (0, 1].")
+
         for loop in range(loops):
             for seg_idx in range((len(data_samples) - 1) // segment_size + 1):
+                print_log(
+                    f"loop(train) [{loop + 1}/{loops}] segment(train) "
+                    f"[{(seg_idx + 1)}/{(len(data_samples) - 1) // segment_size + 1}] ",
+                    logger="current",
+                )
+                
                 sub_data_samples = data_samples[
                     seg_idx * segment_size : (seg_idx + 1) * segment_size
                 ]
@@ -81,12 +96,6 @@ class SimpleBridge(BaseBridge):
                 self.filter_pseudo_label(sub_data_samples)
                 self.pseudo_label_to_idx(sub_data_samples)
                 self.model.train(sub_data_samples)
-
-                print_log(
-                    f"loop(train) [{loop + 1}/{loops}] segment(train) "
-                    f"[{(seg_idx + 1)}/{(len(data_samples) - 1) // segment_size + 1}] ",
-                    logger="current",
-                )
 
             if (loop + 1) % eval_interval == 0 or loop == loops - 1:
                 print_log(f"Evaluation start: loop(val) [{loop + 1}]", logger="current")

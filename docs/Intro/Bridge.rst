@@ -59,7 +59,7 @@ The fundamental part of the ``train`` method is as follows:
         loops : int
             Machine Learning part and Reasoning part will be iteratively optimized
             for ``loops`` times.
-        segment_size:
+        segment_size : Union[int, float]
             Data will be split into segments of this size and data in each segment
             will be used together to train the model.
         """
@@ -67,6 +67,9 @@ The fundamental part of the ``train`` method is as follows:
             data_samples = train_data
         else:
             data_samples = self.data_preprocess(*train_data)
+        
+        if isinstance(segment_size, float):
+            segment_size = int(segment_size * len(data_samples))
 
         for loop in range(loops):
             for seg_idx in range((len(data_samples) - 1) // segment_size + 1):
