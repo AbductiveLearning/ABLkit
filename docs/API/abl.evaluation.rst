@@ -13,4 +13,4 @@ Metrics
 
    BaseMetric
    SymbolMetric
-   SemanticsMetric
+   ReasoningMetric

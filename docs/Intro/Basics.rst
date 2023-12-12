@@ -26,7 +26,7 @@ It first features class ``ListData`` (inherited from base class
 ``BaseDataElement``), which defines the data structures used in
 Abductive Learning, and comprises common data operations like insertion,
 deletion, retrieval, slicing, etc. Additionally, a series of Evaluation
-Metrics, including class ``SymbolMetric`` and ``SemanticsMetric`` (both
+Metrics, including class ``SymbolMetric`` and ``ReasoningMetric`` (both
 specialized metrics derived from base class ``BaseMetric``), outline
 methods for evaluating model quality from a data perspective.
 

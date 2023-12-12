@@ -162,13 +162,13 @@ Read more about `building the reasoning part <Reasoning.html>`_.
 Building Evaluation Metrics
 ---------------------------
 
-ABL-Package provides two basic metrics, namely ``SymbolMetric`` and ``SemanticsMetric``, which are used to evaluate the accuracy of the machine learning model's predictions and the accuracy of the ``logic_forward`` results, respectively.
+ABL-Package provides two basic metrics, namely ``SymbolMetric`` and ``ReasoningMetric``, which are used to evaluate the accuracy of the machine learning model's predictions and the accuracy of the ``logic_forward`` results, respectively.
 
 .. code:: python
 
-   from abl.evaluation import SemanticsMetric, SymbolMetric
+   from abl.evaluation import ReasoningMetric, SymbolMetric
 
-   metric_list = [SymbolMetric(prefix="mnist_add"), SemanticsMetric(kb=kb, prefix="mnist_add")]
+   metric_list = [SymbolMetric(prefix="mnist_add"), ReasoningMetric(kb=kb, prefix="mnist_add")]
 
 Read more about `building evaluation metrics <Evaluation.html>`_
 
@@ -203,7 +203,7 @@ Training log would be similar to this:
    abl - INFO - loop(train) [1/5] segment(train) [3/3] 
    abl - INFO - model loss: 1.33183
    abl - INFO - Evaluation start: loop(val) [1]
-   abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.450 mnist_add/semantics_accuracy: 0.237 
+   abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.450 mnist_add/reasoning_accuracy: 0.237 
    abl - INFO - Saving model: loop(save) [1]
    abl - INFO - Checkpoints will be saved to results/work_dir/weights/model_checkpoint_loop_1.pth
    abl - INFO - loop(train) [2/5] segment(train) [1/3] 
@@ -213,7 +213,7 @@ Training log would be similar to this:
    abl - INFO - loop(train) [2/5] segment(train) [3/3] 
    abl - INFO - model loss: 0.11282
    abl - INFO - Evaluation start: loop(val) [2]
-   abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.976 mnist_add/semantics_accuracy: 0.954 
+   abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.976 mnist_add/reasoning_accuracy: 0.954 
    abl - INFO - Saving model: loop(save) [2]
    abl - INFO - Checkpoints will be saved to results/work_dir/weights/model_checkpoint_loop_2.pth
    ...
@@ -224,9 +224,9 @@ Training log would be similar to this:
    abl - INFO - loop(train) [5/5] segment(train) [3/3] 
    abl - INFO - model loss: 0.03423
    abl - INFO - Evaluation start: loop(val) [5]
-   abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.992 mnist_add/semantics_accuracy: 0.984 
+   abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.992 mnist_add/reasoning_accuracy: 0.984 
    abl - INFO - Saving model: loop(save) [5]
    abl - INFO - Checkpoints will be saved to results/work_dir/weights/model_checkpoint_loop_5.pth
-   abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.987 mnist_add/semantics_accuracy: 0.975 
+   abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.987 mnist_add/reasoning_accuracy: 0.975 
 
 Read more about `bridging machine learning and reasoning <Bridge.html>`_.

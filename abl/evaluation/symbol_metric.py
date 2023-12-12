@@ -1,5 +1,7 @@
 from typing import Optional
 
+import numpy as np
+
 from ..structures import ListData
 from .base_metric import BaseMetric
 
@@ -15,10 +17,8 @@ class SymbolMetric(BaseMetric):
         if not len(pred_pseudo_label_list) == len(gt_pseudo_label_list):
             raise ValueError("lengthes of pred_pseudo_label and gt_pseudo_label should be equal")
 
-        correct_num = 0
-        for pred_pseudo_label, gt_pseudo_label in zip(pred_pseudo_label_list, gt_pseudo_label_list):
-            if pred_pseudo_label == gt_pseudo_label:
-                correct_num += 1
+        correct_num = np.sum(np.array(pred_pseudo_label_list) == np.array(gt_pseudo_label_list))
+
         self.results.append((correct_num, len(pred_pseudo_label_list)))
 
     def compute_metrics(self) -> dict:
