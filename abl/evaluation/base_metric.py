@@ -7,18 +7,19 @@ from ..utils import print_log
 
 
 class BaseMetric(metaclass=ABCMeta):
-    """Base class for a metric.
+    """
+    Base class for a metrics.
 
-    The metric first processes each batch of data_samples and predictions,
-    and appends the processed results to the results list. Then it
-    collects all results together from all ranks if distributed training
-    is used. Finally, it computes the metrics of the entire dataset.
+    The metrics first processes each batch of data_samples and appends the processed
+    results to the results list. Then, it computes the metrics of the entire dataset.
 
-    Args:
-        prefix (str, optional): The prefix that will be added in the metric
-            names to disambiguate homonymous metrics of different evaluators.
-            If prefix is not provided in the argument, self.default_prefix
-            will be used instead. Default: None
+    Parameters
+    ----------
+    prefix : str, optional
+        The prefix that will be added in the metrics names to disambiguate homonymous
+        metrics of different tasks. If prefix is not provided in the argument,
+        self.default_prefix will be used instead. Default to None.
+
     """
 
     def __init__(
@@ -30,30 +31,38 @@ class BaseMetric(metaclass=ABCMeta):
 
     @abstractmethod
     def process(self, data_samples: ListData) -> None:
-        """Process one batch of data samples and predictions. The processed
-        results should be stored in ``self.results``, which will be used to
-        compute the metrics when all batches have been processed.
+        """
+        Process one batch of data samples. The processed results should be stored
+        in ``self.results``, which will be used to compute the metrics when all
+        batches have been processed.
 
-        Args:
-            data_samples (ListData): A batch of outputs from
-                the model.
+        Parameters
+        ----------
+        data_samples : ListData
+            A batch of data samples.
         """
 
     @abstractmethod
     def compute_metrics(self) -> dict:
-        """Compute the metrics from processed results.
+        """
+        Compute the metrics from processed results.
 
-        Returns:
-            dict: The computed metrics. The keys are the names of the metrics,
+        Returns
+        -------
+        dict
+            The computed metrics. The keys are the names of the metrics,
             and the values are corresponding results.
         """
 
     def evaluate(self) -> dict:
-        """Evaluate the model performance of the whole dataset after processing
+        """
+        Evaluate the model performance of the whole dataset after processing
         all batches.
 
-        Returns:
-            dict: Evaluation metrics dict on the val dataset. The keys are the
+        Returns
+        -------
+        dict
+            Evaluation metrics dict on the val dataset. The keys are the
             names of the metrics, and the values are corresponding results.
         """
         if len(self.results) == 0:
@@ -66,7 +75,7 @@ class BaseMetric(metaclass=ABCMeta):
             )
 
         metrics = self.compute_metrics()
-        # Add prefix to metric names
+        # Add prefix to metrics names
         if self.prefix:
             metrics = {"/".join((self.prefix, k)): v for k, v in metrics.items()}
 
