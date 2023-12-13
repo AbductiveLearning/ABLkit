@@ -13,7 +13,7 @@ Dataset & Data Structure
 Dataset
 -------
 
-ABL-Package offers several `dataset classes <../API/abl.dataset.html>`_ for different usage, such as ``ClassificationDataset``, ``RegressionDataset`` and ``PredictionDataset``, while users are only required to organize the dataset into a tuple consists of the following three components
+ABL-Package assumes user data to be structured as a tuple, comprising the following three components:
 
 - ``X``: List[List[Any]]
     A list of instances representing the input data. We refer to each List in ``X`` as an instance and one instance may contain several elements.

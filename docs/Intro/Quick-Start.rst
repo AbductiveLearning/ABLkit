@@ -68,8 +68,6 @@ Out:
    Shape of X [C, H, W]: torch.Size([1, 28, 28])
 
 
-ABL-Package provides several dataset classes for different purposes, including ``ClassificationDataset``, ``RegressionDataset``, and ``PredictionDataset``. However, it's not necessary to encapsulate data into these specific classes. Instead, we only need to structure our datasets in the aforementioned formats.
-
 Read more about `preparing datasets <Datasets.html>`_.
 
 Building the Learning Part
