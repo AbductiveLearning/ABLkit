@@ -32,7 +32,7 @@ class BasicNN:
     num_epochs : int, optional
         The number of epochs used for training, by default 1.
     stop_loss : Optional[float], optional
-        The loss value at which to stop training, by default 0.01.
+        The loss value at which to stop training, by default 0.0001.
     num_workers : int
         The number of workers used for loading data, by default 0.
     save_interval : Optional[int], optional
