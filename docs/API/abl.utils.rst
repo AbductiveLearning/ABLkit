@@ -32,7 +32,6 @@ Utils
    :nosignatures:
    :template: classtemplate.rst
 
-   calculate_revision_num
    confidence_dist
    flatten
    hamming_dist

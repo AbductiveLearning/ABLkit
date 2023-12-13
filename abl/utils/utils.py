@@ -112,38 +112,6 @@ def confidence_dist(pred_prob, candidates):
     return 1 - np.prod(pred_prob[cols, candidates], axis=1)
 
 
-def block_sample(X, Z, Y, sample_num, seg_idx):
-    """
-    Extract a block of samples from lists X, Z, and Y.
-
-    Parameters
-    ----------
-    X, Z, Y : list
-        Input lists from which to extract the samples.
-    sample_num : int
-        The number of samples per block.
-    seg_idx : int
-        The block index to extract.
-
-    Returns
-    -------
-    tuple of lists
-        The extracted block samples from X, Z, and Y.
-
-    Example
-    -------
-    >>> X = [1, 2, 3, 4, 5, 6]
-    >>> Z = ['a', 'b', 'c', 'd', 'e', 'f']
-    >>> Y = [10, 11, 12, 13, 14, 15]
-    >>> block_sample(X, Z, Y, 2, 1)
-    ([3, 4], ['c', 'd'], [12, 13])
-    """
-    start_idx = sample_num * seg_idx
-    end_idx = sample_num * (seg_idx + 1)
-
-    return (data[start_idx:end_idx] for data in (X, Z, Y))
-
-
 def to_hashable(x):
     """
     Convert a nested list to a nested tuple so it is hashable.
@@ -184,40 +152,3 @@ def restore_from_hashable(x):
     return x
 
 
-def calculate_revision_num(parameter, total_length):
-    """
-    Convert a float parameter to an integer, based on a total length.
-
-    Parameters
-    ----------
-    parameter : int or float
-        The parameter to convert. If float, it should be between 0 and 1.
-        If int, it should be non-negative. If -1, it will be replaced with total_length.
-    total_length : int
-        The total length to calculate the parameter from if it's a fraction.
-
-    Returns
-    -------
-    int
-        The calculated parameter.
-
-    Raises
-    ------
-    TypeError
-        If parameter is not an int or a float.
-    ValueError
-        If parameter is a float not in [0, 1] or an int below 0.
-    """
-    if not isinstance(parameter, (int, float)):
-        raise TypeError("Parameter must be of type int or float.")
-
-    if parameter == -1:
-        return total_length
-    elif isinstance(parameter, float):
-        if not (0 <= parameter <= 1):
-            raise ValueError("If parameter is a float, it must be between 0 and 1.")
-        return round(total_length * parameter)
-    else:
-        if parameter < 0:
-            raise ValueError("If parameter is an int, it must be non-negative.")
-        return parameter

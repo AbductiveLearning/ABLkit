@@ -3,16 +3,6 @@ abl.reasoning
 
 .. currentmodule:: abl.reasoning
 
-Reasoning
----------
-
-.. autosummary::
-   :toctree: generated
-   :nosignatures:
-   :template: classtemplate.rst
-
-   Reasoner
-
 Knowledge Base
 --------------
 
@@ -25,3 +15,12 @@ Knowledge Base
    GroundKB
    PrologKB
 
+Reasoner
+---------
+
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+   :template: classtemplate.rst
+
+   Reasoner

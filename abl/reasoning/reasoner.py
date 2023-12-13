@@ -11,7 +11,7 @@ from ..utils.utils import confidence_dist, hamming_dist
 
 class Reasoner:
     """
-    Base class for reasoner.
+    Reasoner for minimizing the inconsistency between the knowledge base and learning models.
 
     Parameters
     ----------
