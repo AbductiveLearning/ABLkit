@@ -126,9 +126,11 @@ class KBBase(ABC):
 
         Returns
         -------
-        List[List[Any]]
-            A list of candidates, i.e. revised pseudo label samples that are compatible with the
-            knowledge base.
+        Tuple[List[List[Any]], List[Any]]
+            A tuple of two element. The first element is a list of candidate revisions, i.e. revised
+            pseudo label samples that are compatible with the knowledge base. The second element is 
+            a list of reasoning results corresponding to each candidate, i.e., the outcome of the 
+            logic_forward function.
         """
         return self._abduce_by_search(pseudo_label, y, x, max_revision_num, require_more_revision)
 
@@ -173,19 +175,22 @@ class KBBase(ABC):
 
         Returns
         -------
-        List[List[Any]]
-            A list of candidates, i.e. revised pseudo label samples that are compatible with the
-            knowledge base.
+        Tuple[List[List[Any]], List[Any]]
+            A tuple of two element. The first element is a list of candidate revisions, i.e. revised
+            pseudo label samples that are compatible with the knowledge base. The second element is 
+            a list of reasoning results corresponding to each candidate, i.e., the outcome of the 
+            logic_forward function.
         """
-        candidates = []
+        candidates, reasoning_results = [], []
         abduce_c = product(self.pseudo_label_list, repeat=len(revision_idx))
         for c in abduce_c:
             candidate = pseudo_label.copy()
             for i, idx in enumerate(revision_idx):
                 candidate[idx] = c[i]
-            if self._check_equal(self.logic_forward(candidate, *(x,) if self._num_args == 2 else ()), y):
-                candidates.append(candidate)
-        return candidates
+            reasoning_result = self.logic_forward(candidate, *(x,) if self._num_args == 2 else ())
+            if self._check_equal(reasoning_result, y):
+                candidates.append(candidate); reasoning_results.append(reasoning_result)
+        return candidates, reasoning_results
 
     def _revision(
         self, 
@@ -198,13 +203,12 @@ class KBBase(ABC):
         For a specified number of labels in a pseudo label sample to revise, iterate through
         all possible indices to find any candidates that are compatible with the knowledge base.
         """
-        new_candidates = []
+        new_candidates, new_reasoning_results = [], []
         revision_idx_list = combinations(range(len(pseudo_label)), revision_num)
-
         for revision_idx in revision_idx_list:
-            candidates = self.revise_at_idx(pseudo_label, y, x, revision_idx)
-            new_candidates.extend(candidates)
-        return new_candidates
+            candidates, reasoning_results = self.revise_at_idx(pseudo_label, y, x, revision_idx)
+            new_candidates.extend(candidates); new_reasoning_results.extend(reasoning_results)
+        return new_candidates, new_reasoning_results
 
     @abl_cache()
     def _abduce_by_search(
@@ -237,26 +241,30 @@ class KBBase(ABC):
 
         Returns
         -------
-        List[List[Any]]
-            A list of candidates, i.e. revised pseudo label samples that are compatible with the
-            knowledge base.
+        Tuple[List[List[Any]], List[Any]]
+            A tuple of two element. The first element is a list of candidate revisions, i.e. revised
+            pseudo label samples that are compatible with the knowledge base. The second element is 
+            a list of reasoning results corresponding to each candidate, i.e., the outcome of the 
+            logic_forward function.
         """
-        candidates = []
+        candidates, reasoning_results = [], []
         for revision_num in range(len(pseudo_label) + 1):
-            candidates.extend(self._revision(revision_num, pseudo_label, y, x))
+            new_candidates, new_reasoning_results = self._revision(revision_num, pseudo_label, y, x)
+            candidates.extend(new_candidates); reasoning_results.extend(new_reasoning_results)
             if len(candidates) > 0:
                 min_revision_num = revision_num
                 break
             if revision_num >= max_revision_num:
-                return []
+                return [], []
 
         for revision_num in range(
             min_revision_num + 1, min_revision_num + require_more_revision + 1
         ):
             if revision_num > max_revision_num:
-                return candidates
-            candidates.extend(self._revision(revision_num, pseudo_label, y, x))
-        return candidates
+                return candidates, reasoning_results
+            new_candidates, new_reasoning_results = self._revision(revision_num, pseudo_label, y, x)
+            candidates.extend(new_candidates); reasoning_results.extend(new_reasoning_results)
+        return candidates, reasoning_results
 
     def __repr__(self):
         return (
@@ -363,28 +371,31 @@ class GroundKB(KBBase):
 
         Returns
         -------
-        List[List[Any]]
-            A list of candidates, i.e. revised pseudo label samples that are compatible with the
-            knowledge base.
+        Tuple[List[List[Any]], List[Any]]
+            A tuple of two element. The first element is a list of candidate revisions, i.e. revised
+            pseudo label samples that are compatible with the knowledge base. The second element is 
+            a list of reasoning results corresponding to each candidate, i.e., the outcome of the 
+            logic_forward function.
         """
         if self.GKB == {} or len(pseudo_label) not in self.GKB_len_list:
-            return []
+            return [], []
 
-        all_candidates = self._find_candidate_GKB(pseudo_label, y)
+        all_candidates, all_reasoning_results = self._find_candidate_GKB(pseudo_label, y)
         if len(all_candidates) == 0:
-            return []
+            return [], []
 
         cost_list = hamming_dist(pseudo_label, all_candidates)
         min_revision_num = np.min(cost_list)
         revision_num = min(max_revision_num, min_revision_num + require_more_revision)
         idxs = np.where(cost_list <= revision_num)[0]
         candidates = [all_candidates[idx] for idx in idxs]
-        return candidates
+        reasoning_results = [all_reasoning_results[idx] for idx in idxs]
+        return candidates, reasoning_results
 
     def _find_candidate_GKB(self, pseudo_label: List[Any], y: Any) -> List[List[Any]]:
         """
         Retrieve compatible candidates from the prebuilt GKB. For numerical reasoning results,
-        return all candidates whose reasoning results fall within the
+        return all candidates and their corresponding reasoning results which fall within the
         [y - max_err, y + max_err] range.
         """
         if isinstance(y, (int, float)):
@@ -394,15 +405,14 @@ class GroundKB(KBBase):
             low_key = bisect.bisect_left(key_list, y - self.max_err)
             high_key = bisect.bisect_right(key_list, y + self.max_err)
 
-            all_candidates = [
-                candidate
-                for key in key_list[low_key:high_key]
-                for candidate in potential_candidates[key]
-            ]
-            return all_candidates
-
+            all_candidates, all_reasoning_results = [], []
+            for key in key_list[low_key:high_key]:
+                for candidate in potential_candidates[key]:
+                    all_candidates.append(candidate); all_reasoning_results.append(key)
         else:
-            return self.GKB[len(pseudo_label)][y]
+            all_candidates = self.GKB[len(pseudo_label)][y]
+            all_reasoning_results = [y] * len(all_candidates)
+        return all_candidates, all_reasoning_results
 
     def __repr__(self):
         GKB_info_parts = []
@@ -551,11 +561,15 @@ class PrologKB(KBBase):
 
         Returns
         -------
-        List[List[Any]]
+        Tuple[List[List[Any]], List[Any]]
             A list of candidates, i.e. revised pseudo label samples that are compatible with the
             knowledge base.
+            A tuple of two element. The first element is a list of candidate revisions, i.e. revised
+            pseudo label samples that are compatible with the knowledge base. The second element is 
+            a list of reasoning results corresponding to each candidate, i.e., the outcome of the 
+            logic_forward function.
         """
-        candidates = []
+        candidates, reasoning_results = [], []
         query_string = self.get_query_string(pseudo_label, y, x, revision_idx)
         save_pseudo_label = pseudo_label
         pseudo_label = flatten(pseudo_label)
@@ -565,8 +579,8 @@ class PrologKB(KBBase):
             for i, idx in enumerate(revision_idx):
                 candidate[idx] = c[i]
             candidate = reform_list(candidate, save_pseudo_label)
-            candidates.append(candidate)
-        return candidates
+            candidates.append(candidate); reasoning_results.append(y)
+        return candidates, reasoning_results
 
     def __repr__(self):
         return (

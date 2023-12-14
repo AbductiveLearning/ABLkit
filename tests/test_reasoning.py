@@ -20,17 +20,17 @@ class TestKBBase(object):
 
     def test_revise_at_idx(self, kb_add):
         result = kb_add.revise_at_idx([0, 2], 2, [0.1, -0.2, 0.2, -0.3], [])
-        assert result == [[0, 2]]
+        assert result == ([[0, 2]], [2])
         result = kb_add.revise_at_idx([1, 2], 2, [0.1, -0.2, 0.2, -0.3], [])
-        assert result == []
+        assert result == ([], [])
         result = kb_add.revise_at_idx([1, 2], 2, [0.1, -0.2, 0.2, -0.3], [0, 1])
-        assert result == [[0, 2], [1, 1], [2, 0]]
+        assert result == ([[0, 2], [1, 1], [2, 0]], [2, 2, 2])
 
     def test_abduce_candidates(self, kb_add):
         result = kb_add.abduce_candidates([0, 1], 1, [0.1, -0.2, 0.2, -0.3], max_revision_num=2, require_more_revision=0)
-        assert result == [[0, 1]]
+        assert result == ([[0, 1]], [1])
         result = kb_add.abduce_candidates([1, 2], 1, [0.1, -0.2, 0.2, -0.3], max_revision_num=2, require_more_revision=0)
-        assert result == [[1, 0]]
+        assert result == ([[1, 0]], [1])
 
 
 class TestGroundKB(object):
@@ -47,7 +47,7 @@ class TestGroundKB(object):
         result = kb_add_ground.abduce_candidates(
             [1, 2], 1, [0.1, -0.2, 0.2, -0.3], max_revision_num=2, require_more_revision=0
         )
-        assert result == [(1, 0)]
+        assert result == ([(1, 0)], [1])
 
 
 class TestPrologKB(object):
@@ -87,7 +87,7 @@ class TestPrologKB(object):
 
     def test_revise_at_idx(self, kb_add_prolog):
         result = kb_add_prolog.revise_at_idx([1, 2], 2, [0.1, -0.2, 0.2, -0.3], [0])
-        assert result == [[0, 2]]
+        assert result == ([[0, 2]], [2])
 
 
 class TestReaonser(object):
@@ -101,8 +101,8 @@ class TestReaonser(object):
             excinfo.value
         )
         
-    def random_dist(self, data_sample, candidates):
-        cost_list = np.array([np.random.rand() for _ in candidates])
+    def random_dist(self, data_sample, candidates, reasoning_results):
+        cost_list = [np.random.rand() for _ in candidates]
         return cost_list
     
     def test_user_defined_dist_func(self, kb_add):
@@ -113,14 +113,14 @@ class TestReaonser(object):
         cost_list = np.array([np.random.rand() for _ in candidates])
         return cost_list
     
-    def invalid_dist2(self, data_sample, candidates):
+    def invalid_dist2(self, data_sample, candidates, reasoning_results):
         cost_list = np.array([np.random.rand() for _ in candidates])
         return np.append(cost_list, np.random.rand())
     
     def test_invalid_user_defined_dist_func(self, kb_add, data_samples_add):
         with pytest.raises(ValueError) as excinfo:
             Reasoner(kb_add, self.invalid_dist1)
-        assert 'User-defined dist_func must have exactly two parameters' in str(
+        assert 'User-defined dist_func must have exactly three parameters' in str(
             excinfo.value
         )
         with pytest.raises(ValueError) as excinfo:

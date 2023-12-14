@@ -79,8 +79,8 @@ class Reasoner:
             return
         elif callable(dist_func):
             params = inspect.signature(dist_func).parameters.values()
-            if len(params) != 2:
-                raise ValueError(f"User-defined dist_func must have exactly two parameters, but got {len(params)}.")
+            if len(params) != 3:
+                raise ValueError(f"User-defined dist_func must have exactly three parameters, but got {len(params)}.")
             return
         else:
             raise TypeError(
@@ -102,6 +102,7 @@ class Reasoner:
         self,
         data_sample: ListData,
         candidates: List[List[Any]],
+        reasoning_results: List[Any],
     ) -> List[Any]:
         """
         Due to the nondeterminism of abductive reasoning, there could be multiple candidates
@@ -114,6 +115,8 @@ class Reasoner:
             Data sample.
         candidates : List[List[Any]]
             Multiple compatible candidates.
+        reasoning_results : List[Any]
+            Corresponding reasoning results of the candidates.
 
         Returns
         -------
@@ -125,7 +128,7 @@ class Reasoner:
         elif len(candidates) == 1:
             return candidates[0]
         else:
-            cost_array = self._get_cost_list(data_sample, candidates)
+            cost_array = self._get_cost_list(data_sample, candidates, reasoning_results)
             candidate = candidates[np.argmin(cost_array)]
             return candidate
 
@@ -133,6 +136,7 @@ class Reasoner:
         self,
         data_sample: ListData,
         candidates: List[List[Any]],
+        reasoning_results: List[Any],
     ) -> np.ndarray:
         """
         Get the list of costs between each candidate and the given data sample.
@@ -143,6 +147,8 @@ class Reasoner:
             Data sample.
         candidates : List[List[Any]]
             Multiple compatible candidates.
+        reasoning_results : List[Any]
+            Corresponding reasoning results of the candidates.
 
         Returns
         -------
@@ -155,7 +161,7 @@ class Reasoner:
             candidates = [[self.remapping[x] for x in c] for c in candidates]
             return confidence_dist(data_sample.pred_prob, candidates)
         else:
-            cost_list = self.dist_func(data_sample, candidates)
+            cost_list = self.dist_func(data_sample, candidates, reasoning_results)
             if len(cost_list) != len(candidates):
                 raise ValueError(
                     f"The length of the array returned by dist_func must be equal to the number of candidates. "
@@ -222,11 +228,11 @@ class Reasoner:
             The revision score for the solution.
         """
         revision_idx = np.where(sol.get_x() != 0)[0]
-        candidates = self.kb.revise_at_idx(
+        candidates, reasoning_results = self.kb.revise_at_idx(
             data_sample.pred_pseudo_label, data_sample.Y, data_sample.X, revision_idx
         )
         if len(candidates) > 0:
-            return np.min(self._get_cost_list(data_sample, candidates))
+            return np.min(self._get_cost_list(data_sample, candidates, reasoning_results))
         else:
             return symbol_num
 
@@ -281,19 +287,22 @@ class Reasoner:
         if self.use_zoopt:
             solution = self._zoopt_get_solution(symbol_num, data_sample, max_revision_num)
             revision_idx = np.where(solution != 0)[0]
-            candidates = self.kb.revise_at_idx(
-                data_sample.pred_pseudo_label, data_sample.Y, data_sample.X, revision_idx
+            candidates, reasoning_results = self.kb.revise_at_idx(
+                pseudo_label=data_sample.pred_pseudo_label, 
+                y=data_sample.Y, 
+                x=data_sample.X, 
+                revision_idx=revision_idx
             )
         else:
-            candidates = self.kb.abduce_candidates(
-                data_sample.pred_pseudo_label,
-                data_sample.Y,
-                data_sample.X,
-                max_revision_num,
-                self.require_more_revision,
+            candidates, reasoning_results = self.kb.abduce_candidates(
+                pseudo_label=data_sample.pred_pseudo_label,
+                y=data_sample.Y, 
+                x=data_sample.X,
+                max_revision_num=max_revision_num,
+                require_more_revision=self.require_more_revision  
             )
 
-        candidate = self._get_one_candidate(data_sample, candidates)
+        candidate = self._get_one_candidate(data_sample, candidates, reasoning_results)
         return candidate
 
     def batch_abduce(self, data_samples: ListData) -> List[List[Any]]:
