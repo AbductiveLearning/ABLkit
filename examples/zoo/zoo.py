@@ -13,6 +13,7 @@ class ZooKB(KBBase):
     def __init__(self):
         super().__init__(pseudo_label_list=list(range(7)), use_cache=False)
         
+        # Use z3 solver 
         self.solver = Solver()
 
         # Load information of Zoo dataset
