@@ -5,3 +5,5 @@ torchvision
 torchaudio
 zoopt
 termcolor
+openml
+z3-solver 
