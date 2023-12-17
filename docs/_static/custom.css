@@ -1,28 +1,3 @@
 div.code-out > div.highlight > pre {
     background-color: #d3effd !important; 
 }
-
-.autosummary.longtable.docutils.align-default {
-    width: 100%;
-}
-
-.autosummary.longtable.docutils.align-default td {
-    word-wrap: break-word;
-    white-space: normal;
-}
-
-.row-odd td:first-child .pre {
-    font-size: 110%;
-    color: #4682B4;
-}
-
-.row-even td:first-child .pre {
-    font-size: 110%;
-    color: #4682B4;
-}
-
-.autosummary.longtable.docutils.align-default td:first-child {
-    width: 30%;
-    text-align: left;
-}
-
