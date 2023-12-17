@@ -211,7 +211,7 @@ Out:
       abl - INFO - Evaluation start: loop(val) [1]
       abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.207 mnist_add/reasoning_accuracy: 0.245 
       abl - INFO - Saving model: loop(save) [1]
-      abl - INFO - Checkpoints will be saved to results/20231217_14_27_56/weights/model_checkpoint_loop_1.pth
+      abl - INFO - Checkpoints will be saved to log_dir/weights/model_checkpoint_loop_1.pth
       abl - INFO - loop(train) [2/5] segment(train) [1/3] 
       abl - INFO - model loss: 0.97430
       abl - INFO - loop(train) [2/5] segment(train) [2/3] 
@@ -221,7 +221,7 @@ Out:
       abl - INFO - Evaluation start: loop(val) [2]
       abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.191 mnist_add/reasoning_accuracy: 0.353 
       abl - INFO - Saving model: loop(save) [2]
-      abl - INFO - Checkpoints will be saved to results/20231217_14_27_56/weights/model_checkpoint_loop_2.pth
+      abl - INFO - Checkpoints will be saved to log_dir/weights/model_checkpoint_loop_2.pth
       abl - INFO - loop(train) [3/5] segment(train) [1/3] 
       abl - INFO - model loss: 0.79906
       abl - INFO - loop(train) [3/5] segment(train) [2/3] 
@@ -231,7 +231,7 @@ Out:
       abl - INFO - Evaluation start: loop(val) [3]
       abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.148 mnist_add/reasoning_accuracy: 0.385 
       abl - INFO - Saving model: loop(save) [3]
-      abl - INFO - Checkpoints will be saved to results/20231217_14_27_56/weights/model_checkpoint_loop_3.pth
+      abl - INFO - Checkpoints will be saved to log_dir/weights/model_checkpoint_loop_3.pth
       abl - INFO - loop(train) [4/5] segment(train) [1/3] 
       abl - INFO - model loss: 0.72659
       abl - INFO - loop(train) [4/5] segment(train) [2/3] 
@@ -241,7 +241,7 @@ Out:
       abl - INFO - Evaluation start: loop(val) [4]
       abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.016 mnist_add/reasoning_accuracy: 0.494 
       abl - INFO - Saving model: loop(save) [4]
-      abl - INFO - Checkpoints will be saved to results/20231217_14_27_56/weights/model_checkpoint_loop_4.pth
+      abl - INFO - Checkpoints will be saved to log_dir/weights/model_checkpoint_loop_4.pth
       abl - INFO - loop(train) [5/5] segment(train) [1/3] 
       abl - INFO - model loss: 0.61140
       abl - INFO - loop(train) [5/5] segment(train) [2/3] 
@@ -251,7 +251,7 @@ Out:
       abl - INFO - Evaluation start: loop(val) [5]
       abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.002 mnist_add/reasoning_accuracy: 0.507 
       abl - INFO - Saving model: loop(save) [5]
-      abl - INFO - Checkpoints will be saved to results/20231217_14_27_56/weights/model_checkpoint_loop_5.pth
+      abl - INFO - Checkpoints will be saved to log_dir/weights/model_checkpoint_loop_5.pth
       abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.002 mnist_add/reasoning_accuracy: 0.482 
       
-More concrete examples are available in `examples/mnist_add` folder.
+More concrete examples are available in ``examples/mnist_add`` folder.
