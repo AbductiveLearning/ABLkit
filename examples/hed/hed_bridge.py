@@ -53,8 +53,7 @@ class HEDBridge(SimpleBridge):
                 pretrain_data, batch_size=64, shuffle=True
             )
 
-            min_loss = pretrain_model.fit(pretrain_data_loader)
-            print_log(f"min loss is {min_loss}", logger="current")
+            pretrain_model.fit(pretrain_data_loader)
             save_parma_dic = {
                 "model": cls_autoencoder.base_model.state_dict(),
             }
@@ -81,6 +80,7 @@ class HEDBridge(SimpleBridge):
         self.reasoner.remapping = dict(
             zip(self.reasoner.mapping.values(), self.reasoner.mapping.keys())
         )
+        self.idx_to_pseudo_label(data_samples)
         data_samples.abduced_pseudo_label = abduced_pseudo_label_list[return_idx]
 
         return data_samples.abduced_pseudo_label
@@ -202,6 +202,10 @@ class HEDBridge(SimpleBridge):
             data_samples = self.data_preprocess(train_data[1], equation_len)
             sampler = InfiniteSampler(len(data_samples), batch_size=segment_size)
             for seg_idx, select_idx in enumerate(sampler):
+                print_log(
+                    f"Equation Len(train) [{equation_len}] Segment Index [{seg_idx + 1}]",
+                    logger="current",
+                )
                 sub_data_samples = data_samples[select_idx]
                 self.predict(sub_data_samples)
                 if equation_len == min_len:
@@ -212,12 +216,6 @@ class HEDBridge(SimpleBridge):
                 filtered_sub_data_samples = self.filter_empty(sub_data_samples)
                 self.pseudo_label_to_idx(filtered_sub_data_samples)
                 loss = self.model.train(filtered_sub_data_samples)
-
-                print_log(
-                    f"Equation Len(train) [{equation_len}] Segment Index [{seg_idx + 1}] \
-                        model loss is {loss:.5f}",
-                    logger="current",
-                )
 
                 if self.check_training_impact(filtered_sub_data_samples, sub_data_samples):
                     condition_num += 1

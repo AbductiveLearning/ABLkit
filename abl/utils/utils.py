@@ -25,6 +25,9 @@ def flatten(nested_list):
     # if not isinstance(nested_list, list):
     #     raise TypeError("Input must be of type list.")
 
+    if isinstance(nested_list, list) and len(nested_list) == 0:
+        return nested_list
+
     if not isinstance(nested_list, list) or not isinstance(nested_list[0], (list, tuple)):
         return nested_list
 
