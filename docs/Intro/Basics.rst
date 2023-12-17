@@ -75,8 +75,8 @@ To implement this process, the following five steps are necessary:
 
 2. Build the learning part
 
-    Build a machine learning model that can predict inputs to pseudo labels. 
-    Then, use ``ABLModel`` to encapsulate the model.
+    Build a base machine learning model that can predict inputs to pseudo labels. 
+    Then, use ``ABLModel`` to encapsulate the base model.
 
 3. Build the reasoning part
 
@@ -87,7 +87,8 @@ To implement this process, the following five steps are necessary:
 
 4. Define Evaluation Metrics
 
-    Define the metrics for measuring accuracy by inheriting from ``BaseMetric``.
+    Define the metrics by building a subclass of ``BaseMetric``. The metrics will 
+    specify how to measure performance during the training and testing of the ABL framework.
 
 5. Bridge learning and reasoning
 

@@ -10,7 +10,7 @@
 Bridge
 ======
 
-Bridging learning and reasoning part to train the model is the fundamental idea of Abductive Learning. ABL-Package implements a set of bridge classes to achieve this.
+Bridging learning and reasoning parts to train the model is the fundamental idea of Abductive Learning. ABL-Package implements a set of bridge classes to achieve this.
 
 ``BaseBridge`` is an abstract class with the following initialization parameters:
 

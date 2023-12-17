@@ -15,7 +15,7 @@ class SimpleBridge(BaseBridge):
     """
     A basic implementation for bridging machine learning and reasoning parts.
 
-    This class implements the typical pipeline of Abductive learning, which involves
+    This class implements the typical pipeline of Abductive Learning, which involves
     the following five steps:
 
         - Predict class probabilities and indices for the given data samples.
