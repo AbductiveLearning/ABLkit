@@ -75,7 +75,7 @@ To implement this process, the following five steps are necessary:
 
 2. Build the learning part
 
-    Build a model that can predict inputs to pseudo labels. 
+    Build a machine learning model that can predict inputs to pseudo labels. 
     Then, use ``ABLModel`` to encapsulate the model.
 
 3. Build the reasoning part
@@ -89,7 +89,7 @@ To implement this process, the following five steps are necessary:
 
     Define the metrics for measuring accuracy by inheriting from ``BaseMetric``.
 
-5. Bridge machine learning and reasoning
+5. Bridge learning and reasoning
 
     Use ``SimpleBridge`` to bridge the learning and reasoning part
     for integrated training and testing. 

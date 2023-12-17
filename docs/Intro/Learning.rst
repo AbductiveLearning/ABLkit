@@ -10,11 +10,15 @@
 Learning Part
 =============
 
-Learnig part is constructed by first defining a base machine learning model and then wrap it into an instance of ``ABLModel`` class. 
+Learning part is constructed by first defining a base machine learning model and then wrap it into an instance of ``ABLModel`` class. 
 
-The flexibility of ABL package allows the base model to be any machine learning model conforming to the scikit-learn style, which requires implementing the ``fit`` and ``predict`` methods, or a PyTorch-based neural network, provided it has defined the architecture and implemented the ``forward`` method. 
+For base model, ABL package allows it to be one of the following forms:  
 
-Typically, base models are trained and make predictions on instance-level data, e.g. single images in the MNIST dataset, and therefore can not directly utilize sample-level data to train and predict, which is not suitable for most neural-symbolic tasks. ABL-Package provides the ``ABLModel`` to solve this problem. This class serves as a unified wrapper for all base models, which enables the learning part to train, test, and predict on sample-level data. The following two parts shows how to construct an ``ABLModel`` from a scikit-learn model and a PyTorch-based neural network, respectively.
+1. Any machine learning model conforming to the scikit-learn style, i.e., models which has implemented the ``fit`` and ``predict`` methods; 
+
+2. A PyTorch-based neural network, provided it has defined the architecture and implemented the ``forward`` method. 
+
+However, base models are typically trained and make predictions on instance-level data, e.g. single images in the MNIST dataset, and therefore can not directly utilize sample-level data to train and predict, which is not suitable for most neural-symbolic tasks. ABL-Package provides the ``ABLModel`` to solve this problem. This class serves as a unified wrapper for all base models, which enables the learning part to train, test, and predict on sample-level data. The following two parts shows how to construct an ``ABLModel`` from a scikit-learn model and a PyTorch-based neural network, respectively.
 
 For a scikit-learn model, we can directly use the model to create an instance of ``ABLModel``. For example, we can customize our machine learning model by
 
@@ -43,18 +47,18 @@ For a PyTorch-based neural network, we first need to encapsulate it within a ``B
 
 Besides ``fit`` and ``predict``, ``BasicNN`` also implements the following methods:
 
-+---------------------------+----------------------------------------+
-| Method                    | Function                               |
-+===========================+========================================+
-| train_epoch(data_loader)  | Train the neural network for one epoch.|
-+---------------------------+----------------------------------------+
-| predict_proba(X)          | Predict the class probabilities of X.  |
-+---------------------------+----------------------------------------+
-| score(X, y)               | Calculate the accuracy of the model on |
-|                           | test data.                             |
-+---------------------------+----------------------------------------+
-| save(epoch_id, save_path) | Save the model.                        |
-+---------------------------+----------------------------------------+
-| load(load_path)           | Load the model.                        |
-+---------------------------+----------------------------------------+
++-------------------------------+------------------------------------------+
+| Method                        | Function                                 |
++===============================+==========================================+
+| ``train_epoch(data_loader)``  | Train the neural network for one epoch.  |
++-------------------------------+------------------------------------------+
+| ``predict_proba(X)``          | Predict the class probabilities of ``X``.|
++-------------------------------+------------------------------------------+
+| ``score(X, y)``               | Calculate the accuracy of the model on   |
+|                               | test data.                               |
++-------------------------------+------------------------------------------+
+| ``save(epoch_id, save_path)`` | Save the model.                          |
++-------------------------------+------------------------------------------+
+| ``load(load_path)``           | Load the model.                          |
++-------------------------------+------------------------------------------+
 

@@ -16,13 +16,16 @@ Dataset
 ABL-Package assumes user data to be structured as a tuple, comprising the following three components:
 
 - ``X``: List[List[Any]]
-    A list of instances representing the input data. We refer to each List in ``X`` as an instance and one instance may contain several elements.
+    A list of sublists representing the input data. We refer to each sublist in ``X`` as an instance and each instance may contain several elements.
 - ``gt_pseudo_label``: List[List[Any]], optional
-    A list of objects representing the ground truth label of each element in ``X``. It should have the same shape as ``X``. This component is only used to evaluate the performance of the machine learning part but not to train the model. If elements are unlabeled, this component can be ``None``.
+    A list of sublists with each sublist representing ground truth pseudo labels for each **element** within an instance of ``X``. 
 - ``Y``: List[Any]
-    A list of objects representing the ground truth label of the reasoning result of each instance in ``X``.
+    A list representing the ground truth reasoning result for each **instance** in ``X``.
 
-In the MNIST Addition example, the data used for training looks like:
+.. warning::
+    Each sublist in ``gt_pseudo_label`` should have the same length as the sublist in ``X``. ``gt_pseudo_label`` is only used to evaluate the performance of the learning part but not to train the model. If the pseudo label of the elements in the datasets are unlabeled, ``gt_pseudo_label`` can be ``None``.
+
+As an illustration, in the MNIST Addition example, the data used for training are organized as follows:
 
 .. image:: ../img/Datasets_1.png
    :width: 350px
@@ -31,7 +34,7 @@ In the MNIST Addition example, the data used for training looks like:
 Data Structure
 --------------
 
-In Abductive Learning, there are various types of data in the training and testing process, such as raw data, pseudo label, index of the pseudo label, abduced pseudo label, etc. To make the interface stable and possessing good versatility, ABL-Package uses `abstract data interfaces <../API/abl.structures.html>`_ to encapsulate various data during the implementation of the model.
+In Abductive Learning, there are various types of data in the training and testing process, such as raw data, pseudo label, index of the pseudo label, abduced pseudo label, etc. To enhance the stability and versatility, ABL-Package uses `abstract data interfaces <../API/abl.structures.html>`_ to encapsulate various data during the implementation of the model.
 
 One of the most commonly used abstract data interface is ``ListData``. Besides orginizing data into tuple, we can also prepare data to be in the form of this data interface.
 

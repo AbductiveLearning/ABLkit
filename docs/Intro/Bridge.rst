@@ -10,30 +10,33 @@
 Bridge
 ======
 
-Bridging machine learning and reasoning to train the model is the fundamental idea of Abductive Learning, ABL-Package implements a set of `bridge class <../API/abl.bridge.html>`_ to achieve this.
+Bridging learning and reasoning part to train the model is the fundamental idea of Abductive Learning. ABL-Package implements a set of bridge classes to achieve this.
 
 ``BaseBridge`` is an abstract class with the following initialization parameters:
 
-- ``model``: an object of type ``ABLModel``. Machine Learning part are wrapped in this object.
-- ``reasoner``: a object of type ``Reasoner``. Reasoning part are wrapped in this object.
+- ``model`` is an object of type ``ABLModel``. Learning part are wrapped in this object.
+- ``reasoner`` is a object of type ``Reasoner``. Reasoning part are wrapped in this object.
 
 ``BaseBridge`` has the following important methods that need to be overridden in subclasses:
 
-+-----------------------------------+--------------------------------------------------------------------------------------+
-| Method Signature                  | Description                                                                          |
-+===================================+======================================================================================+
-| predict(data_samples)             | Predicts class probabilities and indices for the given data samples.                 |
-+-----------------------------------+--------------------------------------------------------------------------------------+
-| abduce_pseudo_label(data_samples) | Abduces pseudo labels for the given data samples.                                    |
-+-----------------------------------+--------------------------------------------------------------------------------------+
-| idx_to_pseudo_label(data_samples) | Converts indices to pseudo labels using the provided or default mapping.             |
-+-----------------------------------+--------------------------------------------------------------------------------------+
-| pseudo_label_to_idx(data_samples) | Converts pseudo labels to indices using the provided or default remapping.           |
-+-----------------------------------+--------------------------------------------------------------------------------------+
-| train(train_data)                 | Train the model.                                                                     |
-+-----------------------------------+--------------------------------------------------------------------------------------+
-| test(test_data)                   | Test the model.                                                                      |
-+-----------------------------------+--------------------------------------------------------------------------------------+
++---------------------------------------+----------------------------------------------------+
+| Method Signature                      | Description                                        |
++=======================================+====================================================+
+| ``predict(data_samples)``             | Predicts class probabilities and indices           |
+|                                       | for the given data samples.                        |
++---------------------------------------+----------------------------------------------------+
+| ``abduce_pseudo_label(data_samples)`` | Abduces pseudo labels for the given data samples.  |
++---------------------------------------+----------------------------------------------------+
+| ``idx_to_pseudo_label(data_samples)`` | Converts indices to pseudo labels using            |
+|                                       | the provided or default mapping.                   |
++---------------------------------------+----------------------------------------------------+
+| ``pseudo_label_to_idx(data_samples)`` | Converts pseudo labels to indices                  |
+|                                       | using the provided or default remapping.           |
++---------------------------------------+----------------------------------------------------+
+| ``train(train_data)``                 | Train the model.                                   |
++---------------------------------------+----------------------------------------------------+
+| ``test(test_data)``                   | Test the model.                                    |
++---------------------------------------+----------------------------------------------------+
 
 where ``train_data`` and ``test_data`` are both in the form of ``(X, gt_pseudo_label, Y)``. They will be used to construct ``ListData`` instances which are referred to as ``data_samples`` in the ``train`` and ``test`` methods respectively. More details can be found in `preparing datasets <Datasets.html>`_.
 
