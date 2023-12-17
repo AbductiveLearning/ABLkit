@@ -8,10 +8,10 @@ from ..structures import ListData
 
 class BaseBridge(metaclass=ABCMeta):
     """
-    A base class for bridging machine learning and reasoning parts.
+    A base class for bridging learning and reasoning parts.
 
     This class provides necessary methods that need to be overridden in subclasses
-    to construct a typical pipeline of Abductive learning (corresponding to ``train``),
+    to construct a typical pipeline of Abductive Learning (corresponding to ``train``),
     which involves the following four methods:
 
         - predict: Predict class indices on the given data samples.
