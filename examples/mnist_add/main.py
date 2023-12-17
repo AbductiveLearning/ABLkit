@@ -56,13 +56,6 @@ def main():
                         help='use GroundKB (default: False)')
 
     args = parser.parse_args()
-    
-    # Build logger
-    print_log("Abductive Learning on the MNIST Addition example.", logger="current")
-
-    # Retrieve the directory of the Log file and define the directory for saving the model weights.
-    log_dir = ABLLogger.get_current_instance().log_dir
-    weights_dir = osp.join(log_dir, "weights")
 
     ### Learning Part
     # Build necessary components for BasicNN
@@ -96,7 +89,7 @@ def main():
         kb = AddKB()
     reasoner = Reasoner(kb, dist_func="confidence", max_revision=args.max_revision, require_more_revision=args.require_more_revision)
 
-    ### Datasets and Evaluation Metrics
+    ### Evaluation Metrics
     # Get training and testing data
     train_data = get_mnist_add(train=True, get_pseudo_label=True)
     test_data = get_mnist_add(train=False, get_pseudo_label=True)
@@ -107,6 +100,13 @@ def main():
     ### Bridge Machine Learning and Logic Reasoning
     bridge = SimpleBridge(model, reasoner, metric_list)
 
+    # Build logger
+    print_log("Abductive Learning on the MNIST Addition example.", logger="current")
+
+    # Retrieve the directory of the Log file and define the directory for saving the model weights.
+    log_dir = ABLLogger.get_current_instance().log_dir
+    weights_dir = osp.join(log_dir, "weights")
+    
     #  Train and Test
     bridge.train(train_data, loops=args.loops, segment_size=args.segment_size, save_interval=args.save_interval, save_dir=weights_dir)
     bridge.test(test_data)
