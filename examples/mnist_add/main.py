@@ -5,13 +5,13 @@ import argparse
 import torch
 from torch import nn
 
-from abl.bridge import SimpleBridge
-from abl.evaluation import ReasoningMetric, SymbolMetric
+from examples.mnist_add.datasets import get_dataset
+from examples.models.nn import LeNet5
 from abl.learning import ABLModel, BasicNN
 from abl.reasoning import KBBase, GroundKB, PrologKB, Reasoner
+from abl.evaluation import ReasoningMetric, SymbolMetric
 from abl.utils import ABLLogger, print_log
-from examples.mnist_add.datasets import get_mnist_add
-from examples.models.nn import LeNet5
+from abl.bridge import SimpleBridge
 
 class AddKB(KBBase):
     def __init__(self, pseudo_label_list=list(range(10))):
@@ -42,7 +42,7 @@ def main():
     parser.add_argument('--loops', type=int, default=5,
                         help='number of loop iterations (default : 5)')
     parser.add_argument('--segment_size', type=int or float, default=1/3,
-                        help='number of loop iterations (default : 1/3)')
+                        help='segment size (default : 1/3)')
     parser.add_argument('--save_interval', type=int, default=1,
                         help='save interval (default : 1)')
     parser.add_argument('--max-revision', type=int or float, default=-1,
@@ -56,8 +56,12 @@ def main():
                         help='use GroundKB (default: False)')
 
     args = parser.parse_args()
+    
+    ### Working with Data
+    train_data = get_dataset(train=True, get_pseudo_label=True)
+    test_data = get_dataset(train=False, get_pseudo_label=True)
 
-    ### Learning Part
+    ### Building the Learning Part
     # Build necessary components for BasicNN
     cls = LeNet5(num_classes=10)
     loss_fn = nn.CrossEntropyLoss()
@@ -66,7 +70,6 @@ def main():
     device = torch.device("cuda" if use_cuda else "cpu")
 
     # Build BasicNN
-    # The function of BasicNN is to wrap NN models into the form of an sklearn estimator
     base_model = BasicNN(
         cls,
         loss_fn,
@@ -77,27 +80,24 @@ def main():
     )
 
     # Build ABLModel
-    # The main function of the ABL model is to serialize data and
-    # provide a unified interface for different machine learning models
     model = ABLModel(base_model)
     
+    ### Building the Reasoning Part
+    # Build knowledge base
     if args.prolog:
         kb = PrologKB(pseudo_label_list=list(range(10)), pl_file="add.pl")
     elif args.ground:
         kb = AddGroundKB()
     else:
         kb = AddKB()
-    reasoner = Reasoner(kb, dist_func="confidence", max_revision=args.max_revision, require_more_revision=args.require_more_revision)
+    
+    # Create reasoner
+    reasoner = Reasoner(kb, max_revision=args.max_revision, require_more_revision=args.require_more_revision)
 
-    ### Evaluation Metrics
-    # Get training and testing data
-    train_data = get_mnist_add(train=True, get_pseudo_label=True)
-    test_data = get_mnist_add(train=False, get_pseudo_label=True)
-
-    # Set up metrics
+    ### Building Evaluation Metrics
     metric_list = [SymbolMetric(prefix="mnist_add"), ReasoningMetric(kb=kb, prefix="mnist_add")]
 
-    ### Bridge Machine Learning and Logic Reasoning
+    ### Bridge Learning and Reasoning
     bridge = SimpleBridge(model, reasoner, metric_list)
 
     # Build logger

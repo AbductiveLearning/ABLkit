@@ -9,7 +9,7 @@
 Quick Start
 ===========
 
-We use the MNIST Addition task as a quick start example. In this task, the inputs are pairs of MNIST handwritten images, and the outputs are their sums. Refer to the links in each section to dive deeper.
+We use the MNIST Addition task as a quick start example. In this task, pairs of MNIST handwritten images and their sums are given, alongwith a domain knowledge base which contain information on how to perform addition operations. Our objective is to input a pair of handwritten images and accurately determine their sum. Refer to the links in each section to dive deeper.
 
 Working with Data
 -----------------
@@ -90,8 +90,11 @@ function specifying how to perform (deductive) reasoning.
 
 Then, we create a reasoner by instantiating the class
 ``Reasoner`` and passing the knowledge base as an parameter.
-The reasoner can be used to minimize inconsistencies between the 
-knowledge base and the prediction from the learning part. 
+Due to the indeterminism of abductive reasoning, there could 
+be multiple candidates compatible to the knowledge base. 
+When this happens, reasoner can minimize inconsistencies between 
+the knowledge base and pseudo labels predicted by the learning part, 
+and then return only one candidate which has highest consistency.
 
 .. code:: python
 

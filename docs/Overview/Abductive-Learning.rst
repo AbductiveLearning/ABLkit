@@ -51,7 +51,7 @@ The following figure illustrates this process:
 
 We can observe that in the above figure, the left half involves machine
 learning, while the right half involves logical reasoning. Thus, the
-entire abductive learning process is a continuous cycle of machine
+entire Abductive Learning process is a continuous cycle of machine
 learning and logical reasoning. This effectively forms a paradigm that
 is dual-driven by both data and domain knowledge, integrating and
 balancing the use of machine learning and logical reasoning in a unified

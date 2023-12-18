@@ -43,8 +43,8 @@ class KBBase(ABC):
 
     Notes
     -----
-    Users should inherit from this base class to build their own knowledge base. For the
-    user-build KB (an inherited subclass), it's only required for the user to provide the
+    Users should derive from this base class to build their own knowledge base. For the
+    user-build KB (a derived subclass), it's only required for the user to provide the
     `pseudo_label_list` and override the `logic_forward` function (specifying how to
     perform logical reasoning). After that, other operations (e.g. how to perform abductive
     reasoning) will be automatically set up.

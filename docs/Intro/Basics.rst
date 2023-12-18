@@ -22,7 +22,7 @@ AI: data, models, and knowledge.
 .. image:: ../img/ABL-Package.png
 
 **Data** module manages the storage, operation, and evaluation of data.
-It first features class ``ListData`` (inherited from base class
+It first features class ``ListData`` (derived from base class
 ``BaseDataElement``), which defines the data structures used in
 Abductive Learning, and comprises common data operations like insertion,
 deletion, retrieval, slicing, etc. Additionally, a series of Evaluation
@@ -46,7 +46,7 @@ responsible for minimizing the inconsistency between the knowledge base
 and learning models.
 
 Finally, the integration of these three modules occurs through
-**Bridge** module, which features class ``SimpleBridge`` (inherited from base
+**Bridge** module, which features class ``SimpleBridge`` (derived from base
 class ``BaseBridge``). Bridge module synthesize data, learning, and
 reasoning, and facilitate the training and testing of the entire
 Abductive Learning framework.

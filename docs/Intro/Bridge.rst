@@ -14,6 +14,7 @@ In this section, we will look at how to bridge learning and reasoning parts to t
 
 .. code:: python
 
+    # Import necessary modules
     from abl.bridge import BaseBridge, SimpleBridge
 
 ``BaseBridge`` is an abstract class with the following initialization parameters:

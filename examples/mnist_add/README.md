@@ -4,16 +4,15 @@ This example shows a simple implementation of [MNIST Addition](https://link) tas
 
 ## Run
 
-```
-bash
+```bash
 pip install -r requirements.txt
 python main.py
 ```
 
 ## Usage
 
-```
-usage: test.py [-h] [--no-cuda] [--epochs EPOCHS] [--lr LR]
+```bash
+usage: main.py [-h] [--no-cuda] [--epochs EPOCHS] [--lr LR]
                [--weight-decay WEIGHT_DECAY] [--batch-size BATCH_SIZE]
                [--loops LOOPS] [--segment_size SEGMENT_SIZE]
                [--save_interval SAVE_INTERVAL] [--max-revision MAX_REVISION]
@@ -34,7 +33,7 @@ optional arguments:
                         batch size (default : 32)
   --loops LOOPS         number of loop iterations (default : 5)
   --segment_size SEGMENT_SIZE
-                        number of loop iterations (default : 1/3)
+                        segment size (default : 1/3)
   --save_interval SAVE_INTERVAL
                         save interval (default : 1)
   --max-revision MAX_REVISION

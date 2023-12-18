@@ -22,12 +22,13 @@ In ABL-Package, building the reasoning part involves two steps:
 
 .. code:: python
 
+   # Import necessary modules
    from abl.reasoning import KBBase, GroundKB, PrologKB, Reasoner
 
 Building a knowledge base
 -------------------------
 
-Generally, we can create a subclass inherited from ``KBBase`` to build our own
+Generally, we can create a subclass derived from ``KBBase`` to build our own
 knowledge base. In addition, ABL-Package also offers several predefined 
 subclasses of ``KBBase`` (e.g., ``PrologKB`` and ``GroundKB``), 
 which we can utilize to build our knowledge base more conveniently.
@@ -35,7 +36,7 @@ which we can utilize to build our knowledge base more conveniently.
 Building a knowledge base from `KBBase`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For the user-built KB from `KBBase` (an inherited subclass), it's only
+For the user-built KB from ``KBBase`` (a derived subclass), it's only
 required to pass the ``pseudo_label_list`` parameter in the ``__init__`` function
 and override the ``logic_forward`` function:
 
@@ -184,7 +185,7 @@ As an example, the ``GKB_len_list`` for MNIST Addition should be ``[2]``,
 since all pseudo labels in the example consist of two digits. Therefore,
 the construction of KB with GKB (``add_ground_kb``) of MNIST Addition would be
 as follows. As mentioned, the difference between this and the previously
-built ``add_kb`` lies only in the base class from which it is inherited
+built ``add_kb`` lies only in the base class from which it is derived
 and whether an extra parameter ``GKB_len_list`` is passed.
 
 .. code:: python
