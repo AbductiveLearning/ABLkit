@@ -2,8 +2,5 @@ numpy
 pyswip==0.2.9
 torch
 torchvision
-torchaudio
 zoopt
 termcolor
-openml
-z3-solver 
