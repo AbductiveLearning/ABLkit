@@ -95,7 +95,7 @@ class SimpleBridge(BaseBridge):
         """
         pred_idx = data_samples.pred_idx
         data_samples.pred_pseudo_label = [
-            [self.reasoner.mapping[_idx] for _idx in sub_list] for sub_list in pred_idx
+            [self.reasoner.idx_to_label[_idx] for _idx in sub_list] for sub_list in pred_idx
         ]
         return data_samples.pred_pseudo_label
 
@@ -114,7 +114,7 @@ class SimpleBridge(BaseBridge):
             A list of indices converted from pseudo labels.
         """
         abduced_idx = [
-            [self.reasoner.remapping[_abduced_pseudo_label] for _abduced_pseudo_label in sub_list]
+            [self.reasoner.label_to_idx[_abduced_pseudo_label] for _abduced_pseudo_label in sub_list]
             for sub_list in data_samples.abduced_pseudo_label
         ]
         data_samples.abduced_idx = abduced_idx

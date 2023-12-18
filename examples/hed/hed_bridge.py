@@ -67,8 +67,8 @@ class HEDBridge(SimpleBridge):
         mapping_score = []
         abduced_pseudo_label_list = []
         for _mapping in candidate_mappings:
-            self.reasoner.mapping = _mapping
-            self.reasoner.remapping = dict(zip(_mapping.values(), _mapping.keys()))
+            self.reasoner.idx_to_label = _mapping
+            self.reasoner.label_to_idx = dict(zip(_mapping.values(), _mapping.keys()))
             self.idx_to_pseudo_label(data_samples)
             abduced_pseudo_label = self.reasoner.abduce(data_samples)
             mapping_score.append(len(abduced_pseudo_label) - abduced_pseudo_label.count([]))
@@ -76,9 +76,9 @@ class HEDBridge(SimpleBridge):
 
         max_revisible_instances = max(mapping_score)
         return_idx = mapping_score.index(max_revisible_instances)
-        self.reasoner.mapping = candidate_mappings[return_idx]
-        self.reasoner.remapping = dict(
-            zip(self.reasoner.mapping.values(), self.reasoner.mapping.keys())
+        self.reasoner.idx_to_label = candidate_mappings[return_idx]
+        self.reasoner.label_to_idx = dict(
+            zip(self.reasoner.idx_to_label.values(), self.reasoner.idx_to_label.keys())
         )
         self.idx_to_pseudo_label(data_samples)
         data_samples.abduced_pseudo_label = abduced_pseudo_label_list[return_idx]
@@ -236,7 +236,7 @@ class HEDBridge(SimpleBridge):
                     else:
                         if equation_len == min_len:
                             print_log(
-                                "Learned mapping is: " + str(self.reasoner.mapping),
+                                "Learned mapping is: " + str(self.reasoner.idx_to_label),
                                 logger="current",
                             )
                             self.model.load(load_path="./weights/pretrain_weights.pth")
