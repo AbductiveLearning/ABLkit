@@ -10,7 +10,13 @@
 Learning Part
 =============
 
-Learning part is constructed by first defining a base machine learning model and then wrap it into an instance of ``ABLModel`` class. 
+In this section, we will look at how to build the learning part. In ABL-Package, learning part is constructed by first defining a base machine learning model, and then wrap it into an instance of ``ABLModel`` class. 
+
+.. code:: python
+
+    import sklearn
+    import torchvision
+    from abl.learning import BasicNN, ABLModel
 
 For base model, ABL package allows it to be one of the following forms:  
 
@@ -18,14 +24,11 @@ For base model, ABL package allows it to be one of the following forms:
 
 2. A PyTorch-based neural network, provided it has defined the architecture and implemented the ``forward`` method. 
 
-However, base models are typically trained and make predictions on instance-level data, e.g. single images in the MNIST dataset, and therefore can not directly utilize sample-level data to train and predict, which is not suitable for most neural-symbolic tasks. ABL-Package provides the ``ABLModel`` to solve this problem. This class serves as a unified wrapper for all base models, which enables the learning part to train, test, and predict on sample-level data. The following two parts shows how to construct an ``ABLModel`` from a scikit-learn model and a PyTorch-based neural network, respectively.
+However, base models are typically trained to make predictions on instance-level data, and can not directly utilize sample-level data to train and predict, which is not suitable for most neural-symbolic tasks. ABL-Package provides the ``ABLModel`` to solve this problem. This class serves as a unified wrapper for all base models, which enables the learning part to train, test, and predict on sample-level data. The following two parts shows how to construct an ``ABLModel`` from a scikit-learn model and a PyTorch-based neural network, respectively.
 
 For a scikit-learn model, we can directly use the model to create an instance of ``ABLModel``. For example, we can customize our machine learning model by
 
 .. code:: python
-
-    import sklearn
-    from abl.learning import ABLModel
 
     base_model = sklearn.neighbors.KNeighborsClassifier(n_neighbors=3)
     model = ABLModel(base_model)
@@ -35,7 +38,6 @@ For a PyTorch-based neural network, we first need to encapsulate it within a ``B
 .. code:: python
 
     # Load a PyTorch-based neural network
-    import torchvision
     cls = torchvision.models.resnet18(pretrained=True)
 
     # loss_fn and optimizer are used for training

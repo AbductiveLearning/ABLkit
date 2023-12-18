@@ -10,20 +10,27 @@
 Dataset & Data Structure
 ========================
 
+In this section, we will look at the datasets and data structures in ABL-Package.
+
+.. code:: python
+
+    import torch
+    from abl.structures import ListData
+
 Dataset
 -------
 
 ABL-Package assumes user data to be structured as a tuple, comprising the following three components:
 
 - ``X``: List[List[Any]]
-    A list of sublists representing the input data. We refer to each sublist in ``X`` as an instance and each instance may contain several elements.
+    A list of sublists representing the input data. We refer to each sublist in ``X`` as an sample and each sample may contain several instances.
 - ``gt_pseudo_label``: List[List[Any]], optional
-    A list of sublists with each sublist representing ground truth pseudo labels for each **element** within an instance of ``X``. 
+    A list of sublists with each sublist representing a ground truth pseudo label sample. Each sample consists of ground truth pseudo labels for each **instance** within a sample of ``X``. 
 - ``Y``: List[Any]
-    A list representing the ground truth reasoning result for each **instance** in ``X``.
+    A list representing the ground truth reasoning result for each **sample** in ``X``.
 
 .. warning::
-    Each sublist in ``gt_pseudo_label`` should have the same length as the sublist in ``X``. ``gt_pseudo_label`` is only used to evaluate the performance of the learning part but not to train the model. If the pseudo label of the elements in the datasets are unlabeled, ``gt_pseudo_label`` can be ``None``.
+    Each sublist in ``gt_pseudo_label`` should have the same length as the sublist in ``X``. ``gt_pseudo_label`` is only used to evaluate the performance of the learning part but not to train the model. If the pseudo label of the instances in the datasets are unlabeled, ``gt_pseudo_label`` can be ``None``.
 
 As an illustration, in the MNIST Addition example, the data used for training are organized as follows:
 
@@ -39,9 +46,6 @@ In Abductive Learning, there are various types of data in the training and testi
 One of the most commonly used abstract data interface is ``ListData``. Besides orginizing data into tuple, we can also prepare data to be in the form of this data interface.
 
 .. code-block:: python
-
-    import torch
-    from abl.structures import ListData
 
     # prepare data
     X = [list(torch.randn(3, 28, 28)), list(torch.randn(3, 28, 28))]

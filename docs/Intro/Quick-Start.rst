@@ -56,7 +56,7 @@ To facilitate uniform processing, ABL-Package provides the ``BasicNN`` class to 
    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
    base_model = BasicNN(cls, loss_fn, optimizer, device)
 
-Afterward, we wrap the scikit-learn style model, ``base_model``, into an instance of ``ABLModel``. This class serves as a unified wrapper for all base models,  facilitating the learning part to train, test, and predict on sample-level data - such as equations in the MNIST Addition task.
+However, Base model built above are trained to make predictions on instance-level data (e.g., a single image), which is not suitable enough for our task. Therefore, we then wrap the ``base_model`` into an instance of ``ABLModel``. This class serves as a unified wrapper for base models, facilitating the learning part to train, test, and predict on sample-level data, (e.g., images that comprise the equation).
 
 .. code:: python
 
