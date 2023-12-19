@@ -4,18 +4,18 @@ MNIST Addition
 In this example, we show an implementation of `MNIST
 Addition <https://arxiv.org/abs/1805.10872>`_. In this task, pairs of
 MNIST handwritten images and their sums are given, alongwith a domain
-knowledge base which contain information on how to perform addition
-operations. Our objective is to input a pair of handwritten images and
-accurately determine their sum.
+knowledge base containing information on how to perform addition
+operations. The task is to recognize the digits of handwritten 
+images and accurately determine their sum.
 
 Intuitively, we first use a machine learning model (learning part) to
 convert the input images to digits (we call them pseudo labels), and
 then use the knowledge base (reasoning part) to calculate the sum of
-these digits. Since we do not have ground-truth of the digits, the
-reasoning part will leverage domain knowledge and revise the initial
-digits yielded by the learning part into results derived from abductive
-reasoning. This process enables us to further refine and retrain the
-machine learning model.
+these digits. Since we do not have ground-truth of the digits, in 
+abductive learning, the reasoning part will leverage domain knowledge 
+and revise the initial digits yielded by the learning part through
+abductive reasoning. This process enables us to further update 
+the machine learning model.
 
 .. code:: ipython3
 
@@ -44,8 +44,8 @@ First, we get the training and testing datasets:
 
 Both datasets contain several data examples. In each data example, we
 have three components: X (a pair of images), gt_pseudo_label (a pair of
-corresponding ground truth digits, i.e., pseudo labels), and Y (their sum). The datasets are illustrated
-as follows.
+corresponding ground truth digits, i.e., pseudo labels), and Y (their sum).
+The datasets are illustrated as follows.
 
 .. code:: ipython3
 
@@ -127,11 +127,11 @@ Out:
         Shape of pred_prob for a batch of 32 samples: (32, 10)
     
 
-However, base model built above are trained to make predictions on
-instance-level data, i.e., a single image, and can not directly utilize
-sample-level data, i.e., a pair of images. Therefore, we then wrap the
-base model into ``ABLModel`` which enables the learning part to train,
-test, and predict on sample-level data.
+However, the base model built above deals with instance-level data 
+(i.e., a single image), and can not directly deal with sample-level
+data (i.e., a pair of images). Therefore, we wrap the base model
+into ``ABLModel``, which enables the learning part to train, test, 
+and predict on sample-level data.
 
 .. code:: ipython3
 
@@ -152,8 +152,8 @@ Building the Reasoning Part
 
 In the reasoning part, we first build a knowledge base which contain
 information on how to perform addition operations. We build it by
-creating a subclass of ``KBBase``. In the derived subclass, we have to
-first initialize the ``pseudo_label_list`` parameter specifying list of
+creating a subclass of ``KBBase``. In the derived subclass, we first 
+initialize the ``pseudo_label_list`` parameter specifying list of
 possible pseudo labels, and then override the ``logic_forward`` function
 defining how to perform (deductive) reasoning.
 
@@ -200,7 +200,7 @@ to the indeterminism of abductive reasoning, there could be multiple
 candidates compatible to the knowledge base. When this happens, reasoner
 can minimize inconsistencies between the knowledge base and pseudo
 labels predicted by the learning part, and then return only one
-candidate which has highest consistency.
+candidate that has highest consistency.
 
 .. code:: ipython3
 
