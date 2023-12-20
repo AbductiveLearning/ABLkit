@@ -1,7 +1,7 @@
 MNIST Addition
 ==============
 
-This notebook shows an implementation of `MNIST
+Below shows an implementation of `MNIST
 Addition <https://arxiv.org/abs/1805.10872>`__. In this task, pairs of
 MNIST handwritten images and their sums are given, alongwith a domain
 knowledge base containing information on how to perform addition
@@ -12,7 +12,7 @@ Intuitively, we first use a machine learning model (learning part) to
 convert the input images to digits (we call them pseudo-labels), and
 then use the knowledge base (reasoning part) to calculate the sum of
 these digits. Since we do not have ground-truth of the digits, in
-abductive learning, the reasoning part will leverage domain knowledge
+Abductive Learning, the reasoning part will leverage domain knowledge
 and revise the initial digits yielded by the learning part through
 abductive reasoning. This process enables us to further update the
 machine learning model.
@@ -42,11 +42,12 @@ First, we get the training and testing datasets:
     train_data = get_dataset(train=True, get_pseudo_label=True)
     test_data = get_dataset(train=False, get_pseudo_label=True)
 
-Both ``train_data`` and ``test_data`` have the same structures: tuples
-with three components: X (list where each element is a pair of images),
-gt_pseudo_label (list where each element is a pair of digits) and Y
-(list where each element is the sum of each digit pair). The length and
-structures of datasets are illustrated as follows.
+``train_data`` and ``test_data`` share identical structures: 
+tuples with three components: X (list where each element is a 
+list of two images), gt_pseudo_label (list where each element 
+is a list of two digits, i.e., pseudo-labels) and Y (list where 
+each element is the sum of the two digits). The length and structures 
+of datasets are illustrated as follows.
 
 .. note::
 
@@ -55,24 +56,25 @@ structures of datasets are illustrated as follows.
 
 .. code:: ipython3
 
-    def describe_structure(lst):
-        if not isinstance(lst, list):
-            return type(lst).__name__ 
-        return [describe_structure(item) for item in lst]
-    
     print(f"Both train_data and test_data consist of 3 components: X, gt_pseudo_label, Y")
     print("\n")
     train_X, train_gt_pseudo_label, train_Y = train_data
-    print(f"Length of X, gt_pseudo_label, Y in train_data: {len(train_X)}, {len(train_gt_pseudo_label)}, {len(train_Y)}")
+    print(f"Length of X, gt_pseudo_label, Y in train_data: " +
+          f"{len(train_X)}, {len(train_gt_pseudo_label)}, {len(train_Y)}")
     test_X, test_gt_pseudo_label, test_Y = test_data
-    print(f"Length of X, gt_pseudo_label, Y in test_data: {len(test_X)}, {len(test_gt_pseudo_label)}, {len(test_Y)}")
+    print(f"Length of X, gt_pseudo_label, Y in test_data: " +
+          f"{len(test_X)}, {len(test_gt_pseudo_label)}, {len(test_Y)}")
     print("\n")
-    structure_X = describe_structure(train_X[0])
-    structure_gt_pseudo_label = describe_structure(train_gt_pseudo_label[0])
-    structure_Y = describe_structure(train_Y[0])
-    print(f"Type of X: {type(train_X).__name__}, and type of each element in X: {structure_X}.")
-    print(f"Type of gt_pseudo_label: {type(train_gt_pseudo_label).__name__}, and type of each element in gt_pseudo_label: {structure_gt_pseudo_label}.")
-    print(f"Type of Y: {type(train_Y).__name__}, and type of each element in Y: {structure_Y}.")
+
+    X_0, gt_pseudo_label_0, Y_0 = train_X[0], train_gt_pseudo_label[0], train_Y[0]
+    print(f"X is a {type(train_X).__name__}, " +
+          f"with each element being a {type(X_0).__name__} " +
+          f"of {len(X_0)} {type(X_0[0]).__name__}.")
+    print(f"gt_pseudo_label is a {type(train_gt_pseudo_label).__name__}, " +
+          f"with each element being a {type(gt_pseudo_label_0).__name__} " +
+          f"of {len(gt_pseudo_label_0)} {type(gt_pseudo_label_0[0]).__name__}.")
+    print(f"Y is a {type(train_Y).__name__}, " +
+          f"with each element being a {type(Y_0).__name__}.")
 
 
 Out:
@@ -80,15 +82,13 @@ Out:
         :class: code-out
 
         Both train_data and test_data consist of 3 components: X, gt_pseudo_label, Y
-        
-        
+
         Length of X, gt_pseudo_label, Y in train_data: 30000, 30000, 30000
         Length of X, gt_pseudo_label, Y in test_data: 5000, 5000, 5000
-        
-        
-        Type of X: list, and type of each element in X: ['Tensor', 'Tensor'].
-        Type of gt_pseudo_label: list, and type of each element in gt_pseudo_label: ['int', 'int'].
-        Type of Y: list, and type of each element in Y: int.
+
+        X is a list, with each element being a list of 2 Tensor.
+        gt_pseudo_label is a list, with each element being a list of 2 int.
+        Y is a list, with each element being a int.
     
 
 The ith element of X, gt_pseudo_label, and Y together constitute the ith
@@ -97,24 +97,24 @@ training set, we have:
 
 .. code:: ipython3
 
-    first_X, first_gt_pseudo_label, first_Y = train_X[0], train_gt_pseudo_label[0], train_Y[0]
-    print(f"X in the first data example (a pair of images):")
+    X_0, gt_pseudo_label_0, Y_0 = train_X[0], train_gt_pseudo_label[0], train_Y[0]
+    print(f"X in the first data example (a list of two images):")
     plt.subplot(1,2,1)
     plt.axis('off') 
-    plt.imshow(first_X[0].numpy().transpose(1, 2, 0))
+    plt.imshow(X_0[0].numpy().transpose(1, 2, 0))
     plt.subplot(1,2,2)
     plt.axis('off') 
-    plt.imshow(first_X[1].numpy().transpose(1, 2, 0))
+    plt.imshow(X_0[1].numpy().transpose(1, 2, 0))
     plt.show()
-    print(f"gt_pseudo_label in the first data example (a pair of ground truth pseudo-labels): {first_gt_pseudo_label[0]}, {first_gt_pseudo_label[1]}")
-    print(f"Y in the first data example (their sum result): {first_Y}")
+    print(f"gt_pseudo_label in the first data example (a list of two ground truth pseudo-labels): {gt_pseudo_label_0}")
+    print(f"Y in the first data example (their sum result): {Y_0}")
 
 
 Out:
     .. code:: none
         :class: code-out
 
-        X in the first data example (a pair of images):
+        X in the first data example (a list of two images):
     
     .. image:: ../img/mnist_add_datasets.png
         :width: 400px
@@ -122,7 +122,7 @@ Out:
 
     .. parsed-literal::
 
-        gt_pseudo_label in the first data example (a pair of ground truth pseudo-labels): 7, 5
+        gt_pseudo_label in the first data example (a list of two ground truth pseudo-labels): [7, 5]
         Y in the first data example (their sum result): 12
     
 
@@ -193,24 +193,32 @@ examples.
 
     from abl.structures import ListData
     # ListData is a data structure provided by ABL-Package that can be used to organize data examples
-    data_example = ListData()
-    data_example.X = first_X
-    data_example.gt_pseudo_label = first_gt_pseudo_label
-    data_example.Y = first_Y
-    
-    # Perform prediction on the first data examples
-    prediction_result = model.predict(data_example)
-    print(f"Predicted class labels for the first data example: np.array with shape {prediction_result['label'].shape}")
-    print(f"Predicted class probabilities for the first data example: np.array with shape {prediction_result['prob'].shape}")
+    data_examples = ListData()
+    # We use the first 100 data examples in the training set as an illustration
+    data_examples.X = train_X[:100]
+    data_examples.gt_pseudo_label = train_gt_pseudo_label[:100]
+    data_examples.Y = train_Y[:100]
+
+    # Perform prediction on the 100 data examples
+    pred_label, pred_prob = model.predict(data_examples)['label'], model.predict(data_examples)['prob']
+    print(f"Predicted class labels for the 100 data examples: \n" +
+          f"a list of length {len(pred_label)}, and each element is " +
+          f"a {type(pred_label[0]).__name__} of shape {pred_label[0].shape}.\n")
+    print(f"Predicted class probabilities for the 100 data examples: \n" +
+          f"a list of length {len(pred_prob)}, and each element is " +
+          f"a {type(pred_prob[0]).__name__} of shape {pred_prob[0].shape}.")
 
 
 Out:
     .. code:: none
         :class: code-out
 
-        Predicted class labels for the first data example: np.array with shape (2,)
-        Predicted class probabilities for the first data example: np.array with shape (2, 10)
-    
+        Predicted class labels for the 100 data examples: 
+        a list of length 100, and each element is a ndarray of shape (2,).
+
+        Predicted class probabilities for the 100 data examples: 
+        a list of length 100, and each element is a ndarray of shape (2, 10).
+
 
 Building the Reasoning Part
 ---------------------------
@@ -282,7 +290,7 @@ candidate that has the highest consistency.
     confidence derived from the predicted probability. In ``examples/mnist_add/main.py``, we
     provide options for utilizing other forms of consistency measurement.
 
-    Also, during process of inconsistency minimization, one can leverage
+    Also, during process of inconsistency minimization, we can leverage
     `ZOOpt library <https://github.com/polixir/ZOOpt>`__ for acceleration.
     Options for this are also available in ``examples/mnist_add/main.py``. Those interested are
     encouraged to explore these features.

@@ -1,6 +1,6 @@
 # MNIST Addition Example
 
-This example shows a simple implementation of [MNIST Addition](https://arxiv.org/abs/1805.10872) task, where pairs of MNIST handwritten images and their sums are given, alongwith a domain knowledge base containing information on how to perform addition operations. The task is to recognize the digits of handwritten images and accurately determine their sum.
+This example shows a simple implementation of [Handwritten Formula](https://arxiv.org/abs/2006.06649) task, where handwritten images of decimal formulas and their computed results are given, alongwith a domain knowledge base containing information on how to compute the decimal formula. The task is to recognize the symbols (which can be digits or operators '+', '-', '×', '÷') of handwritten images and accurately determine their results.
 
 ## Run
 
@@ -17,7 +17,7 @@ usage: main.py [-h] [--no-cuda] [--epochs EPOCHS] [--lr LR]
                [--loops LOOPS] [--segment_size SEGMENT_SIZE]
                [--save_interval SAVE_INTERVAL] [--max-revision MAX_REVISION]
                [--require-more-revision REQUIRE_MORE_REVISION]
-               [--prolog | --ground]
+               [--ground] [--max-err MAX_ERR]
 
 MNIST Addition example
 
@@ -40,7 +40,7 @@ optional arguments:
                         maximum revision in reasoner (default : -1)
   --require-more-revision REQUIRE_MORE_REVISION
                         require more revision in reasoner (default : 0)
-  --prolog              use PrologKB (default: False)
   --ground              use GroundKB (default: False)
+  --max-err MAX_ERR     max tolerance during abductive reasoning (default : 1e-10)
 
 ```

@@ -45,12 +45,12 @@ and override the ``logic_forward`` function:
 -  ``logic_forward`` defines how to perform (deductive) reasoning,
    i.e. matching each pseudo-label example to its reasoning result. 
 
-.. warnings::
+.. note::
 
    Generally, the overridden function ``logic_forward`` provided by the user accepts 
-   only one parameter, ``pseudo_label`` (a pseudo-label example), However, for certain 
+   only one parameter, ``pseudo_label`` (a pseudo-label example). However, for certain 
    scenarios, deductive reasoning in the knowledge base may necessitate information 
-   from the input. When this happens, ``logic_forward`` can also accept two parameters: 
+   from the input. In these scenarios, ``logic_forward`` can also accept two parameters: 
    ``pseudo_label`` and ``x``.
 
 After that, other operations, including how to perform abductive
