@@ -62,7 +62,13 @@ The fundamental part of the ``train`` method is as follows:
         Parameters
         ----------
         train_data : Tuple[List[List[Any]], Optional[List[List[Any]]], List[Any]]]
-            Training data.
+            Training data is a tuple consists of three parts: ``X``, ``gt_pseudo_label``
+            and ``Y``.
+            - ``X`` is a list of sublists representing the input data.
+            - ``gt_pseudo_label`` is only used to evaluate the performance of the 
+            ``ABLModel`` but not to train. ``gt_pseudo_label`` can be ``None``.
+            - ``Y`` is a list representing the ground truth reasoning result for each
+            sublist in ``X``.
         loops : int
             Machine Learning part and Reasoning part will be iteratively optimized
             for ``loops`` times.
