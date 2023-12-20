@@ -32,6 +32,8 @@ def gen_mappings(chars, symbs):
     # returned mappings
     perms = permutations(symbs)
     for p in perms:
+        if p.index(1) < p.index(0):
+            continue
         mappings.append(dict(zip(chars, list(p))))
     return mappings
 

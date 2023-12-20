@@ -98,7 +98,7 @@ class HEDBridge(SimpleBridge):
         )
         print_log(log_string, logger="current")
 
-        if character_accuracy >= 0.9 and revisible_ratio >= 0.9:
+        if character_accuracy >= 0.95 and revisible_ratio >= 0.95:
             return True
         return False
 
