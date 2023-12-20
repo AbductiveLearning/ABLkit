@@ -21,7 +21,7 @@ In this section, we will look at the datasets and data structures in ABL-Package
 Dataset
 -------
 
-ABL-Package assumes user data to be structured as a tuple, comprising the following three components:
+ABL-Package assumes user data to be either structured as a tuple or a ``ListData`` which is the underlying data structure utilized in the whole package and will be introduced in the next section. Regardless of the chosen format, the data should encompass the following three essential components:
 
 - ``X``: List[List[Any]]
     
@@ -53,9 +53,11 @@ As an illustration, in the MNIST Addition example, the data used for training ar
 Data Structure
 --------------
 
-In Abductive Learning, there are various types of data in the training and testing process, such as raw data, pseudo-label, index of the pseudo-label, abduced pseudo-label, etc. To enhance the stability and versatility, ABL-Package uses `abstract data interfaces <../API/abl.structures.html>`_ to encapsulate various data during the implementation of the model.
+Besides the user-provided dataset, various forms of data are utilized and dynamicly generate throughout the training and testing process of Abductive Learning framework. Examples include raw data, predicted pseudo-label, abduced pseudo-label, pseudo-label indices, and so on. To manage this diversity and ensure a stable, versatile interface, ABL-Package employs `abstract data interfaces <../API/abl.structures.html>`_ to encapsulate different forms of data that will be used in the total learning process.
 
-One of the most commonly used abstract data interface is ``ListData``. Besides orginizing data into tuple, we can also prepare data to be in the form of this data interface.
+``BaseDataElement`` is the base class for all abstract data interfaces. Inherited from ``BaseDataElement``, ``ListData`` is the most commonly used abstract data interface in ABL-Package. As the fundamental data structure, ``ListData`` implements commonly used data manipulation methods and is responsible for transferring data between various components of ABL, ensuring that stages such as prediction, training, and abductive reasoning can utilize ``ListData`` as a unified input format. 
+
+Before proceeding to other stages, user-provided datasets are firstly converted into ``ListData``. For flexibility, ABL-Package also allows user to directly supply data in ``ListData`` format, which similarly requires the inclusion of three attributes: ``X``, ``gt_pseudo_label``, and ``Y``. The following code shows the basic usage of ``ListData``. More information can be found in the `API documentation <../API/abl.structures.html>`_.
 
 .. code-block:: python
 
