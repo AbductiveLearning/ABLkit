@@ -24,11 +24,11 @@ class Reasoner:
         abduced label. It can be either a string representing a predefined distance 
         function or a callable function. The available predefined distance functions: 
         'hamming' | 'confidence'. 'hamming': directly calculates the Hamming 
-        distance between the predicted pseudo label in the data sample and each 
+        distance between the predicted pseudo label in the data example and each 
         candidate, 'confidence': calculates the distance between the prediction 
         and each candidate based on confidence derived from the predicted probability 
-        in the data sample. The callable function should have the signature 
-        dist_func(data_sample, candidates, candidate_idxs, reasoning_results) and must return a cost list. Each element 
+        in the data example. The callable function should have the signature 
+        dist_func(data_example, candidates, candidate_idxs, reasoning_results) and must return a cost list. Each element 
         in this cost list should be a numerical value representing the cost for each 
         candidate, and the list should have the same length as candidates. 
         Defaults to 'confidence'.
@@ -36,7 +36,7 @@ class Reasoner:
         A mapping from index in the base model to label. If not provided, a default
         order-based index to label mapping is created. Defaults to None.
     max_revision : Union[int, float], optional
-        The upper limit on the number of revisions for each data sample when
+        The upper limit on the number of revisions for each data example when
         performing abductive reasoning. If float, denotes the fraction of the total
         length that can be revised. A value of -1 implies no restriction on the
         number of revisions. Defaults to -1.
@@ -100,7 +100,7 @@ class Reasoner:
 
     def _get_one_candidate(
         self,
-        data_sample: ListData,
+        data_example: ListData,
         candidates: List[List[Any]],
         reasoning_results: List[Any],
     ) -> List[Any]:
@@ -111,8 +111,8 @@ class Reasoner:
 
         Parameters
         ----------
-        data_sample : ListData
-            Data sample.
+        data_example : ListData
+            Data example.
         candidates : List[List[Any]]
             Multiple compatible candidates.
         reasoning_results : List[Any]
@@ -128,23 +128,23 @@ class Reasoner:
         elif len(candidates) == 1:
             return candidates[0]
         else:
-            cost_array = self._get_cost_list(data_sample, candidates, reasoning_results)
+            cost_array = self._get_cost_list(data_example, candidates, reasoning_results)
             candidate = candidates[np.argmin(cost_array)]
             return candidate
 
     def _get_cost_list(
         self,
-        data_sample: ListData,
+        data_example: ListData,
         candidates: List[List[Any]],
         reasoning_results: List[Any],
     ) -> Union[List[Union[int, float]], np.ndarray]:
         """
-        Get the list of costs between each candidate and the given data sample.
+        Get the list of costs between each candidate and the given data example.
 
         Parameters
         ----------
-        data_sample : ListData
-            Data sample.
+        data_example : ListData
+            Data example.
         candidates : List[List[Any]]
             Multiple compatible candidates.
         reasoning_results : List[Any]
@@ -156,13 +156,13 @@ class Reasoner:
             The list of costs.
         """
         if self.dist_func == "hamming":
-            return hamming_dist(data_sample.pred_pseudo_label, candidates)
+            return hamming_dist(data_example.pred_pseudo_label, candidates)
         elif self.dist_func == "confidence":
             candidates = [[self.label_to_idx[x] for x in c] for c in candidates]
-            return confidence_dist(data_sample.pred_prob, candidates)
+            return confidence_dist(data_example.pred_prob, candidates)
         else:
             candidate_idxs = [[self.label_to_idx[x] for x in c] for c in candidates]
-            cost_list = self.dist_func(data_sample, candidates, candidate_idxs, reasoning_results)
+            cost_list = self.dist_func(data_example, candidates, candidate_idxs, reasoning_results)
             if len(cost_list) != len(candidates):
                 raise ValueError(
                     f"The length of the array returned by dist_func must be equal to the number of candidates. "
@@ -173,7 +173,7 @@ class Reasoner:
     def _zoopt_get_solution(
         self,
         symbol_num: int,
-        data_sample: ListData,
+        data_example: ListData,
         max_revision_num: int,
     ) -> List[bool]:
         """
@@ -184,8 +184,8 @@ class Reasoner:
         ----------
         symbol_num : int
             Number of total symbols.
-        data_sample : ListData
-            Data sample.
+        data_example : ListData
+            Data example.
         max_revision_num : int
             Specifies the maximum number of revisions allowed.
 
@@ -196,7 +196,7 @@ class Reasoner:
         """
         dimension = Dimension(size=symbol_num, regs=[[0, 1]] * symbol_num, tys=[False] * symbol_num)
         objective = Objective(
-            lambda sol: self.zoopt_revision_score(symbol_num, data_sample, sol),
+            lambda sol: self.zoopt_revision_score(symbol_num, data_example, sol),
             dim=dimension,
             constraint=lambda sol: self._constrain_revision_num(sol, max_revision_num),
         )
@@ -207,7 +207,7 @@ class Reasoner:
     def zoopt_revision_score(
         self,
         symbol_num: int,
-        data_sample: ListData,
+        data_example: ListData,
         sol: List[bool],
     ) -> int:
         """
@@ -218,8 +218,8 @@ class Reasoner:
         ----------
         symbol_num : int
             Number of total symbols.
-        data_sample : ListData
-            Data sample.
+        data_example : ListData
+            Data example.
         sol: List[bool]
             The solution for ZOOpt library.
 
@@ -230,10 +230,10 @@ class Reasoner:
         """
         revision_idx = np.where(sol.get_x() != 0)[0]
         candidates, reasoning_results = self.kb.revise_at_idx(
-            data_sample.pred_pseudo_label, data_sample.Y, data_sample.X, revision_idx
+            data_example.pred_pseudo_label, data_example.Y, data_example.X, revision_idx
         )
         if len(candidates) > 0:
-            return np.min(self._get_cost_list(data_sample, candidates, reasoning_results))
+            return np.min(self._get_cost_list(data_example, candidates, reasoning_results))
         else:
             return symbol_num
 
@@ -267,53 +267,53 @@ class Reasoner:
                 )
             return max_revision
 
-    def abduce(self, data_sample: ListData) -> List[Any]:
+    def abduce(self, data_example: ListData) -> List[Any]:
         """
-        Perform abductive reasoning on the given data sample.
+        Perform abductive reasoning on the given data example.
 
         Parameters
         ----------
-        data_sample : ListData
-            Data sample.
+        data_example : ListData
+            Data example.
 
         Returns
         -------
         List[Any]
-            A revised pseudo label sample through abductive reasoning, which is compatible
+            A revised pseudo label example through abductive reasoning, which is compatible
             with the knowledge base.
         """
-        symbol_num = data_sample.elements_num("pred_pseudo_label")
+        symbol_num = data_example.elements_num("pred_pseudo_label")
         max_revision_num = self._get_max_revision_num(self.max_revision, symbol_num)
 
         if self.use_zoopt:
-            solution = self._zoopt_get_solution(symbol_num, data_sample, max_revision_num)
+            solution = self._zoopt_get_solution(symbol_num, data_example, max_revision_num)
             revision_idx = np.where(solution != 0)[0]
             candidates, reasoning_results = self.kb.revise_at_idx(
-                pseudo_label=data_sample.pred_pseudo_label, 
-                y=data_sample.Y, 
-                x=data_sample.X, 
+                pseudo_label=data_example.pred_pseudo_label, 
+                y=data_example.Y, 
+                x=data_example.X, 
                 revision_idx=revision_idx
             )
         else:
             candidates, reasoning_results = self.kb.abduce_candidates(
-                pseudo_label=data_sample.pred_pseudo_label,
-                y=data_sample.Y, 
-                x=data_sample.X,
+                pseudo_label=data_example.pred_pseudo_label,
+                y=data_example.Y, 
+                x=data_example.X,
                 max_revision_num=max_revision_num,
                 require_more_revision=self.require_more_revision  
             )
 
-        candidate = self._get_one_candidate(data_sample, candidates, reasoning_results)
+        candidate = self._get_one_candidate(data_example, candidates, reasoning_results)
         return candidate
 
-    def batch_abduce(self, data_samples: ListData) -> List[List[Any]]:
+    def batch_abduce(self, data_examples: ListData) -> List[List[Any]]:
         """
-        Perform abductive reasoning on the given prediction data samples.
+        Perform abductive reasoning on the given prediction data examples.
         For detailed information, refer to `abduce`.
         """
-        abduced_pseudo_label = [self.abduce(data_sample) for data_sample in data_samples]
-        data_samples.abduced_pseudo_label = abduced_pseudo_label
+        abduced_pseudo_label = [self.abduce(data_example) for data_example in data_examples]
+        data_examples.abduced_pseudo_label = abduced_pseudo_label
         return abduced_pseudo_label
 
-    def __call__(self, data_samples: ListData) -> List[List[Any]]:
-        return self.batch_abduce(data_samples)
+    def __call__(self, data_examples: ListData) -> List[List[Any]]:
+        return self.batch_abduce(data_examples)

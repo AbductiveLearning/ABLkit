@@ -24,13 +24,13 @@ class ABLModel:
 
         self.base_model = base_model
 
-    def predict(self, data_samples: ListData) -> Dict:
+    def predict(self, data_examples: ListData) -> Dict:
         """
         Predict the labels and probabilities for the given data.
 
         Parameters
         ----------
-        data_samples : ListData
+        data_examples : ListData
             A batch of data to predict on.
 
         Returns
@@ -39,28 +39,28 @@ class ABLModel:
             A dictionary containing the predicted labels and probabilities.
         """
         model = self.base_model
-        data_X = data_samples.flatten("X")
+        data_X = data_examples.flatten("X")
         if hasattr(model, "predict_proba"):
             prob = model.predict_proba(X=data_X)
             label = prob.argmax(axis=1)
-            prob = reform_list(prob, data_samples.X)
+            prob = reform_list(prob, data_examples.X)
         else:
             prob = None
             label = model.predict(X=data_X)
-        label = reform_list(label, data_samples.X)
+        label = reform_list(label, data_examples.X)
 
-        data_samples.pred_idx = label
-        data_samples.pred_prob = prob
+        data_examples.pred_idx = label
+        data_examples.pred_prob = prob
 
         return {"label": label, "prob": prob}
 
-    def train(self, data_samples: ListData) -> float:
+    def train(self, data_examples: ListData) -> float:
         """
         Train the model on the given data.
 
         Parameters
         ----------
-        data_samples : ListData
+        data_examples : ListData
             A batch of data to train on, which typically contains the data, `X`, and the
             corresponding labels, `abduced_idx`.
 
@@ -69,17 +69,17 @@ class ABLModel:
         float
             The loss value of the trained model.
         """
-        data_X = data_samples.flatten("X")
-        data_y = data_samples.flatten("abduced_idx")
+        data_X = data_examples.flatten("X")
+        data_y = data_examples.flatten("abduced_idx")
         return self.base_model.fit(X=data_X, y=data_y)
 
-    def valid(self, data_samples: ListData) -> float:
+    def valid(self, data_examples: ListData) -> float:
         """
         Validate the model on the given data.
 
         Parameters
         ----------
-        data_samples : ListData
+        data_examples : ListData
             A batch of data to train on, which typically contains the data, `X`,
             and the corresponding labels, `abduced_idx`.
 
@@ -88,8 +88,8 @@ class ABLModel:
         float
             The accuracy the trained model.
         """
-        data_X = data_samples.flatten("X")
-        data_y = data_samples.flatten("abduced_idx")
+        data_X = data_examples.flatten("X")
+        data_y = data_examples.flatten("abduced_idx")
         score = self.base_model.score(X=data_X, y=data_y)
         return score
 

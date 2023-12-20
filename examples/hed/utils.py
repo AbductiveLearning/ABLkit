@@ -5,14 +5,14 @@ import torch.utils.data.sampler as sampler
 
 
 class InfiniteSampler(sampler.Sampler):
-    def __init__(self, num_samples, batch_size=1):
-        self.num_samples = num_samples
+    def __init__(self, num_examples, batch_size=1):
+        self.num_examples = num_examples
         self.batch_size = batch_size
 
     def __iter__(self):
         while True:
-            order = np.random.permutation(self.num_samples)
-            for i in range(self.num_samples):
+            order = np.random.permutation(self.num_examples)
+            for i in range(self.num_examples):
                 yield order[i : i + self.batch_size]
                 i += self.batch_size
 

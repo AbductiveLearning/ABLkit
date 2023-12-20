@@ -53,7 +53,7 @@ class TestGroundKB(object):
 class TestPrologKB(object):
     def test_init_pl1(self, kb_add_prolog):
         assert kb_add_prolog.pseudo_label_list == list(range(10))
-        assert kb_add_prolog.pl_file == "examples/mnist_add/datasets/add.pl"
+        assert kb_add_prolog.pl_file == "examples/mnist_add/add.pl"
 
     def test_init_pl2(self, kb_hed):
         assert kb_hed.pseudo_label_list == [1, 0, "+", "="]
@@ -101,7 +101,7 @@ class TestReaonser(object):
             excinfo.value
         )
         
-    def random_dist(self, data_sample, candidates, candidate_idxs, reasoning_results):
+    def random_dist(self, data_example, candidates, candidate_idxs, reasoning_results):
         cost_list = [np.random.rand() for _ in candidates]
         return cost_list
     
@@ -113,11 +113,11 @@ class TestReaonser(object):
         cost_list = np.array([np.random.rand() for _ in candidates])
         return cost_list
     
-    def invalid_dist2(self, data_sample, candidates, candidate_idxs, reasoning_results):
+    def invalid_dist2(self, data_example, candidates, candidate_idxs, reasoning_results):
         cost_list = np.array([np.random.rand() for _ in candidates])
         return np.append(cost_list, np.random.rand())
     
-    def test_invalid_user_defined_dist_func(self, kb_add, data_samples_add):
+    def test_invalid_user_defined_dist_func(self, kb_add, data_examples_add):
         with pytest.raises(ValueError) as excinfo:
             Reasoner(kb_add, self.invalid_dist1)
         assert 'User-defined dist_func must have exactly four parameters' in str(
@@ -125,98 +125,98 @@ class TestReaonser(object):
         )
         with pytest.raises(ValueError) as excinfo:
             reasoner = Reasoner(kb_add, self.invalid_dist2)
-            reasoner.batch_abduce(data_samples_add)
+            reasoner.batch_abduce(data_examples_add)
         assert 'The length of the array returned by dist_func must be equal to the number of candidates' in str(
             excinfo.value
         )
 
 
 class TestBatchAbduce(object):
-    def test_batch_abduce_add(self, kb_add, data_samples_add):
+    def test_batch_abduce_add(self, kb_add, data_examples_add):
         reasoner1 = Reasoner(kb_add, "confidence", max_revision=1, require_more_revision=0)
         reasoner2 = Reasoner(kb_add, "confidence", max_revision=1, require_more_revision=1)
         reasoner3 = Reasoner(kb_add, "confidence", max_revision=2, require_more_revision=0)
         reasoner4 = Reasoner(kb_add, "confidence", max_revision=2, require_more_revision=1)
-        assert reasoner1.batch_abduce(data_samples_add) == [[1, 7], [7, 1], [], [1, 9]]
-        assert reasoner2.batch_abduce(data_samples_add) == [[1, 7], [7, 1], [], [1, 9]]
-        assert reasoner3.batch_abduce(data_samples_add) == [
+        assert reasoner1.batch_abduce(data_examples_add) == [[1, 7], [7, 1], [], [1, 9]]
+        assert reasoner2.batch_abduce(data_examples_add) == [[1, 7], [7, 1], [], [1, 9]]
+        assert reasoner3.batch_abduce(data_examples_add) == [
             [1, 7],
             [7, 1],
             [8, 9],
             [1, 9],
         ]
-        assert reasoner4.batch_abduce(data_samples_add) == [
+        assert reasoner4.batch_abduce(data_examples_add) == [
             [1, 7],
             [7, 1],
             [8, 9],
             [7, 3],
         ]
 
-    def test_batch_abduce_ground(self, kb_add_ground, data_samples_add):
+    def test_batch_abduce_ground(self, kb_add_ground, data_examples_add):
         reasoner1 = Reasoner(kb_add_ground, "confidence", max_revision=1, require_more_revision=0)
         reasoner2 = Reasoner(kb_add_ground, "confidence", max_revision=1, require_more_revision=1)
         reasoner3 = Reasoner(kb_add_ground, "confidence", max_revision=2, require_more_revision=0)
         reasoner4 = Reasoner(kb_add_ground, "confidence", max_revision=2, require_more_revision=1)
-        assert reasoner1.batch_abduce(data_samples_add) == [(1, 7), (7, 1), [], (1, 9)]
-        assert reasoner2.batch_abduce(data_samples_add) == [(1, 7), (7, 1), [], (1, 9)]
-        assert reasoner3.batch_abduce(data_samples_add) == [
+        assert reasoner1.batch_abduce(data_examples_add) == [(1, 7), (7, 1), [], (1, 9)]
+        assert reasoner2.batch_abduce(data_examples_add) == [(1, 7), (7, 1), [], (1, 9)]
+        assert reasoner3.batch_abduce(data_examples_add) == [
             (1, 7),
             (7, 1),
             (8, 9),
             (1, 9),
         ]
-        assert reasoner4.batch_abduce(data_samples_add) == [
+        assert reasoner4.batch_abduce(data_examples_add) == [
             (1, 7),
             (7, 1),
             (8, 9),
             (7, 3),
         ]
 
-    def test_batch_abduce_prolog(self, kb_add_prolog, data_samples_add):
+    def test_batch_abduce_prolog(self, kb_add_prolog, data_examples_add):
         reasoner1 = Reasoner(kb_add_prolog, "confidence", max_revision=1, require_more_revision=0)
         reasoner2 = Reasoner(kb_add_prolog, "confidence", max_revision=1, require_more_revision=1)
         reasoner3 = Reasoner(kb_add_prolog, "confidence", max_revision=2, require_more_revision=0)
         reasoner4 = Reasoner(kb_add_prolog, "confidence", max_revision=2, require_more_revision=1)
-        assert reasoner1.batch_abduce(data_samples_add) == [[1, 7], [7, 1], [], [1, 9]]
-        assert reasoner2.batch_abduce(data_samples_add) == [[1, 7], [7, 1], [], [1, 9]]
-        assert reasoner3.batch_abduce(data_samples_add) == [
+        assert reasoner1.batch_abduce(data_examples_add) == [[1, 7], [7, 1], [], [1, 9]]
+        assert reasoner2.batch_abduce(data_examples_add) == [[1, 7], [7, 1], [], [1, 9]]
+        assert reasoner3.batch_abduce(data_examples_add) == [
             [1, 7],
             [7, 1],
             [8, 9],
             [1, 9],
         ]
-        assert reasoner4.batch_abduce(data_samples_add) == [
+        assert reasoner4.batch_abduce(data_examples_add) == [
             [1, 7],
             [7, 1],
             [8, 9],
             [7, 3],
         ]
 
-    def test_batch_abduce_zoopt(self, kb_add_prolog, data_samples_add):
+    def test_batch_abduce_zoopt(self, kb_add_prolog, data_examples_add):
         reasoner1 = Reasoner(kb_add_prolog, "confidence", use_zoopt=True, max_revision=1)
         reasoner2 = Reasoner(kb_add_prolog, "confidence", use_zoopt=True, max_revision=2)
-        assert reasoner1.batch_abduce(data_samples_add) == [[1, 7], [7, 1], [], [1, 9]]
-        assert reasoner2.batch_abduce(data_samples_add) == [
+        assert reasoner1.batch_abduce(data_examples_add) == [[1, 7], [7, 1], [], [1, 9]]
+        assert reasoner2.batch_abduce(data_examples_add) == [
             [1, 7],
             [7, 1],
             [8, 9],
             [7, 3],
         ]
 
-    def test_batch_abduce_hwf1(self, kb_hwf1, data_samples_hwf):
+    def test_batch_abduce_hwf1(self, kb_hwf1, data_examples_hwf):
         reasoner1 = Reasoner(kb_hwf1, "hamming", max_revision=3, require_more_revision=0)
         reasoner2 = Reasoner(kb_hwf1, "hamming", max_revision=0.5, require_more_revision=0)
         reasoner3 = Reasoner(kb_hwf1, "hamming", max_revision=0.9, require_more_revision=0)
-        res = reasoner1.batch_abduce(data_samples_hwf)
+        res = reasoner1.batch_abduce(data_examples_hwf)
         assert res == [
             ["1", "+", "2"],
             ["8", "times", "8"],
             [],
             ["4", "-", "6", "div", "8"],
         ]
-        res = reasoner2.batch_abduce(data_samples_hwf)
+        res = reasoner2.batch_abduce(data_examples_hwf)
         assert res == [["1", "+", "2"], [], [], []]
-        res = reasoner3.batch_abduce(data_samples_hwf)
+        res = reasoner3.batch_abduce(data_examples_hwf)
         assert res == [
             ["1", "+", "2"],
             ["8", "times", "8"],
@@ -224,25 +224,25 @@ class TestBatchAbduce(object):
             ["4", "-", "6", "div", "8"],
         ]
 
-    def test_batch_abduce_hwf2(self, kb_hwf2, data_samples_hwf):
+    def test_batch_abduce_hwf2(self, kb_hwf2, data_examples_hwf):
         reasoner1 = Reasoner(kb_hwf2, "hamming", max_revision=3, require_more_revision=0)
         reasoner2 = Reasoner(kb_hwf2, "hamming", max_revision=0.5, require_more_revision=0)
         reasoner3 = Reasoner(kb_hwf2, "hamming", max_revision=0.9, require_more_revision=0)
-        res = reasoner1.batch_abduce(data_samples_hwf)
+        res = reasoner1.batch_abduce(data_examples_hwf)
         assert res == [
             ["1", "+", "2"],
             ["7", "times", "9"],
             ["8", "times", "8"],
             ["5", "-", "8", "div", "8"],
         ]
-        res = reasoner2.batch_abduce(data_samples_hwf)
+        res = reasoner2.batch_abduce(data_examples_hwf)
         assert res == [
             ["1", "+", "2"],
             ["7", "times", "9"],
             [],
             ["5", "-", "8", "div", "8"],
         ]
-        res = reasoner3.batch_abduce(data_samples_hwf)
+        res = reasoner3.batch_abduce(data_examples_hwf)
         assert res == [
             ["1", "+", "2"],
             ["7", "times", "9"],

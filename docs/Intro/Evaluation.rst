@@ -34,11 +34,11 @@ We provide two basic metrics, namely ``SymbolMetric`` and ``ReasoningMetric``, w
             # prefix is used to distinguish different metrics
             super().__init__(prefix)
 
-        def process(self, data_samples: Sequence[dict]) -> None:
+        def process(self, data_examples: Sequence[dict]) -> None:
             # pred_pseudo_label and gt_pseudo_label are both of type List[List[Any]] 
             # and have the same length
-            pred_pseudo_label = data_samples.pred_pseudo_label
-            gt_pseudo_label = data_samples.gt_pseudo_label
+            pred_pseudo_label = data_examples.pred_pseudo_label
+            gt_pseudo_label = data_examples.gt_pseudo_label
             
             for pred_z, z in zip(pred_pseudo_label, gt_pseudo_label):
                 correct_num = 0

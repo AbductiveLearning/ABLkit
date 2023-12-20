@@ -114,24 +114,24 @@ image, respectively. As shown below:
 .. code:: ipython3
 
     pred_idx = base_model.predict(X=[torch.randn(1, 28, 28).to(device) for _ in range(32)])
-    print(f"Shape of pred_idx for a batch of 32 samples: {pred_idx.shape}")
+    print(f"Shape of pred_idx for a batch of 32 examples: {pred_idx.shape}")
     pred_prob = base_model.predict_proba(X=[torch.randn(1, 28, 28).to(device) for _ in range(32)])
-    print(f"Shape of pred_prob for a batch of 32 samples: {pred_prob.shape}")
+    print(f"Shape of pred_prob for a batch of 32 examples: {pred_prob.shape}")
 
 
 Out:
     .. code:: none
         :class: code-out
 
-        Shape of pred_idx for a batch of 32 samples: (32,)
-        Shape of pred_prob for a batch of 32 samples: (32, 10)
+        Shape of pred_idx for a batch of 32 examples: (32,)
+        Shape of pred_prob for a batch of 32 examples: (32, 10)
     
 
 However, the base model built above deals with instance-level data 
-(i.e., a single image), and can not directly deal with sample-level
+(i.e., a single image), and can not directly deal with example-level
 data (i.e., a pair of images). Therefore, we wrap the base model
 into ``ABLModel``, which enables the learning part to train, test, 
-and predict on sample-level data.
+and predict on example-level data.
 
 .. code:: ipython3
 
@@ -142,10 +142,10 @@ TODO: 示例展示ablmodel和base model的predict的不同
 .. code:: ipython3
 
     # from abl.structures import ListData
-    # data_samples = ListData()
-    # data_samples.X = [list(torch.randn(2, 1, 28, 28)) for _ in range(3)]
+    # data_examples = ListData()
+    # data_examples.X = [list(torch.randn(2, 1, 28, 28)) for _ in range(3)]
     
-    # model.predict(data_samples)
+    # model.predict(data_examples)
 
 Building the Reasoning Part
 ---------------------------
@@ -174,16 +174,16 @@ performing (deductive) reasoning: # TODO: ABDUCTIVE REASONING
 
 .. code:: ipython3
 
-    pseudo_label_sample = [1, 2]
-    reasoning_result = kb.logic_forward(pseudo_label_sample)
-    print(f"Reasoning result of pseudo label sample {pseudo_label_sample} is {reasoning_result}.")
+    pseudo_label_example = [1, 2]
+    reasoning_result = kb.logic_forward(pseudo_label_example)
+    print(f"Reasoning result of pseudo label example {pseudo_label_example} is {reasoning_result}.")
 
 
 Out:
     .. code:: none
         :class: code-out
 
-        Reasoning result of pseudo label sample [1, 2] is 3.
+        Reasoning result of pseudo label example [1, 2] is 3.
     
 
 .. note::
@@ -211,7 +211,7 @@ candidate that has highest consistency.
     During creating reasoner, the definition of “consistency” can be
     customized within the ``dist_func`` parameter. In the code above, we
     employ a consistency measurement based on confidence, which calculates
-    the consistency between the data sample and candidates based on the
+    the consistency between the data example and candidates based on the
     confidence derived from the predicted probability. In ``examples/mnist_add/main.py``, we
     provide options for utilizing other forms of consistency measurement.
 

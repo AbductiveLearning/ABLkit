@@ -23,19 +23,19 @@ class SymbolMetric(BaseMetric):
     def __init__(self, prefix: Optional[str] = None) -> None:
         super().__init__(prefix)
 
-    def process(self, data_samples: ListData) -> None:
+    def process(self, data_examples: ListData) -> None:
         """
-        Processes a batch of data samples.
+        Processes a batch of data examples.
 
-        This method takes in a batch of data samples, each containing a list of predicted
+        This method takes in a batch of data examples, each containing a list of predicted
         pseudo labels (pred_pseudo_label) and their ground truth (gt_pseudo_label). It
         calculates the accuracy by comparing the two lists. Then, a tuple of correct symbol
         count and total symbol count is appended to `self.results`.
 
         Parameters
         ----------
-        data_samples : ListData
-            A batch of data samples, each containing:
+        data_examples : ListData
+            A batch of data examples, each containing:
             - `pred_pseudo_label`: List of predicted pseudo labels.
             - `gt_pseudo_label`: List of ground truth pseudo labels.
 
@@ -44,8 +44,8 @@ class SymbolMetric(BaseMetric):
         ValueError
             If the lengths of predicted and ground truth symbol lists are not equal.
         """
-        pred_pseudo_label_list = data_samples.flatten("pred_pseudo_label")
-        gt_pseudo_label_list = data_samples.flatten("gt_pseudo_label")
+        pred_pseudo_label_list = data_examples.flatten("pred_pseudo_label")
+        gt_pseudo_label_list = data_examples.flatten("gt_pseudo_label")
 
         if not len(pred_pseudo_label_list) == len(gt_pseudo_label_list):
             raise ValueError("lengthes of pred_pseudo_label and gt_pseudo_label should be equal")

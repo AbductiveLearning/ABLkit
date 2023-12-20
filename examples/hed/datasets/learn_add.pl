@@ -16,7 +16,7 @@ eval_eq(Ex, Feature):-
 %%%%%%%%%%%%%%
 %% Abduction
 %%%%%%%%%%%%%%
-% Make abduction when given examples that have been interpreted as pseudo-labels
+% Make abduction when given samples that have been interpreted as pseudo-labels
 abduce(Exs, Delta_C) :-
     abduce(Exs, [], Delta_C).
 abduce([], Delta_C, Delta_C).
@@ -45,13 +45,13 @@ consistent_inst_feature(Exs, Delta_C):-
 %% (Experimental) Parallel abduction
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 abduce_consistent_exs_concurrent(Exs) :-
-    % Split the current data batch into grounding examples and variable examples (which need to be revised)
+    % Split the current data batch into grounding samples and variable samples (which need to be revised)
     split_exs(Exs, Ground_Exs, Var_Exs),
-    % Find the simplest Delta_C for grounding examples.
+    % Find the simplest Delta_C for grounding samples.
     abduce(Ground_Exs, Ground_Delta_C), !,
     % Extend Ground Delta_C into all possible variations
     extend_op_rule(Ground_Delta_C, Possible_Deltas),
-    % Concurrently abduce the variable examples
+    % Concurrently abduce the variable samples
     maplist(append([abduce2, Var_Exs, Ground_Exs]), [[Possible_Deltas]], Call_List),
     maplist(=.., Goals, Call_List),
     % writeln(Goals),
@@ -76,7 +76,7 @@ extend_op_rule(Rules, Ext) :-
 % abduction without learning new Delta_C (Because they have been extended!)
 abduce2([], _, _).
 abduce2([E|Exs], Ground_Exs, Delta_C) :-
-    % abduce by finding ground examples
+    % abduce by finding ground samples
     member(E, Ground_Exs),
     abduce2(Exs, Ground_Exs, Delta_C).
 abduce2([E|Exs], Ground_Exs, Delta_C) :-

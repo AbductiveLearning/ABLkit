@@ -18,7 +18,7 @@ class SimpleBridge(BaseBridge):
     This class implements the typical pipeline of Abductive Learning, which involves
     the following five steps:
 
-        - Predict class probabilities and indices for the given data samples.
+        - Predict class probabilities and indices for the given data examples.
         - Map indices into pseudo labels.
         - Revise pseudo labels based on abdutive reasoning.
         - Map the revised pseudo labels to indices.
@@ -44,69 +44,69 @@ class SimpleBridge(BaseBridge):
         super().__init__(model, reasoner)
         self.metric_list = metric_list
 
-    def predict(self, data_samples: ListData) -> Tuple[List[ndarray], List[ndarray]]:
+    def predict(self, data_examples: ListData) -> Tuple[List[ndarray], List[ndarray]]:
         """
         Predict class indices and probabilities (if ``predict_proba`` is implemented in
-        ``self.model.base_model``) on the given data samples.
+        ``self.model.base_model``) on the given data examples.
 
         Parameters
         ----------
-        data_samples : ListData
-            Data samples on which predictions are to be made.
+        data_examples : ListData
+            Data examples on which predictions are to be made.
 
         Returns
         -------
         Tuple[List[ndarray], List[ndarray]]
             A tuple containing lists of predicted indices and probabilities.
         """
-        self.model.predict(data_samples)
-        return data_samples.pred_idx, data_samples.pred_prob
+        self.model.predict(data_examples)
+        return data_examples.pred_idx, data_examples.pred_prob
 
-    def abduce_pseudo_label(self, data_samples: ListData) -> List[List[Any]]:
+    def abduce_pseudo_label(self, data_examples: ListData) -> List[List[Any]]:
         """
-        Revise predicted pseudo labels of the given data samples using abduction.
+        Revise predicted pseudo labels of the given data examples using abduction.
 
         Parameters
         ----------
-        data_samples : ListData
-            Data samples containing predicted pseudo labels.
+        data_examples : ListData
+            Data examples containing predicted pseudo labels.
 
         Returns
         -------
         List[List[Any]]
-            A list of abduced pseudo labels for the given data samples.
+            A list of abduced pseudo labels for the given data examples.
         """
-        self.reasoner.batch_abduce(data_samples)
-        return data_samples.abduced_pseudo_label
+        self.reasoner.batch_abduce(data_examples)
+        return data_examples.abduced_pseudo_label
 
-    def idx_to_pseudo_label(self, data_samples: ListData) -> List[List[Any]]:
+    def idx_to_pseudo_label(self, data_examples: ListData) -> List[List[Any]]:
         """
-        Map indices of data samples into pseudo labels.
+        Map indices of data examples into pseudo labels.
 
         Parameters
         ----------
-        data_samples : ListData
-            Data samples containing the indices.
+        data_examples : ListData
+            Data examples containing the indices.
 
         Returns
         -------
         List[List[Any]]
             A list of pseudo labels converted from indices.
         """
-        pred_idx = data_samples.pred_idx
-        data_samples.pred_pseudo_label = [
+        pred_idx = data_examples.pred_idx
+        data_examples.pred_pseudo_label = [
             [self.reasoner.idx_to_label[_idx] for _idx in sub_list] for sub_list in pred_idx
         ]
-        return data_samples.pred_pseudo_label
+        return data_examples.pred_pseudo_label
 
-    def pseudo_label_to_idx(self, data_samples: ListData) -> List[List[Any]]:
+    def pseudo_label_to_idx(self, data_examples: ListData) -> List[List[Any]]:
         """
-        Map pseudo labels of data samples into indices.
+        Map pseudo labels of data examples into indices.
 
         Parameters
         ----------
-        data_samples : ListData
-            Data samples containing pseudo labels.
+        data_examples : ListData
+            Data examples containing pseudo labels.
 
         Returns
         -------
@@ -115,10 +115,10 @@ class SimpleBridge(BaseBridge):
         """
         abduced_idx = [
             [self.reasoner.label_to_idx[_abduced_pseudo_label] for _abduced_pseudo_label in sub_list]
-            for sub_list in data_samples.abduced_pseudo_label
+            for sub_list in data_examples.abduced_pseudo_label
         ]
-        data_samples.abduced_idx = abduced_idx
-        return data_samples.abduced_idx
+        data_examples.abduced_idx = abduced_idx
+        return data_examples.abduced_idx
 
     def data_preprocess(
         self,
@@ -141,49 +141,49 @@ class SimpleBridge(BaseBridge):
             The preprocessed ListData object.
         """
         if isinstance(data, ListData):
-            data_samples = data
+            data_examples = data
             if not (
-                hasattr(data_samples, "X")
-                and hasattr(data_samples, "gt_pseudo_label")
-                and hasattr(data_samples, "Y")
+                hasattr(data_examples, "X")
+                and hasattr(data_examples, "gt_pseudo_label")
+                and hasattr(data_examples, "Y")
             ):
                 raise ValueError(
                     f"{prefix}data should have X, gt_pseudo_label and Y attribute but "
-                    f"only {data_samples.all_keys()} are provided."
+                    f"only {data_examples.all_keys()} are provided."
                 )
         else:
             X, gt_pseudo_label, Y = data
-            data_samples = ListData(X=X, gt_pseudo_label=gt_pseudo_label, Y=Y)
+            data_examples = ListData(X=X, gt_pseudo_label=gt_pseudo_label, Y=Y)
 
-        return data_samples
+        return data_examples
 
-    def concat_data_samples(
-        self, unlabel_data_samples: ListData, label_data_samples: Optional[ListData]
+    def concat_data_examples(
+        self, unlabel_data_examples: ListData, label_data_examples: Optional[ListData]
     ) -> ListData:
         """
-        Concatenate unlabeled and labeled data samples. ``abduced_pseudo_label`` of unlabeled data samples and ``gt_pseudo_label`` of labeled data samples will be used to train the model.
+        Concatenate unlabeled and labeled data examples. ``abduced_pseudo_label`` of unlabeled data examples and ``gt_pseudo_label`` of labeled data examples will be used to train the model.
 
         Parameters
         ----------
-        unlabel_data_samples : ListData
-            Unlabeled data samples to concatenate.
-        label_data_samples : Optional[ListData]
-            Labeled data samples to concatenate, if available.
+        unlabel_data_examples : ListData
+            Unlabeled data examples to concatenate.
+        label_data_examples : Optional[ListData]
+            Labeled data examples to concatenate, if available.
 
         Returns
         -------
         ListData
-            Concatenated data samples.
+            Concatenated data examples.
         """
-        if label_data_samples is None:
-            return unlabel_data_samples
+        if label_data_examples is None:
+            return unlabel_data_examples
 
-        unlabel_data_samples.X = unlabel_data_samples.X + label_data_samples.X
-        unlabel_data_samples.abduced_pseudo_label = (
-            unlabel_data_samples.abduced_pseudo_label + label_data_samples.gt_pseudo_label
+        unlabel_data_examples.X = unlabel_data_examples.X + label_data_examples.X
+        unlabel_data_examples.abduced_pseudo_label = (
+            unlabel_data_examples.abduced_pseudo_label + label_data_examples.gt_pseudo_label
         )
-        unlabel_data_samples.Y = unlabel_data_samples.Y + label_data_samples.Y
-        return unlabel_data_samples
+        unlabel_data_examples.Y = unlabel_data_examples.Y + label_data_examples.Y
+        return unlabel_data_examples
 
     def train(
         self,
@@ -227,51 +227,51 @@ class SimpleBridge(BaseBridge):
         save_dir : Optional[str]
             Directory to save the model, by default None.
         """
-        data_samples = self.data_preprocess("train", train_data)
+        data_examples = self.data_preprocess("train", train_data)
 
         if label_data is not None:
-            label_data_samples = self.data_preprocess("label", label_data)
+            label_data_examples = self.data_preprocess("label", label_data)
         else:
-            label_data_samples = None
+            label_data_examples = None
 
         if val_data is not None:
-            val_data_samples = self.data_preprocess("val", val_data)
+            val_data_examples = self.data_preprocess("val", val_data)
         else:
-            val_data_samples = data_samples
+            val_data_examples = data_examples
 
         if isinstance(segment_size, int):
             if segment_size <= 0:
                 raise ValueError("segment_size should be positive.")
         elif isinstance(segment_size, float):
             if 0 < segment_size <= 1:
-                segment_size = int(segment_size * len(data_samples))
+                segment_size = int(segment_size * len(data_examples))
             else:
                 raise ValueError("segment_size should be in (0, 1].")
         else:
             raise ValueError("segment_size should be int or float.")
 
         for loop in range(loops):
-            for seg_idx in range((len(data_samples) - 1) // segment_size + 1):
+            for seg_idx in range((len(data_examples) - 1) // segment_size + 1):
                 print_log(
                     f"loop(train) [{loop + 1}/{loops}] segment(train) "
-                    f"[{(seg_idx + 1)}/{(len(data_samples) - 1) // segment_size + 1}] ",
+                    f"[{(seg_idx + 1)}/{(len(data_examples) - 1) // segment_size + 1}] ",
                     logger="current",
                 )
 
-                sub_data_samples = data_samples[
+                sub_data_examples = data_examples[
                     seg_idx * segment_size : (seg_idx + 1) * segment_size
                 ]
-                self.predict(sub_data_samples)
-                self.idx_to_pseudo_label(sub_data_samples)
-                self.abduce_pseudo_label(sub_data_samples)
-                self.filter_pseudo_label(sub_data_samples)
-                self.concat_data_samples(sub_data_samples, label_data_samples)
-                self.pseudo_label_to_idx(sub_data_samples)
-                self.model.train(sub_data_samples)
+                self.predict(sub_data_examples)
+                self.idx_to_pseudo_label(sub_data_examples)
+                self.abduce_pseudo_label(sub_data_examples)
+                self.filter_pseudo_label(sub_data_examples)
+                self.concat_data_examples(sub_data_examples, label_data_examples)
+                self.pseudo_label_to_idx(sub_data_examples)
+                self.model.train(sub_data_examples)
 
             if (loop + 1) % eval_interval == 0 or loop == loops - 1:
                 print_log(f"Evaluation start: loop(val) [{loop + 1}]", logger="current")
-                self._valid(val_data_samples)
+                self._valid(val_data_examples)
 
             if save_interval is not None and ((loop + 1) % save_interval == 0 or loop == loops - 1):
                 print_log(f"Saving model: loop(save) [{loop + 1}]", logger="current")
@@ -279,20 +279,20 @@ class SimpleBridge(BaseBridge):
                     save_path=osp.join(save_dir, f"model_checkpoint_loop_{loop + 1}.pth")
                 )
 
-    def _valid(self, data_samples: ListData) -> None:
+    def _valid(self, data_examples: ListData) -> None:
         """
-        Internal method for validating the model with given data samples.
+        Internal method for validating the model with given data examples.
 
         Parameters
         ----------
-        data_samples : ListData
-            Data samples to be used for validation.
+        data_examples : ListData
+            Data examples to be used for validation.
         """
-        self.predict(data_samples)
-        self.idx_to_pseudo_label(data_samples)
+        self.predict(data_examples)
+        self.idx_to_pseudo_label(data_examples)
 
         for metric in self.metric_list:
-            metric.process(data_samples)
+            metric.process(data_examples)
 
         res = dict()
         for metric in self.metric_list:
@@ -314,8 +314,8 @@ class SimpleBridge(BaseBridge):
         val_data : Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], List[Any]]]
             Validation data to be used for model evaluation.
         """
-        val_data_samples = self.data_preprocess(val_data)
-        self._valid(val_data_samples)
+        val_data_examples = self.data_preprocess(val_data)
+        self._valid(val_data_examples)
 
     def test(
         self,
@@ -329,5 +329,5 @@ class SimpleBridge(BaseBridge):
         test_data : Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], List[Any]]]
             Test data to be used for model evaluation.
         """
-        test_data_samples = self.data_preprocess("test", test_data)
-        self._valid(test_data_samples)
+        test_data_examples = self.data_preprocess("test", test_data)
+        self._valid(test_data_examples)

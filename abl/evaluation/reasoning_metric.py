@@ -25,7 +25,7 @@ class ReasoningMetric(BaseMetric):
 
     Notes
     -----
-    The `ReasoningMetric` expects data_samples to have the attributes `pred_pseudo_label`,
+    The `ReasoningMetric` expects data_examples to have the attributes `pred_pseudo_label`,
     `Y`, and `X`, corresponding to the predicted pseduo labels, ground truth of reasoning
     results, and input data, respectively.
     """
@@ -34,24 +34,24 @@ class ReasoningMetric(BaseMetric):
         super().__init__(prefix)
         self.kb = kb
 
-    def process(self, data_samples: ListData) -> None:
+    def process(self, data_examples: ListData) -> None:
         """
-        Process a batch of data samples.
+        Process a batch of data examples.
 
-        This method takes in a batch of data samples, each containing predicted pseudo labels(pred_pseudo_label), ground truth of reasoning results (Y), and input data (X). It
-        evaluates the reasoning accuracy of each sample by comparing the logical reasoning
+        This method takes in a batch of data examples, each containing predicted pseudo labels(pred_pseudo_label), ground truth of reasoning results (Y), and input data (X). It
+        evaluates the reasoning accuracy of each example by comparing the logical reasoning
         result (derived using the knowledge base) of the predicted pseudo labels against Y
         The result of this comparison (1 for correct reasoning, 0 for incorrect) is appended
         to ``self.results``.
 
         Parameters
         ----------
-        data_samples : ListData
-            A batch of data samples.
+        data_examples : ListData
+            A batch of data examples.
         """
-        pred_pseudo_label_list = data_samples.pred_pseudo_label
-        y_list = data_samples.Y
-        x_list = data_samples.X
+        pred_pseudo_label_list = data_examples.pred_pseudo_label
+        y_list = data_examples.Y
+        x_list = data_examples.X
         for pred_pseudo_label, y, x in zip(pred_pseudo_label_list, y_list, x_list):
             if self.kb._check_equal(
                 self.kb.logic_forward(pred_pseudo_label, *(x,) if self.kb._num_args == 2 else ()), y
@@ -63,7 +63,7 @@ class ReasoningMetric(BaseMetric):
     def compute_metrics(self) -> dict:
         """
         Compute the reasoning accuracy metrics from ``self.results``. It calculates the
-        percentage of correctly reasoned samples over all samples.
+        percentage of correctly reasoned examples over all examples.
 
         Returns
         -------

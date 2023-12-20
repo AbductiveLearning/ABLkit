@@ -10,7 +10,7 @@ class BaseMetric(metaclass=ABCMeta):
     """
     Base class for a metrics.
 
-    The metrics first processes each batch of data_samples and appends the processed
+    The metrics first processes each batch of data_examples and appends the processed
     results to the results list. Then, it computes the metrics of the entire dataset.
 
     Parameters
@@ -30,16 +30,16 @@ class BaseMetric(metaclass=ABCMeta):
         self.prefix = prefix or self.default_prefix
 
     @abstractmethod
-    def process(self, data_samples: ListData) -> None:
+    def process(self, data_examples: ListData) -> None:
         """
-        Process one batch of data samples. The processed results should be stored
+        Process one batch of data examples. The processed results should be stored
         in ``self.results``, which will be used to compute the metrics when all
         batches have been processed.
 
         Parameters
         ----------
-        data_samples : ListData
-            A batch of data samples.
+        data_examples : ListData
+            A batch of data examples.
         """
 
     @abstractmethod

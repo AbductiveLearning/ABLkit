@@ -33,21 +33,18 @@ class HWF_KB(KBBase):
         for i in range(len(formula)):
             if i % 2 == 0 and formula[i] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
                 return False
-            if i % 2 != 0 and formula[i] not in ["+", "-", "times", "div"]:
+            if i % 2 != 0 and formula[i] not in ["+", "-", "*", "/"]:
                 return False
         return True
 
     def logic_forward(self, formula):
         if not self._valid_candidate(formula):
-            return np.inf
-        mapping = {str(i): str(i) for i in range(1, 10)}
-        mapping.update({"+": "+", "-": "-", "times": "*", "div": "/"})
-        formula = [mapping[f] for f in formula]
+            return np.info
         return eval("".join(formula))
 
 
 kb = HWF_KB(
-    pseudo_label_list=["1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "-", "times", "div"],
+    pseudo_label_list=["1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "-", "*", "/"],
     max_err=1e-10,
     use_cache=False,
 )

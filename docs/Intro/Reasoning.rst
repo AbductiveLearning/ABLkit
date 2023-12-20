@@ -15,7 +15,7 @@ leverage domain knowledge and perform deductive or abductive reasoning.
 In ABL-Package, building the reasoning part involves two steps:
 
 1. Build a knowledge base by creating a subclass of ``KBBase``, which
-   specifies how to map pseudo label samples to reasoning results.
+   specifies how to map pseudo label examples to reasoning results.
 2. Create a reasoner by instantiating the class ``Reasoner``
    to minimize inconsistencies between the knowledge base and pseudo
    labels predicted by the learning part.
@@ -43,7 +43,7 @@ and override the ``logic_forward`` function:
 -  ``pseudo_label_list`` is the list of possible pseudo labels (also,
    the output of the machine learning model).
 -  ``logic_forward`` defines how to perform (deductive) reasoning,
-   i.e. matching each pseudo label sample (often consisting of multiple 
+   i.e. matching each pseudo label example (often consisting of multiple 
    pseudo labels) to its reasoning result.
 
 After that, other operations, including how to perform abductive
@@ -54,7 +54,7 @@ MNIST Addition example
 
 As an example, the ``pseudo_label_list`` passed in MNIST Addition is all the
 possible digits, namely, ``[0,1,2,...,9]``, and the ``logic_forward``
-should be: “Add the two labels in the pseudo label sample to get the result.”. Therefore, the
+should be: “Add the two labels in the pseudo label example to get the result.”. Therefore, the
 construction of the KB (``add_kb``) for MNIST Addition would be:
 
 .. code:: python
@@ -72,15 +72,15 @@ and (deductive) reasoning in ``add_kb`` would be:
 
 .. code:: python
 
-   pseudo_label_sample = [1, 2]
-   reasoning_result = add_kb.logic_forward(pseudo_label_sample)
-   print(f"Reasoning result of pseudo label sample {pseudo_label_sample} is {reasoning_result}.")
+   pseudo_label_example = [1, 2]
+   reasoning_result = add_kb.logic_forward(pseudo_label_example)
+   print(f"Reasoning result of pseudo label example {pseudo_label_example} is {reasoning_result}.")
 
 Out:
    .. code:: none
       :class: code-out
 
-      Reasoning result of pseudo label sample [1, 2] is 3
+      Reasoning result of pseudo label example [1, 2] is 3
 
 .. _other-par:
 
@@ -91,13 +91,13 @@ We can also pass the following parameters in the ``__init__`` function when buil
 knowledge base:
 
 -  ``max_err`` (float, optional), specifying the upper tolerance limit
-   when comparing the similarity between a pseudo label sample's reasoning result
+   when comparing the similarity between a pseudo label example's reasoning result
    and the ground truth during abductive reasoning. This is only
    applicable when the reasoning result is of a numerical type. This is
    particularly relevant for regression problems where exact matches
    might not be feasible. Defaults to 1e-10. See :ref:`an example <kb-abd-2>`.
 -  ``use_cache`` (bool, optional), indicating whether to use cache to store
-   previous candidates (pseudo label samples generated from abductive reasoning) 
+   previous candidates (pseudo label examples generated from abductive reasoning) 
    to speed up subsequent abductive reasoning operations. Defaults to True. 
    For more information of abductive reasoning, please refer to :ref:`this <kb-abd>`.
 -  ``cache_size`` (int, optional), specifying the maximum cache
@@ -173,7 +173,7 @@ override the ``logic_forward`` function, and are allowed to pass other
 :ref:`optional parameters <other-par>`. Additionally, we are required pass the
 ``GKB_len_list`` parameter in the ``__init__`` function.
 
--  ``GKB_len_list`` is the list of possible lengths for a pseudo label sample.
+-  ``GKB_len_list`` is the list of possible lengths for a pseudo label example.
 
 After that, other operations, including auto-construction of GKB, and
 how to perform abductive reasoning, will be **automatically** set up.
@@ -206,29 +206,29 @@ Performing abductive reasoning in the knowledge base
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As mentioned in :ref:`What is Abductive Reasoning? <abd>`, abductive reasoning
-enables the inference of candidates (which are pseudo label samples) as potential
+enables the inference of candidates (which are pseudo label examples) as potential
 explanations for the reasoning result. Also, in Abductive Learning where
-an observation (a pseudo label sample predicted by the learning part) is
+an observation (a pseudo label example predicted by the learning part) is
 available, we aim to let the candidate do not largely revise the
-previously identified pseudo label sample.
+previously identified pseudo label example.
 
 ``KBBase`` (also, ``GroundKB`` and ``PrologKB``) implement the method
 ``abduce_candidates(pseudo_label, y, max_revision_num, require_more_revision)``
 for performing abductive reasoning, where the parameters are:
 
--  ``pseudo_label``, the pseudo label sample to be revised by abductive
+-  ``pseudo_label``, the pseudo label example to be revised by abductive
    reasoning, usually generated by the learning part.
--  ``y``, the ground truth of the reasoning result for the sample. The
+-  ``y``, the ground truth of the reasoning result for the example. The
    returned candidates should be compatible with it.
 -  ``max_revision_num``, an int value specifying the upper limit on the
-   number of revised labels for each sample.
+   number of revised labels for each example.
 -  ``require_more_revision``, an int value specifying additional number
    of revisions permitted beyond the minimum required. (e.g., If we set
    it to 0, even if ``max_revision_num`` is set to a high value, the
    method will only output candidates with the minimum possible
    revisions.)
 
-And it return a list of candidates (i.e., revised pseudo label samples) that
+And it return a list of candidates (i.e., revised pseudo label examples) that
 are all compatible with ``y``.
 
 MNIST Addition example (cont.)
@@ -292,7 +292,7 @@ When instantiating, besides the required knowledge base, we may also
 specify:
 
 -  ``max_revision`` (int or float, optional), specifies the upper limit
-   on the number of revisions for each sample when performing
+   on the number of revisions for each example when performing
    :ref:`abductive reasoning in the knowledge base <kb-abd>`. If float, denotes the
    fraction of the total length that can be revised. A value of -1
    implies no restriction on the number of revisions. Defaults to -1.
@@ -308,18 +308,18 @@ specify:
    candidate returned from knowledge base. Valid options include
    “confidence” (default) and “hamming”. For “confidence”, it calculates
    the distance between the prediction and candidate based on confidence
-   derived from the predicted probability in the data sample. For
+   derived from the predicted probability in the data example. For
    “hamming”, it directly calculates the Hamming distance between the
-   predicted pseudo label in the data sample and candidate.
+   predicted pseudo label in the data example and candidate.
 
 The main method implemented by ``Reasoner`` is
-``abduce(data_sample)``, which obtains the most consistent candidate 
+``abduce(data_example)``, which obtains the most consistent candidate 
 based on the distance function defined in ``dist_func``.
 
 MNIST Addition example (cont.)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As an example, consider these data samples for MNIST Addition:
+As an example, consider these data examples for MNIST Addition:
 
 .. code:: python
 
@@ -331,37 +331,37 @@ As an example, consider these data samples for MNIST Addition:
    prob2 = [[0,   0.01, 0,   0,   0,   0,   0,   0.99, 0,   0],
             [0.1, 0.1,  0.1, 0.1, 0.1, 0.1, 0.1, 0.1,  0.1, 0.1]]
 
-   sample1 = ListData()
-   sample1.pred_pseudo_label = [1, 1]
-   sample1.pred_prob = prob1
-   sample1.Y = 8
+   example1 = ListData()
+   example1.pred_pseudo_label = [1, 1]
+   example1.pred_prob = prob1
+   example1.Y = 8
 
-   sample2 = ListData()
-   sample2.pred_pseudo_label = [1, 1]
-   sample2.pred_prob = prob2
-   sample2.Y = 8
+   example2 = ListData()
+   example2.pred_pseudo_label = [1, 1]
+   example2.pred_prob = prob2
+   example2.Y = 8
 
-The compatible candidates after abductive reasoning for both samples
+The compatible candidates after abductive reasoning for both examples
 would be ``[[1,7], [7,1]]``. However, when the reasoner call ``abduce`` 
 to select only one candidate based on the ``confidence`` distance function, 
-the output would differ for each sample:
+the output would differ for each example:
 
 .. code:: python
 
    reasoner_add = Reasoner(kb_add, dist_func="confidence")
-   candidate1 = reasoner_add.abduce(sample1)
-   candidate2 = reasoner_add.abduce(sample2)
-   print(f"The outputs for sample1 and sample2 are {candidate1} and {candidate2}, respectively.")
+   candidate1 = reasoner_add.abduce(example1)
+   candidate2 = reasoner_add.abduce(example2)
+   print(f"The outputs for example1 and example2 are {candidate1} and {candidate2}, respectively.")
 
 Out:
    .. code:: none
       :class: code-out
 
-      The outputs for sample1 and sample2 are [1,7] and [7,1], respectively.
+      The outputs for example1 and example2 are [1,7] and [7,1], respectively.
 
 Specifically, as mentioned before, ``confidence`` calculates the distance between the data 
-sample and candidates based on the confidence derived from the predicted probability. 
-Take ``sample1`` as an example, the ``pred_prob`` in it indicates a higher 
+example and candidates based on the confidence derived from the predicted probability. 
+Take ``example1`` as an example, the ``pred_prob`` in it indicates a higher 
 confidence that the first label should be "1" rather than "7". Therefore, among the 
 candidates [1,7] and [7,1], it would be closer to [1,7] (as its first label is "1").
 

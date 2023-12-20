@@ -18,13 +18,13 @@ def get_dataset(train=True, get_pseudo_label=False):
         file = os.path.join(CURRENT_DIR, "test_data.txt")
 
     X = []
-    Z = [] if get_pseudo_label else None
+    pseudo_label = [] if get_pseudo_label else None
     Y = []
     with open(file) as f:
         for line in f:
             x1, x2, y = map(int, line.strip().split(" "))
             X.append([img_dataset[x1][0], img_dataset[x2][0]])
             if get_pseudo_label:
-                Z.append([img_dataset[x1][1], img_dataset[x2][1]])
+                pseudo_label.append([img_dataset[x1][1], img_dataset[x2][1]])
             Y.append(y)
-    return X, Z, Y
+    return X, pseudo_label, Y

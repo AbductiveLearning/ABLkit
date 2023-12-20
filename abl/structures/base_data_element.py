@@ -25,21 +25,21 @@ class BaseDataElement:
     ``LabelData`` inheriting from ``BaseDataElement`` to represent different
     types of ground truth labels or predictions.
 
-    Another common data element is sample data. A sample data consists of input
+    Another common data element is data example. A data example consists of input
     data (such as an image) and its annotations and predictions. In general,
     an image can have multiple types of annotations and/or predictions at the
     same time (for example, both pixel-level semantic segmentation annotations
     and instance-level detection bboxes annotations). All labels and
-    predictions of a training sample are often passed between Dataset, Model,
+    predictions of a training example are often passed between Dataset, Model,
     Visualizer, and Evaluator components. In order to simplify the interface
     between components, we can treat them as a large data element and
     encapsulate them. Such data elements are generally called XXDataSample in
     the OpenMMLab. Therefore, Similar to `nn.Module`, the `BaseDataElement`
     allows `BaseDataElement` as its attribute. Such a class generally
-    encapsulates all the data of a sample in the algorithm library, and its
+    encapsulates all the data of a example in the algorithm library, and its
     attributes generally are various types of data elements. For example,
     MMDetection is assigned by the BaseDataElement to encapsulate all the data
-    elements of the sample labeling and prediction of a sample in the
+    elements of the example labeling and prediction of a example in the
     algorithm library.
 
     The attributes in ``BaseDataElement`` are divided into two parts,
@@ -150,9 +150,9 @@ class BaseDataElement:
         >>> metainfo = dict(img_shape=(800, 1196, 3))
         >>> gt_instances = BaseDataElement(
         ...     metainfo=metainfo, det_labels=torch.LongTensor([0, 1, 2, 3]))
-        >>> sample = BaseDataElement(metainfo=metainfo,
+        >>> example = BaseDataElement(metainfo=metainfo,
         ...                          gt_instances=gt_instances)
-        >>> print(sample)
+        >>> print(example)
         <BaseDataElement(
             META INFORMATION
             img_shape: (800, 1196, 3)
@@ -196,15 +196,15 @@ class BaseDataElement:
         ...     @pred_instances.deleter
         ...     def pred_instances(self):
         ...         del self._pred_instances
-        >>> det_sample = DetDataSample()
+        >>> det_example = DetDataSample()
         >>> proposals = BaseDataElement(bboxes=torch.rand((5, 4)))
-        >>> det_sample.proposals = proposals
-        >>> assert 'proposals' in det_sample
-        >>> assert det_sample.proposals == proposals
-        >>> del det_sample.proposals
-        >>> assert 'proposals' not in det_sample
+        >>> det_example.proposals = proposals
+        >>> assert 'proposals' in det_example
+        >>> assert det_example.proposals == proposals
+        >>> del det_example.proposals
+        >>> assert 'proposals' not in det_example
         >>> with self.assertRaises(AssertionError):
-        ...     det_sample.proposals = torch.rand((5, 4))
+        ...     det_example.proposals = torch.rand((5, 4))
     """
 
     def __init__(self, *, metainfo: Optional[dict] = None, **kwargs) -> None:

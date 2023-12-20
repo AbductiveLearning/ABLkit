@@ -62,15 +62,15 @@ class HEDBridge(SimpleBridge):
 
         self.model.load(load_path=os.path.join(weights_dir, "pretrain_weights.pth"))
 
-    def select_mapping_and_abduce(self, data_samples: ListData):
+    def select_mapping_and_abduce(self, data_examples: ListData):
         candidate_mappings = gen_mappings([0, 1, 2, 3], ["+", "=", 0, 1])
         mapping_score = []
         abduced_pseudo_label_list = []
         for _mapping in candidate_mappings:
             self.reasoner.idx_to_label = _mapping
             self.reasoner.label_to_idx = dict(zip(_mapping.values(), _mapping.keys()))
-            self.idx_to_pseudo_label(data_samples)
-            abduced_pseudo_label = self.reasoner.abduce(data_samples)
+            self.idx_to_pseudo_label(data_examples)
+            abduced_pseudo_label = self.reasoner.abduce(data_examples)
             mapping_score.append(len(abduced_pseudo_label) - abduced_pseudo_label.count([]))
             abduced_pseudo_label_list.append(abduced_pseudo_label)
 
@@ -80,18 +80,18 @@ class HEDBridge(SimpleBridge):
         self.reasoner.label_to_idx = dict(
             zip(self.reasoner.idx_to_label.values(), self.reasoner.idx_to_label.keys())
         )
-        self.idx_to_pseudo_label(data_samples)
-        data_samples.abduced_pseudo_label = abduced_pseudo_label_list[return_idx]
+        self.idx_to_pseudo_label(data_examples)
+        data_examples.abduced_pseudo_label = abduced_pseudo_label_list[return_idx]
 
-        return data_samples.abduced_pseudo_label
+        return data_examples.abduced_pseudo_label
 
-    def abduce_pseudo_label(self, data_samples: ListData):
-        self.reasoner.abduce(data_samples)
-        return data_samples.abduced_pseudo_label
+    def abduce_pseudo_label(self, data_examples: ListData):
+        self.reasoner.abduce(data_examples)
+        return data_examples.abduced_pseudo_label
 
-    def check_training_impact(self, filtered_data_samples, data_samples):
-        character_accuracy = self.model.valid(filtered_data_samples)
-        revisible_ratio = len(filtered_data_samples.X) / len(data_samples.X)
+    def check_training_impact(self, filtered_data_examples, data_examples):
+        character_accuracy = self.model.valid(filtered_data_examples)
+        revisible_ratio = len(filtered_data_examples.X) / len(data_examples.X)
         log_string = (
             f"Revisible ratio is {revisible_ratio:.3f}, Character "
             f"accuracy is {character_accuracy:.3f}"
@@ -119,23 +119,23 @@ class HEDBridge(SimpleBridge):
             return True
         return False
 
-    def calc_consistent_ratio(self, data_samples, rule):
-        self.predict(data_samples)
-        pred_pseudo_label = self.idx_to_pseudo_label(data_samples)
+    def calc_consistent_ratio(self, data_examples, rule):
+        self.predict(data_examples)
+        pred_pseudo_label = self.idx_to_pseudo_label(data_examples)
         consistent_num = sum(
             [self.reasoner.kb.consist_rule(instance, rule) for instance in pred_pseudo_label]
         )
-        return consistent_num / len(data_samples.X)
+        return consistent_num / len(data_examples.X)
 
-    def get_rules_from_data(self, data_samples, samples_per_rule, samples_num):
+    def get_rules_from_data(self, data_examples, examples_per_rule, examples_num):
         rules = []
-        sampler = InfiniteSampler(len(data_samples), batch_size=samples_per_rule)
+        sampler = InfiniteSampler(len(data_examples), batch_size=examples_per_rule)
 
-        for _ in range(samples_num):
+        for _ in range(examples_num):
             for select_idx in sampler:
-                sub_data_samples = data_samples[select_idx]
-                self.predict(sub_data_samples)
-                pred_pseudo_label = self.idx_to_pseudo_label(sub_data_samples)
+                sub_data_examples = data_examples[select_idx]
+                self.predict(sub_data_examples)
+                pred_pseudo_label = self.idx_to_pseudo_label(sub_data_examples)
                 consistent_instance = []
                 for instance in pred_pseudo_label:
                     if self.reasoner.kb.logic_forward([instance]):
@@ -157,13 +157,13 @@ class HEDBridge(SimpleBridge):
         return rules
 
     @staticmethod
-    def filter_empty(data_samples: ListData):
+    def filter_empty(data_examples: ListData):
         consistent_dix = [
             i
-            for i in range(len(data_samples.abduced_pseudo_label))
-            if len(data_samples.abduced_pseudo_label[i]) > 0
+            for i in range(len(data_examples.abduced_pseudo_label))
+            if len(data_examples.abduced_pseudo_label[i]) > 0
         ]
-        return data_samples[consistent_dix]
+        return data_examples[consistent_dix]
 
     @staticmethod
     def select_rules(rule_dict):
@@ -184,12 +184,12 @@ class HEDBridge(SimpleBridge):
         return list(rule_dict)
 
     def data_preprocess(self, data, equation_len) -> ListData:
-        data_samples = ListData()
-        data_samples.X = data[equation_len] + data[equation_len + 1]
-        data_samples.gt_pseudo_label = None
-        data_samples.Y = [None] * len(data_samples.X)
+        data_examples = ListData()
+        data_examples.X = data[equation_len] + data[equation_len + 1]
+        data_examples.gt_pseudo_label = None
+        data_examples.Y = [None] * len(data_examples.X)
 
-        return data_samples
+        return data_examples
 
     def train(self, train_data, val_data, segment_size=10, min_len=5, max_len=8):
         for equation_len in range(min_len, max_len):
@@ -199,25 +199,25 @@ class HEDBridge(SimpleBridge):
             )
 
             condition_num = 0
-            data_samples = self.data_preprocess(train_data[1], equation_len)
-            sampler = InfiniteSampler(len(data_samples), batch_size=segment_size)
+            data_examples = self.data_preprocess(train_data[1], equation_len)
+            sampler = InfiniteSampler(len(data_examples), batch_size=segment_size)
             for seg_idx, select_idx in enumerate(sampler):
                 print_log(
                     f"Equation Len(train) [{equation_len}] Segment Index [{seg_idx + 1}]",
                     logger="current",
                 )
-                sub_data_samples = data_samples[select_idx]
-                self.predict(sub_data_samples)
+                sub_data_examples = data_examples[select_idx]
+                self.predict(sub_data_examples)
                 if equation_len == min_len:
-                    self.select_mapping_and_abduce(sub_data_samples)
+                    self.select_mapping_and_abduce(sub_data_examples)
                 else:
-                    self.idx_to_pseudo_label(sub_data_samples)
-                    self.abduce_pseudo_label(sub_data_samples)
-                filtered_sub_data_samples = self.filter_empty(sub_data_samples)
-                self.pseudo_label_to_idx(filtered_sub_data_samples)
-                loss = self.model.train(filtered_sub_data_samples)
+                    self.idx_to_pseudo_label(sub_data_examples)
+                    self.abduce_pseudo_label(sub_data_examples)
+                filtered_sub_data_examples = self.filter_empty(sub_data_examples)
+                self.pseudo_label_to_idx(filtered_sub_data_examples)
+                loss = self.model.train(filtered_sub_data_examples)
 
-                if self.check_training_impact(filtered_sub_data_samples, sub_data_samples):
+                if self.check_training_impact(filtered_sub_data_examples, sub_data_examples):
                     condition_num += 1
                 else:
                     condition_num = 0
@@ -225,7 +225,7 @@ class HEDBridge(SimpleBridge):
                 if condition_num >= 5:
                     print_log("Now checking if we can go to next course", logger="current")
                     rules = self.get_rules_from_data(
-                        data_samples, samples_per_rule=3, samples_num=50
+                        data_examples, examples_per_rule=3, examples_num=50
                     )
                     print_log("Learned rules from data: " + str(rules), logger="current")
 

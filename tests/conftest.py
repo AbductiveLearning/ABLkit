@@ -61,15 +61,15 @@ def base_model_instance():
 # Fixture for ListData instance
 @pytest.fixture
 def list_data_instance():
-    data_samples = ListData()
-    data_samples.X = [list(torch.randn(2, 1, 28, 28)) for _ in range(3)]
-    data_samples.Y = [1, 2, 3]
-    data_samples.gt_pseudo_label = [[1, 2], [3, 4], [5, 6]]
-    return data_samples
+    data_examples = ListData()
+    data_examples.X = [list(torch.randn(2, 1, 28, 28)) for _ in range(3)]
+    data_examples.Y = [1, 2, 3]
+    data_examples.gt_pseudo_label = [[1, 2], [3, 4], [5, 6]]
+    return data_examples
 
 
 @pytest.fixture
-def data_samples_add():
+def data_examples_add():
     # favor 1 in first one
     prob1 = [
         [0, 0.99, 0, 0, 0, 0, 0, 0.01, 0, 0],
@@ -81,27 +81,27 @@ def data_samples_add():
         [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
     ]
 
-    data_samples_add = ListData()
-    data_samples_add.X = None
-    data_samples_add.pred_pseudo_label = [[1, 1], [1, 1], [1, 1], [1, 1]]
-    data_samples_add.pred_prob = [prob1, prob2, prob1, prob2]
-    data_samples_add.Y = [8, 8, 17, 10]
-    return data_samples_add
+    data_examples_add = ListData()
+    data_examples_add.X = None
+    data_examples_add.pred_pseudo_label = [[1, 1], [1, 1], [1, 1], [1, 1]]
+    data_examples_add.pred_prob = [prob1, prob2, prob1, prob2]
+    data_examples_add.Y = [8, 8, 17, 10]
+    return data_examples_add
 
 
 @pytest.fixture
-def data_samples_hwf():
-    data_samples_hwf = ListData()
-    data_samples_hwf.X = None
-    data_samples_hwf.pred_pseudo_label = [
+def data_examples_hwf():
+    data_examples_hwf = ListData()
+    data_examples_hwf.X = None
+    data_examples_hwf.pred_pseudo_label = [
         ["5", "+", "2"],
         ["5", "+", "9"],
         ["5", "+", "9"],
         ["5", "-", "8", "8", "8"],
     ]
-    data_samples_hwf.pred_prob = [None, None, None, None]
-    data_samples_hwf.Y = [3, 64, 65, 3.17]
-    return data_samples_hwf
+    data_examples_hwf.pred_prob = [None, None, None, None]
+    data_examples_hwf.Y = [3, 64, 65, 3.17]
+    return data_examples_hwf
 
 
 class AddKB(KBBase):
@@ -199,7 +199,7 @@ def kb_add_ground():
 
 @pytest.fixture
 def kb_add_prolog():
-    kb = PrologKB(pseudo_label_list=list(range(10)), pl_file="examples/mnist_add/datasets/add.pl")
+    kb = PrologKB(pseudo_label_list=list(range(10)), pl_file="examples/mnist_add/add.pl")
     return kb
 
 @pytest.fixture
