@@ -11,8 +11,8 @@ def read(rel_path: str) -> str:
 
 # Package meta-data.
 NAME = "abl"
-DESCRIPTION = "abl package project"
-REQUIRES_PYTHON = ">=3.8.0"
+DESCRIPTION = "abductive learning package project"
+REQUIRES_PYTHON = ">=3.6.0"
 VERSION = None
 
 
