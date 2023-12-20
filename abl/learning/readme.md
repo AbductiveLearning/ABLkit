@@ -104,7 +104,7 @@
 + The base model to use for training and prediction.
 
 **pseudo_label_list : List[Any]**
-+ A list of pseudo labels to use for training.
++ A list of pseudo-labels to use for training.
 
 ## 序列化数据
 考虑到训练数据可能多种组织形式，比如：\

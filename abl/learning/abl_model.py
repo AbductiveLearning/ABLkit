@@ -12,7 +12,7 @@ class ABLModel:
     Parameters
     ----------
     base_model : Machine Learning Model
-        The base machine learning model used for training and prediction. This model should
+        The machine learning base model used for training and prediction. This model should
         implement the 'fit' and 'predict' methods. It's recommended, but not required,for the
         model to also implement the 'predict_proba' method for generating probabilistic
         predictions.

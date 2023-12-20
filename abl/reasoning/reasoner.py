@@ -24,7 +24,7 @@ class Reasoner:
         abduced label. It can be either a string representing a predefined distance 
         function or a callable function. The available predefined distance functions: 
         'hamming' | 'confidence'. 'hamming': directly calculates the Hamming 
-        distance between the predicted pseudo label in the data example and each 
+        distance between the predicted pseudo-label in the data example and each 
         candidate, 'confidence': calculates the distance between the prediction 
         and each candidate based on confidence derived from the predicted probability 
         in the data example. The callable function should have the signature 
@@ -279,7 +279,7 @@ class Reasoner:
         Returns
         -------
         List[Any]
-            A revised pseudo label example through abductive reasoning, which is compatible
+            A revised pseudo-label example through abductive reasoning, which is compatible
             with the knowledge base.
         """
         symbol_num = data_example.elements_num("pred_pseudo_label")

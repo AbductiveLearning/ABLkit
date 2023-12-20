@@ -15,7 +15,7 @@ leverage domain knowledge and perform deductive or abductive reasoning.
 In ABL-Package, building the reasoning part involves two steps:
 
 1. Build a knowledge base by creating a subclass of ``KBBase``, which
-   specifies how to map pseudo label examples to reasoning results.
+   specifies how to map pseudo-label examples to reasoning results.
 2. Create a reasoner by instantiating the class ``Reasoner``
    to minimize inconsistencies between the knowledge base and pseudo
    labels predicted by the learning part.
@@ -40,11 +40,11 @@ For the user-built KB from ``KBBase`` (a derived subclass), it's only
 required to pass the ``pseudo_label_list`` parameter in the ``__init__`` function
 and override the ``logic_forward`` function:
 
--  ``pseudo_label_list`` is the list of possible pseudo labels (also,
+-  ``pseudo_label_list`` is the list of possible pseudo-labels (also,
    the output of the machine learning model).
 -  ``logic_forward`` defines how to perform (deductive) reasoning,
-   i.e. matching each pseudo label example (often consisting of multiple 
-   pseudo labels) to its reasoning result.
+   i.e. matching each pseudo-label example (often consisting of multiple 
+   pseudo-labels) to its reasoning result.
 
 After that, other operations, including how to perform abductive
 reasoning, will be **automatically** set up.
@@ -54,7 +54,7 @@ MNIST Addition example
 
 As an example, the ``pseudo_label_list`` passed in MNIST Addition is all the
 possible digits, namely, ``[0,1,2,...,9]``, and the ``logic_forward``
-should be: “Add the two labels in the pseudo label example to get the result.”. Therefore, the
+should be: “Add the two labels in the pseudo-label example to get the result.”. Therefore, the
 construction of the KB (``add_kb``) for MNIST Addition would be:
 
 .. code:: python
@@ -74,13 +74,13 @@ and (deductive) reasoning in ``add_kb`` would be:
 
    pseudo_label_example = [1, 2]
    reasoning_result = add_kb.logic_forward(pseudo_label_example)
-   print(f"Reasoning result of pseudo label example {pseudo_label_example} is {reasoning_result}.")
+   print(f"Reasoning result of pseudo-label example {pseudo_label_example} is {reasoning_result}.")
 
 Out:
    .. code:: none
       :class: code-out
 
-      Reasoning result of pseudo label example [1, 2] is 3
+      Reasoning result of pseudo-label example [1, 2] is 3
 
 .. _other-par:
 
@@ -91,13 +91,13 @@ We can also pass the following parameters in the ``__init__`` function when buil
 knowledge base:
 
 -  ``max_err`` (float, optional), specifying the upper tolerance limit
-   when comparing the similarity between a pseudo label example's reasoning result
+   when comparing the similarity between a pseudo-label example's reasoning result
    and the ground truth during abductive reasoning. This is only
    applicable when the reasoning result is of a numerical type. This is
    particularly relevant for regression problems where exact matches
    might not be feasible. Defaults to 1e-10. See :ref:`an example <kb-abd-2>`.
 -  ``use_cache`` (bool, optional), indicating whether to use cache to store
-   previous candidates (pseudo label examples generated from abductive reasoning) 
+   previous candidates (pseudo-label examples generated from abductive reasoning) 
    to speed up subsequent abductive reasoning operations. Defaults to True. 
    For more information of abductive reasoning, please refer to :ref:`this <kb-abd>`.
 -  ``cache_size`` (int, optional), specifying the maximum cache
@@ -173,7 +173,7 @@ override the ``logic_forward`` function, and are allowed to pass other
 :ref:`optional parameters <other-par>`. Additionally, we are required pass the
 ``GKB_len_list`` parameter in the ``__init__`` function.
 
--  ``GKB_len_list`` is the list of possible lengths for a pseudo label example.
+-  ``GKB_len_list`` is the list of possible lengths for a pseudo-label example.
 
 After that, other operations, including auto-construction of GKB, and
 how to perform abductive reasoning, will be **automatically** set up.
@@ -182,7 +182,7 @@ MNIST Addition example (cont.)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 As an example, the ``GKB_len_list`` for MNIST Addition should be ``[2]``,
-since all pseudo labels in the example consist of two digits. Therefore,
+since all pseudo-labels in the example consist of two digits. Therefore,
 the construction of KB with GKB (``add_ground_kb``) of MNIST Addition would be
 as follows. As mentioned, the difference between this and the previously
 built ``add_kb`` lies only in the base class from which it is derived
@@ -206,17 +206,17 @@ Performing abductive reasoning in the knowledge base
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As mentioned in :ref:`What is Abductive Reasoning? <abd>`, abductive reasoning
-enables the inference of candidates (which are pseudo label examples) as potential
+enables the inference of candidates (which are pseudo-label examples) as potential
 explanations for the reasoning result. Also, in Abductive Learning where
-an observation (a pseudo label example predicted by the learning part) is
+an observation (a pseudo-label example predicted by the learning part) is
 available, we aim to let the candidate do not largely revise the
-previously identified pseudo label example.
+previously identified pseudo-label example.
 
 ``KBBase`` (also, ``GroundKB`` and ``PrologKB``) implement the method
 ``abduce_candidates(pseudo_label, y, max_revision_num, require_more_revision)``
 for performing abductive reasoning, where the parameters are:
 
--  ``pseudo_label``, the pseudo label example to be revised by abductive
+-  ``pseudo_label``, the pseudo-label example to be revised by abductive
    reasoning, usually generated by the learning part.
 -  ``y``, the ground truth of the reasoning result for the example. The
    returned candidates should be compatible with it.
@@ -228,7 +228,7 @@ for performing abductive reasoning, where the parameters are:
    method will only output candidates with the minimum possible
    revisions.)
 
-And it return a list of candidates (i.e., revised pseudo label examples) that
+And it return a list of candidates (i.e., revised pseudo-label examples) that
 are all compatible with ``y``.
 
 MNIST Addition example (cont.)
@@ -277,8 +277,8 @@ After building our knowledge base, the next step is creating a
 reasoner. Due to the indeterminism of abductive reasoning, there could
 be multiple candidates compatible to the knowledge base. When this
 happens, reasoner can minimize inconsistencies between the knowledge
-base and pseudo labels predicted by the learning part, and then return **only
-one** candidate which has highest consistency.
+base and pseudo-labels predicted by the learning part, and then return **only
+one** candidate that has the highest consistency.
 
 We can create a reasoner simply by instantiating class
 ``Reasoner`` and passing our knowledge base as an parameter. As an
@@ -310,7 +310,7 @@ specify:
    the distance between the prediction and candidate based on confidence
    derived from the predicted probability in the data example. For
    “hamming”, it directly calculates the Hamming distance between the
-   predicted pseudo label in the data example and candidate.
+   predicted pseudo-label in the data example and candidate.
 
 The main method implemented by ``Reasoner`` is
 ``abduce(data_example)``, which obtains the most consistent candidate 

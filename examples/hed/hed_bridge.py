@@ -127,11 +127,11 @@ class HEDBridge(SimpleBridge):
         )
         return consistent_num / len(data_examples.X)
 
-    def get_rules_from_data(self, data_examples, examples_per_rule, examples_num):
+    def get_rules_from_data(self, data_examples, samples_per_rule, samples_num):
         rules = []
-        sampler = InfiniteSampler(len(data_examples), batch_size=examples_per_rule)
+        sampler = InfiniteSampler(len(data_examples), batch_size=samples_per_rule)
 
-        for _ in range(examples_num):
+        for _ in range(samples_num):
             for select_idx in sampler:
                 sub_data_examples = data_examples[select_idx]
                 self.predict(sub_data_examples)
@@ -225,7 +225,7 @@ class HEDBridge(SimpleBridge):
                 if condition_num >= 5:
                     print_log("Now checking if we can go to next course", logger="current")
                     rules = self.get_rules_from_data(
-                        data_examples, examples_per_rule=3, examples_num=50
+                        data_examples, samples_per_rule=3, samples_num=50
                     )
                     print_log("Learned rules from data: " + str(rules), logger="current")
 

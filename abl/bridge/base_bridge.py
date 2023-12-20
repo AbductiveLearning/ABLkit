@@ -15,9 +15,9 @@ class BaseBridge(metaclass=ABCMeta):
     which involves the following four methods:
 
         - predict: Predict class indices on the given data examples.
-        - idx_to_pseudo_label: Map indices into pseudo labels.
-        - abduce_pseudo_label: Revise pseudo labels based on abdutive reasoning.
-        - pseudo_label_to_idx: Map revised pseudo labels back into indices.
+        - idx_to_pseudo_label: Map indices into pseudo-labels.
+        - abduce_pseudo_label: Revise pseudo-labels based on abdutive reasoning.
+        - pseudo_label_to_idx: Map revised pseudo-labels back into indices.
 
     Parameters
     ----------
@@ -25,7 +25,7 @@ class BaseBridge(metaclass=ABCMeta):
         The machine learning model wrapped in ``ABLModel``, which is mainly used for
         prediction and model training.
     reasoner : Reasoner
-        The reasoning part wrapped in ``Reasoner``, which is used for pseudo label revision.
+        The reasoning part wrapped in ``Reasoner``, which is used for pseudo-label revision.
     """
 
     def __init__(self, model: ABLModel, reasoner: Reasoner) -> None:
@@ -47,18 +47,18 @@ class BaseBridge(metaclass=ABCMeta):
 
     @abstractmethod
     def abduce_pseudo_label(self, data_examples: ListData) -> List[List[Any]]:
-        """Placeholder for revising pseudo labels based on abdutive reasoning."""
+        """Placeholder for revising pseudo-labels based on abdutive reasoning."""
 
     @abstractmethod
     def idx_to_pseudo_label(self, data_examples: ListData) -> List[List[Any]]:
-        """Placeholder for mapping indices to pseudo labels."""
+        """Placeholder for mapping indices to pseudo-labels."""
 
     @abstractmethod
     def pseudo_label_to_idx(self, data_examples: ListData) -> List[List[Any]]:
-        """Placeholder for mapping pseudo labels to indices."""
+        """Placeholder for mapping pseudo-labels to indices."""
 
     def filter_pseudo_label(self, data_examples: ListData) -> List[List[Any]]:
-        """Default filter function for pseudo label."""
+        """Default filter function for pseudo-label."""
         non_empty_idx = [
             i
             for i in range(len(data_examples.abduced_pseudo_label))

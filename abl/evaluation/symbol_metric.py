@@ -28,7 +28,7 @@ class SymbolMetric(BaseMetric):
         Processes a batch of data examples.
 
         This method takes in a batch of data examples, each containing a list of predicted
-        pseudo labels (pred_pseudo_label) and their ground truth (gt_pseudo_label). It
+        pseudo-labels (pred_pseudo_label) and their ground truth (gt_pseudo_label). It
         calculates the accuracy by comparing the two lists. Then, a tuple of correct symbol
         count and total symbol count is appended to `self.results`.
 
@@ -36,8 +36,8 @@ class SymbolMetric(BaseMetric):
         ----------
         data_examples : ListData
             A batch of data examples, each containing:
-            - `pred_pseudo_label`: List of predicted pseudo labels.
-            - `gt_pseudo_label`: List of ground truth pseudo labels.
+            - `pred_pseudo_label`: List of predicted pseudo-labels.
+            - `gt_pseudo_label`: List of ground truth pseudo-labels.
 
         Raises
         ------
@@ -57,7 +57,7 @@ class SymbolMetric(BaseMetric):
     def compute_metrics(self) -> dict:
         """
         Compute the symbol accuracy metrics from ``self.results``. It calculates the
-        percentage of correctly predicted pseudo labels over all pseudo labels.
+        percentage of correctly predicted pseudo-labels over all pseudo-labels.
 
         Returns
         -------

@@ -19,9 +19,9 @@ class SimpleBridge(BaseBridge):
     the following five steps:
 
         - Predict class probabilities and indices for the given data examples.
-        - Map indices into pseudo labels.
-        - Revise pseudo labels based on abdutive reasoning.
-        - Map the revised pseudo labels to indices.
+        - Map indices into pseudo-labels.
+        - Revise pseudo-labels based on abdutive reasoning.
+        - Map the revised pseudo-labels to indices.
         - Train the model.
 
     Parameters
@@ -30,7 +30,7 @@ class SimpleBridge(BaseBridge):
         The machine learning model wrapped in ``ABLModel``, which is mainly used for
         prediction and model training.
     reasoner : Reasoner
-        The reasoning part wrapped in ``Reasoner``, which is used for pseudo label revision.
+        The reasoning part wrapped in ``Reasoner``, which is used for pseudo-label revision.
     metric_list : List[BaseMetric]
         A list of metrics used for evaluating the model's performance.
     """
@@ -64,24 +64,24 @@ class SimpleBridge(BaseBridge):
 
     def abduce_pseudo_label(self, data_examples: ListData) -> List[List[Any]]:
         """
-        Revise predicted pseudo labels of the given data examples using abduction.
+        Revise predicted pseudo-labels of the given data examples using abduction.
 
         Parameters
         ----------
         data_examples : ListData
-            Data examples containing predicted pseudo labels.
+            Data examples containing predicted pseudo-labels.
 
         Returns
         -------
         List[List[Any]]
-            A list of abduced pseudo labels for the given data examples.
+            A list of abduced pseudo-labels for the given data examples.
         """
         self.reasoner.batch_abduce(data_examples)
         return data_examples.abduced_pseudo_label
 
     def idx_to_pseudo_label(self, data_examples: ListData) -> List[List[Any]]:
         """
-        Map indices of data examples into pseudo labels.
+        Map indices of data examples into pseudo-labels.
 
         Parameters
         ----------
@@ -91,7 +91,7 @@ class SimpleBridge(BaseBridge):
         Returns
         -------
         List[List[Any]]
-            A list of pseudo labels converted from indices.
+            A list of pseudo-labels converted from indices.
         """
         pred_idx = data_examples.pred_idx
         data_examples.pred_pseudo_label = [
@@ -101,17 +101,17 @@ class SimpleBridge(BaseBridge):
 
     def pseudo_label_to_idx(self, data_examples: ListData) -> List[List[Any]]:
         """
-        Map pseudo labels of data examples into indices.
+        Map pseudo-labels of data examples into indices.
 
         Parameters
         ----------
         data_examples : ListData
-            Data examples containing pseudo labels.
+            Data examples containing pseudo-labels.
 
         Returns
         -------
         List[List[Any]]
-            A list of indices converted from pseudo labels.
+            A list of indices converted from pseudo-labels.
         """
         abduced_idx = [
             [self.reasoner.label_to_idx[_abduced_pseudo_label] for _abduced_pseudo_label in sub_list]

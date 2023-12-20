@@ -27,15 +27,15 @@ In this section, we will look at how to bridge learning and reasoning parts to t
 +---------------------------------------+----------------------------------------------------+
 | Method Signature                      | Description                                        |
 +=======================================+====================================================+
-| ``predict(data_examples)``             | Predicts class probabilities and indices           |
-|                                       | for the given data examples.                        |
+| ``predict(data_examples)``            | Predicts class probabilities and indices           |
+|                                       | for the given data examples.                       |
 +---------------------------------------+----------------------------------------------------+
-| ``abduce_pseudo_label(data_examples)`` | Abduces pseudo labels for the given data examples.  |
+| ``abduce_pseudo_label(data_examples)``| Abduces pseudo-labels for the given data examples. |
 +---------------------------------------+----------------------------------------------------+
-| ``idx_to_pseudo_label(data_examples)`` | Converts indices to pseudo labels using            |
+| ``idx_to_pseudo_label(data_examples)``| Converts indices to pseudo-labels using            |
 |                                       | the provided or default mapping.                   |
 +---------------------------------------+----------------------------------------------------+
-| ``pseudo_label_to_idx(data_examples)`` | Converts pseudo labels to indices                  |
+| ``pseudo_label_to_idx(data_examples)``| Converts pseudo-labels to indices                  |
 |                                       | using the provided or default remapping.           |
 +---------------------------------------+----------------------------------------------------+
 | ``train(train_data)``                 | Train the model.                                   |
@@ -48,9 +48,9 @@ where ``train_data`` and ``test_data`` are both in the form of ``(X, gt_pseudo_l
 ``SimpleBridge`` inherits from ``BaseBridge`` and provides a basic implementation. Besides the ``model`` and ``reasoner``, ``SimpleBridge`` has an extra initialization arguments, ``metric_list``, which will be used to evaluate model performance. Its training process involves several Abductive Learning loops and each loop consists of the following five steps:
 
   1. Predict class probabilities and indices for the given data examples.
-  2. Transform indices into pseudo labels.
-  3. Revise pseudo labels based on abdutive reasoning.
-  4. Transform the revised pseudo labels to indices.
+  2. Transform indices into pseudo-labels.
+  3. Revise pseudo-labels based on abdutive reasoning.
+  4. Transform the revised pseudo-labels to indices.
   5. Train the model.
 
 The fundamental part of the ``train`` method is as follows:

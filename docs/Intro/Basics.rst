@@ -55,13 +55,13 @@ Use ABL-Package Step by Step
 ----------------------------
 
 In a typical Abductive Learning process, as illustrated below, 
-data inputs are first predicted by a machine learning model, and the outcomes are a pseudo label 
-example (which consists of multiple pseudo labels). 
+data inputs are first predicted by a machine learning model, and the outcomes are a pseudo-label 
+example (which consists of multiple pseudo-labels). 
 These labels then pass through a knowledge base :math:`\mathcal{KB}`
 to obtain the reasoning result by deductive reasoning. During training, 
 alongside the aforementioned forward flow (i.e., prediction --> deduction reasoning), 
 there also exists a reverse flow, which starts from the reasoning result and 
-involves abductive reasoning to generate possible pseudo label examples. 
+involves abductive reasoning to generate possible pseudo-label examples. 
 Subsequently, these examples are processed to minimize inconsistencies with machine learning, 
 which in turn revise the outcomes of the machine learning model, and then 
 fed back into the machine learning model for further training. 
@@ -71,17 +71,17 @@ To implement this process, the following five steps are necessary:
 
 1. Prepare datasets
 
-    Prepare the data's input, ground truth for pseudo labels (optional), and ground truth for reasoning results.
+    Prepare the data's input, ground truth for pseudo-labels (optional), and ground truth for reasoning results.
 
 2. Build the learning part
 
-    Build a base machine learning model that can predict inputs to pseudo labels. 
+    Build a machine learning base model that can predict inputs to pseudo-labels. 
     Then, use ``ABLModel`` to encapsulate the base model.
 
 3. Build the reasoning part
 
     Define a knowledge base by building a subclass of ``KBBase``, specifying how to 
-    map pseudo label examples to reasoning results.
+    map pseudo-label examples to reasoning results.
     Also, create a ``Reasoner`` for minimizing of inconsistencies 
     between the knowledge base and the learning part.
 

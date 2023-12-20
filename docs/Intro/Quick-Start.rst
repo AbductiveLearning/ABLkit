@@ -33,7 +33,7 @@ Read more about `preparing datasets <Datasets.html>`_.
 Building the Learning Part
 --------------------------
 
-Learnig part is constructed by first defining a base machine learning model and then wrap it into an instance of ``ABLModel`` class. 
+Learnig part is constructed by first defining a machine learning base model and then wrap it into an instance of ``ABLModel`` class. 
 The flexibility of ABL package allows the base model to be any machine learning model conforming to the scikit-learn style, which requires implementing the ``fit`` and ``predict`` methods, or a PyTorch-based neural network, provided it has defined the architecture and implemented the ``forward`` method.
 In the MNIST Addition example, we build a simple LeNet5 network as the base model.
 
@@ -41,7 +41,7 @@ In the MNIST Addition example, we build a simple LeNet5 network as the base mode
 
    from examples.models.nn import LeNet5
 
-   # The number of pseudo labels is 10
+   # The number of pseudo-labels is 10
    cls = LeNet5(num_classes=10)
 
 To facilitate uniform processing, ABL-Package provides the ``BasicNN`` class to convert PyTorch-based neural networks into a format similar to scikit-learn models. To construct a ``BasicNN`` instance, we need also define a loss function, an optimizer, and a device aside from the previous network.
@@ -93,8 +93,8 @@ Then, we create a reasoner by instantiating the class
 Due to the indeterminism of abductive reasoning, there could 
 be multiple candidates compatible to the knowledge base. 
 When this happens, reasoner can minimize inconsistencies between 
-the knowledge base and pseudo labels predicted by the learning part, 
-and then return only one candidate which has highest consistency.
+the knowledge base and pseudo-labels predicted by the learning part, 
+and then return only one candidate that has the highest consistency.
 
 .. code:: python
 

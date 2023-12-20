@@ -1,21 +1,21 @@
 MNIST Addition
 ==============
 
-In this example, we show an implementation of `MNIST
-Addition <https://arxiv.org/abs/1805.10872>`_. In this task, pairs of
+This notebook shows an implementation of `MNIST
+Addition <https://arxiv.org/abs/1805.10872>`__. In this task, pairs of
 MNIST handwritten images and their sums are given, alongwith a domain
 knowledge base containing information on how to perform addition
-operations. The task is to recognize the digits of handwritten 
-images and accurately determine their sum.
+operations. The task is to recognize the digits of handwritten images
+and accurately determine their sum.
 
 Intuitively, we first use a machine learning model (learning part) to
-convert the input images to digits (we call them pseudo labels), and
+convert the input images to digits (we call them pseudo-labels), and
 then use the knowledge base (reasoning part) to calculate the sum of
-these digits. Since we do not have ground-truth of the digits, in 
-abductive learning, the reasoning part will leverage domain knowledge 
+these digits. Since we do not have ground-truth of the digits, in
+abductive learning, the reasoning part will leverage domain knowledge
 and revise the initial digits yielded by the learning part through
-abductive reasoning. This process enables us to further update 
-the machine learning model.
+abductive reasoning. This process enables us to further update the
+machine learning model.
 
 .. code:: ipython3
 
@@ -42,54 +42,99 @@ First, we get the training and testing datasets:
     train_data = get_dataset(train=True, get_pseudo_label=True)
     test_data = get_dataset(train=False, get_pseudo_label=True)
 
-Both datasets contain several data examples. In each data example, we
-have three components: X (a pair of images), gt_pseudo_label (a pair of
-corresponding ground truth digits, i.e., pseudo labels), and Y (their sum).
-The datasets are illustrated as follows.
+Both ``train_data`` and ``test_data`` have the same structures: tuples
+with three components: X (list where each element is a pair of images),
+gt_pseudo_label (list where each element is a pair of digits) and Y
+(list where each element is the sum of each digit pair). The length and
+structures of datasets are illustrated as follows.
+
+.. note::
+
+    ``gt_pseudo_label`` is only used to evaluate the performance of
+    the learning part but not to train the model.
 
 .. code:: ipython3
 
-    print(f"There are {len(train_data[0])} data examples in the training set and {len(test_data[0])} data examples in the test set")
-    print("As an illustration, in the first data example of the training set, we have:")
-    print(f"X ({len(train_data[0][0])} images):")
-    plt.subplot(1,2,1)
-    plt.axis('off') 
-    plt.imshow(train_data[0][0][0].numpy().transpose(1, 2, 0))
-    plt.subplot(1,2,2)
-    plt.axis('off') 
-    plt.imshow(train_data[0][0][1].numpy().transpose(1, 2, 0))
-    plt.show()
-    print(f"gt_pseudo_label ({len(train_data[1][0])} ground truth pseudo label): {train_data[1][0][0]}, {train_data[1][0][1]}")
-    print(f"Y (their sum result): {train_data[2][0]}")
+    def describe_structure(lst):
+        if not isinstance(lst, list):
+            return type(lst).__name__ 
+        return [describe_structure(item) for item in lst]
+    
+    print(f"Both train_data and test_data consist of 3 components: X, gt_pseudo_label, Y")
+    print("\n")
+    train_X, train_gt_pseudo_label, train_Y = train_data
+    print(f"Length of X, gt_pseudo_label, Y in train_data: {len(train_X)}, {len(train_gt_pseudo_label)}, {len(train_Y)}")
+    test_X, test_gt_pseudo_label, test_Y = test_data
+    print(f"Length of X, gt_pseudo_label, Y in test_data: {len(test_X)}, {len(test_gt_pseudo_label)}, {len(test_Y)}")
+    print("\n")
+    structure_X = describe_structure(train_X[0])
+    structure_gt_pseudo_label = describe_structure(train_gt_pseudo_label[0])
+    structure_Y = describe_structure(train_Y[0])
+    print(f"Type of X: {type(train_X).__name__}, and type of each element in X: {structure_X}.")
+    print(f"Type of gt_pseudo_label: {type(train_gt_pseudo_label).__name__}, and type of each element in gt_pseudo_label: {structure_gt_pseudo_label}.")
+    print(f"Type of Y: {type(train_Y).__name__}, and type of each element in Y: {structure_Y}.")
+
 
 Out:
     .. code:: none
         :class: code-out
-      
-        There are 30000 data examples in the training set and 5000 data examples in the test set
-        As an illustration, in the first data example of the training set, we have:
-        X (2 images):
+
+        Both train_data and test_data consist of 3 components: X, gt_pseudo_label, Y
+        
+        
+        Length of X, gt_pseudo_label, Y in train_data: 30000, 30000, 30000
+        Length of X, gt_pseudo_label, Y in test_data: 5000, 5000, 5000
+        
+        
+        Type of X: list, and type of each element in X: ['Tensor', 'Tensor'].
+        Type of gt_pseudo_label: list, and type of each element in gt_pseudo_label: ['int', 'int'].
+        Type of Y: list, and type of each element in Y: int.
+    
+
+The ith element of X, gt_pseudo_label, and Y together constitute the ith
+data example. As an illustration, in the first data example of the
+training set, we have:
+
+.. code:: ipython3
+
+    first_X, first_gt_pseudo_label, first_Y = train_X[0], train_gt_pseudo_label[0], train_Y[0]
+    print(f"X in the first data example (a pair of images):")
+    plt.subplot(1,2,1)
+    plt.axis('off') 
+    plt.imshow(first_X[0].numpy().transpose(1, 2, 0))
+    plt.subplot(1,2,2)
+    plt.axis('off') 
+    plt.imshow(first_X[1].numpy().transpose(1, 2, 0))
+    plt.show()
+    print(f"gt_pseudo_label in the first data example (a pair of ground truth pseudo-labels): {first_gt_pseudo_label[0]}, {first_gt_pseudo_label[1]}")
+    print(f"Y in the first data example (their sum result): {first_Y}")
+
+
+Out:
+    .. code:: none
+        :class: code-out
+
+        X in the first data example (a pair of images):
     
     .. image:: ../img/mnist_add_datasets.png
         :width: 400px
 
 
-    .. code:: none
-        :class: code-out
+    .. parsed-literal::
 
-        gt_pseudo_label (2 ground truth pseudo label): 7, 5
-        Y (their sum result): 12
+        gt_pseudo_label in the first data example (a pair of ground truth pseudo-labels): 7, 5
+        Y in the first data example (their sum result): 12
     
 
 Building the Learning Part
 --------------------------
 
-To build the learning part, we need to first build a base machine
-learning model. We use a simple `LeNet-5 neural
-network <https://en.wikipedia.org/wiki/LeNet>`__ to complete this task,
-and encapsulate it within a ``BasicNN`` object to create the base model.
-``BasicNN`` is a class that encapsulates a PyTorch model, transforming
-it into a base model with an sklearn-style interface.
+To build the learning part, we need to first build a machine learning
+base model. We use a simple `LeNet-5 neural
+network <https://en.wikipedia.org/wiki/LeNet>`__, and encapsulate it
+within a ``BasicNN`` object to create the base model. ``BasicNN`` is a
+class that encapsulates a PyTorch model, transforming it into a base
+model with an sklearn-style interface.
 
 .. code:: ipython3
 
@@ -108,53 +153,73 @@ it into a base model with an sklearn-style interface.
     )
 
 ``BasicNN`` offers methods like ``predict`` and ``predict_prob``, which
-are used to predict the outcome class index and the probabilities for an
-image, respectively. As shown below:
+are used to predict the class index and the probabilities of each class
+for images. As shown below:
 
 .. code:: ipython3
 
-    pred_idx = base_model.predict(X=[torch.randn(1, 28, 28).to(device) for _ in range(32)])
-    print(f"Shape of pred_idx for a batch of 32 examples: {pred_idx.shape}")
-    pred_prob = base_model.predict_proba(X=[torch.randn(1, 28, 28).to(device) for _ in range(32)])
-    print(f"Shape of pred_prob for a batch of 32 examples: {pred_prob.shape}")
+    data_instances = [torch.randn(1, 28, 28).to(device) for _ in range(32)]
+    pred_idx = base_model.predict(X=data_instances)
+    print(f"Predicted class index for a batch of 32 instances: np.ndarray with shape {pred_idx.shape}")
+    pred_prob = base_model.predict_proba(X=data_instances)
+    print(f"Predicted class probabilities for a batch of 32 instances: np.ndarray with shape {pred_prob.shape}")
 
 
 Out:
     .. code:: none
         :class: code-out
 
-        Shape of pred_idx for a batch of 32 examples: (32,)
-        Shape of pred_prob for a batch of 32 examples: (32, 10)
+        Predicted class index for a batch of 32 instances: np.ndarray with shape (32,)
+        Predicted class probabilities for a batch of 32 instances: np.ndarray with shape (32, 10)
     
 
-However, the base model built above deals with instance-level data 
-(i.e., a single image), and can not directly deal with example-level
-data (i.e., a pair of images). Therefore, we wrap the base model
-into ``ABLModel``, which enables the learning part to train, test, 
-and predict on example-level data.
+However, the base model built above deals with instance-level data
+(i.e., individual images), and can not directly deal with example-level
+data (i.e., a pair of images). Therefore, we wrap the base model into
+``ABLModel``, which enables the learning part to train, test, and
+predict on example-level data.
 
 .. code:: ipython3
 
     model = ABLModel(base_model)
 
-TODO: 示例展示ablmodel和base model的predict的不同
+As an illustration, consider this example of training on example-level
+data using the ``predict`` method in ``ABLModel``. In this process, the
+method accepts data examples as input and outputs the class labels and
+the probabilities of each class for all instances within these data
+examples.
 
 .. code:: ipython3
 
-    # from abl.structures import ListData
-    # data_examples = ListData()
-    # data_examples.X = [list(torch.randn(2, 1, 28, 28)) for _ in range(3)]
+    from abl.structures import ListData
+    # ListData is a data structure provided by ABL-Package that can be used to organize data examples
+    data_example = ListData()
+    data_example.X = first_X
+    data_example.gt_pseudo_label = first_gt_pseudo_label
+    data_example.Y = first_Y
     
-    # model.predict(data_examples)
+    # Perform prediction on the first data examples
+    prediction_result = model.predict(data_example)
+    print(f"Predicted class labels for the first data example: np.array with shape {prediction_result['label'].shape}")
+    print(f"Predicted class probabilities for the first data example: np.array with shape {prediction_result['prob'].shape}")
+
+
+Out:
+    .. code:: none
+        :class: code-out
+
+        Predicted class labels for the first data example: np.array with shape (2,)
+        Predicted class probabilities for the first data example: np.array with shape (2, 10)
+    
 
 Building the Reasoning Part
 ---------------------------
 
 In the reasoning part, we first build a knowledge base which contain
 information on how to perform addition operations. We build it by
-creating a subclass of ``KBBase``. In the derived subclass, we first 
+creating a subclass of ``KBBase``. In the derived subclass, we
 initialize the ``pseudo_label_list`` parameter specifying list of
-possible pseudo labels, and then override the ``logic_forward`` function
+possible pseudo-labels, and override the ``logic_forward`` function
 defining how to perform (deductive) reasoning.
 
 .. code:: ipython3
@@ -169,21 +234,23 @@ defining how to perform (deductive) reasoning.
     
     kb = AddKB()
 
-The knowledge base can perform logical reasoning. Below is an example of
-performing (deductive) reasoning: # TODO: ABDUCTIVE REASONING
+The knowledge base can perform logical reasoning (both deductive
+reasoning and abductive reasoning). Below is an example of performing
+(deductive) reasoning, and users can refer to :ref:`Performing abductive 
+reasoning in the knowledge base <kb-abd>` for details of abductive reasoning.
 
 .. code:: ipython3
 
     pseudo_label_example = [1, 2]
     reasoning_result = kb.logic_forward(pseudo_label_example)
-    print(f"Reasoning result of pseudo label example {pseudo_label_example} is {reasoning_result}.")
+    print(f"Reasoning result of pseudo-label example {pseudo_label_example} is {reasoning_result}.")
 
 
 Out:
     .. code:: none
         :class: code-out
 
-        Reasoning result of pseudo label example [1, 2] is 3.
+        Reasoning result of pseudo-label example [1, 2] is 3.
     
 
 .. note::
@@ -192,15 +259,15 @@ Out:
     can also establish a knowledge base with a ground KB using ``GroundKB``,
     or a knowledge base implemented based on Prolog files using
     ``PrologKB``. The corresponding code for these implementations can be
-    found in the ``examples/mnist_add/main.py`` file. Those interested are encouraged to
+    found in the ``main.py`` file. Those interested are encouraged to
     examine it for further insights.
 
 Then, we create a reasoner by instantiating the class ``Reasoner``. Due
 to the indeterminism of abductive reasoning, there could be multiple
 candidates compatible to the knowledge base. When this happens, reasoner
-can minimize inconsistencies between the knowledge base and pseudo
-labels predicted by the learning part, and then return only one
-candidate that has highest consistency.
+can minimize inconsistencies between the knowledge base and
+pseudo-labels predicted by the learning part, and then return only one
+candidate that has the highest consistency.
 
 .. code:: ipython3
 
@@ -258,60 +325,60 @@ methods of ``SimpleBridge``.
     bridge.test(test_data)
 
 Out:
-   .. code:: none
-      :class: code-out
+    .. code:: none
+        :class: code-out
 
-      abl - INFO - Abductive Learning on the MNIST Addition example.
-      abl - INFO - loop(train) [1/5] segment(train) [1/3] 
-      abl - INFO - model loss: 1.81231
-      abl - INFO - loop(train) [1/5] segment(train) [2/3] 
-      abl - INFO - model loss: 1.37639
-      abl - INFO - loop(train) [1/5] segment(train) [3/3] 
-      abl - INFO - model loss: 1.14446
-      abl - INFO - Evaluation start: loop(val) [1]
-      abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.207 mnist_add/reasoning_accuracy: 0.245 
-      abl - INFO - Saving model: loop(save) [1]
-      abl - INFO - Checkpoints will be saved to log_dir/weights/model_checkpoint_loop_1.pth
-      abl - INFO - loop(train) [2/5] segment(train) [1/3] 
-      abl - INFO - model loss: 0.97430
-      abl - INFO - loop(train) [2/5] segment(train) [2/3] 
-      abl - INFO - model loss: 0.91448
-      abl - INFO - loop(train) [2/5] segment(train) [3/3] 
-      abl - INFO - model loss: 0.83089
-      abl - INFO - Evaluation start: loop(val) [2]
-      abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.191 mnist_add/reasoning_accuracy: 0.353 
-      abl - INFO - Saving model: loop(save) [2]
-      abl - INFO - Checkpoints will be saved to log_dir/weights/model_checkpoint_loop_2.pth
-      abl - INFO - loop(train) [3/5] segment(train) [1/3] 
-      abl - INFO - model loss: 0.79906
-      abl - INFO - loop(train) [3/5] segment(train) [2/3] 
-      abl - INFO - model loss: 0.77949
-      abl - INFO - loop(train) [3/5] segment(train) [3/3] 
-      abl - INFO - model loss: 0.75007
-      abl - INFO - Evaluation start: loop(val) [3]
-      abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.148 mnist_add/reasoning_accuracy: 0.385 
-      abl - INFO - Saving model: loop(save) [3]
-      abl - INFO - Checkpoints will be saved to log_dir/weights/model_checkpoint_loop_3.pth
-      abl - INFO - loop(train) [4/5] segment(train) [1/3] 
-      abl - INFO - model loss: 0.72659
-      abl - INFO - loop(train) [4/5] segment(train) [2/3] 
-      abl - INFO - model loss: 0.70985
-      abl - INFO - loop(train) [4/5] segment(train) [3/3] 
-      abl - INFO - model loss: 0.66337
-      abl - INFO - Evaluation start: loop(val) [4]
-      abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.016 mnist_add/reasoning_accuracy: 0.494 
-      abl - INFO - Saving model: loop(save) [4]
-      abl - INFO - Checkpoints will be saved to log_dir/weights/model_checkpoint_loop_4.pth
-      abl - INFO - loop(train) [5/5] segment(train) [1/3] 
-      abl - INFO - model loss: 0.61140
-      abl - INFO - loop(train) [5/5] segment(train) [2/3] 
-      abl - INFO - model loss: 0.57534
-      abl - INFO - loop(train) [5/5] segment(train) [3/3] 
-      abl - INFO - model loss: 0.57018
-      abl - INFO - Evaluation start: loop(val) [5]
-      abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.002 mnist_add/reasoning_accuracy: 0.507 
-      abl - INFO - Saving model: loop(save) [5]
-      abl - INFO - Checkpoints will be saved to log_dir/weights/model_checkpoint_loop_5.pth
-      abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.002 mnist_add/reasoning_accuracy: 0.482 
-      
+        abl - INFO - Abductive Learning on the MNIST Addition example.
+        abl - INFO - loop(train) [1/5] segment(train) [1/3] 
+        abl - INFO - model loss: 1.49104
+        abl - INFO - loop(train) [1/5] segment(train) [2/3] 
+        abl - INFO - model loss: 1.24945
+        abl - INFO - loop(train) [1/5] segment(train) [3/3] 
+        abl - INFO - model loss: 0.87861
+        abl - INFO - Evaluation start: loop(val) [1]
+        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.818 mnist_add/reasoning_accuracy: 0.672 
+        abl - INFO - Saving model: loop(save) [1]
+        abl - INFO - Checkpoints will be saved to weights_dir/model_checkpoint_loop_1.pth
+        abl - INFO - loop(train) [2/5] segment(train) [1/3] 
+        abl - INFO - model loss: 0.31148
+        abl - INFO - loop(train) [2/5] segment(train) [2/3] 
+        abl - INFO - model loss: 0.09520
+        abl - INFO - loop(train) [2/5] segment(train) [3/3] 
+        abl - INFO - model loss: 0.07402
+        abl - INFO - Evaluation start: loop(val) [2]
+        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.982 mnist_add/reasoning_accuracy: 0.964 
+        abl - INFO - Saving model: loop(save) [2]
+        abl - INFO - Checkpoints will be saved to weights_dir/model_checkpoint_loop_2.pth
+        abl - INFO - loop(train) [3/5] segment(train) [1/3] 
+        abl - INFO - model loss: 0.06027
+        abl - INFO - loop(train) [3/5] segment(train) [2/3] 
+        abl - INFO - model loss: 0.05341
+        abl - INFO - loop(train) [3/5] segment(train) [3/3] 
+        abl - INFO - model loss: 0.04915
+        abl - INFO - Evaluation start: loop(val) [3]
+        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.987 mnist_add/reasoning_accuracy: 0.975 
+        abl - INFO - Saving model: loop(save) [3]
+        abl - INFO - Checkpoints will be saved to weights_dir/model_checkpoint_loop_3.pth
+        abl - INFO - loop(train) [4/5] segment(train) [1/3] 
+        abl - INFO - model loss: 0.04413
+        abl - INFO - loop(train) [4/5] segment(train) [2/3] 
+        abl - INFO - model loss: 0.04181
+        abl - INFO - loop(train) [4/5] segment(train) [3/3] 
+        abl - INFO - model loss: 0.04127
+        abl - INFO - Evaluation start: loop(val) [4]
+        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.990 mnist_add/reasoning_accuracy: 0.980 
+        abl - INFO - Saving model: loop(save) [4]
+        abl - INFO - Checkpoints will be saved to weights_dir/model_checkpoint_loop_4.pth
+        abl - INFO - loop(train) [5/5] segment(train) [1/3] 
+        abl - INFO - model loss: 0.03544
+        abl - INFO - loop(train) [5/5] segment(train) [2/3] 
+        abl - INFO - model loss: 0.03092
+        abl - INFO - loop(train) [5/5] segment(train) [3/3] 
+        abl - INFO - model loss: 0.03663
+        abl - INFO - Evaluation start: loop(val) [5]
+        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.991 mnist_add/reasoning_accuracy: 0.982 
+        abl - INFO - Saving model: loop(save) [5]
+        abl - INFO - Checkpoints will be saved to weights_dir/model_checkpoint_loop_5.pth
+        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.987 mnist_add/reasoning_accuracy: 0.974 
+
 More concrete examples are available in ``examples/mnist_add/main.py`` and ``examples/mnist_add/mnist_add.ipynb``.
