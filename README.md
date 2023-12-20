@@ -6,6 +6,8 @@
 
 This is the code repository of abductive learning Package.
 
+To learn how to use it, please refer to - [document](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/Overview/Abductive-Learning.html).
+
 ## Installation
 
 Case a: If you develop and run abl directly, install it from source:
@@ -21,17 +23,15 @@ Case b (TO DO):  If you use abl as a dependency or third-party package, install 
 ```bash 
 pip install abl
 ```
+Case c (for test):  If you use abl as a dependency or third-party package, install it with pip:
+```bash 
+pip install -i https://test.pypi.org/simple/ abl
+```
 
 ## Example 
 + MNIST ADD - [here](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/mnist_add/mnist_add_example.ipynb)
 + Hand Written Formula - [here](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/hwf/hwf_example.ipynb)
 + Hand written Equation Decipherment - [here](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed)
-
-## Authors 
-
-- [Yu-Xuan Huang](http://www.lamda.nju.edu.cn/huangyx/) (Nanjing University)
-- [](http://www.lamda.nju.edu.cn//) (Nanjing University)
-
 
 ## NOTICE 
 They can only be used for academic purpose. For other purposes, please contact with LAMDA Group(www.lamda.nju.edu.cn).
@@ -40,8 +40,6 @@ They can only be used for academic purpose. For other purposes, please contact w
 
 - [ ] Improve speed and accuracy
 - [ ] Add comparison with DeepProbLog, NGS,... (Accuracy and Speed)
-- [x] Add Inference/Abduction example with FOL engine (e.g., Prolog)
-- [x] Add zoopt optimization
 - [ ] Rearrange structure and make it a python package
 - [ ] Documents
 
