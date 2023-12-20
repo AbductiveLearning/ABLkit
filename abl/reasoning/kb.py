@@ -118,7 +118,9 @@ class KBBase(ABC):
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
-            The corresponding input example.
+            The corresponding input example. If the information from the input 
+            is not required in the reasoning process, then this parameter will not have 
+            any effect.
         max_revision_num : int
             The upper limit on the number of revised labels for each example.
         require_more_revision : int
@@ -169,7 +171,9 @@ class KBBase(ABC):
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
-            The corresponding input example.
+            The corresponding input example. If the information from the input 
+            is not required in the reasoning process, then this parameter will not have 
+            any effect.
         revision_idx : List[int]
             A list specifying indices of where revisions should be made to the pseudo-label example.
 
@@ -231,7 +235,9 @@ class KBBase(ABC):
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
-            The corresponding input example.
+            The corresponding input example. If the information from the input 
+            is not required in the reasoning process, then this parameter will not have 
+            any effect.
         max_revision_num : int
             The upper limit on the number of revisions.
         require_more_revision : int
@@ -523,7 +529,9 @@ class PrologKB(KBBase):
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
-            The corresponding input example.
+            The corresponding input example. If the information from the input 
+            is not required in the reasoning process, then this parameter will not have 
+            any effect.
         revision_idx : List[int]
             A list specifying indices of where revisions should be made to the pseudo-label example.
 
@@ -555,7 +563,9 @@ class PrologKB(KBBase):
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
-            The corresponding input example.
+            The corresponding input example. If the information from the input 
+            is not required in the reasoning process, then this parameter will not have 
+            any effect.
         revision_idx : List[int]
             A list specifying indices of where revisions should be made to the pseudo-label example.
 
