@@ -77,7 +77,7 @@ class BaseBridge(metaclass=ABCMeta):
     @abstractmethod
     def valid(
         self,
-        valid_data: Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], List[Any]]],
+        val_data: Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], List[Any]]],
     ) -> None:
         """Placeholder for model test."""
 

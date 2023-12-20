@@ -209,15 +209,21 @@ class SimpleBridge(BaseBridge):
         Parameters
         ----------
         train_data : Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], List[Any]]]
-            Training data should be in the form of ``(X, gt_pseudo_label, Y)`` or a ``ListData`` object with ``X``, ``gt_pseudo_label`` and ``Y`` attributes.
+            Training data should be in the form of ``(X, gt_pseudo_label, Y)`` or a ``ListData``
+            object with ``X``, ``gt_pseudo_label`` and ``Y`` attributes.
             - ``X`` is a list of sublists representing the input data.
-            - ``gt_pseudo_label`` is only used to evaluate the performance of the ``ABLModel`` but not to train. ``gt_pseudo_label`` can be ``None``.
+            - ``gt_pseudo_label`` is only used to evaluate the performance of the ``ABLModel`` but not
+            to train. ``gt_pseudo_label`` can be ``None``.
             - ``Y`` is a list representing the ground truth reasoning result for each sublist in ``X``.
-
         label_data : Optional[Union[ListData, Tuple[List[List[Any]], List[List[Any]], List[Any]]]]
-            Labeled data should be in the same format as ``train_data``. The only difference is that the ``gt_pseudo_label`` in ``label_data`` should not be ``None`` and will be utilized to train the model. Defaults to None.
+            Labeled data should be in the same format as ``train_data``. The only difference is
+            that the ``gt_pseudo_label`` in ``label_data`` should not be ``None`` and will be
+            utilized to train the model. Defaults to None.
         val_data : Optional[Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]]]]
-            Validation data should be in the same format as ``train_data``. Both ``gt_pseudo_label`` and ``Y`` can be either None or not, which depends on the evaluation metircs in ``self.metric_list``. If ``val_data`` is None, ``train_data`` will be used to validate the model during training time. Defaults to None.
+            Validation data should be in the same format as ``train_data``. Both ``gt_pseudo_label``
+            and ``Y`` can be either None or not, which depends on the evaluation metircs in
+            ``self.metric_list``. If ``val_data`` is None, ``train_data`` will be used to validate the
+            model during training time. Defaults to None.
         loops : int
             Machine Learning part and Reasoning part will be iteratively optimized
             for ``loops`` times, by default 50.
@@ -320,7 +326,9 @@ class SimpleBridge(BaseBridge):
         Parameters
         ----------
         val_data : Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]]]
-            Validation data should be in the form of ``(X, gt_pseudo_label, Y)`` or a ``ListData`` object with ``X``, ``gt_pseudo_label`` and ``Y`` attributes. Both ``gt_pseudo_label`` and ``Y`` can be either None or not, which depends on the evaluation metircs in ``self.metric_list``.
+            Validation data should be in the form of ``(X, gt_pseudo_label, Y)`` or a ``ListData`` object
+            with ``X``, ``gt_pseudo_label`` and ``Y`` attributes. Both ``gt_pseudo_label`` and ``Y`` can be
+            either None or not, which depends on the evaluation metircs in ``self.metric_list``.
         """
         val_data_examples = self.data_preprocess("val", val_data)
         self._valid(val_data_examples)
@@ -337,7 +345,9 @@ class SimpleBridge(BaseBridge):
         Parameters
         ----------
         test_data : Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]]]
-            Test data should be in the form of ``(X, gt_pseudo_label, Y)`` or a ``ListData`` object with ``X``, ``gt_pseudo_label`` and ``Y`` attributes. Both ``gt_pseudo_label`` and ``Y`` can be either None or not, which depends on the evaluation metircs in ``self.metric_list``.
+            Test data should be in the form of ``(X, gt_pseudo_label, Y)`` or a ``ListData`` object with ``X``,
+            ``gt_pseudo_label`` and ``Y`` attributes. Both ``gt_pseudo_label`` and ``Y`` can be either None or
+            not, which depends on the evaluation metircs in ``self.metric_list``.
         """
         test_data_examples = self.data_preprocess("test", test_data)
         self._valid(test_data_examples)
