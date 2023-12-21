@@ -13,10 +13,9 @@ Modules in ABL-Package
 ----------------------
 
 ABL-Package is an implementation of `Abductive Learning <../Overview/Abductive-Learning.html>`_, 
-designed to harmoniously integrate and balance the use of machine learning and
-logical reasoning within a unified model. As depicted below, the
-ABL-Package comprises three primary parts: **Data**, **Learning**, and
-**Reasoning**, corresponding to the three pivotal components in current
+a paradigm which integrates machine learning and logical reasoning in a balanced-loop.
+As depicted below, the ABL-Package comprises three primary parts: **Data**, **Learning**, and
+**Reasoning**, corresponding to the three pivotal components of current
 AI: data, models, and knowledge.
 
 .. image:: ../img/ABL-Package.png
@@ -30,11 +29,11 @@ Metrics, including class ``SymbolMetric`` and ``ReasoningMetric`` (both
 specialized metrics derived from base class ``BaseMetric``), outline
 methods for evaluating model quality from a data perspective.
 
-**Learning** part is responsible for the construction, deployment, and
-training of machine learning models. In this part, the class
-``ABLModel`` is the central class that encapsulates the machine learning
-model, which may incorporate models such as those based on Scikit-learn
-or a neural network framework using constructed by class ``BasicNN``.
+**Learning** part focuses on the construction, deployment, and
+training of machine learning models. The class ``ABLModel`` is the 
+central class that encapsulates the machine learning model, 
+adaptable to various frameworks, including those based on Scikit-learn
+or PyTorch neural networks constructed by the ``BasicNN`` class.
 
 **Reasoning** part is responsible for the construction of domain knowledge 
 and performing reasoning. In this part, the class ``KBBase`` allows users to 
@@ -45,11 +44,11 @@ Upon building the knowledge base, the class ``Reasoner`` is
 responsible for minimizing the inconsistency between the knowledge base
 and learning models.
 
-Finally, the integration of these three parts occurs through
+The integration of these parts are achieved through the
 **Bridge** part, which features class ``SimpleBridge`` (derived from base
 class ``BaseBridge``). Bridge part synthesize data, learning, and
 reasoning, and facilitate the training and testing of the entire
-Abductive Learning framework.
+ABL framework.
 
 Use ABL-Package Step by Step
 ----------------------------
