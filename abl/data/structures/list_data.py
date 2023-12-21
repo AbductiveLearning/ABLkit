@@ -18,13 +18,43 @@ IndexType = Union[str, slice, int, list, LongTypeTensor, BoolTypeTensor, np.ndar
 # https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/data_structures/instance_data.py # noqa
 class ListData(BaseDataElement):
     """
-    Data structure for example-level data.
+    Abstract Data Interface used throughout the ABL-Package.
 
-    Subclass of :class:`BaseDataElement`. All value in `data_fields`
-    should have the same length. This design refer to
-    https://github.com/facebookresearch/detectron2/blob/master/detectron2/structures/instances.py
+    `ListData` is the underlying data structure used in the ABL-Package,
+    designed to manage diverse forms of data dynamically generated throughout the
+    Abductive Learning (ABL) framework. This includes handling raw data, predicted
+    pseudo-labels, abduced pseudo-labels, pseudo-label indices, etc.
 
-    ListData supports `index` and `slice` for data field. The type of value in data field can be either `None` or `list` of base data structures such as `torch.Tensor`, `numpy.ndarray`, `list`, `str` and `tuple`.
+    As a fundamental data structure in ABL, `ListData` is essential for the smooth
+    transfer and manipulation of data across various components of the ABL framework,
+    such as prediction, abductive reasoning, and training phases. It provides a
+    unified data format across these stages, ensuring compatibility and flexibility
+    in handling diverse data forms in the ABL framework.
+
+    The attributes in ``ListData`` are divided into two parts,
+    the ``metainfo`` and the ``data`` respectively.
+
+        - ``metainfo``: Usually used to store basic information about data examples,
+          such as symbol number, image size, etc. The attributes can be accessed or
+          modified by dict-like or object-like operations, such as ``.`` (for data
+          access and modification), ``in``, ``del``, ``pop(str)``, ``get(str)``,
+          ``metainfo_keys()``, ``metainfo_values()``, ``metainfo_items()``,
+          ``set_metainfo()`` (for set or change key-value pairs in metainfo).
+
+        - ``data``: raw data, labels, predictions, and abduced results are stored.
+          The attributes can be accessed or modified by dict-like or object-like operations,
+          such as ``.``, ``in``, ``del``, ``pop(str)``, ``get(str)``, ``keys()``,
+          ``values()``, ``items()``. Users can also apply tensor-like
+          methods to all :obj:`torch.Tensor` in the ``data_fields``, such as ``.cuda()``,
+          ``.cpu()``, ``.numpy()``, ``.to()``, ``to_tensor()``, ``.detach()``.
+
+    ListData supports `index` and `slice` for data field. The type of value in
+    data field can be either `None` or `list` of base data structures such as
+    `torch.Tensor`, `numpy.ndarray`, `list`, `str` and `tuple`.
+
+    This design is inspired by and extends the functionalities of the `BaseDataElement`
+    class implemented in MMEngine.
+    https://github.com/open-mmlab/mmengine/blob/main/mmengine/structures/base_data_element.py # noqa E501
 
     Examples:
         >>> from abl.data.structures import ListData
