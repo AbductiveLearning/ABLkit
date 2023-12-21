@@ -8,7 +8,7 @@ import numpy
 import torch
 from torch.utils.data import DataLoader
 
-from ..dataset import ClassificationDataset, PredictionDataset
+from .torch_dataset import ClassificationDataset, PredictionDataset
 from ..utils.logger import print_log
 
 

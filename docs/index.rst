@@ -32,11 +32,10 @@
    :maxdepth: 1
    :caption: API
 
-   API/abl.dataset
+   API/abl.data
    API/abl.learning
    API/abl.reasoning
    API/abl.bridge
-   API/abl.data
    API/abl.utils
 
 .. toctree::

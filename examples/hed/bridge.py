@@ -4,7 +4,7 @@ from collections import defaultdict
 import torch
 
 from abl.bridge import SimpleBridge
-from abl.dataset import RegressionDataset
+from abl.learning.torch_dataset import RegressionDataset
 from abl.data.evaluation import BaseMetric
 from abl.learning import ABLModel, BasicNN
 from abl.reasoning import Reasoner
