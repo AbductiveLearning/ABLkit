@@ -81,7 +81,7 @@ def split_equation(equations_by_len, prop_train, prop_val):
     return train_equations_by_len, val_equations_by_len
 
 
-def get_hed(dataset="mnist", train=True):
+def get_dataset(dataset="mnist", train=True):
     if dataset == "mnist":
         file = osp.join(CURRENT_DIR, "mnist_equation_data_train_len_26_test_len_26_sys_2_.pk")
     elif dataset == "random":

@@ -2,7 +2,7 @@ import inspect
 from typing import Callable, Any, List, Optional, Union
 
 import numpy as np
-from zoopt import Dimension, Objective, Opt, Parameter
+from zoopt import Dimension, Objective, Opt, Parameter, Solution
 
 from ..reasoning import KBBase
 from ..structures import ListData
@@ -175,9 +175,9 @@ class Reasoner:
         symbol_num: int,
         data_example: ListData,
         max_revision_num: int,
-    ) -> List[bool]:
+    ) -> Solution:
         """
-        Get the optimal solution using ZOOpt library. The solution is a list of
+        Get the optimal solution using ZOOpt library. From the solution, we can get a list of
         boolean values, where '1' (True) indicates the indices chosen to be revised.
 
         Parameters
@@ -191,7 +191,7 @@ class Reasoner:
 
         Returns
         -------
-        List[bool]
+        Solution
             The solution for ZOOpt library.
         """
         dimension = Dimension(size=symbol_num, regs=[[0, 1]] * symbol_num, tys=[False] * symbol_num)
@@ -201,14 +201,14 @@ class Reasoner:
             constraint=lambda sol: self._constrain_revision_num(sol, max_revision_num),
         )
         parameter = Parameter(budget=100, intermediate_result=False, autoset=True)
-        solution = Opt.min(objective, parameter).get_x()
+        solution = Opt.min(objective, parameter)
         return solution
 
     def zoopt_revision_score(
         self,
         symbol_num: int,
         data_example: ListData,
-        sol: List[bool],
+        sol: Solution,
     ) -> int:
         """
         Get the revision score for a solution. A lower score suggests that ZOOpt library
@@ -220,7 +220,7 @@ class Reasoner:
             Number of total symbols.
         data_example : ListData
             Data example.
-        sol: List[bool]
+        sol: Solution
             The solution for ZOOpt library.
 
         Returns
@@ -237,7 +237,7 @@ class Reasoner:
         else:
             return symbol_num
 
-    def _constrain_revision_num(self, solution: List[bool], max_revision_num: int) -> int:
+    def _constrain_revision_num(self, solution: Solution, max_revision_num: int) -> int:
         """
         Constrain that the total number of revisions chosen by the solution does not exceed
         maximum number of revisions allowed.
@@ -287,7 +287,7 @@ class Reasoner:
 
         if self.use_zoopt:
             solution = self._zoopt_get_solution(symbol_num, data_example, max_revision_num)
-            revision_idx = np.where(solution != 0)[0]
+            revision_idx = np.where(solution.get_x() != 0)[0]
             candidates, reasoning_results = self.kb.revise_at_idx(
                 pseudo_label=data_example.pred_pseudo_label, 
                 y=data_example.Y, 
