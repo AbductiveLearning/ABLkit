@@ -215,7 +215,7 @@ def kb_hwf2():
 def kb_hed():
     kb = HedKB(
         pseudo_label_list=[1, 0, "+", "="],
-        pl_file="examples/hed/datasets/learn_add.pl",
+        pl_file="examples/hed/reasoning/learn_add.pl",
     )
     return kb
 

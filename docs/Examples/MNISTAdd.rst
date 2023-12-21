@@ -140,7 +140,7 @@ model with an sklearn-style interface.
 
     cls = LeNet5(num_classes=10)
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(cls.parameters(), lr=0.001)
+    optimizer = torch.optim.RMSprop(cls.parameters(), lr=0.001, alpha=0.9)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     
     base_model = BasicNN(

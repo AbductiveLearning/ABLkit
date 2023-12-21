@@ -2,7 +2,7 @@ Handwritten Formula (HWF)
 =========================
 
 Below shows an implementation of `Handwritten
-Formula <https://arxiv.org/abs/2006.06649>`__. In this task. In this
+Formula <https://arxiv.org/abs/2006.06649>`__. In this
 task, handwritten images of decimal formulas and their computed results
 are given, alongwith a domain knowledge base containing information on
 how to compute the decimal formula. The task is to recognize the symbols

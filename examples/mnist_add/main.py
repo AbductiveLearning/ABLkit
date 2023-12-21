@@ -34,11 +34,11 @@ def main():
     parser.add_argument('--epochs', type=int, default=1,
                         help='number of epochs in each learning loop iteration (default : 1)')
     parser.add_argument('--lr', type=float, default=1e-3,
-                        help='base learning rate (default : 0.001)')
-    parser.add_argument('--weight-decay', type=int, default=3e-2,
-                        help='weight decay value (default : 0.03)')
+                        help='base model learning rate (default : 0.001)')
+    parser.add_argument('--alpha', type=float, default=0.9,
+                        help='alpha in RMSprop (default : 0.9)')
     parser.add_argument('--batch-size', type=int, default=32,
-                        help='batch size (default : 32)')
+                        help='base model batch size (default : 32)')
     parser.add_argument('--loops', type=int, default=5,
                         help='number of loop iterations (default : 5)')
     parser.add_argument('--segment_size', type=int or float, default=1/3,
@@ -65,7 +65,7 @@ def main():
     # Build necessary components for BasicNN
     cls = LeNet5(num_classes=10)
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(cls.parameters(), lr=args.lr)
+    optimizer = torch.optim.RMSprop(cls.parameters(), lr=args.lr, alpha=args.alpha)
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 

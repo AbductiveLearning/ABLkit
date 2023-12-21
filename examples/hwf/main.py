@@ -68,11 +68,9 @@ def main():
     parser.add_argument('--epochs', type=int, default=3,
                         help='number of epochs in each learning loop iteration (default : 3)')
     parser.add_argument('--lr', type=float, default=1e-3,
-                        help='base learning rate (default : 0.001)')
-    parser.add_argument('--weight-decay', type=int, default=3e-2,
-                        help='weight decay value (default : 0.03)')
+                        help='base model learning rate (default : 0.001)')
     parser.add_argument('--batch-size', type=int, default=128,
-                        help='batch size (default : 128)')
+                        help='base model batch size (default : 128)')
     parser.add_argument('--loops', type=int, default=5,
                         help='number of loop iterations (default : 5)')
     parser.add_argument('--segment_size', type=int or float, default=1000,

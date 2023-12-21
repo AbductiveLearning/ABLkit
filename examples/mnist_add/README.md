@@ -12,8 +12,8 @@ python main.py
 ## Usage
 
 ```bash
-usage: main.py [-h] [--no-cuda] [--epochs EPOCHS] [--lr LR]
-               [--weight-decay WEIGHT_DECAY] [--batch-size BATCH_SIZE]
+usage: main.py [-h] [--no-cuda] [--epochs EPOCHS] [--lr LR] 
+               [--alpha ALPHA] [--batch-size BATCH_SIZE]
                [--loops LOOPS] [--segment_size SEGMENT_SIZE]
                [--save_interval SAVE_INTERVAL] [--max-revision MAX_REVISION]
                [--require-more-revision REQUIRE_MORE_REVISION]
@@ -26,11 +26,10 @@ optional arguments:
   --no-cuda             disables CUDA training
   --epochs EPOCHS       number of epochs in each learning loop iteration
                         (default : 1)
-  --lr LR               base learning rate (default : 0.001)
-  --weight-decay WEIGHT_DECAY
-                        weight decay value (default : 0.03)
+  --lr LR               base model learning rate (default : 0.001)
+  --alpha ALPHA         alpha in RMSprop (default : 0.9)
   --batch-size BATCH_SIZE
-                        batch size (default : 32)
+                        base model batch size (default : 32)
   --loops LOOPS         number of loop iterations (default : 5)
   --segment_size SEGMENT_SIZE
                         segment size (default : 1/3)

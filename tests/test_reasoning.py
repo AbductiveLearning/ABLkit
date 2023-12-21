@@ -57,7 +57,7 @@ class TestPrologKB(object):
 
     def test_init_pl2(self, kb_hed):
         assert kb_hed.pseudo_label_list == [1, 0, "+", "="]
-        assert kb_hed.pl_file == "examples/hed/datasets/learn_add.pl"
+        assert kb_hed.pl_file == "examples/hed/reasoning/learn_add.pl"
 
     def test_prolog_file_not_exist(self):
         pseudo_label_list = [1, 2]

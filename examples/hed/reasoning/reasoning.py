@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import math
-from zoopt import Dimension, Objective, Opt, Parameter
 from abl.reasoning import PrologKB, Reasoner
 from abl.utils import reform_list
 

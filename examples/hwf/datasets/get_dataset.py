@@ -13,13 +13,13 @@ img_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(
 def download_and_unzip(url, zip_file_name):
     try:
         gdown.download(url, zip_file_name)
-        with zipfile.pseudo_labelipFile(zip_file_name, 'r') as zip_ref:
+        with zipfile.ZipFile(zip_file_name, 'r') as zip_ref:
             zip_ref.extractall(CURRENT_DIR)
         os.remove(zip_file_name)
     except Exception as e:
         if os.path.exists(zip_file_name):
             os.remove(zip_file_name)
-        raise Exception(f"An error occurred during download or unzip: {e}. Instead, you can download the dataset from {url} and unzip it in './datasets' folder")
+        raise Exception(f"An error occurred during download or unzip: {e}. Instead, you can download the dataset from {url} and unzip it in 'examples/hwf/datasets' folder")
 
 def get_dataset(train=True, get_pseudo_label=False):
     data_dir = CURRENT_DIR + '/data'
