@@ -28,7 +28,7 @@ machine learning model.
     from examples.models.nn import LeNet5
     from abl.learning import ABLModel, BasicNN
     from abl.reasoning import KBBase, Reasoner
-    from abl.evaluation import ReasoningMetric, SymbolMetric
+    from abl.data.evaluation import ReasoningMetric, SymbolMetric
     from abl.utils import ABLLogger, print_log
     from abl.bridge import SimpleBridge
 
@@ -191,7 +191,7 @@ examples.
 
 .. code:: ipython3
 
-    from abl.structures import ListData
+    from abl.data.structures import ListData
     # ListData is a data structure provided by ABL-Package that can be used to organize data examples
     data_examples = ListData()
     # We use the first 100 data examples in the training set as an illustration

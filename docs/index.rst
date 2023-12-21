@@ -35,9 +35,8 @@
    API/abl.dataset
    API/abl.learning
    API/abl.reasoning
-   API/abl.evaluation
    API/abl.bridge
-   API/abl.structures
+   API/abl.data
    API/abl.utils
 
 .. toctree::

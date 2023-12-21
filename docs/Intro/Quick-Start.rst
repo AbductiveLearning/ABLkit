@@ -111,7 +111,7 @@ ABL-Package provides two basic metrics, namely ``SymbolMetric`` and ``ReasoningM
 
 .. code:: python
 
-   from abl.evaluation import ReasoningMetric, SymbolMetric
+   from abl.data.evaluation import ReasoningMetric, SymbolMetric
 
    metric_list = [SymbolMetric(prefix="mnist_add"), ReasoningMetric(kb=kb, prefix="mnist_add")]
 

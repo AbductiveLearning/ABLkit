@@ -6,7 +6,7 @@ import torch.optim as optim
 
 from abl.learning import BasicNN
 from abl.reasoning import GroundKB, KBBase, PrologKB, Reasoner
-from abl.structures import ListData
+from abl.data.structures import ListData
 
 
 class LeNet5(nn.Module):
@@ -202,9 +202,11 @@ def kb_add_prolog():
     kb = PrologKB(pseudo_label_list=list(range(10)), pl_file="examples/mnist_add/add.pl")
     return kb
 
+
 @pytest.fixture
 def kb_hwf1():
     return HwfKB(max_err=0.1)
+
 
 @pytest.fixture
 def kb_hwf2():

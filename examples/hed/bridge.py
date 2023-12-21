@@ -5,10 +5,10 @@ import torch
 
 from abl.bridge import SimpleBridge
 from abl.dataset import RegressionDataset
-from abl.evaluation import BaseMetric
+from abl.data.evaluation import BaseMetric
 from abl.learning import ABLModel, BasicNN
 from abl.reasoning import Reasoner
-from abl.structures import ListData
+from abl.data.structures import ListData
 from abl.utils import print_log
 from examples.hed.datasets import get_pretrain_data
 from examples.hed.utils import InfiniteSampler, gen_mappings

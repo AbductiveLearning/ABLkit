@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 from typing import Any, List, Optional
 
 from ..structures import ListData
-from ..utils import print_log
+from ...utils import print_log
 
 
 class BaseMetric(metaclass=ABCMeta):

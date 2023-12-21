@@ -1,11 +1,9 @@
-from . import bridge, dataset, evaluation, learning, reasoning, structures, utils
+from . import bridge, data, learning, reasoning, utils
 
 __all__ = [
     "bridge",
-    "dataset",
-    "evaluation",
+    "data",
     "learning",
     "reasoning",
-    "structures",
     "utils",
 ]

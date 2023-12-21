@@ -3,10 +3,10 @@ from typing import Any, List, Optional, Tuple, Union
 
 from numpy import ndarray
 
-from ..evaluation import BaseMetric
+from ..data.evaluation import BaseMetric
 from ..learning import ABLModel
 from ..reasoning import Reasoner
-from ..structures import ListData
+from ..data.structures import ListData
 from ..utils import print_log
 from .base_bridge import BaseBridge
 

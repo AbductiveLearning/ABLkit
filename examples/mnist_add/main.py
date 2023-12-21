@@ -9,9 +9,10 @@ from examples.mnist_add.datasets import get_dataset
 from examples.models.nn import LeNet5
 from abl.learning import ABLModel, BasicNN
 from abl.reasoning import KBBase, GroundKB, PrologKB, Reasoner
-from abl.evaluation import ReasoningMetric, SymbolMetric
+from abl.data.evaluation import ReasoningMetric, SymbolMetric
 from abl.utils import ABLLogger, print_log
 from abl.bridge import SimpleBridge
+
 
 class AddKB(KBBase):
     def __init__(self, pseudo_label_list=list(range(10))):
@@ -20,6 +21,7 @@ class AddKB(KBBase):
     def logic_forward(self, nums):
         return sum(nums)
 
+
 class AddGroundKB(GroundKB):
     def __init__(self, pseudo_label_list=list(range(10)), GKB_len_list=[2]):
         super().__init__(pseudo_label_list, GKB_len_list)
@@ -27,36 +29,54 @@ class AddGroundKB(GroundKB):
     def logic_forward(self, nums):
         return sum(nums)
 
+
 def main():
-    parser = argparse.ArgumentParser(description='MNIST Addition example')
-    parser.add_argument('--no-cuda', action='store_true', default=False,
-                        help='disables CUDA training')
-    parser.add_argument('--epochs', type=int, default=1,
-                        help='number of epochs in each learning loop iteration (default : 1)')
-    parser.add_argument('--lr', type=float, default=1e-3,
-                        help='base model learning rate (default : 0.001)')
-    parser.add_argument('--alpha', type=float, default=0.9,
-                        help='alpha in RMSprop (default : 0.9)')
-    parser.add_argument('--batch-size', type=int, default=32,
-                        help='base model batch size (default : 32)')
-    parser.add_argument('--loops', type=int, default=5,
-                        help='number of loop iterations (default : 5)')
-    parser.add_argument('--segment_size', type=int or float, default=1/3,
-                        help='segment size (default : 1/3)')
-    parser.add_argument('--save_interval', type=int, default=1,
-                        help='save interval (default : 1)')
-    parser.add_argument('--max-revision', type=int or float, default=-1,
-                        help='maximum revision in reasoner (default : -1)')
-    parser.add_argument('--require-more-revision', type=int, default=5,
-                        help='require more revision in reasoner (default : 0)')
+    parser = argparse.ArgumentParser(description="MNIST Addition example")
+    parser.add_argument(
+        "--no-cuda", action="store_true", default=False, help="disables CUDA training"
+    )
+    parser.add_argument(
+        "--epochs",
+        type=int,
+        default=1,
+        help="number of epochs in each learning loop iteration (default : 1)",
+    )
+    parser.add_argument(
+        "--lr", type=float, default=1e-3, help="base model learning rate (default : 0.001)"
+    )
+    parser.add_argument("--alpha", type=float, default=0.9, help="alpha in RMSprop (default : 0.9)")
+    parser.add_argument(
+        "--batch-size", type=int, default=32, help="base model batch size (default : 32)"
+    )
+    parser.add_argument(
+        "--loops", type=int, default=5, help="number of loop iterations (default : 5)"
+    )
+    parser.add_argument(
+        "--segment_size", type=int or float, default=1 / 3, help="segment size (default : 1/3)"
+    )
+    parser.add_argument("--save_interval", type=int, default=1, help="save interval (default : 1)")
+    parser.add_argument(
+        "--max-revision",
+        type=int or float,
+        default=-1,
+        help="maximum revision in reasoner (default : -1)",
+    )
+    parser.add_argument(
+        "--require-more-revision",
+        type=int,
+        default=5,
+        help="require more revision in reasoner (default : 0)",
+    )
     kb_type = parser.add_mutually_exclusive_group()
-    kb_type.add_argument("--prolog", action="store_true", default=False,
-                        help='use PrologKB (default: False)')
-    kb_type.add_argument("--ground", action="store_true", default=False,
-                        help='use GroundKB (default: False)')
+    kb_type.add_argument(
+        "--prolog", action="store_true", default=False, help="use PrologKB (default: False)"
+    )
+    kb_type.add_argument(
+        "--ground", action="store_true", default=False, help="use GroundKB (default: False)"
+    )
 
     args = parser.parse_args()
-    
+
     ### Working with Data
     train_data = get_dataset(train=True, get_pseudo_label=True)
     test_data = get_dataset(train=False, get_pseudo_label=True)
@@ -81,7 +101,7 @@ def main():
 
     # Build ABLModel
     model = ABLModel(base_model)
-    
+
     ### Building the Reasoning Part
     # Build knowledge base
     if args.prolog:
@@ -90,9 +110,11 @@ def main():
         kb = AddGroundKB()
     else:
         kb = AddKB()
-    
+
     # Create reasoner
-    reasoner = Reasoner(kb, max_revision=args.max_revision, require_more_revision=args.require_more_revision)
+    reasoner = Reasoner(
+        kb, max_revision=args.max_revision, require_more_revision=args.require_more_revision
+    )
 
     ### Building Evaluation Metrics
     metric_list = [SymbolMetric(prefix="mnist_add"), ReasoningMetric(kb=kb, prefix="mnist_add")]
@@ -106,12 +128,16 @@ def main():
     # Retrieve the directory of the Log file and define the directory for saving the model weights.
     log_dir = ABLLogger.get_current_instance().log_dir
     weights_dir = osp.join(log_dir, "weights")
-    
-    #  Train and Test
-    bridge.train(train_data, loops=args.loops, segment_size=args.segment_size, save_interval=args.save_interval, save_dir=weights_dir)
-    bridge.test(test_data)
 
-    
+    #  Train and Test
+    bridge.train(
+        train_data,
+        loops=args.loops,
+        segment_size=args.segment_size,
+        save_interval=args.save_interval,
+        save_dir=weights_dir,
+    )
+    bridge.test(test_data)
 
 
 if __name__ == "__main__":

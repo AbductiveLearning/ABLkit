@@ -15,7 +15,7 @@ In this section, we will look at how to build evaluation metrics.
 .. code:: python
 
     # Import necessary modules
-    from abl.evaluation import BaseMetric, SymbolMetric, ReasoningMetric
+    from abl.data.evaluation import BaseMetric, SymbolMetric, ReasoningMetric
 
 ABL-Package seperates the evaluation process from model training and testing as an independent class, ``BaseMetric``. The training and testing processes are implemented in the ``BaseBridge`` class, so metrics are used by this class and its sub-classes. After building a ``bridge`` with a list of ``BaseMetric`` instances, these metrics will be used by the ``bridge.valid`` method to evaluate the model performance during training and testing. 
 

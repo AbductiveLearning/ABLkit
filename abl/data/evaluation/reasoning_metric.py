@@ -1,6 +1,6 @@
 from typing import Optional
 
-from ..reasoning import KBBase
+from ...reasoning import KBBase
 from ..structures import ListData
 from .base_metric import BaseMetric
 

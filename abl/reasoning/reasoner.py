@@ -5,7 +5,7 @@ import numpy as np
 from zoopt import Dimension, Objective, Opt, Parameter, Solution
 
 from ..reasoning import KBBase
-from ..structures import ListData
+from ..data.structures import ListData
 from ..utils.utils import confidence_dist, hamming_dist
 
 
@@ -19,18 +19,18 @@ class Reasoner:
         The knowledge base to be used for reasoning.
     dist_func : Union[str, Callable], optional
         The distance function used to determine the cost list between each
-        candidate and the given prediction. The cost is also referred to as a consistency 
-        measure, wherein the candidate with lowest cost is selected as the final 
-        abduced label. It can be either a string representing a predefined distance 
-        function or a callable function. The available predefined distance functions: 
-        'hamming' | 'confidence'. 'hamming': directly calculates the Hamming 
-        distance between the predicted pseudo-label in the data example and each 
-        candidate, 'confidence': calculates the distance between the prediction 
-        and each candidate based on confidence derived from the predicted probability 
-        in the data example. The callable function should have the signature 
-        dist_func(data_example, candidates, candidate_idxs, reasoning_results) and must return a cost list. Each element 
-        in this cost list should be a numerical value representing the cost for each 
-        candidate, and the list should have the same length as candidates. 
+        candidate and the given prediction. The cost is also referred to as a consistency
+        measure, wherein the candidate with lowest cost is selected as the final
+        abduced label. It can be either a string representing a predefined distance
+        function or a callable function. The available predefined distance functions:
+        'hamming' | 'confidence'. 'hamming': directly calculates the Hamming
+        distance between the predicted pseudo-label in the data example and each
+        candidate, 'confidence': calculates the distance between the prediction
+        and each candidate based on confidence derived from the predicted probability
+        in the data example. The callable function should have the signature
+        dist_func(data_example, candidates, candidate_idxs, reasoning_results) and must return a cost list. Each element
+        in this cost list should be a numerical value representing the cost for each
+        candidate, and the list should have the same length as candidates.
         Defaults to 'confidence'.
     idx_to_label : Optional[dict], optional
         A mapping from index in the base model to label. If not provided, a default
@@ -64,7 +64,9 @@ class Reasoner:
         self.require_more_revision = require_more_revision
 
         if idx_to_label is None:
-            self.idx_to_label = {index: label for index, label in enumerate(self.kb.pseudo_label_list)}
+            self.idx_to_label = {
+                index: label for index, label in enumerate(self.kb.pseudo_label_list)
+            }
         else:
             self._check_valid_idx_to_label(idx_to_label)
             self.idx_to_label = idx_to_label
@@ -80,7 +82,9 @@ class Reasoner:
         elif callable(dist_func):
             params = inspect.signature(dist_func).parameters.values()
             if len(params) != 4:
-                raise ValueError(f"User-defined dist_func must have exactly four parameters, but got {len(params)}.")
+                raise ValueError(
+                    f"User-defined dist_func must have exactly four parameters, but got {len(params)}."
+                )
             return
         else:
             raise TypeError(
@@ -289,18 +293,18 @@ class Reasoner:
             solution = self._zoopt_get_solution(symbol_num, data_example, max_revision_num)
             revision_idx = np.where(solution.get_x() != 0)[0]
             candidates, reasoning_results = self.kb.revise_at_idx(
-                pseudo_label=data_example.pred_pseudo_label, 
-                y=data_example.Y, 
-                x=data_example.X, 
-                revision_idx=revision_idx
+                pseudo_label=data_example.pred_pseudo_label,
+                y=data_example.Y,
+                x=data_example.X,
+                revision_idx=revision_idx,
             )
         else:
             candidates, reasoning_results = self.kb.abduce_candidates(
                 pseudo_label=data_example.pred_pseudo_label,
-                y=data_example.Y, 
+                y=data_example.Y,
                 x=data_example.X,
                 max_revision_num=max_revision_num,
-                require_more_revision=self.require_more_revision  
+                require_more_revision=self.require_more_revision,
             )
 
         candidate = self._get_one_candidate(data_example, candidates, reasoning_results)

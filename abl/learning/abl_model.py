@@ -1,7 +1,7 @@
 import pickle
 from typing import Any, Dict
 
-from ..structures import ListData
+from ..data.structures import ListData
 from ..utils import reform_list
 
 

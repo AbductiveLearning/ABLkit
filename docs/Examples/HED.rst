@@ -32,7 +32,7 @@ model.
     from examples.models.nn import SymbolNet
     from abl.learning import ABLModel, BasicNN
     from examples.hed.reasoning import HedKB, HedReasoner
-    from abl.evaluation import ReasoningMetric, SymbolMetric
+    from abl.data.evaluation import ReasoningMetric, SymbolMetric
     from abl.utils import ABLLogger, print_log
     from examples.hed.bridge import HedBridge
 

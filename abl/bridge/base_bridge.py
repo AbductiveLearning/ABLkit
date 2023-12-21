@@ -3,7 +3,7 @@ from typing import Any, List, Optional, Tuple, Union
 
 from ..learning import ABLModel
 from ..reasoning import Reasoner
-from ..structures import ListData
+from ..data.structures import ListData
 
 
 class BaseBridge(metaclass=ABCMeta):
