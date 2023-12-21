@@ -7,7 +7,7 @@ import torch
 
 
 # Modified from
-# https://github.com/open-mmlab/mmengine/blob/main/mmengine/data.structures/base_data_element.py
+# https://github.com/open-mmlab/mmengine/blob/main/mmengine/structures/base_data_element.py
 class BaseDataElement:
     """A base data interface that supports Tensor-like and dict-like
     operations.
@@ -74,7 +74,7 @@ class BaseDataElement:
 
     Examples:
         >>> import torch
-        >>> from mmengine.data.structures import BaseDataElement
+        >>> from mmengine.structures import BaseDataElement
         >>> gt_instances = BaseDataElement()
         >>> bboxes = torch.rand((5, 4))
         >>> scores = torch.rand((5,))

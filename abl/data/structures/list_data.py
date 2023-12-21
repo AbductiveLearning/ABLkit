@@ -15,16 +15,16 @@ IndexType = Union[str, slice, int, list, LongTypeTensor, BoolTypeTensor, np.ndar
 
 
 # Modified from
-# https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/data_data.structures/instance_data.py # noqa
+# https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/data_structures/instance_data.py # noqa
 class ListData(BaseDataElement):
     """
     Data structure for example-level data.
 
     Subclass of :class:`BaseDataElement`. All value in `data_fields`
     should have the same length. This design refer to
-    https://github.com/facebookresearch/detectron2/blob/master/detectron2/data.structures/instances.py
+    https://github.com/facebookresearch/detectron2/blob/master/detectron2/structures/instances.py
 
-    ListData supports `index` and `slice` for data field. The type of value in data field can be either `None` or `list` of base data data.structures such as `torch.Tensor`, `numpy.ndarray`, `list`, `str` and `tuple`.
+    ListData supports `index` and `slice` for data field. The type of value in data field can be either `None` or `list` of base data structures such as `torch.Tensor`, `numpy.ndarray`, `list`, `str` and `tuple`.
 
     Examples:
         >>> from abl.data.structures import ListData
