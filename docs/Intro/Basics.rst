@@ -15,13 +15,13 @@ Modules in ABL-Package
 ABL-Package is an implementation of `Abductive Learning <../Overview/Abductive-Learning.html>`_, 
 designed to harmoniously integrate and balance the use of machine learning and
 logical reasoning within a unified model. As depicted below, the
-ABL-Package comprises three primary modules: **Data**, **Learning**, and
+ABL-Package comprises three primary parts: **Data**, **Learning**, and
 **Reasoning**, corresponding to the three pivotal components in current
 AI: data, models, and knowledge.
 
 .. image:: ../img/ABL-Package.png
 
-**Data** module manages the storage, operation, and evaluation of data.
+**Data** part manages the storage, operation, and evaluation of data.
 It first features class ``ListData`` (derived from base class
 ``BaseDataElement``), which defines the data structures used in
 Abductive Learning, and comprises common data operations like insertion,
@@ -30,24 +30,24 @@ Metrics, including class ``SymbolMetric`` and ``ReasoningMetric`` (both
 specialized metrics derived from base class ``BaseMetric``), outline
 methods for evaluating model quality from a data perspective.
 
-**Learning** module is responsible for the construction, deployment, and
-training of machine learning models. In this module, the class
+**Learning** part is responsible for the construction, deployment, and
+training of machine learning models. In this part, the class
 ``ABLModel`` is the central class that encapsulates the machine learning
 model, which may incorporate models such as those based on Scikit-learn
 or a neural network framework using constructed by class ``BasicNN``.
 
-**Reasoning** module consists of the reasoning part of the Abductive
-learning. The class ``KBBase`` allows users to define domain
-knowledge base. For diverse types of knowledge, we also offer
+**Reasoning** part is responsible for the construction of domain knowledge 
+and performing reasoning. In this part, the class ``KBBase`` allows users to 
+define domain knowledge base. For diverse types of knowledge, we also offer
 implementations like ``GroundKB`` and ``PrologKB``, e.g., the latter
 enables knowledge base to be imported in the form of a Prolog files.
 Upon building the knowledge base, the class ``Reasoner`` is
 responsible for minimizing the inconsistency between the knowledge base
 and learning models.
 
-Finally, the integration of these three modules occurs through
-**Bridge** module, which features class ``SimpleBridge`` (derived from base
-class ``BaseBridge``). Bridge module synthesize data, learning, and
+Finally, the integration of these three parts occurs through
+**Bridge** part, which features class ``SimpleBridge`` (derived from base
+class ``BaseBridge``). Bridge part synthesize data, learning, and
 reasoning, and facilitate the training and testing of the entire
 Abductive Learning framework.
 

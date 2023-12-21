@@ -5,7 +5,14 @@ ABL is distributed on `PyPI <https://pypi.org/>`__ and can be installed with ``p
 
 .. code:: console
 
-   $ pip install abl
+    # (TODO)
+    $ pip install abl
+
+For testing purposes, you can install it using:
+
+.. code:: console
+
+    $ pip install -i https://test.pypi.org/simple/ abl
 
 Alternatively, to install ABL by source code, 
 sequentially run following commands in your terminal/command line.
