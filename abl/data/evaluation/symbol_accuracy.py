@@ -6,7 +6,7 @@ from ..structures import ListData
 from .base_metric import BaseMetric
 
 
-class SymbolMetric(BaseMetric):
+class SymbolAccuracy(BaseMetric):
     """
     A metrics class for evaluating symbol-level accuracy.
 

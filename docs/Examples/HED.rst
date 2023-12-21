@@ -32,7 +32,7 @@ model.
     from examples.models.nn import SymbolNet
     from abl.learning import ABLModel, BasicNN
     from examples.hed.reasoning import HedKB, HedReasoner
-    from abl.data.evaluation import ReasoningMetric, SymbolMetric
+    from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
     from abl.utils import ABLLogger, print_log
     from examples.hed.bridge import HedBridge
 
@@ -259,7 +259,7 @@ Building Evaluation Metrics
 
 Next, we set up evaluation metrics. These metrics will be used to
 evaluate the model performance during training and testing.
-Specifically, we use ``SymbolMetric`` and ``ReasoningMetric``, which are
+Specifically, we use ``SymbolAccuracy`` and ``ReasoningMetric``, which are
 used to evaluate the accuracy of the machine learning model’s
 predictions and the accuracy of the final reasoning results,
 respectively.
@@ -267,7 +267,7 @@ respectively.
 .. code:: ipython3
 
     # Set up metrics
-    metric_list = [SymbolMetric(prefix="hed"), ReasoningMetric(kb=kb, prefix="hed")]
+    metric_list = [SymbolAccuracy(prefix="hed"), ReasoningMetric(kb=kb, prefix="hed")]
 
 Bridge Learning and Reasoning
 -----------------------------

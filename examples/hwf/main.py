@@ -10,7 +10,7 @@ from examples.hwf.datasets import get_dataset
 from examples.models.nn import SymbolNet
 from abl.learning import ABLModel, BasicNN
 from abl.reasoning import KBBase, GroundKB, Reasoner
-from abl.data.evaluation import ReasoningMetric, SymbolMetric
+from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
 from abl.utils import ABLLogger, print_log
 from abl.bridge import SimpleBridge
 
@@ -152,7 +152,7 @@ def main():
     )
 
     ### Building Evaluation Metrics
-    metric_list = [SymbolMetric(prefix="hwf"), ReasoningMetric(kb=kb, prefix="hwf")]
+    metric_list = [SymbolAccuracy(prefix="hwf"), ReasoningMetric(kb=kb, prefix="hwf")]
 
     ### Bridge Learning and Reasoning
     bridge = SimpleBridge(model, reasoner, metric_list)

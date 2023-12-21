@@ -107,13 +107,13 @@ Read more about `building the reasoning part <Reasoning.html>`_.
 Building Evaluation Metrics
 ---------------------------
 
-ABL-Package provides two basic metrics, namely ``SymbolMetric`` and ``ReasoningMetric``, which are used to evaluate the accuracy of the machine learning model's predictions and the accuracy of the ``logic_forward`` results, respectively.
+ABL-Package provides two basic metrics, namely ``SymbolAccuracy`` and ``ReasoningMetric``, which are used to evaluate the accuracy of the machine learning model's predictions and the accuracy of the ``logic_forward`` results, respectively.
 
 .. code:: python
 
-   from abl.data.evaluation import ReasoningMetric, SymbolMetric
+   from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
 
-   metric_list = [SymbolMetric(prefix="mnist_add"), ReasoningMetric(kb=kb, prefix="mnist_add")]
+   metric_list = [SymbolAccuracy(prefix="mnist_add"), ReasoningMetric(kb=kb, prefix="mnist_add")]
 
 Read more about `building evaluation metrics <Evaluation.html>`_
 

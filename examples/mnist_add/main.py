@@ -9,7 +9,7 @@ from examples.mnist_add.datasets import get_dataset
 from examples.models.nn import LeNet5
 from abl.learning import ABLModel, BasicNN
 from abl.reasoning import KBBase, GroundKB, PrologKB, Reasoner
-from abl.data.evaluation import ReasoningMetric, SymbolMetric
+from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
 from abl.utils import ABLLogger, print_log
 from abl.bridge import SimpleBridge
 
@@ -117,7 +117,7 @@ def main():
     )
 
     ### Building Evaluation Metrics
-    metric_list = [SymbolMetric(prefix="mnist_add"), ReasoningMetric(kb=kb, prefix="mnist_add")]
+    metric_list = [SymbolAccuracy(prefix="mnist_add"), ReasoningMetric(kb=kb, prefix="mnist_add")]
 
     ### Bridge Learning and Reasoning
     bridge = SimpleBridge(model, reasoner, metric_list)

@@ -8,7 +8,7 @@ import openml
 
 from abl.learning import ABLModel
 from abl.reasoning import KBBase, Reasoner
-from abl.data.evaluation import ReasoningMetric, SymbolMetric
+from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
 from abl.bridge import SimpleBridge
 from abl.utils.utils import confidence_dist
 from abl.utils import ABLLogger, print_log
@@ -182,7 +182,7 @@ train_data = transform_tab_data(X_unlabel, y_unlabel)
 
 # %%
 # Set up metrics
-metric_list = [SymbolMetric(prefix="zoo"), ReasoningMetric(kb=kb, prefix="zoo")]
+metric_list = [SymbolAccuracy(prefix="zoo"), ReasoningMetric(kb=kb, prefix="zoo")]
 
 # %% [markdown]
 # ### Bridge Machine Learning and Logic Reasoning
