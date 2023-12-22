@@ -23,7 +23,7 @@ AI: data, models, and knowledge. Below is an overview of the ABL-Package.
 **Data** part manages the storage, operation, and evaluation of data efficiently.
 It includes the ``ListData`` class, which defines the data structures used in
 Abductive Learning, and comprises common data operations like insertion, deletion, 
-retrieval, slicing, etc. Additionally, it contains a series of Evaluation Metrics 
+retrieval, slicing, etc. Additionally, it contains a series of evaluation metrics 
 such as ``SymbolAccuracy`` and ``ReasoningMetric`` (both specialized metrics 
 inherited from the ``BaseMetric`` class), for evaluating model quality from a 
 data perspective.
@@ -42,7 +42,7 @@ from the ``KBBase`` class). The latter, for instance, enables
 knowledge bases to be imported in the form of Prolog files.
 Upon building the knowledge base, the ``Reasoner`` class is
 responsible for minimizing the inconsistency between the knowledge base
-and learning models.
+and data.
 
 The integration of these three parts are achieved through the
 **Bridge** part, which features the ``SimpleBridge`` class (derived 
@@ -81,10 +81,10 @@ To implement this process, the following five steps are necessary:
 
     Define a knowledge base by building a subclass of ``KBBase``, specifying how to 
     map pseudo-label examples to reasoning results.
-    Also, create a ``Reasoner`` for minimizing of inconsistencies 
-    between the knowledge base and the learning part.
+    Also, create a ``Reasoner`` for minimizing inconsistencies 
+    between the knowledge base and data.
 
-4. Define Evaluation Metrics
+4. Define evaluation metrics
 
     Define the metrics by building a subclass of ``BaseMetric``. The metrics will 
     specify how to measure performance during the training and testing of the ABL framework.
