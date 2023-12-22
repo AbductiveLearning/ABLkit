@@ -13,9 +13,9 @@ class ABLModel:
     ----------
     base_model : Machine Learning Model
         The machine learning base model used for training and prediction. This model should
-        implement the 'fit' and 'predict' methods. It's recommended, but not required,for the
-        model to also implement the 'predict_proba' method for generating probabilistic
-        predictions.
+        implement the ``fit`` and ``predict`` methods. It's recommended, but not required, for the
+        model to also implement the ``predict_proba`` method for generating
+        predictions on the probabilities.
     """
 
     def __init__(self, base_model: Any) -> None:
@@ -61,8 +61,8 @@ class ABLModel:
         Parameters
         ----------
         data_examples : ListData
-            A batch of data to train on, which typically contains the data, `X`, and the
-            corresponding labels, `abduced_idx`.
+            A batch of data to train on, which typically contains the data, ``X``, and the
+            corresponding labels, ``abduced_idx``.
 
         Returns
         -------
@@ -80,8 +80,8 @@ class ABLModel:
         Parameters
         ----------
         data_examples : ListData
-            A batch of data to train on, which typically contains the data, `X`,
-            and the corresponding labels, `abduced_idx`.
+            A batch of data to train on, which typically contains the data, ``X``,
+            and the corresponding labels, ``abduced_idx``.
 
         Returns
         -------
@@ -119,8 +119,8 @@ class ABLModel:
         """
         Save the model to a file.
 
-        This method delegates to the 'save' method of self.base_model. The arguments passed to
-        this method should match those expected by the 'save' method of self.base_model.
+        This method delegates to the ``save`` method of self.base_model. The arguments passed to
+        this method should match those expected by the ``save`` method of self.base_model.
         """
         self._model_operation("save", *args, **kwargs)
 
@@ -128,7 +128,7 @@ class ABLModel:
         """
         Load the model from a file.
 
-        This method delegates to the 'load' method of self.base_model. The arguments passed to
-        this method should match those expected by the 'load' method of self.base_model.
+        This method delegates to the ``load`` method of self.base_model. The arguments passed to
+        this method should match those expected by the ``load`` method of self.base_model.
         """
         self._model_operation("load", *args, **kwargs)

@@ -45,7 +45,7 @@ class KBBase(ABC):
     -----
     Users should derive from this base class to build their own knowledge base. For the
     user-build KB (a derived subclass), it's only required for the user to provide the
-    `pseudo_label_list` and override the `logic_forward` function (specifying how to
+    ``pseudo_label_list`` and override the ``logic_forward`` function (specifying how to
     perform logical reasoning). After that, other operations (e.g. how to perform abductive
     reasoning) will be automatically set up.
     """
@@ -88,7 +88,7 @@ class KBBase(ABC):
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo label example.
+            Pseudo-label example.
         x : Optional[List[Any]]
             The corresponding input example. If deductive logical reasoning does not require any 
             information from the input, the overridden function provided by the user can omit 
@@ -114,7 +114,7 @@ class KBBase(ABC):
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo label example (to be revised by abductive reasoning).
+            Pseudo-label example (to be revised by abductive reasoning).
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
@@ -167,7 +167,7 @@ class KBBase(ABC):
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo label example (to be revised).
+            Pseudo-label example (to be revised).
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
@@ -231,7 +231,7 @@ class KBBase(ABC):
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo label example (to be revised).
+            Pseudo-label example (to be revised).
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
@@ -285,22 +285,22 @@ class GroundKB(KBBase):
     """
     Knowledge base with a ground KB (GKB). Ground KB is a knowledge base prebuilt upon
     class initialization, storing all potential candidates along with their respective
-    reasoning result. Ground KB can accelerate abductive reasoning in `abduce_candidates`.
+    reasoning result. Ground KB can accelerate abductive reasoning in ``abduce_candidates``.
 
     Parameters
     ----------
     pseudo_label_list : list
-        Refer to class `KBBase`.
+        Refer to class ``KBBase``.
     GKB_len_list : list
         List of possible lengths for a pseudo-label example.
     max_err : float, optional
-        Refer to class `KBBase`.
+        Refer to class ``KBBase``.
 
     Notes
     -----
     Users can also inherit from this class to build their own knowledge base. Similar
-    to `KBBase`, users are only required to provide the `pseudo_label_list` and override
-    the `logic_forward` function. Additionally, users should provide the `GKB_len_list`.
+    to ``KBBase``, users are only required to provide the ``pseudo_label_list`` and override
+    the ``logic_forward`` function. Additionally, users should provide the ``GKB_len_list``.
     After that, other operations (e.g. auto-construction of GKB, and how to perform
     abductive reasoning) will be automatically set up.
     """
@@ -329,7 +329,7 @@ class GroundKB(KBBase):
 
     def _get_GKB(self):
         """
-        Prebuild the GKB according to `pseudo_label_list` and `GKB_len_list`.
+        Prebuild the GKB according to ``pseudo_label_list`` and ``GKB_len_list``.
         """
         X, Y = [], []
         for length in self.GKB_len_list:
@@ -365,7 +365,7 @@ class GroundKB(KBBase):
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo label example (to be revised by abductive reasoning).
+            Pseudo-label example (to be revised by abductive reasoning).
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
@@ -447,20 +447,20 @@ class PrologKB(KBBase):
     Parameters
     ----------
     pseudo_label_list : list
-        Refer to class `KBBase`.
+        Refer to class ``KBBase``.
     pl_file :
         Prolog file containing the KB.
     max_err : float, optional
-        Refer to class `KBBase`.
+        Refer to class ``KBBase``.
 
     Notes
     -----
     Users can instantiate this class to build their own knowledge base. During the
-    instantiation, users are only required to provide the `pseudo_label_list` and `pl_file`.
+    instantiation, users are only required to provide the ``pseudo_label_list`` and ``pl_file``.
     To use the default logic forward and abductive reasoning methods in this class, in the
     Prolog (.pl) file, there needs to be a rule which is strictly formatted as
-    `logic_forward(Pseudo_labels, Res).`, e.g., `logic_forward([A,B], C) :- C is A+B`.
-    For specifics, refer to the `logic_forward` and `get_query_string` functions in this
+    ``logic_forward(Pseudo_labels, Res).``, e.g., ``logic_forward([A,B], C) :- C is A+B``.
+    For specifics, refer to the ``logic_forward`` and ``get_query_string`` functions in this
     class. Users are also welcome to override related functions for more flexible support.
     """
 
@@ -475,15 +475,15 @@ class PrologKB(KBBase):
 
     def logic_forward(self, pseudo_label: List[Any]) -> Any:
         """
-        Consult prolog with the query `logic_forward(pseudo_labels, Res).`, and set the
-        returned `Res` as the reasoning results. To use this default function, there must be
-        a `logic_forward` method in the pl file to perform reasoning.
+        Consult prolog with the query ``logic_forward(pseudo_labels, Res).``, and set the
+        returned ``Res`` as the reasoning results. To use this default function, there must be
+        a ``logic_forward`` method in the pl file to perform reasoning.
         Otherwise, users would override this function.
 
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo label example.
+            Pseudo-label example.
         """
         result = list(self.prolog.query("logic_forward(%s, Res)." % pseudo_label))[0]["Res"]
         if result == "true":
@@ -520,12 +520,12 @@ class PrologKB(KBBase):
         Get the query to be used for consulting Prolog.
         This is a default function for demo, users would override this function to adapt to
         their own Prolog file. In this demo function, return query
-        `logic_forward([kept_labels, Revise_labels], Res).`.
+        ``logic_forward([kept_labels, Revise_labels], Res).``.
 
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo label example (to be revised by abductive reasoning).
+            Pseudo-label example (to be revised by abductive reasoning).
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
@@ -559,7 +559,7 @@ class PrologKB(KBBase):
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo label example (to be revised).
+            Pseudo-label example (to be revised).
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]

@@ -1,7 +1,7 @@
 abl.data
 ===================
 
-Data Structure
+``structures``
 --------------
 
 .. autoclass:: abl.data.structures.ListData
@@ -9,8 +9,8 @@ Data Structure
    :undoc-members:
    :show-inheritance:
 
-Evaluation Metric
------------------
+``evaluation``
+--------------
 
 .. automodule:: abl.data.evaluation
    :members:
