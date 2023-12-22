@@ -24,6 +24,9 @@ class BasicNN:
         The loss function used for training.
     optimizer : torch.optim.Optimizer
         The optimizer used for training.
+    scheduler : torch.optim.lr_scheduler.LRScheduler
+        The learning rate scheduler used for training, which will be called
+        at the end of each run of the ``fit`` method, by default None.
     device : torch.device, optional
         The device on which the model will be trained or used for prediction,
         by default torch.device("cpu").
@@ -216,9 +219,7 @@ class BasicNN:
         for data, target in data_loader:
             data, target = data.to(device), target.to(device)
             out = model(data)
-            proba = torch.nn.functional.softmax(out, dim=1)
-            entropy = -torch.sum(proba * torch.log(proba + 1e-5), dim=1).mean()
-            loss = loss_fn(out, target) - 0.3 * entropy
+            loss = loss_fn(out, target)
 
             optimizer.zero_grad()
             loss.backward()

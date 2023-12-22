@@ -1,17 +1,17 @@
-import os
-import os.path as osp
 import argparse
+import os.path as osp
 
 import torch
 from torch import nn
+from torch.optim import RMSprop, lr_scheduler
 
+from abl.bridge import SimpleBridge
+from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
+from abl.learning import ABLModel, BasicNN
+from abl.reasoning import GroundKB, KBBase, PrologKB, Reasoner
+from abl.utils import ABLLogger, print_log
 from examples.mnist_add.datasets import get_dataset
 from examples.models.nn import LeNet5
-from abl.learning import ABLModel, BasicNN
-from abl.reasoning import KBBase, GroundKB, PrologKB, Reasoner
-from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
-from abl.utils import ABLLogger, print_log
-from abl.bridge import SimpleBridge
 
 
 class AddKB(KBBase):
@@ -49,10 +49,10 @@ def main():
         "--batch-size", type=int, default=32, help="base model batch size (default : 32)"
     )
     parser.add_argument(
-        "--loops", type=int, default=5, help="number of loop iterations (default : 5)"
+        "--loops", type=int, default=1, help="number of loop iterations (default : 1)"
     )
     parser.add_argument(
-        "--segment_size", type=int or float, default=1 / 3, help="segment size (default : 1/3)"
+        "--segment_size", type=int or float, default=0.01, help="segment size (default : 0.01)"
     )
     parser.add_argument("--save_interval", type=int, default=1, help="save interval (default : 1)")
     parser.add_argument(
@@ -64,7 +64,7 @@ def main():
     parser.add_argument(
         "--require-more-revision",
         type=int,
-        default=5,
+        default=0,
         help="require more revision in reasoner (default : 0)",
     )
     kb_type = parser.add_mutually_exclusive_group()
@@ -84,16 +84,24 @@ def main():
     ### Building the Learning Part
     # Build necessary components for BasicNN
     cls = LeNet5(num_classes=10)
-    loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.RMSprop(cls.parameters(), lr=args.lr, alpha=args.alpha)
+    loss_fn = nn.CrossEntropyLoss(label_smoothing=0.1)
+    optimizer = RMSprop(cls.parameters(), lr=args.lr, alpha=args.alpha)
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
+    scheduler = lr_scheduler.OneCycleLR(
+        optimizer,
+        max_lr=args.lr,
+        pct_start=0.2,
+        epochs=args.loops,
+        steps_per_epoch=int(1 / args.segment_size),
+    )
 
     # Build BasicNN
     base_model = BasicNN(
         cls,
         loss_fn,
         optimizer,
+        scheduler=scheduler,
         device=device,
         batch_size=args.batch_size,
         num_epochs=args.epochs,

@@ -58,7 +58,7 @@ As an illustration, in the MNIST Addition task, the data are organized as follow
    :alt: alternate text
    :scale: 55%
 
-where each sublist in ``X``, e.g., |data_example|, is a data example and each image in the sublist, e.g. |instance|, is a data instance.
+where each sublist in ``X``, e.g., |data_example|, is a data example and each image in the sublist, e.g., |instance|, is a data instance.
 
 Data Structure
 --------------
