@@ -1,4 +1,4 @@
-# MNIST Addition Example
+# Handwritten Formula
 
 This example shows a simple implementation of [Handwritten Formula](https://arxiv.org/abs/2006.06649) task, where handwritten images of decimal formulas and their computed results are given, alongwith a domain knowledge base containing information on how to compute the decimal formula. The task is to recognize the symbols (which can be digits or operators '+', '-', '×', '÷') of handwritten images and accurately determine their results.
 
@@ -13,13 +13,13 @@ python main.py
 
 ```bash
 usage: main.py [-h] [--no-cuda] [--epochs EPOCHS] [--lr LR]
-               [--weight-decay WEIGHT_DECAY] [--batch-size BATCH_SIZE]
+               [--batch-size BATCH_SIZE]
                [--loops LOOPS] [--segment_size SEGMENT_SIZE]
                [--save_interval SAVE_INTERVAL] [--max-revision MAX_REVISION]
                [--require-more-revision REQUIRE_MORE_REVISION]
                [--ground] [--max-err MAX_ERR]
 
-MNIST Addition example
+Handwritten Formula example
 
 optional arguments:
   -h, --help            show this help message and exit

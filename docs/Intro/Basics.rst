@@ -12,47 +12,48 @@ Learn the Basics
 Modules in ABL-Package
 ----------------------
 
-ABL-Package is an implementation of `Abductive Learning <../Overview/Abductive-Learning.html>`_, 
+ABL-Package is an efficient implementation of `Abductive Learning <../Overview/Abductive-Learning.html>`_ (ABL), 
 a paradigm which integrates machine learning and logical reasoning in a balanced-loop.
-As depicted below, the ABL-Package comprises three primary parts: **Data**, **Learning**, and
+The ABL-Package comprises three primary parts: **Data**, **Learning**, and
 **Reasoning**, corresponding to the three pivotal components of current
-AI: data, models, and knowledge.
+AI: data, models, and knowledge. Below is an overview of the ABL-Package.
 
 .. image:: ../img/ABL-Package.png
 
-**Data** part manages the storage, operation, and evaluation of data.
-It first features class ``ListData``, which defines the data structures used in
-Abductive Learning, and comprises common data operations like insertion,
-deletion, retrieval, slicing, etc. Additionally, a series of Evaluation
-Metrics, including class ``SymbolAccuracy`` and ``ReasoningMetric`` (both
-specialized metrics derived from base class ``BaseMetric``), outline
-methods for evaluating model quality from a data perspective.
+**Data** part manages the storage, operation, and evaluation of data efficiently.
+It includes the ``ListData`` class, which defines the data structures used in
+Abductive Learning, and comprises common data operations like insertion, deletion, 
+retrieval, slicing, etc. Additionally, it contains a series of evaluation metrics 
+such as ``SymbolAccuracy`` and ``ReasoningMetric`` (both specialized metrics 
+inherited from the ``BaseMetric`` class), for evaluating model quality from a 
+data perspective.
 
 **Learning** part focuses on the construction, deployment, and
-training of machine learning models. The class ``ABLModel`` is the 
-central class that encapsulates the machine learning model, 
-adaptable to various frameworks, including those based on Scikit-learn
+training of machine learning models. The ``ABLModel`` class is the 
+central class that encapsulates the machine learning model. This class is
+compatible with various frameworks, including those based on Scikit-learn
 or PyTorch neural networks constructed by the ``BasicNN`` class.
 
-**Reasoning** part is responsible for the construction of domain knowledge 
-and performing reasoning. In this part, the class ``KBBase`` allows users to 
-define domain knowledge base. For diverse types of knowledge, we also offer
-implementations like ``GroundKB`` and ``PrologKB``, e.g., the latter
-enables knowledge base to be imported in the form of a Prolog files.
-Upon building the knowledge base, the class ``Reasoner`` is
+**Reasoning** part concentrates on constructing domain knowledge and 
+performing reasoning. The ``KBBase`` class allows users to define a 
+domain knowledge base. For diverse types of knowledge, we also offer
+implementations like ``GroundKB`` and ``PrologKB`` (both inherited 
+from the ``KBBase`` class). The latter, for instance, enables 
+knowledge bases to be imported in the form of Prolog files.
+Upon building the knowledge base, the ``Reasoner`` class is
 responsible for minimizing the inconsistency between the knowledge base
-and learning models.
+and data.
 
-The integration of these parts are achieved through the
-**Bridge** part, which features class ``SimpleBridge`` (derived from base
-class ``BaseBridge``). Bridge part synthesize data, learning, and
-reasoning, and facilitate the training and testing of the entire
-ABL framework.
+The integration of these three parts are achieved through the
+**Bridge** part, which features the ``SimpleBridge`` class (derived 
+from the ``BaseBridge`` class). The Bridge part synthesizes data, 
+learning, and reasoning, facilitating the training and testing 
+of the entire ABL framework.
 
 Use ABL-Package Step by Step
 ----------------------------
 
-In a typical Abductive Learning process, as illustrated below, 
+In a typical ABL process, as illustrated below, 
 data inputs are first predicted by a machine learning model, and the outcomes are a pseudo-label 
 example (which consists of multiple pseudo-labels). 
 These labels then pass through a knowledge base :math:`\mathcal{KB}`
@@ -80,10 +81,10 @@ To implement this process, the following five steps are necessary:
 
     Define a knowledge base by building a subclass of ``KBBase``, specifying how to 
     map pseudo-label examples to reasoning results.
-    Also, create a ``Reasoner`` for minimizing of inconsistencies 
-    between the knowledge base and the learning part.
+    Also, create a ``Reasoner`` for minimizing inconsistencies 
+    between the knowledge base and data.
 
-4. Define Evaluation Metrics
+4. Define evaluation metrics
 
     Define the metrics by building a subclass of ``BaseMetric``. The metrics will 
     specify how to measure performance during the training and testing of the ABL framework.

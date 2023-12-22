@@ -251,7 +251,7 @@ class Reasoner:
 
     def _get_max_revision_num(self, max_revision: Union[int, float], symbol_num: int) -> int:
         """
-        Get the maximum revision number according to input `max_revision`.
+        Get the maximum revision number according to input ``max_revision``.
         """
         if not isinstance(max_revision, (int, float)):
             raise TypeError(f"Parameter must be of type int or float, but got {type(max_revision)}")
@@ -313,7 +313,7 @@ class Reasoner:
     def batch_abduce(self, data_examples: ListData) -> List[List[Any]]:
         """
         Perform abductive reasoning on the given prediction data examples.
-        For detailed information, refer to `abduce`.
+        For detailed information, refer to ``abduce``.
         """
         abduced_pseudo_label = [self.abduce(data_example) for data_example in data_examples]
         data_examples.abduced_pseudo_label = abduced_pseudo_label

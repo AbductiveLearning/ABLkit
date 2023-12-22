@@ -67,7 +67,7 @@ class HwfGroundKB(GroundKB):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="MNIST Addition example")
+    parser = argparse.ArgumentParser(description="Handwritten Formula example")
     parser.add_argument(
         "--no-cuda", action="store_true", default=False, help="disables CUDA training"
     )

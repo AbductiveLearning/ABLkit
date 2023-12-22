@@ -1,9 +1,6 @@
 abl.learning
 ==================
 
-Learning
---------
-
 .. autoclass:: abl.learning.ABLModel
    :members:
    :undoc-members:
@@ -14,8 +11,8 @@ Learning
    :undoc-members:
    :show-inheritance:
 
-Torch Dataset
--------------
+``torch_dataset``
+-----------------
 
 .. automodule:: abl.learning.torch_dataset
    :members:

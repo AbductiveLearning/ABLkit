@@ -13,8 +13,8 @@ class ZooKB(KBBase):
         X, y, categorical_indicator, attribute_names = dataset.get_data(target=dataset.default_target_attribute)
         self.attribute_names = attribute_names
         self.target_names = y.cat.categories.tolist()
-        print("Attribute names are: ", self.attribute_names)
-        print("Target names are: ", self.target_names)
+        # print("Attribute names are: ", self.attribute_names)
+        # print("Target names are: ", self.target_names)
         # self.attribute_names = ["hair", "feathers", "eggs", "milk", "airborne", "aquatic", "predator", "toothed", "backbone", "breathes", "venomous", "fins", "legs", "tail", "domestic", "catsize"]
         # self.target_names = ["mammal", "bird", "reptile", "fish", "amphibian", "insect", "invertebrate"]
 

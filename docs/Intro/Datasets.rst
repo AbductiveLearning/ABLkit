@@ -44,7 +44,7 @@ ABL-Package assumes user data to be either structured as a tuple or a ``ListData
 
     The length of ``X``, ``gt_pseudo_label`` (if not ``None``) and ``Y`` should be the same. Also, each sublist in ``gt_pseudo_label`` should have the same length as the sublist in ``X``.
 
-As an illustration, in the MNIST Addition example, the data used for training are organized as follows:
+As an illustration, in the MNIST Addition task, the data are organized as follows:
 
 .. image:: ../img/Datasets_1.png
    :width: 350px
@@ -53,11 +53,11 @@ As an illustration, in the MNIST Addition example, the data used for training ar
 Data Structure
 --------------
 
-Besides the user-provided dataset, various forms of data are utilized and dynamicly generated throughout the training and testing process of Abductive Learning framework. Examples include raw data, predicted pseudo-label, abduced pseudo-label, pseudo-label indices, and so on. To manage this diversity and ensure a stable, versatile interface, ABL-Package employs `abstract data interfaces <../API/abl.data.html#data-structure>`_ to encapsulate different forms of data that will be used in the total learning process.
+Besides the user-provided dataset, various forms of data are utilized and dynamicly generated throughout the training and testing process of Abductive Learning framework. Examples include raw data, predicted pseudo-label, abduced pseudo-label, pseudo-label indices, etc. To manage this diversity and ensure a stable, versatile interface, ABL-Package employs `abstract data interfaces <../API/abl.data.html#structure>`_ to encapsulate different forms of data that will be used in the total learning process.
 
 ``ListData`` is the underlying abstract data interface utilized in ABL-Package. As the fundamental data structure, ``ListData`` implements commonly used data manipulation methods and is responsible for transferring data between various components of ABL, ensuring that stages such as prediction, abductive reasoning, and training can utilize ``ListData`` as a unified input format. 
 
-Before proceeding to other stages, user-provided datasets are firstly converted into ``ListData``. For flexibility, ABL-Package also allows user to directly supply data in ``ListData`` format, which similarly requires the inclusion of three attributes: ``X``, ``gt_pseudo_label``, and ``Y``. The following code shows the basic usage of ``ListData``. More information can be found in the `API documentation <../API/abl.data.html#data-structure>`_.
+Before proceeding to other stages, user-provided datasets are firstly converted into ``ListData``. For flexibility, ABL-Package also allows user to directly supply data in ``ListData`` format, which similarly requires the inclusion of three attributes: ``X``, ``gt_pseudo_label``, and ``Y``. The following code shows the basic usage of ``ListData``. More information can be found in the `API documentation <../API/abl.data.html#structure>`_.
 
 .. code-block:: python
 

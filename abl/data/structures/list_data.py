@@ -20,12 +20,12 @@ class ListData(BaseDataElement):
     """
     Abstract Data Interface used throughout the ABL-Package.
 
-    `ListData` is the underlying data structure used in the ABL-Package,
+    ``ListData`` is the underlying data structure used in the ABL-Package,
     designed to manage diverse forms of data dynamically generated throughout the
     Abductive Learning (ABL) framework. This includes handling raw data, predicted
     pseudo-labels, abduced pseudo-labels, pseudo-label indices, etc.
 
-    As a fundamental data structure in ABL, `ListData` is essential for the smooth
+    As a fundamental data structure in ABL, ``ListData`` is essential for the smooth
     transfer and manipulation of data across various components of the ABL framework,
     such as prediction, abductive reasoning, and training phases. It provides a
     unified data format across these stages, ensuring compatibility and flexibility
@@ -48,13 +48,12 @@ class ListData(BaseDataElement):
           methods to all :obj:`torch.Tensor` in the ``data_fields``, such as ``.cuda()``,
           ``.cpu()``, ``.numpy()``, ``.to()``, ``to_tensor()``, ``.detach()``.
 
-    ListData supports `index` and `slice` for data field. The type of value in
-    data field can be either `None` or `list` of base data structures such as
-    `torch.Tensor`, `numpy.ndarray`, `list`, `str` and `tuple`.
+    ListData supports ``index`` and ``slice`` for data field. The type of value in
+    data field can be either ``None`` or ``list`` of base data structures such as
+    ``torch.Tensor``, ``numpy.ndarray``, ``list``, ``str`` and ``tuple``.
 
-    This design is inspired by and extends the functionalities of the `BaseDataElement`
-    class implemented in MMEngine.
-    https://github.com/open-mmlab/mmengine/blob/main/mmengine/structures/base_data_element.py # noqa E501
+    This design is inspired by and extends the functionalities of the ``BaseDataElement``
+    class implemented in `MMEngine <https://github.com/open-mmlab/mmengine/blob/main/mmengine/structures/base_data_element.py>`_.
 
     Examples:
         >>> from abl.data.structures import ListData

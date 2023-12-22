@@ -125,7 +125,7 @@ class BasicNN:
 
     def _fit(self, data_loader: DataLoader) -> BasicNN:
         """
-        Internal method to fit the model on data for self.num_epochs times,
+        Internal method to fit the model on data for ``self.num_epochs`` times,
         with early stopping.
 
         Parameters
@@ -468,7 +468,7 @@ class BasicNN:
         the epoch_id at which the model and optimizer is saved. if both save_path and
         epoch_id are provided, save_path will be used. If only epoch_id is specified,
         model and optimizer will be saved to the path f"model_checkpoint_epoch_{epoch_id}.pth"
-        under self.save_dir. save_path and epoch_id can not be None simultaneously.
+        under ``self.save_dir``. save_path and epoch_id can not be None simultaneously.
 
         Parameters
         ----------
