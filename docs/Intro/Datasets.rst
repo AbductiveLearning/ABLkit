@@ -50,6 +50,16 @@ As an illustration, in the MNIST Addition task, the data are organized as follow
    :width: 350px
    :align: center
 
+.. |data_example| image:: ../img/data_example.png
+   :alt: alternate text
+   :scale: 8%
+
+.. |instance| image:: ../img/instance.png
+   :alt: alternate text
+   :scale: 55%
+
+where each sublist in ``X``, e.g., |data_example|, is a data example and each image in the sublist, e.g. |instance|, is a data instance.
+
 Data Structure
 --------------
 
