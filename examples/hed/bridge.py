@@ -1,5 +1,6 @@
 import os
 from collections import defaultdict
+from typing import Any, List, Optional, Tuple, Union
 
 import torch
 
@@ -41,7 +42,7 @@ class HedBridge(SimpleBridge):
                 cls_autoencoder,
                 loss_fn,
                 optimizer,
-                device,
+                device=device,
                 save_interval=1,
                 save_dir=weights_dir,
                 num_epochs=10,
@@ -115,7 +116,7 @@ class HedBridge(SimpleBridge):
         )
         print_log(log_string, logger="current")
 
-        if true_ratio > 0.95 and false_ratio < 0.1:
+        if true_ratio > 0.9 and false_ratio < 0.05:
             return True
         return False
 
@@ -215,7 +216,7 @@ class HedBridge(SimpleBridge):
                     self.abduce_pseudo_label(sub_data_examples)
                 filtered_sub_data_examples = self.filter_empty(sub_data_examples)
                 self.pseudo_label_to_idx(filtered_sub_data_examples)
-                loss = self.model.train(filtered_sub_data_examples)
+                self.model.train(filtered_sub_data_examples)
 
                 if self.check_training_impact(filtered_sub_data_examples, sub_data_examples):
                     condition_num += 1
@@ -231,6 +232,7 @@ class HedBridge(SimpleBridge):
 
                     seems_good = self.check_rule_quality(rules, val_data, equation_len)
                     if seems_good:
+                        self.reasoner.kb.learned_rules.update({equation_len: rules})
                         self.model.save(save_path=f"./weights/eq_len_{equation_len}.pth")
                         break
                     else:
@@ -244,3 +246,19 @@ class HedBridge(SimpleBridge):
                             self.model.load(load_path=f"./weights/eq_len_{equation_len - 1}.pth")
                         condition_num = 0
                         print_log("Reload Model and retrain", logger="current")
+
+    def test(
+        self,
+        test_data: Union[
+            ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]]
+        ],
+        min_len=5,
+        max_len=8,
+    ) -> None:
+        for equation_len in range(min_len, max_len):
+            test_data_examples = self.data_preprocess(test_data[1], equation_len)
+            print_log(f"Test on true equations with length {equation_len}", logger="current")
+            self._valid(test_data_examples)
+            test_data_examples = self.data_preprocess(test_data[0], equation_len)
+            print_log(f"Test on false equations with length {equation_len}", logger="current")
+            self._valid(test_data_examples)

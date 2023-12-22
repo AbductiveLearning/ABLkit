@@ -26,6 +26,7 @@ class BaseMetric(metaclass=ABCMeta):
         self,
         prefix: Optional[str] = None,
     ) -> None:
+        self.default_prefix = ""
         self.results: List[Any] = []
         self.prefix = prefix or self.default_prefix
 

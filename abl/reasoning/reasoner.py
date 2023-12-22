@@ -204,7 +204,7 @@ class Reasoner:
             dim=dimension,
             constraint=lambda sol: self._constrain_revision_num(sol, max_revision_num),
         )
-        parameter = Parameter(budget=100, intermediate_result=False, autoset=True)
+        parameter = Parameter(budget=200, intermediate_result=False, autoset=True)
         solution = Opt.min(objective, parameter)
         return solution
 
