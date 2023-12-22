@@ -24,9 +24,10 @@ class BasicNN:
         The loss function used for training.
     optimizer : torch.optim.Optimizer
         The optimizer used for training.
-    scheduler : torch.optim.lr_scheduler.LRScheduler
+    scheduler : Callable[..., Any], optional
         The learning rate scheduler used for training, which will be called
-        at the end of each run of the ``fit`` method, by default None.
+        at the end of each run of the ``fit`` method. It should implement the
+        ``step`` method, by default None.
     device : torch.device, optional
         The device on which the model will be trained or used for prediction,
         by default torch.device("cpu").
@@ -34,13 +35,13 @@ class BasicNN:
         The batch size used for training, by default 32.
     num_epochs : int, optional
         The number of epochs used for training, by default 1.
-    stop_loss : Optional[float], optional
+    stop_loss : float, optional
         The loss value at which to stop training, by default 0.0001.
     num_workers : int
         The number of workers used for loading data, by default 0.
-    save_interval : Optional[int], optional
+    save_interval : int, optional
         The model will be saved every ``save_interval`` epochs during training, by default None.
-    save_dir : Optional[str], optional
+    save_dir : str, optional
         The directory in which to save the model during training, by default None.
     train_transform : Callable[..., Any], optional
         A function/transform that takes an object and returns a transformed version used
@@ -57,7 +58,7 @@ class BasicNN:
         model: torch.nn.Module,
         loss_fn: torch.nn.Module,
         optimizer: torch.optim.Optimizer,
-        scheduler: Optional[torch.optim.lr_scheduler.LRScheduler] = None,
+        scheduler: Optional[Callable[..., Any]] = None,
         device: torch.device = torch.device("cpu"),
         batch_size: int = 32,
         num_epochs: int = 1,
@@ -75,10 +76,8 @@ class BasicNN:
             raise TypeError("loss_fn must be an instance of torch.nn.Module")
         if not isinstance(optimizer, torch.optim.Optimizer):
             raise TypeError("optimizer must be an instance of torch.optim.Optimizer")
-        if scheduler is not None and not isinstance(
-            scheduler, torch.optim.lr_scheduler.LRScheduler
-        ):
-            raise TypeError("scheduler must be an instance of torch.optim.lr_scheduler.LRScheduler")
+        if scheduler is not None and not hasattr(scheduler, "step"):
+            raise NotImplementedError("scheduler should implement the ``step`` method")
         if not isinstance(device, torch.device):
             raise TypeError("device must be an instance of torch.device")
         if not isinstance(batch_size, int):

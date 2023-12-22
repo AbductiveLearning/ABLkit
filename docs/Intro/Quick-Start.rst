@@ -52,17 +52,18 @@ To facilitate uniform processing, ABL-Package provides the ``BasicNN`` class to 
    from abl.learning import BasicNN
 
    loss_fn = torch.nn.CrossEntropyLoss()
-   optimizer = torch.optim.Adam(cls.parameters(), lr=0.001, betas=(0.9, 0.99))
+   optimizer = torch.optim.RMSprop(cls.parameters(), lr=0.001, alpha=0.9)
    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-   base_model = BasicNN(cls, loss_fn, optimizer, device)
+   scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=0.001, pct_start=0.1, total_steps=100)
+   base_model = BasicNN(cls, loss_fn, optimizer, scheduler=scheduler, device=device)
 
 However, Base model built above are trained to make predictions on instance-level data (e.g., a single image), which is not suitable enough for our task. Therefore, we then wrap the ``base_model`` into an instance of ``ABLModel``. This class serves as a unified wrapper for base models, facilitating the learning part to train, test, and predict on example-level data, (e.g., images that comprise the equation).
 
 .. code:: python
 
-    from abl.learning import ABLModel
+   from abl.learning import ABLModel
 
-    model = ABLModel(base_model)
+   model = ABLModel(base_model)
 
 Read more about `building the learning part <Learning.html>`_.
 
@@ -132,7 +133,7 @@ Finally, we proceed with training and testing.
 
 .. code:: python
 
-   bridge.train(train_data, loops=5, segment_size=1/3)
+   bridge.train(train_data, loops=1, segment_size=0.01)
    bridge.test(test_data)
 
 Read more about `bridging machine learning and reasoning <Bridge.html>`_.

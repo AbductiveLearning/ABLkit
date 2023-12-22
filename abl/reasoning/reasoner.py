@@ -32,7 +32,7 @@ class Reasoner:
         in this cost list should be a numerical value representing the cost for each
         candidate, and the list should have the same length as candidates.
         Defaults to 'confidence'.
-    idx_to_label : Optional[dict], optional
+    idx_to_label : dict, optional
         A mapping from index in the base model to label. If not provided, a default
         order-based index to label mapping is created. Defaults to None.
     max_revision : Union[int, float], optional

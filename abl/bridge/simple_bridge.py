@@ -282,7 +282,7 @@ class SimpleBridge(BaseBridge):
                 self.model.train(sub_data_examples)
 
             if (loop + 1) % eval_interval == 0 or loop == loops - 1:
-                print_log(f"Evaluation start: loop(val) [{loop + 1}]", logger="current")
+                print_log(f"Eval start: loop(val) [{loop + 1}]", logger="current")
                 self._valid(val_data_examples)
 
             if save_interval is not None and ((loop + 1) % save_interval == 0 or loop == loops - 1):
@@ -349,5 +349,6 @@ class SimpleBridge(BaseBridge):
             ``gt_pseudo_label`` and ``Y`` attributes. Both ``gt_pseudo_label`` and ``Y`` can be either None or
             not, which depends on the evaluation metircs in ``self.metric_list``.
         """
+        print_log("Test start:", logger="current")
         test_data_examples = self.data_preprocess("test", test_data)
         self._valid(test_data_examples)
