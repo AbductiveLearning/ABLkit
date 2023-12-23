@@ -54,19 +54,19 @@ Use ABL-Package Step by Step
 ----------------------------
 
 In a typical ABL process, as illustrated below, 
-data inputs are first predicted by a machine learning model, and the outcomes are a pseudo-label 
-example (which consists of multiple pseudo-labels). 
-These labels then pass through a knowledge base :math:`\mathcal{KB}`
-to obtain the reasoning result by deductive reasoning. During training, 
+data inputs are first predicted by the learning model ``ABLModel.predict``, and the outcomes are pseudo-labels.
+These labels then pass through deductive reasoning of the domain knowledge base ``KBBase.logic_forward``
+to obtain the reasoning result. During training, 
 alongside the aforementioned forward flow (i.e., prediction --> deduction reasoning), 
 there also exists a reverse flow, which starts from the reasoning result and 
-involves abductive reasoning to generate possible pseudo-label examples. 
-Subsequently, these examples are processed to minimize inconsistencies with machine learning, 
-which in turn revise the outcomes of the machine learning model, and then 
-fed back into the machine learning model for further training. 
-To implement this process, the following five steps are necessary:
+involves abductive reasoning ``KBBase.abduce_candidates`` to generate possible revised pseudo-labels. 
+Subsequently, these pseudo-labels are processed to minimize inconsistencies with the learning part, 
+which in turn revise the outcomes of the learning model, and then 
+fed back for further training ``ABLModel.train``.  
 
 .. image:: ../img/usage.png
+
+To implement this process, the following five steps are necessary:
 
 1. Prepare datasets
 
