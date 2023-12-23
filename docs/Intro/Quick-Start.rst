@@ -14,8 +14,8 @@ We use the MNIST Addition task as a quick start example. In this task, pairs of 
 Working with Data
 -----------------
 
-ABL-Package assumes data to be in the form of ``(X, gt_pseudo_label, Y)``  where ``X`` is the input of the machine learning model, 
-``gt_pseudo_label`` is the ground truth label of each element in ``X`` and ``Y`` is the ground truth reasoning result of each instance in ``X``. Note that ``gt_pseudo_label`` is only used to evaluate the performance of the machine learning model but not to train it. If elements in ``X`` are unlabeled, ``gt_pseudo_label`` can be ``None``.
+ABL-Package requires data in the format of ``(X, gt_pseudo_label, Y)``  where ``X`` is a list of input examples containing instances, 
+``gt_pseudo_label`` is the ground-truth label of each example in ``X`` and ``Y`` is the ground-truth reasoning result of each example in ``X``. Note that ``gt_pseudo_label`` is only used to evaluate the machine learning model's performance but not to train it. If examples in ``X`` are unlabeled, ``gt_pseudo_label`` should be ``None``.
 
 In the MNIST Addition task, the data loading looks like
 
@@ -23,8 +23,8 @@ In the MNIST Addition task, the data loading looks like
 
    from examples.mnist_add.datasets.get_mnist_add import get_mnist_add
    
-   # train_data and test_data both consists of multiple (X, gt_pseudo_label, Y) tuples.
-   # If get_pseudo_label is False, gt_pseudo_label in each tuple will be None.
+   # train_data and test_data are tuples in the format (X, gt_pseudo_label, Y)
+   # If get_pseudo_label is set to False, the gt_pseudo_label in each tuple will be None.
    train_data = get_mnist_add(train=True, get_pseudo_label=True)
    test_data = get_mnist_add(train=False, get_pseudo_label=True)
 
@@ -33,9 +33,8 @@ Read more about `preparing datasets <Datasets.html>`_.
 Building the Learning Part
 --------------------------
 
-Learnig part is constructed by first defining a machine learning base model and then wrap it into an instance of ``ABLModel`` class. 
-The flexibility of ABL package allows the base model to be any machine learning model conforming to the scikit-learn style, which requires implementing the ``fit`` and ``predict`` methods, or a PyTorch-based neural network, provided it has defined the architecture and implemented the ``forward`` method.
-In the MNIST Addition example, we build a simple LeNet5 network as the base model.
+Learnig part is constructed by first defining a base model for machine learning. The ABL-Package offers considerable flexibility, supporting any base model that conforms to the scikit-learn style (which requires the implementation of ``fit`` and ``predict`` methods), or a PyTorch-based neural network (which has defined the architecture and implemented ``forward`` method).
+In this example, we build a simple LeNet5 network as the base model.
 
 .. code:: python
 
@@ -44,7 +43,7 @@ In the MNIST Addition example, we build a simple LeNet5 network as the base mode
    # The number of pseudo-labels is 10
    cls = LeNet5(num_classes=10)
 
-To facilitate uniform processing, ABL-Package provides the ``BasicNN`` class to convert PyTorch-based neural networks into a format similar to scikit-learn models. To construct a ``BasicNN`` instance, we need also define a loss function, an optimizer, and a device aside from the previous network.
+To facilitate uniform processing, ABL-Package provides the ``BasicNN`` class to convert a PyTorch-based neural network into a format compatible with scikit-learn models. To construct a ``BasicNN`` instance, aside from the network itself, we also need to define a loss function, an optimizer, and the computing device.
 
 .. code:: python
 
@@ -54,10 +53,9 @@ To facilitate uniform processing, ABL-Package provides the ``BasicNN`` class to 
    loss_fn = torch.nn.CrossEntropyLoss()
    optimizer = torch.optim.RMSprop(cls.parameters(), lr=0.001, alpha=0.9)
    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-   scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=0.001, pct_start=0.1, total_steps=100)
-   base_model = BasicNN(cls, loss_fn, optimizer, scheduler=scheduler, device=device)
+   base_model = BasicNN(model=cls, loss_fn=loss_fn, optimizer=optimizer, device=device)
 
-However, Base model built above are trained to make predictions on instance-level data (e.g., a single image), which is not suitable enough for our task. Therefore, we then wrap the ``base_model`` into an instance of ``ABLModel``. This class serves as a unified wrapper for base models, facilitating the learning part to train, test, and predict on example-level data, (e.g., images that comprise the equation).
+The base model built above are trained to make predictions on instance-level data (e.g., a single image), while ABL deals with example-level data. To bridge this gap, we wrap the ``base_model`` into an instance of ``ABLModel``. This class serves as a unified wrapper for base models, facilitating the learning part to train, test, and predict on example-level data, (e.g., images that comprise an equation).
 
 .. code:: python
 
@@ -70,11 +68,7 @@ Read more about `building the learning part <Learning.html>`_.
 Building the Reasoning Part
 ---------------------------
 
-To build the reasoning part, we first define a knowledge base by
-creating a subclass of ``KBBase``, which specifies how to map a pseudo 
-label example to its reasoning result. In the subclass, we initialize the 
-``pseudo_label_list`` parameter and override the ``logic_forward`` 
-function specifying how to perform (deductive) reasoning.
+To build the reasoning part, we first define a knowledge base by creating a subclass of ``KBBase``. In the subclass, we initialize the ``pseudo_label_list`` parameter and override the ``logic_forward`` method, which specifies how to perform (deductive) reasoning that processes pseudo-labels of an example to the corresponding reasoning result.
 
 .. code:: python
 
@@ -87,15 +81,11 @@ function specifying how to perform (deductive) reasoning.
       def logic_forward(self, nums):
          return sum(nums)
 
-   kb = AddKB(pseudo_label_list=list(range(10)))
+   kb = AddKB()
 
-Then, we create a reasoner by instantiating the class
-``Reasoner`` and passing the knowledge base as an parameter.
-Due to the indeterminism of abductive reasoning, there could 
-be multiple candidates compatible to the knowledge base. 
-When this happens, reasoner can minimize inconsistencies between 
-the knowledge base and pseudo-labels predicted by the learning part, 
-and then return only one candidate that has the highest consistency.
+Next, we create a reasoner by instantiating the class ``Reasoner``, passing the knowledge base as a parameter.
+Due to the indeterminism of abductive reasoning, there could be multiple candidate pseudo-labels compatible to the knowledge base. 
+In such scenarios, the reasoner can minimize inconsistency and return the pseudo-label with the highest consistency.
 
 .. code:: python
 
@@ -121,7 +111,7 @@ Read more about `building evaluation metrics <Evaluation.html>`_
 Bridging Learning and Reasoning
 ---------------------------------------
 
-Now, we use ``SimpleBridge`` to combine learning and reasoning in a unified model.
+Now, we use ``SimpleBridge`` to combine learning and reasoning in a unified ABL framework.
 
 .. code:: python
 
