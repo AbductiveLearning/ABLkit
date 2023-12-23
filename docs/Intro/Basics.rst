@@ -28,13 +28,13 @@ such as ``SymbolAccuracy`` and ``ReasoningMetric`` (both specialized metrics
 inherited from the ``BaseMetric`` class), for evaluating model quality from a 
 data perspective.
 
-**Learning** part focuses on the construction, deployment, and
+:blue-bold:`Learning` part focuses on the construction, deployment, and
 training of machine learning models. The ``ABLModel`` class is the 
 central class that encapsulates the machine learning model. This class is
 compatible with various frameworks, including those based on Scikit-learn
 or PyTorch neural networks constructed by the ``BasicNN`` class.
 
-**Reasoning** part concentrates on constructing domain knowledge and 
+:green-bold:`Reasoning` part concentrates on constructing domain knowledge and 
 performing reasoning. The ``KBBase`` class allows users to define a 
 domain knowledge base. For diverse types of knowledge, we also offer
 implementations like ``GroundKB`` and ``PrologKB`` (both inherited 
@@ -45,7 +45,7 @@ responsible for minimizing the inconsistency between the knowledge base
 and data.
 
 The integration of these three parts are achieved through the
-**Bridge** part, which features the ``SimpleBridge`` class (derived 
+:yellow-bold:`Bridge` part, which features the ``SimpleBridge`` class (derived 
 from the ``BaseBridge`` class). The Bridge part synthesizes data, 
 learning, and reasoning, facilitating the training and testing 
 of the entire ABL framework.
@@ -68,16 +68,16 @@ fed back for further training ``ABLModel.train``.
 
 To implement this process, the following five steps are necessary:
 
-1. Prepare datasets
+1. Prepare **datasets**
 
     Prepare the data's input, ground truth for pseudo-labels (optional), and ground truth for reasoning results.
 
-2. Build the learning part
+2.  :blue:`Build the` :blue-bold:`learning` :blue:`part`
 
     Build a machine learning base model that can predict inputs to pseudo-labels. 
     Then, use ``ABLModel`` to encapsulate the base model.
 
-3. Build the reasoning part
+3. :green:`Build the` :green-bold:`reasoning` :green:`part`
 
     Define a knowledge base by building a subclass of ``KBBase``, specifying how to 
     process pseudo-label examples to reasoning results.
@@ -89,7 +89,7 @@ To implement this process, the following five steps are necessary:
     Define the metrics by building a subclass of ``BaseMetric``. The metrics will 
     specify how to measure performance during the training and testing of the ABL framework.
 
-5. Bridge learning and reasoning
+5. :yellow-bold:`Bridge` :yellow:`learning and reasoning`
 
     Use ``SimpleBridge`` to bridge the learning and reasoning part
     for integrated training and testing. 
