@@ -1,6 +1,20 @@
 import os
 import re
 import sys
+from docutils import nodes
+from docutils.parsers.rst import roles
+
+def colored_text_role(role, rawtext, text, lineno, inliner, options={}, content=[]):
+    node = nodes.inline(rawtext, text, classes=[role])
+    return [node], []
+
+roles.register_local_role('green-bold', colored_text_role)
+roles.register_local_role('blue-bold', colored_text_role)
+roles.register_local_role('yellow-bold', colored_text_role)
+roles.register_local_role('green', colored_text_role)
+roles.register_local_role('blue', colored_text_role)
+roles.register_local_role('yellow', colored_text_role)
+
 
 
 if "READTHEDOCS" not in os.environ:
