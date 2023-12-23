@@ -22,7 +22,7 @@ AI: data, models, and knowledge. Below is an overview of the ABL-Package.
 
 **Data** part manages the storage, operation, and evaluation of data efficiently.
 It includes the ``ListData`` class, which defines the data structures used in
-Abductive Learning, and comprises common data operations like insertion, deletion, 
+ABL, and comprises common data operations like insertion, deletion, 
 retrieval, slicing, etc. Additionally, it contains a series of evaluation metrics 
 such as ``SymbolAccuracy`` and ``ReasoningMetric`` (both specialized metrics 
 inherited from the ``BaseMetric`` class), for evaluating model quality from a 

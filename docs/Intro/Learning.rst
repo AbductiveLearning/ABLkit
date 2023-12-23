@@ -15,7 +15,7 @@ In this section, we will look at how to build the learning part.
 In ABL-Package, building the learning part involves two steps:
 
 1. Build a machine learning base model used to make predictions on instance-level data.
-2. Instantiate an ``ABLModel`` with the base model, which enables the learning part to train, test, and predict on example-level data.
+2. Instantiate an ``ABLModel`` with the base model, which enables the learning part to process example-level data.
 
 .. code:: python
 
