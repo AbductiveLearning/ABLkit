@@ -28,13 +28,13 @@ such as ``SymbolAccuracy`` and ``ReasoningMetric`` (both specialized metrics
 inherited from the ``BaseMetric`` class), for evaluating model quality from a 
 data perspective.
 
-:blue:`Learning` part focuses on the construction, deployment, and
+:blue-bold:`Learning` part focuses on the construction, deployment, and
 training of machine learning models. The ``ABLModel`` class is the 
 central class that encapsulates the machine learning model. This class is
 compatible with various frameworks, including those based on Scikit-learn
 or PyTorch neural networks constructed by the ``BasicNN`` class.
 
-:green:`Reasoning` part concentrates on constructing domain knowledge and 
+:green-bold:`Reasoning` part concentrates on constructing domain knowledge and 
 performing reasoning. The ``KBBase`` class allows users to define a 
 domain knowledge base. For diverse types of knowledge, we also offer
 implementations like ``GroundKB`` and ``PrologKB`` (both inherited 
@@ -45,7 +45,7 @@ responsible for minimizing the inconsistency between the knowledge base
 and data.
 
 The integration of these three parts are achieved through the
-:yellow:`Bridge` part, which features the ``SimpleBridge`` class (derived 
+:yellow-bold:`Bridge` part, which features the ``SimpleBridge`` class (derived 
 from the ``BaseBridge`` class). The Bridge part synthesizes data, 
 learning, and reasoning, facilitating the training and testing 
 of the entire ABL framework.
