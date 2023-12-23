@@ -68,7 +68,7 @@ Read more about `building the learning part <Learning.html>`_.
 Building the Reasoning Part
 ---------------------------
 
-To build the reasoning part, we first define a knowledge base by creating a subclass of ``KBBase``. In the subclass, we initialize the ``pseudo_label_list`` parameter and override the ``logic_forward`` method, which specifies how to perform (deductive) reasoning that processes pseudo-labels of an example to the corresponding reasoning result.
+To build the reasoning part, we first define a knowledge base by creating a subclass of ``KBBase``. In the subclass, we initialize the ``pseudo_label_list`` parameter and override the ``logic_forward`` method, which specifies how to perform (deductive) reasoning that processes pseudo-labels of an example to the corresponding reasoning result. Specifically for the MNIST Addition task, this ``logic_forward`` method is tailored to execute the sum operation.
 
 .. code:: python
 

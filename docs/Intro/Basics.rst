@@ -80,7 +80,7 @@ To implement this process, the following five steps are necessary:
 3. Build the reasoning part
 
     Define a knowledge base by building a subclass of ``KBBase``, specifying how to 
-    map pseudo-label examples to reasoning results.
+    process pseudo-label examples to reasoning results.
     Also, create a ``Reasoner`` for minimizing inconsistencies 
     between the knowledge base and data.
 

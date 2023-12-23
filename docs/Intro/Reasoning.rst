@@ -22,7 +22,6 @@ In ABL-Package, building the reasoning part involves two steps:
 
 .. code:: python
 
-   # Import necessary modules
    from abl.reasoning import KBBase, GroundKB, PrologKB, Reasoner
 
 Building a knowledge base
