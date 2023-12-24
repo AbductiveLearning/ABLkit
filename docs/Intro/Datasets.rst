@@ -20,9 +20,7 @@ In this section, we will look at the dataset and data structure in ABL-Package.
 Dataset
 -------
 
- Training data should be in the form of  or a ListData .
-
-ABL-Package requires user data to be either structured as a tuple ``(X, gt_pseudo_label, Y)`` or a ``ListData`` (the underlying data structure utilized in ABL-Package and will be introduced in the next section) object with ``X``, ``gt_pseudo_label`` and ``Y`` attributes . Regardless of the chosen format, the data should encompass three essential components:
+ABL-Package requires user data to be either structured as a tuple ``(X, gt_pseudo_label, Y)`` or a ``ListData`` (the underlying data structure utilized in ABL-Package, cf. the next section) object with ``X``, ``gt_pseudo_label`` and ``Y`` attributes. Regardless of the chosen format, the data should encompass three essential components:
 
 - ``X``: List[List[Any]]
     

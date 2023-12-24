@@ -38,14 +38,14 @@ For a scikit-learn model, we can directly use the model itself as a base model. 
 
     base_model = sklearn.neighbors.KNeighborsClassifier(n_neighbors=3)
 
-For a PyTorch-based neural network, we need to encapsulate it within a ``BasicNN`` object to create a base model.  For example, we can customize our base model by a ResNet-18 neural network:
+For a PyTorch-based neural network, we need to encapsulate it within a ``BasicNN`` object to create a base model. For example, we can customize our base model by a pre-trained ResNet-18:
 
 .. code:: python
 
     # Load a PyTorch-based neural network
     cls = torchvision.models.resnet18(pretrained=True)
 
-    # loss_fn and optimizer are used for training
+    # loss function and optimizer are used for training
     loss_fn = torch.nn.CrossEntropyLoss() 
     optimizer = torch.optim.Adam(cls.parameters())
 
@@ -54,7 +54,7 @@ For a PyTorch-based neural network, we need to encapsulate it within a ``BasicNN
 BasicNN
 ^^^^^^^
 
-``BasicNN`` is a wrapper class for PyTorch-based neural networks, which enables the neural network to work as a scikit-learn model. It encapsulates the neural network, loss function, and optimizer into a single object, which can be used as a base model. 
+``BasicNN`` is a wrapper class for PyTorch-based neural networks, which enables them to work as scikit-learn models. It encapsulates the neural network, loss function, optimizer, and other elements into a single object, which can be used as a base model. 
 
 Besides the necessary methods required to instantiate an ``ABLModel``, i.e., ``fit`` and ``predict``, ``BasicNN`` also implements the following methods:
 
@@ -76,7 +76,7 @@ Besides the necessary methods required to instantiate an ``ABLModel``, i.e., ``f
 Instantiating an ABLModel
 -------------------------
 
-Typically, base model is trained to make predictions on instance-level data, and can not directly utilize example-level data to train and predict, which is not suitable for most neural-symbolic tasks. ABL-Package provides the ``ABLModel`` to solve this problem. This class serves as a unified wrapper for all base models, which enables the learning part to train, test, and predict on example-level data.
+Typically, base model is trained to make predictions on instance-level data, and can not directly process example-level data, which is not suitable for most neural-symbolic tasks. ABL-Package provides the ``ABLModel`` to solve this problem. This class serves as a unified wrapper for all base models, which enables the learning part to train, test, and predict on example-level data.
 
 Generally, we can simply instantiate an ``ABLModel`` by:
 
