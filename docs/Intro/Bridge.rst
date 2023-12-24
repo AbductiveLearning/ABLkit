@@ -42,7 +42,7 @@ In this section, we will look at how to bridge learning and reasoning parts to t
 | ``test(test_data)``                   | Test the model.                                    |
 +---------------------------------------+----------------------------------------------------+
 
-where ``train_data`` and ``test_data`` are both in the form of ``(X, gt_pseudo_label, Y)``. They will be used to construct ``ListData`` instances which are referred to as ``data_examples`` in the ``train`` and ``test`` methods respectively. More details can be found in `preparing datasets <Datasets.html>`_.
+where ``train_data`` and ``test_data`` are both in the form of a tuple or a `ListData <../API/abl.data.html#structures.ListData>`_. Regardless of the form, they all need to include three components: ``X``, ``gt_pseudo_label`` and ``Y``. Since ``ListData`` is the underlying data structure used throughout the ABL-Package, tuple-formed data will be firstly transformed into ``ListData`` in the ``train`` and ``test`` methods, and such ``ListData`` instances are referred to as ``data_examples``. More details can be found in `preparing datasets <Datasets.html>`_.
 
 ``SimpleBridge`` inherits from ``BaseBridge`` and provides a basic implementation. Besides the ``model`` and ``reasoner``, ``SimpleBridge`` has an extra initialization arguments, ``metric_list``, which will be used to evaluate model performance. Its training process involves several Abductive Learning loops and each loop consists of the following five steps:
 
@@ -60,14 +60,13 @@ The fundamental part of the ``train`` method is as follows:
         """
         Parameters
         ----------
-        train_data : Tuple[List[List[Any]], Optional[List[List[Any]]], List[Any]]]
-            Training data is a tuple consists of three parts: ``X``, ``gt_pseudo_label``
-            and ``Y``.
+        train_data : Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], List[Any]]]
+            Training data should be in the form of ``(X, gt_pseudo_label, Y)`` or a ``ListData``
+            object with ``X``, ``gt_pseudo_label`` and ``Y`` attributes.
             - ``X`` is a list of sublists representing the input data.
-            - ``gt_pseudo_label`` is only used to evaluate the performance of the 
-            ``ABLModel`` but not to train. ``gt_pseudo_label`` can be ``None``.
-            - ``Y`` is a list representing the ground truth reasoning result for each
-            sublist in ``X``.
+            - ``gt_pseudo_label`` is only used to evaluate the performance of the ``ABLModel`` but not
+            to train. ``gt_pseudo_label`` can be ``None``.
+            - ``Y`` is a list representing the ground truth reasoning result for each sublist in ``X``.
         loops : int
             Machine Learning part and Reasoning part will be iteratively optimized
             for ``loops`` times.
