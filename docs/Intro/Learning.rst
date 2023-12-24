@@ -19,7 +19,6 @@ In ABL-Package, building the learning part involves two steps:
 
 .. code:: python
 
-    # Import necessary libraries and modules
     import sklearn
     import torchvision
     from abl.learning import BasicNN, ABLModel

@@ -15,14 +15,13 @@ leverage domain knowledge and perform deductive or abductive reasoning.
 In ABL-Package, building the reasoning part involves two steps:
 
 1. Build a knowledge base by creating a subclass of ``KBBase``, which
-   specifies how to map pseudo-label examples to reasoning results.
+   specifies how to process pseudo-label of an example to the reasoning result.
 2. Create a reasoner by instantiating the class ``Reasoner``
    to minimize inconsistencies between the knowledge base and pseudo
    labels predicted by the learning part.
 
 .. code:: python
 
-   # Import necessary modules
    from abl.reasoning import KBBase, GroundKB, PrologKB, Reasoner
 
 Building a knowledge base
