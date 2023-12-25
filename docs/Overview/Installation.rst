@@ -12,7 +12,7 @@ For testing purposes, you can install it using:
 
 .. code:: console
 
-    $ pip install -i https://test.pypi.org/simple/ abl
+    $ pip install -i https://test.pypi.org/simple/ --extra-index-url https://mirrors.nju.edu.cn/pypi/web/simple/ abl
 
 Alternatively, to install ABL by source code, 
 sequentially run following commands in your terminal/command line.
