@@ -42,15 +42,15 @@ and override the ``logic_forward`` function:
 -  ``pseudo_label_list`` is the list of possible pseudo-labels (also,
    the output of the machine learning model).
 -  ``logic_forward`` defines how to perform (deductive) reasoning,
-   i.e. matching each pseudo-label example to its reasoning result. 
+   i.e. matching each pseudo-labels to its reasoning result. 
 
 .. note::
 
    Generally, the overridden function ``logic_forward`` provided by the user accepts 
-   only one parameter, ``pseudo_label`` (a pseudo-label example). However, for certain 
+   only one parameter, ``pseudo_label`` (pseudo-labels of an example). However, for certain 
    scenarios, deductive reasoning in the knowledge base may necessitate information 
    from the input. In these scenarios, ``logic_forward`` can also accept two parameters: 
-   ``pseudo_label`` and ``x``.
+   ``pseudo_label`` and ``x``. See examples in `Zoo <../Examples/Zoo.html>`_.
 
 After that, other operations, including how to perform abductive
 reasoning, will be **automatically** set up.
@@ -60,7 +60,7 @@ MNIST Addition example
 
 As an example, the ``pseudo_label_list`` passed in MNIST Addition is all the
 possible digits, namely, ``[0,1,2,...,9]``, and the ``logic_forward``
-should be: “Add the two labels in the pseudo-label example to get the result.”. Therefore, the
+should be: “Add the two pseudo-labels to get the result.”. Therefore, the
 construction of the KB (``add_kb``) for MNIST Addition would be:
 
 .. code:: python
@@ -78,15 +78,15 @@ and (deductive) reasoning in ``add_kb`` would be:
 
 .. code:: python
 
-   pseudo_label_example = [1, 2]
-   reasoning_result = add_kb.logic_forward(pseudo_label_example)
-   print(f"Reasoning result of pseudo-label example {pseudo_label_example} is {reasoning_result}.")
+   pseudo_labels = [1, 2]
+   reasoning_result = add_kb.logic_forward(pseudo_labels)
+   print(f"Reasoning result of pseudo-labels {pseudo_labels} is {reasoning_result}.")
 
 Out:
    .. code:: none
       :class: code-out
 
-      Reasoning result of pseudo-label example [1, 2] is 3
+      Reasoning result of pseudo-labels [1, 2] is 3
 
 .. _other-par:
 
@@ -97,18 +97,20 @@ We can also pass the following parameters in the ``__init__`` function when buil
 knowledge base:
 
 -  ``max_err`` (float, optional), specifying the upper tolerance limit
-   when comparing the similarity between a pseudo-label example's reasoning result
+   when comparing the similarity between the reasoning result of pseudo-labels 
    and the ground truth during abductive reasoning. This is only
    applicable when the reasoning result is of a numerical type. This is
    particularly relevant for regression problems where exact matches
    might not be feasible. Defaults to 1e-10. See :ref:`an example <kb-abd-2>`.
 -  ``use_cache`` (bool, optional), indicating whether to use cache to store
-   previous candidates (pseudo-label examples generated from abductive reasoning) 
+   previous candidates (pseudo-labels generated from abductive reasoning) 
    to speed up subsequent abductive reasoning operations. Defaults to True. 
    For more information of abductive reasoning, please refer to :ref:`this <kb-abd>`.
 -  ``cache_size`` (int, optional), specifying the maximum cache
    size. This is only operational when ``use_cache`` is set to True.
    Defaults to 4096.
+
+.. _prolog:
 
 Building a knowledge base from Prolog file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -179,7 +181,7 @@ override the ``logic_forward`` function, and are allowed to pass other
 :ref:`optional parameters <other-par>`. Additionally, we are required pass the
 ``GKB_len_list`` parameter in the ``__init__`` function.
 
--  ``GKB_len_list`` is the list of possible lengths for a pseudo-label example.
+-  ``GKB_len_list`` is the list of possible lengths for pseudo-labels of an example.
 
 After that, other operations, including auto-construction of GKB, and
 how to perform abductive reasoning, will be **automatically** set up.
@@ -212,18 +214,18 @@ Performing abductive reasoning in the knowledge base
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As mentioned in :ref:`What is Abductive Reasoning? <abd>`, abductive reasoning
-enables the inference of candidates (which are pseudo-label examples) as potential
+enables the inference of candidates (i.e., possible pseudo-labels) as potential
 explanations for the reasoning result. Also, in Abductive Learning where
-an observation (a pseudo-label example predicted by the learning part) is
+an observation (pseudo-labels of an example predicted by the learning part) is
 available, we aim to let the candidate do not largely revise the
-previously identified pseudo-label example.
+previously identified pseudo-labels.
 
 ``KBBase`` (also, ``GroundKB`` and ``PrologKB``) implement the method
 ``abduce_candidates(pseudo_label, y, x, max_revision_num, require_more_revision)``
 for performing abductive reasoning, where the parameters are:
 
--  ``pseudo_label``, the pseudo-label example to be revised by abductive
-   reasoning, usually generated by the learning part.
+-  ``pseudo_label``, pseudo-labels of an example, usually generated by the learning 
+   part. They are to be revised by abductive reasoning.
 -  ``y``, the ground truth of the reasoning result for the example. The
    returned candidates should be compatible with it.
 - ``x``, the corresponding input example. If the information from the input 
@@ -237,8 +239,8 @@ for performing abductive reasoning, where the parameters are:
    method will only output candidates with the minimum possible
    revisions.)
 
-And it return a list of candidates (i.e., revised pseudo-label examples) that
-are all compatible with ``y``.
+And it return a list of candidates (i.e., revised pseudo-labels of the example) 
+that are all compatible with ``y``.
 
 MNIST Addition example (cont.)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -320,6 +322,9 @@ specify:
    derived from the predicted probability in the data example. For
    “hamming”, it directly calculates the Hamming distance between the
    predicted pseudo-label in the data example and candidate.
+- ``idx_to_label`` (dict, optional), a mapping from index in the base model to label. 
+   If not provided, a default order-based index to label mapping is created. 
+   Defaults to None.
 
 The main method implemented by ``Reasoner`` is
 ``abduce(data_example)``, which obtains the most consistent candidate 

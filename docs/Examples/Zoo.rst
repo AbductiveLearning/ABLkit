@@ -227,22 +227,22 @@ Out:
     .. code:: none
         :class: code-out
 
-        abl - INFO - Abductive Learning on the Zoo example.
+        abl - INFO - Abductive Learning on the ZOO example.
         abl - INFO - ------- Use labeled data to pretrain the model -----------
         abl - INFO - ------- Test the initial model -----------
-        abl - INFO - Evaluation ended, zoo/character_accuracy: 0.935 zoo/reasoning_accuracy: 0.935 
+        abl - INFO - Evaluation ended, zoo/character_accuracy: 0.903 zoo/reasoning_accuracy: 0.903 
         abl - INFO - ------- Use ABL to train the model -----------
         abl - INFO - loop(train) [1/3] segment(train) [1/1] 
         abl - INFO - Evaluation start: loop(val) [1]
-        abl - INFO - Evaluation ended, zoo/character_accuracy: 0.984 zoo/reasoning_accuracy: 1.000 
+        abl - INFO - Evaluation ended, zoo/character_accuracy: 1.000 zoo/reasoning_accuracy: 1.000 
         abl - INFO - loop(train) [2/3] segment(train) [1/1] 
         abl - INFO - Evaluation start: loop(val) [2]
-        abl - INFO - Evaluation ended, zoo/character_accuracy: 0.984 zoo/reasoning_accuracy: 1.000 
+        abl - INFO - Evaluation ended, zoo/character_accuracy: 1.000 zoo/reasoning_accuracy: 1.000 
         abl - INFO - loop(train) [3/3] segment(train) [1/1] 
         abl - INFO - Evaluation start: loop(val) [3]
-        abl - INFO - Evaluation ended, zoo/character_accuracy: 0.984 zoo/reasoning_accuracy: 1.000 
+        abl - INFO - Evaluation ended, zoo/character_accuracy: 1.000 zoo/reasoning_accuracy: 1.000 
         abl - INFO - ------- Test the final model -----------
-        abl - INFO - Evaluation ended, zoo/character_accuracy: 0.903 zoo/reasoning_accuracy: 0.935 
+        abl - INFO - Evaluation ended, zoo/character_accuracy: 0.968 zoo/reasoning_accuracy: 0.968 
         
 
 We may see from the results, after undergoing training with ABL, the

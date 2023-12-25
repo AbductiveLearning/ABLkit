@@ -28,7 +28,7 @@ ABL-Package requires user data to be either structured as a tuple ``(X, gt_pseud
 
 - ``gt_pseudo_label``: List[List[Any]], optional
     
-    A list of sublists with each sublist representing a ground-truth pseudo-label example. Each example consists of ground-truth pseudo-labels for each **instance** within a example of ``X``. 
+    A list of sublists with each sublist representing ground-truth pseudo-labels of an example. Each pseudo-label in the sublist serves as ground-truth for each **instance** within the example. 
     
     .. note::
 

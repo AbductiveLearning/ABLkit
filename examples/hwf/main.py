@@ -120,7 +120,7 @@ def main():
 
     ### Building the Learning Part
     # Build necessary components for BasicNN
-    cls = SymbolNet(num_classes=14, image_size=(45, 45, 1))
+    cls = SymbolNet(num_classes=13, image_size=(45, 45, 1))
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(cls.parameters(), lr=args.lr)
     use_cuda = not args.no_cuda and torch.cuda.is_available()

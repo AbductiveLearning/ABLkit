@@ -254,16 +254,16 @@ reasoning in the knowledge base <kb-abd>` for details of abductive reasoning.
 
 .. code:: ipython3
 
-    pseudo_label_example = [1, 2]
-    reasoning_result = kb.logic_forward(pseudo_label_example)
-    print(f"Reasoning result of pseudo-label example {pseudo_label_example} is {reasoning_result}.")
+    pseudo_labels = [1, 2]
+    reasoning_result = kb.logic_forward(pseudo_labels)
+    print(f"Reasoning result of pseudo-labels {pseudo_labels} is {reasoning_result}.")
 
 
 Out:
     .. code:: none
         :class: code-out
 
-        Reasoning result of pseudo-label example [1, 2] is 3.
+        Reasoning result of pseudo-labels [1, 2] is 3.
     
 
 .. note::
