@@ -200,22 +200,22 @@ class Reasoner:
         """
         dimension = Dimension(size=symbol_num, regs=[[0, 1]] * symbol_num, tys=[False] * symbol_num)
         objective = Objective(
-            lambda sol: self.zoopt_revision_score(symbol_num, data_example, sol),
+            lambda sol: self.zoopt_score(symbol_num, data_example, sol),
             dim=dimension,
             constraint=lambda sol: self._constrain_revision_num(sol, max_revision_num),
         )
-        parameter = Parameter(budget=200, intermediate_result=False, autoset=True)
+        parameter = Parameter(budget=self.zoopt_budget(symbol_num), intermediate_result=False, autoset=True)
         solution = Opt.min(objective, parameter)
         return solution
 
-    def zoopt_revision_score(
+    def zoopt_score(
         self,
         symbol_num: int,
         data_example: ListData,
         sol: Solution,
     ) -> int:
         """
-        Get the revision score for a solution. A lower score suggests that ZOOpt library
+        Set the revision score for a solution. A lower score suggests that ZOOpt library
         has a higher preference for this solution.
 
         Parameters
@@ -240,6 +240,29 @@ class Reasoner:
             return np.min(self._get_cost_list(data_example, candidates, reasoning_results))
         else:
             return symbol_num
+    
+    def zoopt_budget(self, symbol_num: int) -> int:
+        """
+        Sets a default budget for ZOOpt optimization. The function, in its default implementation, 
+        returns a fixed budget value of 100. However, it can be adjusted to return other fixed 
+        values, or a dynamic budget based on the number of symbols, if desired. For example, one might choose to 
+        set the budget as 100 times symbol_num.
+
+        Parameters
+        ----------
+        symbol_num : int
+            The number of symbols to be considered in the ZOOpt optimization process. Although this parameter
+            can be used to compute a dynamic optimization budget, by default it is not utilized in the
+            calculation.
+
+        Returns
+        -------
+        int
+            The budget for ZOOpt optimization. By default, this is a fixed value of 100, 
+            irrespective of the symbol_num value.
+        """
+        return 100
+        
 
     def _constrain_revision_num(self, solution: Solution, max_revision_num: int) -> int:
         """

@@ -31,8 +31,11 @@ class HedReasoner(Reasoner):
             data_example.pred_pseudo_label, data_example.Y, data_example.X, revision_idx
         )
         return candidate
+    
+    def zoopt_budget(self, symbol_num):
+        return 200
 
-    def zoopt_revision_score(self, symbol_num, data_example, sol, get_score=True):
+    def zoopt_score(self, symbol_num, data_example, sol, get_score=True):
         revision_flag = reform_list(
             list(sol.get_x().astype(np.int32)), data_example.pred_pseudo_label
         )
@@ -78,7 +81,7 @@ class HedReasoner(Reasoner):
         max_revision_num = self._get_max_revision_num(self.max_revision, symbol_num)
 
         solution = self._zoopt_get_solution(symbol_num, data_example, max_revision_num)
-        max_candidate_idxs = self.zoopt_revision_score(symbol_num, data_example, solution, get_score=False)
+        max_candidate_idxs = self.zoopt_score(symbol_num, data_example, solution, get_score=False)
 
         abduced_pseudo_label = [[] for _ in range(len(data_example))]
 
