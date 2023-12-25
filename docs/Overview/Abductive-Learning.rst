@@ -10,7 +10,7 @@ aiming to accurately predict the unseen data instances.
 
 .. image:: ../img/ML.png
    :align: center
-   :width: 300px
+   :width: 280px
 
 In **Abductive Learning (ABL)**, we assume that, in addition to data, 
 there is also a knowledge base :math:`\mathcal{KB}` containing
