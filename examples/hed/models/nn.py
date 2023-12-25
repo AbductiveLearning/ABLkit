@@ -1,16 +1,3 @@
-# coding: utf-8
-# ================================================================#
-#   Copyright (C) 2021 Freecss All rights reserved.
-#
-#   File Name     ：lenet5.py
-#   Author        ：freecss
-#   Email         ：karlfreecss@gmail.com
-#   Created Date  ：2021/03/03
-#   Description   ：
-#
-# ================================================================#
-
-
 import torch
 from torch import nn
 

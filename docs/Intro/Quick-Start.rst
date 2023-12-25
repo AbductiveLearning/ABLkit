@@ -21,7 +21,7 @@ In the MNIST Addition task, the data loading looks like
 
 .. code:: python
 
-   from examples.mnist_add.datasets.get_mnist_add import get_mnist_add
+   from datasets.get_mnist_add import get_mnist_add
    
    # train_data and test_data are tuples in the format (X, gt_pseudo_label, Y)
    # If get_pseudo_label is set to False, the gt_pseudo_label in each tuple will be None.
@@ -38,7 +38,7 @@ In this example, we build a simple LeNet5 network as the base model.
 
 .. code:: python
 
-   from examples.models.nn import LeNet5
+   from models.nn import LeNet5
 
    # The number of pseudo-labels is 10
    cls = LeNet5(num_classes=10)

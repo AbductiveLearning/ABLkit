@@ -5,14 +5,13 @@ import torch
 from torch import nn
 from torch.optim import RMSprop, lr_scheduler
 
-from abl.bridge import SimpleBridge
-from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
-from abl.learning import ABLModel, BasicNN
-from abl.reasoning import GroundKB, KBBase, PrologKB, Reasoner
-from abl.utils import ABLLogger, print_log
-
 from datasets import get_dataset
 from models.nn import LeNet5
+from abl.learning import ABLModel, BasicNN
+from abl.reasoning import GroundKB, KBBase, PrologKB, Reasoner
+from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
+from abl.utils import ABLLogger, print_log
+from abl.bridge import SimpleBridge
 
 
 class AddKB(KBBase):

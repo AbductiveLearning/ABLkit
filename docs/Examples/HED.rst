@@ -28,13 +28,13 @@ model.
     import torch
     import torch.nn as nn
     import matplotlib.pyplot as plt
-    from examples.hed.datasets import get_dataset, split_equation
-    from examples.models.nn import SymbolNet
+    from datasets import get_dataset, split_equation
+    from models.nn import SymbolNet
     from abl.learning import ABLModel, BasicNN
-    from examples.hed.reasoning import HedKB, HedReasoner
+    from reasoning import HedKB, HedReasoner
     from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
     from abl.utils import ABLLogger, print_log
-    from examples.hed.bridge import HedBridge
+    from bridge import HedBridge
 
 Working with Data
 -----------------

@@ -26,8 +26,8 @@ machine learning model.
     import torch
     import torch.nn as nn
     import matplotlib.pyplot as plt
-    from examples.hwf.datasets import get_dataset
-    from examples.models.nn import SymbolNet
+    from datasets import get_dataset
+    from models.nn import SymbolNet
     from abl.learning import ABLModel, BasicNN
     from abl.reasoning import KBBase, Reasoner
     from abl.data.evaluation import ReasoningMetric, SymbolAccuracy

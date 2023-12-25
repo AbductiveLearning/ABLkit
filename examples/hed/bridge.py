@@ -11,9 +11,9 @@ from abl.learning import ABLModel, BasicNN
 from abl.reasoning import Reasoner
 from abl.data.structures import ListData
 from abl.utils import print_log
-from examples.hed.datasets import get_pretrain_data
-from examples.hed.utils import InfiniteSampler, gen_mappings
-from examples.models.nn import SymbolNetAutoencoder
+from datasets import get_pretrain_data
+from utils import InfiniteSampler, gen_mappings
+from models.nn import SymbolNetAutoencoder
 
 
 class HedBridge(SimpleBridge):

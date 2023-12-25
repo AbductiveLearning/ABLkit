@@ -4,14 +4,13 @@ import argparse
 import torch
 import torch.nn as nn
 
-from abl.learning import ABLModel, BasicNN
-from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
-from abl.utils import ABLLogger, print_log
-
-from bridge import HedBridge
 from datasets import get_dataset, split_equation
 from models.nn import SymbolNet
+from abl.learning import ABLModel, BasicNN
 from reasoning import HedKB, HedReasoner
+from consistency_metric import ConsistencyMetric
+from abl.utils import ABLLogger, print_log
+from bridge import HedBridge
 
 
 def main():
@@ -82,7 +81,7 @@ def main():
     reasoner = HedReasoner(kb, dist_func="hamming", use_zoopt=True, max_revision=args.max_revision)
 
     ### Building Evaluation Metrics
-    metric_list = [SymbolAccuracy(prefix="hed"), ReasoningMetric(kb=kb, prefix="hed")]
+    metric_list = [ConsistencyMetric(kb=kb)]
 
     ### Bridge Learning and Reasoning
     bridge = HedBridge(model, reasoner, metric_list)

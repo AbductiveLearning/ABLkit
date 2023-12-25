@@ -27,8 +27,8 @@ machine learning model.
 
     from torch.optim import RMSprop, lr_scheduler
 
-    from examples.mnist_add.datasets import get_dataset
-    from examples.models.nn import LeNet5
+    from datasets import get_dataset
+    from models.nn import LeNet5
     from abl.learning import ABLModel, BasicNN
     from abl.reasoning import KBBase, Reasoner
     from abl.data.evaluation import ReasoningMetric, SymbolAccuracy

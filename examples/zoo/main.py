@@ -4,9 +4,9 @@ import argparse
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 
-from examples.zoo.get_dataset import load_and_preprocess_dataset, split_dataset
+from get_dataset import load_and_preprocess_dataset, split_dataset
 from abl.learning import ABLModel
-from examples.zoo.kb import ZooKB
+from kb import ZooKB
 from abl.reasoning import Reasoner
 from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
 from abl.utils import ABLLogger, print_log, confidence_dist

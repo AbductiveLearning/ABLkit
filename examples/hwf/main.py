@@ -1,18 +1,17 @@
-import os.path as osp
 import argparse
+import os.path as osp
 
 import numpy as np
 import torch
 from torch import nn
 
+from datasets import get_dataset
+from models.nn import SymbolNet
 from abl.learning import ABLModel, BasicNN
 from abl.reasoning import KBBase, GroundKB, Reasoner
 from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
 from abl.utils import ABLLogger, print_log
 from abl.bridge import SimpleBridge
-
-from datasets import get_dataset
-from models.nn import SymbolNet
 
 
 class HwfKB(KBBase):
