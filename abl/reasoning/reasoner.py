@@ -230,7 +230,7 @@ class Reasoner:
         Returns
         -------
         int
-            The revision score for the solution.
+            The score for the solution.
         """
         revision_idx = np.where(sol.get_x() != 0)[0]
         candidates, reasoning_results = self.kb.revise_at_idx(
