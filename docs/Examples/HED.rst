@@ -280,7 +280,7 @@ derived from ``SimpleBridge`` and tailored specific for this task.
 
     bridge = HedBridge(model, reasoner, metric_list)
 
-Perform training and testing.
+Perform pretraining, training and testing by invoking the ``pretrain``, ``train`` and ``test`` methods of ``HedBridge``.
 
 .. code:: ipython3
 
