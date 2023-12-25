@@ -101,28 +101,28 @@ As illustrations, we show four equations in the training dataset:
     for i, x in enumerate(true_train_equation_with_length_5[0]):
         plt.subplot(1, 5, i+1)
         plt.axis('off') 
-        plt.imshow(x.transpose(1, 2, 0))
+        plt.imshow(x.squeeze(), cmap='gray')
     plt.show()
     print(f"First true equation with length 8 in the training dataset:")
     for i, x in enumerate(true_train_equation_with_length_8[0]):
         plt.subplot(1, 8, i+1)
         plt.axis('off') 
-        plt.imshow(x.transpose(1, 2, 0))
+        plt.imshow(x.squeeze(), cmap='gray')
     plt.show()
-    
+
     false_train_equation_with_length_5 = false_train_equation[5]
     false_train_equation_with_length_8 = false_train_equation[8]
     print(f"First false equation with length 5 in the training dataset:")
     for i, x in enumerate(false_train_equation_with_length_5[0]):
         plt.subplot(1, 5, i+1)
         plt.axis('off') 
-        plt.imshow(x.transpose(1, 2, 0))
+        plt.imshow(x.squeeze(), cmap='gray')
     plt.show()
     print(f"First false equation with length 8 in the training dataset:")
     for i, x in enumerate(false_train_equation_with_length_8[0]):
         plt.subplot(1, 8, i+1)
         plt.axis('off') 
-        plt.imshow(x.transpose(1, 2, 0))
+        plt.imshow(x.squeeze(), cmap='gray')
     plt.show()
 
 
@@ -135,8 +135,6 @@ Out:
     .. image:: ../img/hed_dataset1.png
         :width: 300px
 
-
-Out:
     .. code:: none
         :class: code-out
 
@@ -145,8 +143,6 @@ Out:
     .. image:: ../img/hed_dataset2.png
         :width: 480px
 
-
-Out:
     .. code:: none
         :class: code-out
 
@@ -155,8 +151,6 @@ Out:
     .. image:: ../img/hed_dataset3.png
         :width: 300px
 
-
-Out:
     .. code:: none
         :class: code-out
 

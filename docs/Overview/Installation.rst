@@ -23,6 +23,12 @@ sequentially run following commands in your terminal/command line.
     $ cd ABL-Package
     $ pip install -v -e .
 
-(Optional) If the use of a `Prolog-based knowledge base <prolog>`_ is necessary, you will also need to install Swi-Prolog.
+(Optional) If the use of a :ref:`Prolog-based knowledge base <prolog>` is necessary, the installation of `Swi-Prolog <https://www.swi-prolog.org/>`_ is also required:
 
-`http://www.swi-prolog.org/build/unix.html <http://www.swi-prolog.org/build/unix.html>`_
+For Linux users:
+
+.. code:: console
+
+    $ sudo apt-get install swi-prolog
+
+For Windows and Mac users, please refer to the `Swi-Prolog Download Page <https://www.swi-prolog.org/Download.html>`_.

@@ -470,8 +470,10 @@ class PrologKB(KBBase):
         
         try:
             import pyswip
-        except IndexError:
-            print("A Prolog-based knowledge base is used. You need to install Swi-Prolog from https://www.swi-prolog.org/Download.html")
+        except (IndexError, ImportError):
+            print("A Prolog-based knowledge base is in use. Please install Swi-Prolog \
+                   using the command 'sudo apt-get install swi-prolog' for Linux users, \
+                   or download it from https://www.swi-prolog.org/Download.html for Windows and Mac users.")
         
         self.prolog = pyswip.Prolog()
         self.pl_file = pl_file

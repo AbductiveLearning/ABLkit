@@ -104,10 +104,10 @@ training set, we have:
     print(f"X in the first data example (a list of two images):")
     plt.subplot(1,2,1)
     plt.axis('off') 
-    plt.imshow(X_0[0].numpy().transpose(1, 2, 0))
+    plt.imshow(X_0[0].squeeze(), cmap='gray')
     plt.subplot(1,2,2)
     plt.axis('off') 
-    plt.imshow(X_0[1].numpy().transpose(1, 2, 0))
+    plt.imshow(X_0[1].squeeze(), cmap='gray')
     plt.show()
     print(f"gt_pseudo_label in the first data example (a list of two ground truth pseudo-labels): {gt_pseudo_label_0}")
     print(f"Y in the first data example (their sum result): {Y_0}")
@@ -120,10 +120,11 @@ Out:
         X in the first data example (a list of two images):
     
     .. image:: ../img/mnist_add_datasets.png
-        :width: 400px
+        :width: 200px
 
 
-    .. parsed-literal::
+    .. code:: none
+        :class: code-out
 
         gt_pseudo_label in the first data example (a list of two ground truth pseudo-labels): [7, 5]
         Y in the first data example (their sum result): 12

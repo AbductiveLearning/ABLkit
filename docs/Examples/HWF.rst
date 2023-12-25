@@ -102,9 +102,9 @@ illstrations:
     for i, x in enumerate(X_1000):
         plt.subplot(1, len(X_1000), i+1)
         plt.axis('off') 
-        plt.imshow(x.numpy().transpose(1, 2, 0))
+        plt.imshow(x.squeeze(), cmap='gray')
     plt.show()
-    print(f"gt_pseudo_label in the 1001st data example (a list of pseudo-labels): {gt_pseudo_label_1000}")
+    print(f"gt_pseudo_label in the 1001st data example (a list of ground truth pseudo-labels): {gt_pseudo_label_1000}")
     print(f"Y in the 1001st data example (the computed result): {Y_1000}")
     print()
     X_3000, gt_pseudo_label_3000, Y_3000 = train_X[3000], train_gt_pseudo_label[3000], train_Y[3000]
@@ -112,9 +112,9 @@ illstrations:
     for i, x in enumerate(X_3000):
         plt.subplot(1, len(X_3000), i+1)
         plt.axis('off') 
-        plt.imshow(x.numpy().transpose(1, 2, 0))
+        plt.imshow(x.squeeze(), cmap='gray')
     plt.show()
-    print(f"gt_pseudo_label in the 3001st data example (a list of pseudo-labels): {gt_pseudo_label_3000}")
+    print(f"gt_pseudo_label in the 3001st data example (a list of ground truth pseudo-labels): {gt_pseudo_label_3000}")
     print(f"Y in the 3001st data example (the computed result): {Y_3000}")
 
 
@@ -125,7 +125,7 @@ Out:
         X in the 1001st data example (a list of images):
     
     .. image:: ../img/hwf_dataset1.png
-        :width: 300px
+        :width: 210px
 
     .. code:: none
         :class: code-out
@@ -139,7 +139,7 @@ Out:
         X in the 3001st data example (a list of images):
     
     .. image:: ../img/hwf_dataset2.png
-        :width: 500px
+        :width: 350px
 
     .. code:: none
         :class: code-out
