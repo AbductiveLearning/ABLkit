@@ -9,7 +9,6 @@ from multiprocessing import Pool
 from typing import Callable, Any, List, Optional
 
 import numpy as np
-import pyswip
 
 from ..utils.logger import print_log
 from ..utils.cache import abl_cache
@@ -465,6 +464,8 @@ class PrologKB(KBBase):
     """
 
     def __init__(self, pseudo_label_list: List[Any], pl_file: str):
+        import pyswip
+        
         super().__init__(pseudo_label_list)
         self.pl_file = pl_file
         self.prolog = pyswip.Prolog()
