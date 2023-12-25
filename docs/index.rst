@@ -26,7 +26,7 @@
    Examples/MNISTAdd
    Examples/HWF
    Examples/HED
-   Examples/ZOO
+   Examples/Zoo
 
 .. toctree::
    :maxdepth: 1

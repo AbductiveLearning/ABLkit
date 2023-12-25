@@ -1,8 +1,8 @@
-ZOO
+Zoo
 ===
 
 Below shows an implementation of
-`Zoo <https://archive.ics.uci.edu/dataset/111/zoo>`__. In this task,
+`Zoo <https://archive.ics.uci.edu/dataset/111/zoo>`__ dataset. In this task,
 attributes of animals (such as presence of hair, eggs, etc.) and their
 targets (the animal class they belong to) are given, along with a
 knowledge base which contain information about the relations between
@@ -209,7 +209,7 @@ methods of ``SimpleBridge``.
 .. code:: ipython3
 
     # Build logger
-    print_log("Abductive Learning on the ZOO example.", logger="current")
+    print_log("Abductive Learning on the Zoo example.", logger="current")
     log_dir = ABLLogger.get_current_instance().log_dir
     weights_dir = osp.join(log_dir, "weights")
     
@@ -227,7 +227,7 @@ Out:
     .. code:: none
         :class: code-out
 
-        abl - INFO - Abductive Learning on the ZOO example.
+        abl - INFO - Abductive Learning on the Zoo example.
         abl - INFO - ------- Use labeled data to pretrain the model -----------
         abl - INFO - ------- Test the initial model -----------
         abl - INFO - Evaluation ended, zoo/character_accuracy: 0.935 zoo/reasoning_accuracy: 0.935 
