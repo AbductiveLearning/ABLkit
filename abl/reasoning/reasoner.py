@@ -215,7 +215,7 @@ class Reasoner:
         sol: Solution,
     ) -> int:
         """
-        Set the revision score for a solution. A lower score suggests that ZOOpt library
+        Set the score for a solution. A lower score suggests that ZOOpt library
         has a higher preference for this solution.
 
         Parameters
@@ -243,7 +243,7 @@ class Reasoner:
     
     def zoopt_budget(self, symbol_num: int) -> int:
         """
-        Sets a default budget for ZOOpt optimization. The function, in its default implementation, 
+        Set the budget for ZOOpt optimization. The function, in its default implementation, 
         returns a fixed budget value of 100. However, it can be adjusted to return other fixed 
         values, or a dynamic budget based on the number of symbols, if desired. For example, one might choose to 
         set the budget as 100 times symbol_num.
