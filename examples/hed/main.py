@@ -4,13 +4,15 @@ import argparse
 import torch
 import torch.nn as nn
 
-from examples.hed.datasets import get_dataset, split_equation
-from examples.models.nn import SymbolNet
 from abl.learning import ABLModel, BasicNN
-from examples.hed.reasoning import HedKB, HedReasoner
 from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
 from abl.utils import ABLLogger, print_log
-from examples.hed.bridge import HedBridge
+
+from bridge import HedBridge
+from datasets import get_dataset, split_equation
+from models.nn import SymbolNet
+from reasoning import HedKB, HedReasoner
+
 
 def main():
     parser = argparse.ArgumentParser(description="Handwritten Equation Decipherment example")
@@ -54,7 +56,7 @@ def main():
     # Build necessary components for BasicNN
     cls = SymbolNet(num_classes=4)
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.RMSprop(cls.parameters(), lr=args.lr, weight_decay=args.weight_deccay)
+    optimizer = torch.optim.RMSprop(cls.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 
@@ -63,7 +65,7 @@ def main():
         cls,
         loss_fn,
         optimizer,
-        device,
+        device=device,
         batch_size=args.batch_size,
         num_epochs=args.epochs,
         stop_loss=None,
@@ -81,7 +83,7 @@ def main():
 
     ### Building Evaluation Metrics
     metric_list = [SymbolAccuracy(prefix="hed"), ReasoningMetric(kb=kb, prefix="hed")]
-    
+
     ### Bridge Learning and Reasoning
     bridge = HedBridge(model, reasoner, metric_list)
 

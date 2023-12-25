@@ -10,8 +10,9 @@ from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
 from abl.learning import ABLModel, BasicNN
 from abl.reasoning import GroundKB, KBBase, PrologKB, Reasoner
 from abl.utils import ABLLogger, print_log
-from examples.mnist_add.datasets import get_dataset
-from examples.models.nn import LeNet5
+
+from datasets import get_dataset
+from models.nn import LeNet5
 
 
 class AddKB(KBBase):
