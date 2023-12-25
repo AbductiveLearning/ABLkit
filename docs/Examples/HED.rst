@@ -282,8 +282,6 @@ derived from ``SimpleBridge`` and tailored specific for this task.
 
 Perform training and testing.
 
-**[TODO]** give a detailed introduction about training in HedBridge.
-
 .. code:: ipython3
 
     # Build logger
