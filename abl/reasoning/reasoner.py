@@ -283,7 +283,7 @@ class Reasoner:
         Returns
         -------
         List[Any]
-            A revised pseudo-label example through abductive reasoning, which is compatible
+            A revised pseudo-labels of the example through abductive reasoning, which is compatible
             with the knowledge base.
         """
         symbol_num = data_example.elements_num("pred_pseudo_label")

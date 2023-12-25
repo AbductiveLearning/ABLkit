@@ -9,7 +9,6 @@ from multiprocessing import Pool
 from typing import Callable, Any, List, Optional
 
 import numpy as np
-import pyswip
 
 from ..utils.logger import print_log
 from ..utils.cache import abl_cache
@@ -27,8 +26,8 @@ class KBBase(ABC):
         list so that each aligns with its corresponding index in the base model: the first with
         the 0th index, the second with the 1st, and so forth.
     max_err : float, optional
-        The upper tolerance limit when comparing the similarity between a pseudo-label example's
-        reasoning result and the ground truth. This is only applicable when the reasoning
+        The upper tolerance limit when comparing the similarity between the reasoning result of 
+        pseudo-labels and the ground truth. This is only applicable when the reasoning
         result is of a numerical type. This is particularly relevant for regression problems where
         exact matches might not be feasible. Defaults to 1e-10.
     use_cache : bool, optional
@@ -82,16 +81,16 @@ class KBBase(ABC):
     @abstractmethod
     def logic_forward(self, pseudo_label: List[Any], x: Optional[List[Any]] = None) -> Any:
         """
-        How to perform (deductive) logical reasoning, i.e. matching each pseudo-label example to
+        How to perform (deductive) logical reasoning, i.e. matching pseudo-labels to
         their reasoning result. Users are required to provide this.
 
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo-label example.
+            Pseudo-labels of an example.
         x : Optional[List[Any]]
-            The corresponding input example. If deductive logical reasoning does not require any 
-            information from the input, the overridden function provided by the user can omit 
+            The example. If deductive logical reasoning does not require any 
+            information from the example, the overridden function provided by the user can omit 
             this parameter.
         
         Returns
@@ -114,11 +113,11 @@ class KBBase(ABC):
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo-label example (to be revised by abductive reasoning).
+            Pseudo-labels of an example (to be revised by abductive reasoning).
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
-            The corresponding input example. If the information from the input 
+            The example. If the information from the example
             is not required in the reasoning process, then this parameter will not have 
             any effect.
         max_revision_num : int
@@ -130,7 +129,7 @@ class KBBase(ABC):
         -------
         Tuple[List[List[Any]], List[Any]]
             A tuple of two element. The first element is a list of candidate revisions, i.e. revised
-            pseudo-label examples that are compatible with the knowledge base. The second element is 
+            pseudo-labels of the example. that are compatible with the knowledge base. The second element is 
             a list of reasoning results corresponding to each candidate, i.e., the outcome of the 
             logic_forward function.
         """
@@ -162,26 +161,26 @@ class KBBase(ABC):
         revision_idx: List[int],
     ) -> List[List[Any]]:
         """
-        Revise the pseudo-label example at specified index positions.
+        Revise the pseudo-labels at specified index positions.
 
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo-label example (to be revised).
+            Pseudo-labels of an example (to be revised).
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
-            The corresponding input example. If the information from the input 
+            The example. If the information from the example
             is not required in the reasoning process, then this parameter will not have 
             any effect.
         revision_idx : List[int]
-            A list specifying indices of where revisions should be made to the pseudo-label example.
+            A list specifying indices of where revisions should be made to the pseudo-labels.
 
         Returns
         -------
         Tuple[List[List[Any]], List[Any]]
             A tuple of two element. The first element is a list of candidate revisions, i.e. revised
-            pseudo-label examples that are compatible with the knowledge base. The second element is 
+            pseudo-labels of the example that are compatible with the knowledge base. The second element is 
             a list of reasoning results corresponding to each candidate, i.e., the outcome of the 
             logic_forward function.
         """
@@ -204,7 +203,7 @@ class KBBase(ABC):
         x: List[Any],
     ) -> List[List[Any]]:
         """
-        For a specified number of labels in a pseudo-label example to revise, iterate through
+        For a specified number of labels in a pseudo-labels to revise, iterate through
         all possible indices to find any candidates that are compatible with the knowledge base.
         """
         new_candidates, new_reasoning_results = [], []
@@ -225,31 +224,31 @@ class KBBase(ABC):
     ) -> List[List[Any]]:
         """
         Perform abductive reasoning by exhastive search. Specifically, begin with 0 and
-        continuously increase the number of labels in a pseudo-label example to revise, until
+        continuously increase the number of labels to revise, until
         candidates that are compatible with the knowledge base are found.
 
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo-label example (to be revised).
+            Pseudo-labels of an example (to be revised).
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
-            The corresponding input example. If the information from the input 
+            The example. If the information from the example
             is not required in the reasoning process, then this parameter will not have 
             any effect.
         max_revision_num : int
             The upper limit on the number of revisions.
         require_more_revision : int
             If larger than 0, then after having found any candidates compatible with the
-            knowledge base, continue to increase the number of labels in a pseudo-label example to
+            knowledge base, continue to increase the number of labels to
             revise to get more possible compatible candidates.
 
         Returns
         -------
         Tuple[List[List[Any]], List[Any]]
             A tuple of two element. The first element is a list of candidate revisions, i.e. revised
-            pseudo-label examples that are compatible with the knowledge base. The second element is 
+            pseudo-labels of the example that are compatible with the knowledge base. The second element is 
             a list of reasoning results corresponding to each candidate, i.e., the outcome of the 
             logic_forward function.
         """
@@ -292,7 +291,7 @@ class GroundKB(KBBase):
     pseudo_label_list : list
         Refer to class ``KBBase``.
     GKB_len_list : list
-        List of possible lengths for a pseudo-label example.
+        List of possible lengths for pseudo-labels of an example.
     max_err : float, optional
         Refer to class ``KBBase``.
 
@@ -365,11 +364,11 @@ class GroundKB(KBBase):
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo-label example (to be revised by abductive reasoning).
+            Pseudo-labels of an example (to be revised by abductive reasoning).
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
-            The corresponding input example (unused in GroundKB).
+            The example (unused in GroundKB).
         max_revision_num : int
             The upper limit on the number of revised labels for each example.
         require_more_revision : int
@@ -379,7 +378,7 @@ class GroundKB(KBBase):
         -------
         Tuple[List[List[Any]], List[Any]]
             A tuple of two element. The first element is a list of candidate revisions, i.e. revised
-            pseudo-label examples that are compatible with the knowledge base. The second element is 
+            pseudo-labels of THE example that are compatible with the knowledge base. The second element is 
             a list of reasoning results corresponding to each candidate, i.e., the outcome of the 
             logic_forward function.
         """
@@ -466,9 +465,14 @@ class PrologKB(KBBase):
 
     def __init__(self, pseudo_label_list: List[Any], pl_file: str):
         super().__init__(pseudo_label_list)
-        self.pl_file = pl_file
+        
+        try:
+            import pyswip
+        except IndexError:
+            print("A Prolog-based knowledge base is used. You need to install Swi-Prolog from https://www.swi-prolog.org/Download.html")
+        
         self.prolog = pyswip.Prolog()
-
+        self.pl_file = pl_file
         if not os.path.exists(self.pl_file):
             raise FileNotFoundError(f"The Prolog file {self.pl_file} does not exist.")
         self.prolog.consult(self.pl_file)
@@ -483,7 +487,7 @@ class PrologKB(KBBase):
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo-label example.
+            Pseudo-labels of an example.
         """
         result = list(self.prolog.query("logic_forward(%s, Res)." % pseudo_label))[0]["Res"]
         if result == "true":
@@ -525,7 +529,7 @@ class PrologKB(KBBase):
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo-label example (to be revised by abductive reasoning).
+            Pseudo-labels of an example (to be revised by abductive reasoning).
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
@@ -533,7 +537,7 @@ class PrologKB(KBBase):
             is not required in the reasoning process, then this parameter will not have 
             any effect.
         revision_idx : List[int]
-            A list specifying indices of where revisions should be made to the pseudo-label example.
+            A list specifying indices of where revisions should be made to the pseudo-labels.
 
         Returns
         -------
@@ -554,12 +558,12 @@ class PrologKB(KBBase):
         revision_idx: List[int],
     ) -> List[List[Any]]:
         """
-        Revise the pseudo-label example at specified index positions by querying Prolog.
+        Revise the pseudo-labels at specified index positions by querying Prolog.
 
         Parameters
         ----------
         pseudo_label : List[Any]
-            Pseudo-label example (to be revised).
+            Pseudo-labels of an example (to be revised).
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
@@ -567,15 +571,15 @@ class PrologKB(KBBase):
             is not required in the reasoning process, then this parameter will not have 
             any effect.
         revision_idx : List[int]
-            A list specifying indices of where revisions should be made to the pseudo-label example.
+            A list specifying indices of where revisions should be made to the pseudo-labels.
 
         Returns
         -------
         Tuple[List[List[Any]], List[Any]]
-            A list of candidates, i.e. revised pseudo-label examples that are compatible with the
+            A list of candidates, i.e. revised pseudo-labels of the example that are compatible with the
             knowledge base.
             A tuple of two element. The first element is a list of candidate revisions, i.e. revised
-            pseudo-label examples that are compatible with the knowledge base. The second element is 
+            pseudo-labels of the example that are compatible with the knowledge base. The second element is 
             a list of reasoning results corresponding to each candidate, i.e., the outcome of the 
             logic_forward function.
         """

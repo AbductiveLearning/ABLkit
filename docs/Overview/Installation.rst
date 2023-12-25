@@ -22,3 +22,7 @@ sequentially run following commands in your terminal/command line.
     $ git clone https://github.com/AbductiveLearning/ABL-Package.git
     $ cd ABL-Package
     $ pip install -v -e .
+
+(Optional) If the use of a `Prolog-based knowledge base <prolog>`_ is necessary, you will also need to install Swi-Prolog.
+
+`http://www.swi-prolog.org/build/unix.html <http://www.swi-prolog.org/build/unix.html>`_

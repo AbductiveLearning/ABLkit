@@ -169,8 +169,8 @@ sklearn-style interface.
 
 .. code:: ipython3
 
-    # class of symbol may be one of ['0', '1', ..., '9', '+', '-', '*', '/'], total of 14 classes
-    cls = SymbolNet(num_classes=14, image_size=(45, 45, 1))
+    # class of symbol may be one of ['1', ..., '9', '+', '-', '*', '/'], total of 14 classes
+    cls = SymbolNet(num_classes=13, image_size=(45, 45, 1))
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(cls.parameters(), lr=0.001, betas=(0.9, 0.99))
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -297,16 +297,16 @@ reasoning in the knowledge base <kb-abd>` for details of abductive reasoning.
 
 .. code:: ipython3
 
-    pseudo_label_example = ["1", "-", "2", "*", "5"]
-    reasoning_result = kb.logic_forward(pseudo_label_example)
-    print(f"Reasoning result of pseudo-label example {pseudo_label_example} is {reasoning_result}.")
+    pseudo_labels = ["1", "-", "2", "*", "5"]
+    reasoning_result = kb.logic_forward(pseudo_labels)
+    print(f"Reasoning result of pseudo-labels {pseudo_labels} is {reasoning_result}.")
 
 
 Out:
     .. code:: none
         :class: code-out
 
-        Reasoning result of pseudo-label example ['1', '-', '2', '*', '5'] is -9.
+        Reasoning result of pseudo-labels ['1', '-', '2', '*', '5'] is -9.
     
 
 .. note::
@@ -319,8 +319,8 @@ Out:
     Also, when building the knowledge base, we can also set the
     ``max_err`` parameter during initialization, which is shown in the
     ``examples/hwf/main.py`` file. This parameter specifies the upper tolerance limit
-    when comparing the similarity between a pseudo-label example’s reasoning
-    result and the ground truth during abductive reasoning, with a default
+    when comparing the similarity between the reasoning result of pseudo-labels and 
+    the ground truth during abductive reasoning, with a default
     value of 1e-10.
 
 Then, we create a reasoner by instantiating the class ``Reasoner``. Due
