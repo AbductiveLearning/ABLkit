@@ -21,12 +21,12 @@ In the MNIST Addition task, the data loading looks like
 
 .. code:: python
 
-   from datasets.get_mnist_add import get_mnist_add
+   from datasets import get_dataset
    
    # train_data and test_data are tuples in the format (X, gt_pseudo_label, Y)
    # If get_pseudo_label is set to False, the gt_pseudo_label in each tuple will be None.
-   train_data = get_mnist_add(train=True, get_pseudo_label=True)
-   test_data = get_mnist_add(train=False, get_pseudo_label=True)
+   train_data = get_dataset(train=True, get_pseudo_label=True)
+   test_data = get_dataset(train=False, get_pseudo_label=True)
 
 Read more about `preparing datasets <Datasets.html>`_.
 

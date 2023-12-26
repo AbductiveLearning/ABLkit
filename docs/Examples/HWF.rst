@@ -22,17 +22,20 @@ machine learning model.
 
     # Import necessary libraries and modules
     import os.path as osp
+
+    import matplotlib.pyplot as plt
     import numpy as np
     import torch
     import torch.nn as nn
-    import matplotlib.pyplot as plt
-    from datasets import get_dataset
-    from models.nn import SymbolNet
+
+    from abl.bridge import SimpleBridge
+    from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
     from abl.learning import ABLModel, BasicNN
     from abl.reasoning import KBBase, Reasoner
-    from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
     from abl.utils import ABLLogger, print_log
-    from abl.bridge import SimpleBridge
+
+    from datasets import get_dataset
+    from models.nn import SymbolNet
 
 Working with Data
 -----------------
