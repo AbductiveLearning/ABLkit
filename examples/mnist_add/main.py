@@ -42,14 +42,14 @@ def main():
         help="number of epochs in each learning loop iteration (default : 1)",
     )
     parser.add_argument(
-        "--lr", type=float, default=1e-3, help="base model learning rate (default : 0.001)"
+        "--lr", type=float, default=3e-4, help="base model learning rate (default : 0.0003)"
     )
     parser.add_argument("--alpha", type=float, default=0.9, help="alpha in RMSprop (default : 0.9)")
     parser.add_argument(
         "--batch-size", type=int, default=32, help="base model batch size (default : 32)"
     )
     parser.add_argument(
-        "--loops", type=int, default=1, help="number of loop iterations (default : 1)"
+        "--loops", type=int, default=2, help="number of loop iterations (default : 2)"
     )
     parser.add_argument(
         "--segment_size", type=int or float, default=0.01, help="segment size (default : 0.01)"
@@ -84,14 +84,14 @@ def main():
     ### Building the Learning Part
     # Build necessary components for BasicNN
     cls = LeNet5(num_classes=10)
-    loss_fn = nn.CrossEntropyLoss(label_smoothing=0.1)
+    loss_fn = nn.CrossEntropyLoss(label_smoothing=0.2)
     optimizer = RMSprop(cls.parameters(), lr=args.lr, alpha=args.alpha)
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
     scheduler = lr_scheduler.OneCycleLR(
         optimizer,
         max_lr=args.lr,
-        pct_start=0.2,
+        pct_start=0.15,
         epochs=args.loops,
         steps_per_epoch=int(1 / args.segment_size),
     )
