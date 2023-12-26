@@ -1,6 +1,8 @@
-from z3 import Solver, Int, If, Not, Implies, Sum, sat
 import openml
+from z3 import If, Implies, Int, Not, Solver, Sum, sat  # noqa: F401
+
 from abl.reasoning import KBBase
+
 
 class ZooKB(KBBase):
     def __init__(self):

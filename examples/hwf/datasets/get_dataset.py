@@ -1,8 +1,8 @@
 import json
 import os
-import gdown
 import zipfile
 
+import gdown
 from PIL import Image
 from torchvision.transforms import transforms
 

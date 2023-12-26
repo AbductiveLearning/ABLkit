@@ -1,16 +1,18 @@
-import os.path as osp
 import argparse
+import os.path as osp
 
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 
-from get_dataset import load_and_preprocess_dataset, split_dataset
-from abl.learning import ABLModel
-from kb import ZooKB
-from abl.reasoning import Reasoner
-from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
-from abl.utils import ABLLogger, print_log, confidence_dist
 from abl.bridge import SimpleBridge
+from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
+from abl.learning import ABLModel
+from abl.reasoning import Reasoner
+from abl.utils import ABLLogger, confidence_dist, print_log
+
+from get_dataset import load_and_preprocess_dataset, split_dataset
+from kb import ZooKB
+
 
 def transform_tab_data(X, y):
     return ([[x] for x in X], [[y_item] for y_item in y], [0] * len(y))

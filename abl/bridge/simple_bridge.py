@@ -4,9 +4,9 @@ from typing import Any, List, Optional, Tuple, Union
 from numpy import ndarray
 
 from ..data.evaluation import BaseMetric
+from ..data.structures import ListData
 from ..learning import ABLModel
 from ..reasoning import Reasoner
-from ..data.structures import ListData
 from ..utils import print_log
 from .base_bridge import BaseBridge
 

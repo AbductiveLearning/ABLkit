@@ -1,16 +1,17 @@
-import os.path as osp
 import argparse
+import os.path as osp
 
 import torch
 import torch.nn as nn
 
+from abl.learning import ABLModel, BasicNN
+from abl.utils import ABLLogger, print_log
+
+from bridge import HedBridge
+from consistency_metric import ConsistencyMetric
 from datasets import get_dataset, split_equation
 from models.nn import SymbolNet
-from abl.learning import ABLModel, BasicNN
 from reasoning import HedKB, HedReasoner
-from consistency_metric import ConsistencyMetric
-from abl.utils import ABLLogger, print_log
-from bridge import HedBridge
 
 
 def main():

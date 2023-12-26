@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 
+
 class TestBasicNN(object):
     @pytest.fixture
     def sample_data(self):

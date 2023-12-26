@@ -1,8 +1,10 @@
 import os
 import re
 import sys
+
 from docutils import nodes
 from docutils.parsers.rst import roles
+
 
 def colored_text_role(role, rawtext, text, lineno, inliner, options={}, content=[]):
     node = nodes.inline(rawtext, text, classes=[role])

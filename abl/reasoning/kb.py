@@ -1,17 +1,17 @@
 import bisect
-import os
 import inspect
 import logging
+import os
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from itertools import combinations, product
 from multiprocessing import Pool
-from typing import Callable, Any, List, Optional
+from typing import Any, Callable, List, Optional
 
 import numpy as np
 
-from ..utils.logger import print_log
 from ..utils.cache import abl_cache
+from ..utils.logger import print_log
 from ..utils.utils import flatten, hamming_dist, reform_list, to_hashable
 
 

@@ -1,9 +1,9 @@
 from abc import ABCMeta, abstractmethod
 from typing import Any, List, Optional, Tuple, Union
 
+from ..data.structures import ListData
 from ..learning import ABLModel
 from ..reasoning import Reasoner
-from ..data.structures import ListData
 
 
 class BaseBridge(metaclass=ABCMeta):

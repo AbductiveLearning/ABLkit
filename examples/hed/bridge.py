@@ -5,15 +5,16 @@ from typing import Any, List, Optional, Tuple, Union
 import torch
 
 from abl.bridge import SimpleBridge
-from abl.learning.torch_dataset import RegressionDataset
 from abl.data.evaluation import BaseMetric
-from abl.learning import ABLModel, BasicNN
-from abl.reasoning import Reasoner
 from abl.data.structures import ListData
+from abl.learning import ABLModel, BasicNN
+from abl.learning.torch_dataset import RegressionDataset
+from abl.reasoning import Reasoner
 from abl.utils import print_log
+
 from datasets import get_pretrain_data
-from utils import InfiniteSampler, gen_mappings
 from models.nn import SymbolNetAutoencoder
+from utils import InfiniteSampler, gen_mappings
 
 
 class HedBridge(SimpleBridge):

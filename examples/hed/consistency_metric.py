@@ -1,8 +1,8 @@
 from typing import Optional
 
-from abl.reasoning import KBBase
-from abl.data.structures import ListData
 from abl.data.evaluation.base_metric import BaseMetric
+from abl.data.structures import ListData
+from abl.reasoning import KBBase
 
 
 class ConsistencyMetric(BaseMetric):

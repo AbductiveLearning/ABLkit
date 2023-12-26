@@ -1,11 +1,11 @@
 import inspect
-from typing import Callable, Any, List, Optional, Union
+from typing import Any, Callable, List, Optional, Union
 
 import numpy as np
 from zoopt import Dimension, Objective, Opt, Parameter, Solution
 
-from ..reasoning import KBBase
 from ..data.structures import ListData
+from ..reasoning import KBBase
 from ..utils.utils import confidence_dist, hamming_dist
 
 

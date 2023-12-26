@@ -1,6 +1,8 @@
-import os
-import numpy as np
 import math
+import os
+
+import numpy as np
+
 from abl.reasoning import PrologKB, Reasoner
 from abl.utils import reform_list
 

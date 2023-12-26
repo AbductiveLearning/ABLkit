@@ -1,12 +1,12 @@
-import pytest
 import numpy as np
+import pytest
 import torch
 import torch.nn as nn
 import torch.optim as optim
 
+from abl.data.structures import ListData
 from abl.learning import BasicNN
 from abl.reasoning import GroundKB, KBBase, PrologKB, Reasoner
-from abl.data.structures import ListData
 
 
 class LeNet5(nn.Module):

@@ -5,13 +5,14 @@ import numpy as np
 import torch
 from torch import nn
 
+from abl.bridge import SimpleBridge
+from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
+from abl.learning import ABLModel, BasicNN
+from abl.reasoning import GroundKB, KBBase, Reasoner
+from abl.utils import ABLLogger, print_log
+
 from datasets import get_dataset
 from models.nn import SymbolNet
-from abl.learning import ABLModel, BasicNN
-from abl.reasoning import KBBase, GroundKB, Reasoner
-from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
-from abl.utils import ABLLogger, print_log
-from abl.bridge import SimpleBridge
 
 
 class HwfKB(KBBase):

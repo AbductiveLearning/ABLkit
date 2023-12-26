@@ -2,11 +2,11 @@ import os
 import os.path as osp
 import pickle
 import random
-import gdown
 import zipfile
 from collections import defaultdict
 
 import cv2
+import gdown
 import numpy as np
 from torchvision.transforms import transforms
 
