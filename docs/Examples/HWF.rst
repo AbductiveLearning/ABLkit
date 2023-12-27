@@ -131,7 +131,7 @@ Out:
 
         X in the 1001st data example (a list of images):
     
-    .. image:: ../img/hwf_dataset1.png
+    .. image:: ../_static/img/hwf_dataset1.png
         :width: 210px
 
     .. code:: none
@@ -145,7 +145,7 @@ Out:
 
         X in the 3001st data example (a list of images):
     
-    .. image:: ../img/hwf_dataset2.png
+    .. image:: ../_static/img/hwf_dataset2.png
         :width: 350px
 
     .. code:: none

@@ -139,7 +139,7 @@ Out:
 
         First true equation with length 5 in the training dataset:
     
-    .. image:: ../img/hed_dataset1.png
+    .. image:: ../_static/img/hed_dataset1.png
         :width: 300px
 
     .. code:: none
@@ -147,7 +147,7 @@ Out:
 
         First true equation with length 8 in the training dataset:
     
-    .. image:: ../img/hed_dataset2.png
+    .. image:: ../_static/img/hed_dataset2.png
         :width: 480px
 
     .. code:: none
@@ -155,7 +155,7 @@ Out:
 
         First false equation with length 5 in the training dataset:
     
-    .. image:: ../img/hed_dataset3.png
+    .. image:: ../_static/img/hed_dataset3.png
         :width: 300px
 
     .. code:: none
@@ -163,7 +163,7 @@ Out:
 
         First false equation with length 8 in the training dataset:
     
-    .. image:: ../img/hed_dataset4.png
+    .. image:: ../_static/img/hed_dataset4.png
         :width: 480px
 
 

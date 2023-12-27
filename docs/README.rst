@@ -16,7 +16,7 @@ ABL-Package encapsulates advanced ABL techniques, providing users with
 an efficient and convenient package to develop dual-driven ABL systems 
 that leverage both data and knowledge.
 
-.. image:: img/ABL.png
+.. image:: _static/img/ABL.png
 
 Installation
 ------------

@@ -18,7 +18,7 @@ The ABL-Package comprises three primary parts: **Data**, **Learning**, and
 **Reasoning**, corresponding to the three pivotal components of current
 AI: data, models, and knowledge. Below is an overview of the ABL-Package.
 
-.. image:: ../img/ABL-Package.png
+.. image:: ../_static/img/ABL-Package.png
 
 **Data** part manages the storage, operation, and evaluation of data efficiently.
 It includes the ``ListData`` class, which defines the data structures used in
@@ -64,7 +64,7 @@ Subsequently, these pseudo-labels are processed to minimize inconsistencies with
 which in turn revise the outcomes of the learning model, and then 
 fed back for further training ``ABLModel.train``.  
 
-.. image:: ../img/usage.png
+.. image:: ../_static/img/usage.png
 
 To implement this process, the following five steps are necessary:
 

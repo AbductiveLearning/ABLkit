@@ -124,7 +124,7 @@ Out:
 
         X in the first data example (a list of two images):
     
-    .. image:: ../img/mnist_add_datasets.png
+    .. image:: ../_static/img/mnist_add_datasets.png
         :width: 200px
 
 
