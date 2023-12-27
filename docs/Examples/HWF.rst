@@ -1,6 +1,9 @@
 Handwritten Formula (HWF)
 =========================
 
+For detailed code implementation, please view 
+on `GitHub <https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hwf>`_.
+
 Below shows an implementation of `Handwritten
 Formula <https://arxiv.org/abs/2006.06649>`__. In this
 task, handwritten images of decimal formulas and their computed results
@@ -466,5 +469,3 @@ Out:
         abl - INFO - Saving model: loop(save) [3]
         abl - INFO - Checkpoints will be saved to weights_dir/model_checkpoint_loop_2.pth
         abl - INFO - Evaluation ended, hwf/character_accuracy: 0.996 hwf/reasoning_accuracy: 0.977 
-
-More concrete examples are available in ``examples/hwf/main.py`` and ``examples/hwf/hwf.ipynb``.

@@ -1,6 +1,9 @@
 Handwritten Equation Decipherment (HED)
 =======================================
 
+For detailed code implementation, please view 
+on `GitHub <https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed>`_.
+
 Below shows an implementation of `Handwritten Equation
 Decipherment <https://proceedings.neurips.cc/paper_files/paper/2019/file/9c19a2aa1d84e04b0bd4bc888792bd1e-Paper.pdf>`__.
 In this task, the handwritten equations are given, which consist of
