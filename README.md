@@ -3,9 +3,22 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![ABL-Package-CI](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/build-and-test.yaml/badge.svg?branch=Dev)](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/build-and-test.yaml)
 
-# ABL Package
+# ABL-Package
 
-This is the code repository of abductive learning Package.
+**ABL-Package** is an open source library for **Abductive Learning (ABL)**.
+ABL is a novel paradigm that integrates machine learning and 
+logical reasoning in a unified framework. It is suitable for tasks
+where both data and (logical) domain knowledge are available. 
+
+Key Features of ABL-Package:
+
+- **Great Flexibility**: Adaptable to a variety of machine learning modules and logical reasoning components.
+- **User-Friendly**: Provide data, model, and KB, and get started with just a few lines of code.
+- **High-Performance**: Optimization for high accuracy and fast training speed.
+
+ABL-Package encapsulates advanced ABL techniques, providing users with
+an efficient and convenient package to develop dual-driven ABL systems 
+that leverage both data and knowledge.
 
 To learn how to use it, please refer to - [document](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/Overview/Abductive-Learning.html).
 
@@ -42,12 +55,12 @@ For Linux users:
 
 For Windows and Mac users, please refer to the [Swi-Prolog Download Page](https://www.swi-prolog.org/Download.html).
 
-## Example 
-+ MNIST ADD - [here](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/mnist_add)
-+ Hand Written Formula - [here](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/hwf)
-+ Hand written Equation Decipherment - [here](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed)
-+ Zoo - [here](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/zoo)
+## Examples
 
-## NOTICE 
-They can only be used for academic purpose. For other purposes, please contact with LAMDA Group(www.lamda.nju.edu.cn).
+We provide several examples in `examples/`. Each example is stored in a separate folder containing a README file.
+
++ [MNIST Addition](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/mnist_add)
++ [Hand Written Formula](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/hwf)
++ [Hand written Equation Decipherment](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed)
++ [Zoo](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/zoo)
 

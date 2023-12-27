@@ -1,12 +1,20 @@
 ABL-Package
 ===========
 
-**ABL-Package** is an open source library for **Abductive Learning**
-that supports building a model leveraging information from both data and
-(logical) domain knowledge. Using ABL-Package, users may form a
-dual-driven (data & knowledge driven) learning system, integrating and
-balancing the use of machine learning and logical reasoning in a unified
-model.
+**ABL-Package** is an open source library for **Abductive Learning (ABL)**.
+ABL is a novel paradigm that integrates machine learning and 
+logical reasoning in a unified framework. It is suitable for tasks
+where both data and (logical) domain knowledge are available. 
+
+Key Features of ABL-Package:
+
+- **Great Flexibility**: Adaptable to a variety of machine learning modules and logical reasoning components.
+- **User-Friendly**: Provide data, model, and KB, and get started with just a few lines of code.
+- **High-Performance**: Optimization for high accuracy and fast training speed.
+
+ABL-Package encapsulates advanced ABL techniques, providing users with
+an efficient and convenient package to develop dual-driven ABL systems 
+that leverage both data and knowledge.
 
 .. image:: _static/img/ABL.png
 
