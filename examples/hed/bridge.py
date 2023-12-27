@@ -193,7 +193,7 @@ class HedBridge(SimpleBridge):
 
         return data_examples
 
-    def train(self, train_data, val_data, segment_size=10, min_len=5, max_len=8):
+    def train(self, train_data, val_data, segment_size=10, min_len=5, max_len=8, save_dir="./"):
         for equation_len in range(min_len, max_len):
             print_log(
                 f"============== equation_len: {equation_len}-{equation_len + 1} ================",
@@ -234,7 +234,9 @@ class HedBridge(SimpleBridge):
                     seems_good = self.check_rule_quality(rules, val_data, equation_len)
                     if seems_good:
                         self.reasoner.kb.learned_rules.update({equation_len: rules})
-                        self.model.save(save_path=f"./weights/eq_len_{equation_len}.pth")
+                        self.model.save(
+                            save_path=os.path.join(save_dir, f"eq_len_{equation_len}.pth")
+                        )
                         break
                     else:
                         if equation_len == min_len:
@@ -242,9 +244,13 @@ class HedBridge(SimpleBridge):
                                 "Learned mapping is: " + str(self.reasoner.idx_to_label),
                                 logger="current",
                             )
-                            self.model.load(load_path="./weights/pretrain_weights.pth")
+                            self.model.load(
+                                load_path=os.path.join(save_dir, f"pretrain_weights.pth")
+                            )
                         else:
-                            self.model.load(load_path=f"./weights/eq_len_{equation_len - 1}.pth")
+                            self.model.load(
+                                load_path=os.path.join(save_dir, f"eq_len_{equation_len - 1}.pth")
+                            )
                         condition_num = 0
                         print_log("Reload Model and retrain", logger="current")
 

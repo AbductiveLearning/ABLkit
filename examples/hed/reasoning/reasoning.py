@@ -10,6 +10,7 @@ CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 class HedKB(PrologKB):
     def __init__(self, pseudo_label_list=[1, 0, "+", "="], pl_file=os.path.join(CURRENT_DIR, "learn_add.pl")):
+        pl_file = pl_file.replace("\\", "/")
         super().__init__(pseudo_label_list, pl_file)
         self.learned_rules = {}
 

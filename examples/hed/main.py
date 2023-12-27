@@ -95,7 +95,7 @@ def main():
     weights_dir = osp.join(log_dir, "weights")
 
     bridge.pretrain(weights_dir)
-    bridge.train(train_data, val_data)
+    bridge.train(train_data, val_data, save_dir=weights_dir)
     bridge.test(test_data)
 
 

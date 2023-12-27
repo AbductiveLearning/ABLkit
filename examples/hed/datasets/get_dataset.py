@@ -4,8 +4,8 @@ import pickle
 import random
 import zipfile
 from collections import defaultdict
+from PIL import Image
 
-import cv2
 import gdown
 import numpy as np
 from torchvision.transforms import transforms
@@ -32,14 +32,15 @@ def get_pretrain_data(labels, image_size=(28, 28, 1)):
         label_path = osp.join(img_dir, label)
         img_path_list = os.listdir(label_path)
         for img_path in img_path_list:
-            img = cv2.imread(osp.join(label_path, img_path), cv2.IMREAD_GRAYSCALE)
-            img = cv2.resize(img, (image_size[1], image_size[0]))
-            X.append(np.array(img, dtype=np.float32))
+            with Image.open(osp.join(label_path, img_path)) as img:
+                img = img.convert('L')
+                img = img.resize((image_size[1], image_size[0]))
+                img_array = np.array(img, dtype=np.float32)
+                normalized_img = (img_array - 127) / 128.0
+                X.append(normalized_img)
 
-    X = [((img[:, :, np.newaxis] - 127) / 128.0) for img in X]
     Y = [img.copy().reshape(image_size[0] * image_size[1] * image_size[2]) for img in X]
-
-    X = [transform(img) for img in X]
+    X = [transform(img[:, :, np.newaxis]) for img in X]
     return X, Y
 
 

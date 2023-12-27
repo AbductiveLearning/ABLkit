@@ -295,5 +295,5 @@ Perform pretraining, training and testing by invoking the ``pretrain``, ``train`
     weights_dir = osp.join(log_dir, "weights")
     
     bridge.pretrain("./weights")
-    bridge.train(train_data, val_data)
+    bridge.train(train_data, val_data, save_dir=weights_dir)
     bridge.test(test_data)
