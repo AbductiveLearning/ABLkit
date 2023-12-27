@@ -21,9 +21,12 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Display python version
       run: python -c "import sys; print(sys.version)"
-    - name: Install prolog
-      run: |
-        sudo apt-get install swi-prolog
+    - name: Install SWI-Prolog on Ubuntu
+      if: matrix.os == 'ubuntu-latest'
+      run: sudo apt-get install swi-prolog
+    - name: Install SWI-Prolog on Windows
+      if: matrix.os == 'windows-latest'
+      run: choco install swi-prolog
     - name: Install package dependencies
       run: |
         python -m pip install --upgrade pip

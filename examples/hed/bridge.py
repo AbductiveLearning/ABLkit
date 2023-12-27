@@ -233,7 +233,9 @@ class HedBridge(SimpleBridge):
 
                     seems_good = self.check_rule_quality(rules, val_data, equation_len)
                     if seems_good:
-                        self.reasoner.kb.learned_rules.update({equation_len: rules})
+                        self.reasoner.kb.learned_rules.update(
+                            {equation_len: rules, equation_len + 1: rules}
+                        )
                         self.model.save(
                             save_path=os.path.join(save_dir, f"eq_len_{equation_len}.pth")
                         )
