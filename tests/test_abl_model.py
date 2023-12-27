@@ -11,24 +11,22 @@ class TestABLModel(object):
         """Test the initialization method of the ABLModel class."""
 
         invalid_base_model = Mock(spec=[])
-
         with pytest.raises(NotImplementedError):
             ABLModel(invalid_base_model)
 
-        fit = Mock(return_value=1.0)
-        predict = Mock(return_value=np.array(1.0))
-
-        invalid_base_model = Mock(spec=fit)
+        invalid_base_model = Mock(spec=["fit"])
+        invalid_base_model.fit.return_value = 1.0
         with pytest.raises(NotImplementedError):
             ABLModel(invalid_base_model)
 
-        invalid_base_model = Mock(spec=predict)
+        invalid_base_model = Mock(spec=["predict"])
+        invalid_base_model.predict.return_value = np.array(1.0)
         with pytest.raises(NotImplementedError):
             ABLModel(invalid_base_model)
 
         base_model = Mock(spec=["fit", "predict"])
-        base_model.fit = fit
-        base_model.predict = predict
+        base_model.fit.return_value = 1.0
+        base_model.predict.return_value = np.array(1.0)
         model = ABLModel(base_model)
         assert hasattr(model, "base_model"), "The model should have a 'base_model' attribute."
 
