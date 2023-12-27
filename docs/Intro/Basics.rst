@@ -28,8 +28,8 @@ such as ``SymbolAccuracy`` and ``ReasoningMetric`` (both specialized metrics
 inherited from the ``BaseMetric`` class), for evaluating model quality from a 
 data perspective.
 
-:blue-bold:`Learning` part focuses on the construction, deployment, and
-training of machine learning models. The ``ABLModel`` class is the 
+:blue-bold:`Learning` part focuses on the construction, training, and
+prediction of machine learning models. The ``ABLModel`` class is the 
 central class that encapsulates the machine learning model. This class is
 compatible with various frameworks, including those based on Scikit-learn
 or PyTorch neural networks constructed by the ``BasicNN`` class.
