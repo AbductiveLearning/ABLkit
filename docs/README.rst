@@ -8,7 +8,7 @@ dual-driven (data & knowledge driven) learning system, integrating and
 balancing the use of machine learning and logical reasoning in a unified
 model.
 
-.. image:: img/ABL.png
+.. image:: _static/img/ABL.png
 
 Installation
 ------------

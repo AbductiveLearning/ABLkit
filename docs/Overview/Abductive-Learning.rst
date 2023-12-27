@@ -8,7 +8,7 @@ Here, a set of data examples is given, including training instances
 These data are then used to train a classifier model :math:`f`, 
 aiming to accurately predict the unseen data instances.
 
-.. image:: ../img/ML.png
+.. image:: ../_static/img/ML.png
    :align: center
    :width: 280px
 
@@ -46,7 +46,7 @@ base.
 
 The following figure illustrates this process:
 
-.. image:: ../img/ABL.png
+.. image:: ../_static/img/ABL.png
    :width: 800px
 
 We can observe that in the above figure, the left half involves machine

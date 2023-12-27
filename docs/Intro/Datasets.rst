@@ -45,15 +45,15 @@ ABL-Package requires user data to be either structured as a tuple ``(X, gt_pseud
 
 As an illustration, in the MNIST Addition task, the data are organized as follows:
 
-.. image:: ../img/Datasets_1.png
+.. image:: ../_static/img/Datasets_1.png
    :width: 350px
    :align: center
 
-.. |data_example| image:: ../img/data_example.png
+.. |data_example| image:: ../_static/img/data_example.png
    :alt: alternate text
    :scale: 8%
 
-.. |instance| image:: ../img/instance.png
+.. |instance| image:: ../_static/img/instance.png
    :alt: alternate text
    :scale: 55%
 
