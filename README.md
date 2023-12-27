@@ -11,7 +11,7 @@ To learn how to use it, please refer to - [document](https://www.lamda.nju.edu.c
 
 ## Installation
 
-ABL is distributed on `PyPI <https://pypi.org/>`__ and can be installed with ``pip``:
+ABL is distributed on [PyPI](https://pypi.org/) and can be installed with ``pip``:
 
 ```bash
     # (TODO)
@@ -38,7 +38,7 @@ For Linux users:
 
 ```bash
     $ sudo apt-get install swi-prolog
-``````
+```
 
 For Windows and Mac users, please refer to the [Swi-Prolog Download Page](https://www.swi-prolog.org/Download.html).
 
@@ -50,3 +50,4 @@ For Windows and Mac users, please refer to the [Swi-Prolog Download Page](https:
 
 ## NOTICE 
 They can only be used for academic purpose. For other purposes, please contact with LAMDA Group(www.lamda.nju.edu.cn).
+
