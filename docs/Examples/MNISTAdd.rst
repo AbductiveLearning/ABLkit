@@ -1,8 +1,9 @@
 MNIST Addition
 ==============
 
-For detailed code implementation, please view 
-on `GitHub <https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/mnist_add>`_.
+.. raw:: html
+    
+    <p>For detailed code implementation, please view on <a class="reference external" href="https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/mnist_add" target="_blank">GitHub</a>.</p>
 
 Below shows an implementation of `MNIST
 Addition <https://arxiv.org/abs/1805.10872>`__. In this task, pairs of

@@ -1,8 +1,9 @@
 Zoo
 ===
 
-For detailed code implementation, please view 
-on `GitHub <https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed>`_.
+.. raw:: html
+    
+    <p>For detailed code implementation, please view on <a class="reference external" href="https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/zoo" target="_blank">GitHub</a>.</p>
 
 Below shows an implementation of
 `Zoo <https://archive.ics.uci.edu/dataset/111/zoo>`__ dataset. In this task,

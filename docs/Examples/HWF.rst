@@ -1,8 +1,9 @@
 Handwritten Formula (HWF)
 =========================
 
-For detailed code implementation, please view 
-on `GitHub <https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hwf>`_.
+.. raw:: html
+    
+    <p>For detailed code implementation, please view on <a class="reference external" href="https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hwf" target="_blank">GitHub</a>.</p>
 
 Below shows an implementation of `Handwritten
 Formula <https://arxiv.org/abs/2006.06649>`__. In this
