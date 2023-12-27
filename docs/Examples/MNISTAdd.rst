@@ -1,6 +1,10 @@
 MNIST Addition
 ==============
 
+.. raw:: html
+    
+    <p>For detailed code implementation, please view on <a class="reference external" href="https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/mnist_add" target="_blank">GitHub</a>.</p>
+
 Below shows an implementation of `MNIST
 Addition <https://arxiv.org/abs/1805.10872>`__. In this task, pairs of
 MNIST handwritten images and their sums are given, alongwith a domain
@@ -375,5 +379,3 @@ Out:
         abl - INFO - Checkpoints will be saved to results/20231222_22_25_07/weights/model_checkpoint_loop_1.pth
         abl - INFO - Test start:
         abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.983 mnist_add/reasoning_accuracy: 0.967 
-
-More concrete examples are available in ``examples/mnist_add/main.py`` and ``examples/mnist_add/mnist_add.ipynb``.

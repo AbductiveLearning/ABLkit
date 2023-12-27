@@ -1,6 +1,10 @@
 Zoo
 ===
 
+.. raw:: html
+    
+    <p>For detailed code implementation, please view on <a class="reference external" href="https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/zoo" target="_blank">GitHub</a>.</p>
+
 Below shows an implementation of
 `Zoo <https://archive.ics.uci.edu/dataset/111/zoo>`__ dataset. In this task,
 attributes of animals (such as presence of hair, eggs, etc.) and their
@@ -251,4 +255,3 @@ Out:
 We may see from the results, after undergoing training with ABL, the
 model’s accuracy has improved.
 
-More concrete examples are available in ``examples/zoo/main.py`` and ``examples/zoo/zoo.ipynb``.
