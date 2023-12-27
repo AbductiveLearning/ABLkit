@@ -1,3 +1,4 @@
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/LICENSE)
 [![flake8 Lint](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/lint.yaml/badge.svg?branch=Dev)](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/lint.yaml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![ABL-Package-CI](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/build-and-test.yaml/badge.svg?branch=Dev)](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/build-and-test.yaml)
@@ -10,36 +11,42 @@ To learn how to use it, please refer to - [document](https://www.lamda.nju.edu.c
 
 ## Installation
 
-Case a: If you develop and run abl directly, install it from source:
-```bash 
-git clone https://github.com/AbductiveLearning/ABL-Package.git
-cd ABL-Package
-pip install -v -e .
-# "-v" means verbose, or more output
-# "-e" means installing a project in editable mode,
-# thus any local modifications made to the code will take effect without reinstallation.
-```
-Case b (TO DO):  If you use abl as a dependency or third-party package, install it with pip:
-```bash 
-pip install abl
-```
-Case c (for test):  If you use abl as a dependency or third-party package, install it with pip:
-```bash 
-pip install -i https://test.pypi.org/simple/ abl
+ABL is distributed on `PyPI <https://pypi.org/>`__ and can be installed with ``pip``:
+
+```bash
+    # (TODO)
+    $ pip install abl
 ```
 
+For testing purposes, you can install it using:
+
+```bash
+    $ pip install -i https://test.pypi.org/simple/ --extra-index-url https://mirrors.nju.edu.cn/pypi/web/simple/ abl
+```
+    
+Alternatively, to install ABL by source code, sequentially run following commands in your terminal/command line.
+
+```bash
+    $ git clone https://github.com/AbductiveLearning/ABL-Package.git
+    $ cd ABL-Package
+    $ pip install -v -e .
+```
+
+(Optional) If the use of a [Prolog-based knowledge base](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/Intro/Reasoning.html#prolog) is necessary, the installation of [Swi-Prolog](https://www.swi-prolog.org/) is also required:
+
+For Linux users:
+
+```bash
+    $ sudo apt-get install swi-prolog
+``````
+
+For Windows and Mac users, please refer to the [Swi-Prolog Download Page](https://www.swi-prolog.org/Download.html).
+
 ## Example 
-+ MNIST ADD - [here](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/mnist_add/mnist_add_example.ipynb)
-+ Hand Written Formula - [here](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/hwf/hwf_example.ipynb)
++ MNIST ADD - [here](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/mnist_add)
++ Hand Written Formula - [here](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/hwf)
 + Hand written Equation Decipherment - [here](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed)
++ Zoo - [here](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/zoo)
 
 ## NOTICE 
 They can only be used for academic purpose. For other purposes, please contact with LAMDA Group(www.lamda.nju.edu.cn).
-
-## To do list 
-
-- [ ] Improve speed and accuracy
-- [ ] Add comparison with DeepProbLog, NGS,... (Accuracy and Speed)
-- [ ] Rearrange structure and make it a python package
-- [ ] Documents
-
