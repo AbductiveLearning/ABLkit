@@ -55,12 +55,12 @@ For Linux users:
 
 For Windows and Mac users, please refer to the [Swi-Prolog Download Page](https://www.swi-prolog.org/Download.html).
 
-## Example 
-+ MNIST ADD - [here](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/mnist_add)
-+ Hand Written Formula - [here](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/hwf)
-+ Hand written Equation Decipherment - [here](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed)
-+ Zoo - [here](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/zoo)
+## Examples
 
-## NOTICE 
-They can only be used for academic purpose. For other purposes, please contact with LAMDA Group(www.lamda.nju.edu.cn).
+We provide several examples in `examples/`. Each example is stored in a separate folder containing a README file.
+
++ [MNIST Addition](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/mnist_add)
++ [Hand Written Formula](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/hwf)
++ [Hand written Equation Decipherment](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed)
++ [Zoo](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/zoo)
 
