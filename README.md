@@ -79,7 +79,7 @@ In the MNIST Addition task, the data loading looks like:
 # The 'datasets' module below is located in 'examples/mnist_add/'
 from datasets import get_dataset
     
-# train_data and test_data are tuples in the format (X, gt_pseudo_label, Y)
+# train_data and test_data are tuples in the format of (X, gt_pseudo_label, Y)
 train_data = get_dataset(train=True)
 test_data = get_dataset(train=False)
 ```
