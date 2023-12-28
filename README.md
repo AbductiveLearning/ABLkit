@@ -61,10 +61,10 @@ We provide several examples in `examples/`. Each example is stored in a separate
 
 + [MNIST Addition](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/mnist_add)
 + [Hand Written Formula](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/hwf)
-+ [Hand written Equation Decipherment](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed)
++ [Hand Written Equation Decipherment](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed)
 + [Zoo](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/zoo)
 
-## A Simple Example
+## Quick Start
 
 We use the MNIST Addition task as a quick start example. In this task, pairs of MNIST handwritten images and their sums are given, alongwith a domain knowledge base which contain information on how to perform addition operations. Our objective is to input a pair of handwritten images and accurately determine their sum.
 
