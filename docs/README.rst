@@ -13,8 +13,8 @@ Key Features of ABL-Package:
 - **High-Performance**: Optimization for high accuracy and fast training speed.
 
 ABL-Package encapsulates advanced ABL techniques, providing users with
-an efficient and convenient package to develop dual-driven ABL systems 
-that leverage both data and knowledge.
+an efficient and convenient package to develop dual-driven ABL systems,
+which leverage the power of both data and knowledge.
 
 .. image:: _static/img/ABL.png
 
