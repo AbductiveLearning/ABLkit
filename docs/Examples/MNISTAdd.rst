@@ -376,6 +376,6 @@ Out:
         abl - INFO - Eval start: loop(val) [1]
         abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.986 mnist_add/reasoning_accuracy: 0.973 
         abl - INFO - Saving model: loop(save) [1]
-        abl - INFO - Checkpoints will be saved to results/20231222_22_25_07/weights/model_checkpoint_loop_1.pth
+        abl - INFO - Checkpoints will be saved to log_dir/weights/model_checkpoint_loop_1.pth
         abl - INFO - Test start:
         abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.983 mnist_add/reasoning_accuracy: 0.967 

@@ -20,7 +20,7 @@ ABL-Package encapsulates advanced ABL techniques, providing users with
 an efficient and convenient package to develop dual-driven ABL systems,
 which leverage the power of both data and knowledge.
 
-To learn how to use it, please refer to - [document](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/Overview/Abductive-Learning.html).
+To learn how to use it, please refer to - [document](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/index.html).
 
 ## Installation
 
@@ -62,7 +62,7 @@ We provide several examples in `examples/`. Each example is stored in a separate
 + [MNIST Addition](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/mnist_add)
 + [Handwritten Formula](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/hwf)
 + [Handwritten Equation Decipherment](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed)
-+ [Zoo](https://gitub.com/AbductiveLearning/ABL-Package/tree/Dev/examples/zoo)
++ [Zoo](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/zoo)
 
 ## Quick Start
 
@@ -164,6 +164,10 @@ bridge = SimpleBridge(model, reasoner, metric_list)
 Finally, we proceed with training and testing.
 
 ```python
-​bridge.train(train_data, loops=1)
+​bridge.train(train_data, loops=1, segment_size=0.01)
 bridge.test(test_data)
 ```
+
+## References
+
+For more information about ABL, please refer to: [Zhou, 2019](https://link.springer.com/epdf/10.1007/s11432-018-9801-4?author_access_token=jgJe1Ox3Mk-K7ORSnX7jtfe4RwlQNchNByi7wbcMAY7_PxTx-xNLP7Lp0mIZ04ORp3VG4wioIBHSCIAO3B_TBJkj87YzapmdnYVSQvgBIO3aEpQWppxZG25KolINetygc2W_Cj2gtoBdiG_J1hU3pA==) and [Zhou and Huang, 2022](https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf).

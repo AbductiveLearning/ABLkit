@@ -123,7 +123,7 @@ Finally, we proceed with training and testing.
 
 .. code:: python
 
-   bridge.train(train_data, loops=1)
+   bridge.train(train_data, loops=1, segment_size=0.01)
    bridge.test(test_data)
 
 Read more about `bridging machine learning and reasoning <Bridge.html>`_.
