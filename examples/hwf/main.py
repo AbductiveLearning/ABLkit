@@ -87,19 +87,19 @@ def main():
         "--loops", type=int, default=5, help="number of loop iterations (default : 5)"
     )
     parser.add_argument(
-        "--segment_size", type=int or float, default=1000, help="segment size (default : 1000)"
+        "--segment_size", type=int, default=1000, help="segment size (default : 1000)"
     )
     parser.add_argument("--save_interval", type=int, default=1, help="save interval (default : 1)")
     parser.add_argument(
         "--max-revision",
-        type=int or float,
+        type=int,
         default=-1,
         help="maximum revision in reasoner (default : -1)",
     )
     parser.add_argument(
         "--require-more-revision",
         type=int,
-        default=5,
+        default=0,
         help="require more revision in reasoner (default : 0)",
     )
     parser.add_argument(
