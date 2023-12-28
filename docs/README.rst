@@ -8,13 +8,13 @@ where both data and (logical) domain knowledge are available.
 
 Key Features of ABL-Package:
 
-- **Great Flexibility**: Adaptable to a variety of machine learning modules and logical reasoning components.
+- **Great Flexibility**: Adaptable to various machine learning modules and logical reasoning components.
 - **User-Friendly**: Provide data, model, and KB, and get started with just a few lines of code.
 - **High-Performance**: Optimization for high accuracy and fast training speed.
 
 ABL-Package encapsulates advanced ABL techniques, providing users with
-an efficient and convenient package to develop dual-driven ABL systems 
-that leverage both data and knowledge.
+an efficient and convenient package to develop dual-driven ABL systems,
+which leverage the power of both data and knowledge.
 
 .. image:: _static/img/ABL.png
 
@@ -52,3 +52,9 @@ For Linux users:
     $ sudo apt-get install swi-prolog
 
 For Windows and Mac users, please refer to the `Swi-Prolog Download Page <https://www.swi-prolog.org/Download.html>`_.
+
+References
+----------
+
+For more information about ABL, please refer to: `Zhou, 2019 <https://link.springer.com/epdf/10.1007/s11432-018-9801-4?author_access_token=jgJe1Ox3Mk-K7ORSnX7jtfe4RwlQNchNByi7wbcMAY7_PxTx-xNLP7Lp0mIZ04ORp3VG4wioIBHSCIAO3B_TBJkj87YzapmdnYVSQvgBIO3aEpQWppxZG25KolINetygc2W_Cj2gtoBdiG_J1hU3pA==>`_ 
+and `Zhou and Huang, 2022 <https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf>`_.

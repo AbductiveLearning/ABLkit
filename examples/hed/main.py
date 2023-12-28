@@ -35,12 +35,12 @@ def main():
         "--batch-size", type=int, default=32, help="base model batch size (default : 32)"
     )
     parser.add_argument(
-        "--segment_size", type=int or float, default=1000, help="segment size (default : 1000)"
+        "--segment_size", type=int, default=1000, help="segment size (default : 1000)"
     )
     parser.add_argument("--save_interval", type=int, default=1, help="save interval (default : 1)")
     parser.add_argument(
         "--max-revision",
-        type=int or float,
+        type=int,
         default=10,
         help="maximum revision in reasoner (default : 10)",
     )

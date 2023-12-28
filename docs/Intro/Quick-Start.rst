@@ -15,32 +15,32 @@ Working with Data
 -----------------
 
 ABL-Package requires data in the format of ``(X, gt_pseudo_label, Y)``  where ``X`` is a list of input examples containing instances, 
-``gt_pseudo_label`` is the ground-truth label of each example in ``X`` and ``Y`` is the ground-truth reasoning result of each example in ``X``. Note that ``gt_pseudo_label`` is only used to evaluate the machine learning model's performance but not to train it. If examples in ``X`` are unlabeled, ``gt_pseudo_label`` should be ``None``.
+``gt_pseudo_label`` is the ground-truth label of each example in ``X`` and ``Y`` is the ground-truth reasoning result of each example in ``X``. Note that ``gt_pseudo_label`` is only used to evaluate the machine learning model's performance but not to train it.
 
 In the MNIST Addition task, the data loading looks like
 
 .. code:: python
 
+   # The 'datasets' module below is located in 'examples/mnist_add/'
    from datasets import get_dataset
    
-   # train_data and test_data are tuples in the format (X, gt_pseudo_label, Y)
-   # If get_pseudo_label is set to False, the gt_pseudo_label in each tuple will be None.
-   train_data = get_dataset(train=True, get_pseudo_label=True)
-   test_data = get_dataset(train=False, get_pseudo_label=True)
+   # train_data and test_data are tuples in the format of (X, gt_pseudo_label, Y)
+   train_data = get_dataset(train=True)
+   test_data = get_dataset(train=False)
 
 Read more about `preparing datasets <Datasets.html>`_.
 
 Building the Learning Part
 --------------------------
 
-Learnig part is constructed by first defining a base model for machine learning. The ABL-Package offers considerable flexibility, supporting any base model that conforms to the scikit-learn style (which requires the implementation of ``fit`` and ``predict`` methods), or a PyTorch-based neural network (which has defined the architecture and implemented ``forward`` method).
+Learning part is constructed by first defining a base model for machine learning. The ABL-Package offers considerable flexibility, supporting any base model that conforms to the scikit-learn style (which requires the implementation of ``fit`` and ``predict`` methods), or a PyTorch-based neural network (which has defined the architecture and implemented ``forward`` method).
 In this example, we build a simple LeNet5 network as the base model.
 
 .. code:: python
 
+   # The 'models' module below is located in 'examples/mnist_add/'
    from models.nn import LeNet5
 
-   # The number of pseudo-labels is 10
    cls = LeNet5(num_classes=10)
 
 To facilitate uniform processing, ABL-Package provides the ``BasicNN`` class to convert a PyTorch-based neural network into a format compatible with scikit-learn models. To construct a ``BasicNN`` instance, aside from the network itself, we also need to define a loss function, an optimizer, and the computing device.
@@ -51,7 +51,7 @@ To facilitate uniform processing, ABL-Package provides the ``BasicNN`` class to 
    from abl.learning import BasicNN
 
    loss_fn = torch.nn.CrossEntropyLoss()
-   optimizer = torch.optim.RMSprop(cls.parameters(), lr=0.001, alpha=0.9)
+   optimizer = torch.optim.RMSprop(cls.parameters(), lr=0.001)
    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
    base_model = BasicNN(model=cls, loss_fn=loss_fn, optimizer=optimizer, device=device)
 
@@ -104,7 +104,7 @@ ABL-Package provides two basic metrics, namely ``SymbolAccuracy`` and ``Reasonin
 
    from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
 
-   metric_list = [SymbolAccuracy(prefix="mnist_add"), ReasoningMetric(kb=kb, prefix="mnist_add")]
+   metric_list = [SymbolAccuracy(), ReasoningMetric(kb=kb)]
 
 Read more about `building evaluation metrics <Evaluation.html>`_
 
