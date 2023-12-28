@@ -11,31 +11,50 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+
+    - name: Cache Python virtual environment
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.venv
+          !~/.venv/*/lib/python*/no-global-site-packages.txt
+        key: ${{ runner.os }}-python-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-python-${{ matrix.python-version }}-
+
     - name: Display python version
       run: python -c "import sys; print(sys.version)"
+
     - name: Install SWI-Prolog on Ubuntu
       if: matrix.os == 'ubuntu-latest'
       run: sudo apt-get install swi-prolog
     - name: Install SWI-Prolog on Windows
       if: matrix.os == 'windows-latest'
       run: choco install swi-prolog
+    - name: Install SWI-Prolog on MACOS
+      if: matrix.os == 'macos-latest'
+      run: brew install swi-prolog
+
     - name: Install package dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pytest pytest-cov
     - name: Install
       run: pip install -v -e .
+
     - name: Run tests
       run: |
         pytest --cov-config=.coveragerc --cov-report=xml --cov=abl ./tests 
+
     - name: Publish code coverage
       uses: codecov/codecov-action@v1
       with:
