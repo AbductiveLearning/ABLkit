@@ -25,9 +25,8 @@ In the MNIST Addition task, the data loading looks like
    from datasets import get_dataset
    
    # train_data and test_data are tuples in the format (X, gt_pseudo_label, Y)
-   # If get_pseudo_label is set to False, the gt_pseudo_label in each tuple will be None.
-   train_data = get_dataset(train=True, get_pseudo_label=True)
-   test_data = get_dataset(train=False, get_pseudo_label=True)
+   train_data = get_dataset(train=True)
+   test_data = get_dataset(train=False)
 
 Read more about `preparing datasets <Datasets.html>`_.
 
@@ -105,7 +104,7 @@ ABL-Package provides two basic metrics, namely ``SymbolAccuracy`` and ``Reasonin
 
    from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
 
-   metric_list = [SymbolAccuracy(prefix="mnist_add"), ReasoningMetric(kb=kb, prefix="mnist_add")]
+   metric_list = [SymbolAccuracy(), ReasoningMetric(kb=kb)]
 
 Read more about `building evaluation metrics <Evaluation.html>`_
 
