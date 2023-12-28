@@ -8,7 +8,7 @@ where both data and (logical) domain knowledge are available.
 
 Key Features of ABL-Package:
 
-- **Great Flexibility**: Adaptable to a variety of machine learning modules and logical reasoning components.
+- **Great Flexibility**: Adaptable to various machine learning modules and logical reasoning components.
 - **User-Friendly**: Provide data, model, and KB, and get started with just a few lines of code.
 - **High-Performance**: Optimization for high accuracy and fast training speed.
 
