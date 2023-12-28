@@ -60,9 +60,9 @@ For Windows and Mac users, please refer to the [Swi-Prolog Download Page](https:
 We provide several examples in `examples/`. Each example is stored in a separate folder containing a README file.
 
 + [MNIST Addition](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/mnist_add)
-+ [Hand Written Formula](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/hwf)
-+ [Hand Written Equation Decipherment](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed)
-+ [Zoo](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/zoo)
++ [Handwritten Formula](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/hwf)
++ [Handwritten Equation Decipherment](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed)
++ [Zoo](https://gitub.com/AbductiveLearning/ABL-Package/tree/Dev/examples/zoo)
 
 ## Quick Start
 
