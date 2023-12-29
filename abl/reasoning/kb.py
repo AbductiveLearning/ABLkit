@@ -464,8 +464,6 @@ class PrologKB(KBBase):
     """
 
     def __init__(self, pseudo_label_list: List[Any], pl_file: str):
-        import pyswip
-        
         super().__init__(pseudo_label_list)
         
         try:

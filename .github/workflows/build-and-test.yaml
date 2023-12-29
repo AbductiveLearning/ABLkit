@@ -42,9 +42,7 @@ jobs:
       run: choco install swi-prolog
     - name: Install SWI-Prolog on MACOS
       if: matrix.os == 'macos-latest'
-      run: |
-        brew install swi-prolog
-        echo "SWI_HOME_DIR=/usr/local/lib/swipl" >> $GITHUB_ENV
+      run: brew install swi-prolog
 
     - name: Install package dependencies
       run: |
