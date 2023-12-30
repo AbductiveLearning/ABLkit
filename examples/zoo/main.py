@@ -30,8 +30,13 @@ def main():
         "--loops", type=int, default=3, help="number of loop iterations (default : 3)"
     )
     args = parser.parse_args()
+    
+    # Build logger
+    print_log("Abductive Learning on the ZOO example.", logger="current")
 
     ### Working with Data
+    print_log("Working with Data.", logger="current")
+    
     X, y = load_and_preprocess_dataset(dataset_id=62)
     X_label, y_label, X_unlabel, y_unlabel, X_test, y_test = split_dataset(X, y, test_size=0.3)
     label_data = transform_tab_data(X_label, y_label)
@@ -39,12 +44,17 @@ def main():
     train_data = transform_tab_data(X_unlabel, y_unlabel)
 
     ### Building the Learning Part
+    print_log("Building the Learning Part.", logger="current")
+    
+    # Build base model
     base_model = RandomForestClassifier()
 
     # Build ABLModel
     model = ABLModel(base_model)
 
     ### Building the Reasoning Part
+    print_log("Building the Reasoning Part.", logger="current")
+    
     # Build knowledge base
     kb = ZooKB()
     
@@ -52,15 +62,16 @@ def main():
     reasoner = Reasoner(kb, dist_func=consitency)
 
     ### Building Evaluation Metrics
+    print_log("Building Evaluation Metrics.", logger="current")
     metric_list = [SymbolAccuracy(prefix="zoo"), ReasoningMetric(kb=kb, prefix="zoo")]
     
-    # Build logger
-    print_log("Abductive Learning on the ZOO example.", logger="current")
+    ### Bridging learning and reasoning
+    print_log("Bridge Learning and Reasoning.", logger="current")
+    bridge = SimpleBridge(model, reasoner, metric_list)
+    
+    # Retrieve the directory of the Log file and define the directory for saving the model weights.
     log_dir = ABLLogger.get_current_instance().log_dir
     weights_dir = osp.join(log_dir, "weights")
-    
-    ### Bridging learning and reasoning
-    bridge = SimpleBridge(model, reasoner, metric_list)
     
     # Performing training and testing
     print_log("------- Use labeled data to pretrain the model -----------", logger="current")

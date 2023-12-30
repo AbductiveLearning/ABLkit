@@ -113,12 +113,19 @@ def main():
     )
 
     args = parser.parse_args()
+    
+    # Build logger
+    print_log("Abductive Learning on the HWF example.", logger="current")
 
     ### Working with Data
+    print_log("Working with Data.", logger="current")
+    
     train_data = get_dataset(train=True, get_pseudo_label=True)
     test_data = get_dataset(train=False, get_pseudo_label=True)
 
     ### Building the Learning Part
+    print_log("Building the Learning Part.", logger="current")
+    
     # Build necessary components for BasicNN
     cls = SymbolNet(num_classes=13, image_size=(45, 45, 1))
     loss_fn = nn.CrossEntropyLoss()
@@ -140,6 +147,8 @@ def main():
     model = ABLModel(base_model)
 
     ### Building the Reasoning Part
+    print_log("Building the Reasoning Part.", logger="current")
+    
     # Build knowledge base
     if args.ground:
         kb = HwfGroundKB()
@@ -152,13 +161,12 @@ def main():
     )
 
     ### Building Evaluation Metrics
+    print_log("Building Evaluation Metrics.", logger="current")
     metric_list = [SymbolAccuracy(prefix="hwf"), ReasoningMetric(kb=kb, prefix="hwf")]
 
     ### Bridge Learning and Reasoning
+    print_log("Bridge Learning and Reasoning.", logger="current")
     bridge = SimpleBridge(model, reasoner, metric_list)
-
-    # Build logger
-    print_log("Abductive Learning on the HWF example.", logger="current")
 
     # Retrieve the directory of the Log file and define the directory for saving the model weights.
     log_dir = ABLLogger.get_current_instance().log_dir
