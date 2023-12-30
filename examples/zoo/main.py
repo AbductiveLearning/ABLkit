@@ -8,14 +8,12 @@ from abl.bridge import SimpleBridge
 from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
 from abl.learning import ABLModel
 from abl.reasoning import Reasoner
-from abl.utils import ABLLogger, confidence_dist, print_log
+from abl.utils import ABLLogger, confidence_dist, print_log, tab_data_to_tuple
 
 from get_dataset import load_and_preprocess_dataset, split_dataset
 from kb import ZooKB
 
 
-def transform_tab_data(X, y):
-    return ([[x] for x in X], [[y_item] for y_item in y], [0] * len(y))
 
 def consitency(data_example, candidates, candidate_idxs, reasoning_results):
     pred_prob = data_example.pred_prob
@@ -39,9 +37,9 @@ def main():
     
     X, y = load_and_preprocess_dataset(dataset_id=62)
     X_label, y_label, X_unlabel, y_unlabel, X_test, y_test = split_dataset(X, y, test_size=0.3)
-    label_data = transform_tab_data(X_label, y_label)
-    test_data = transform_tab_data(X_test, y_test)
-    train_data = transform_tab_data(X_unlabel, y_unlabel)
+    label_data = tab_data_to_tuple(X_label, y_label)
+    test_data = tab_data_to_tuple(X_test, y_test)
+    train_data = tab_data_to_tuple(X_unlabel, y_unlabel)
 
     ### Building the Learning Part
     print_log("Building the Learning Part.", logger="current")
