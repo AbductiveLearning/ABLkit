@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "abl"
 version = "0.1.4"
 authors = [
-  { name="LAMDA 2023" },
+  { name="LAMDA 2024" },
 ]
 description = "Abductive learning package project"
 readme = "README.md"
