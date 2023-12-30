@@ -157,6 +157,7 @@ def restore_from_hashable(x):
 def tab_data_to_tuple(X, y, reasoning_result = 0):
     '''
     Convert a tabular data to a tuple by adding a dimension to each element of X and y. The tuple contains three elements: data, label, and reasoning result.
+    If X is None, return None.
     '''
     if X is None:
         return None
