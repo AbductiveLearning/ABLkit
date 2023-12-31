@@ -1,6 +1,6 @@
 from .cache import Cache, abl_cache
 from .logger import ABLLogger, print_log
-from .utils import confidence_dist, flatten, hamming_dist, reform_list, to_hashable
+from .utils import confidence_dist, flatten, hamming_dist, reform_list, to_hashable, tab_data_to_tuple
 
 __all__ = [
     "Cache",
@@ -12,4 +12,5 @@ __all__ = [
     "reform_list",
     "to_hashable",
     "abl_cache",
+    "tab_data_to_tuple",
 ]

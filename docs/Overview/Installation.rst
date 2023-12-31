@@ -31,4 +31,4 @@ For Linux users:
 
     $ sudo apt-get install swi-prolog
 
-For Windows and Mac users, please refer to the `Swi-Prolog Download Page <https://www.swi-prolog.org/Download.html>`_.
+For Windows and Mac users, please refer to the `Swi-Prolog Install Guide <https://github.com/yuce/pyswip/blob/master/INSTALL.md>`_.

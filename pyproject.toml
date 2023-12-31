@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "abl"
 version = "0.1.4"
 authors = [
-  { name="LAMDA 2023" },
+  { name="LAMDA 2024" },
 ]
 description = "Abductive learning package project"
 readme = "README.md"
@@ -25,12 +25,12 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
 ]
 dependencies = [
-    "numpy",
-    "pyswip==0.2.9",
-    "torch",
-    "torchvision",
-    "zoopt",
-    "termcolor"
+    "numpy>=1.15.0",
+    "pyswip>=0.2.9",
+    "torch>=1.11.0",
+    "torchvision>=0.12.0",
+    "zoopt>=0.3.0",
+    "termcolor>=2.3.0"
 ]
 
 [project.urls]

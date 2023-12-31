@@ -154,4 +154,13 @@ def restore_from_hashable(x):
         return [restore_from_hashable(item) for item in x]
     return x
 
-
+def tab_data_to_tuple(X, y, reasoning_result = 0):
+    '''
+    Convert a tabular data to a tuple by adding a dimension to each element of X and y. The tuple contains three elements: data, label, and reasoning result.
+    If X is None, return None.
+    '''
+    if X is None:
+        return None
+    if len(X) != len(y):
+        raise ValueError("The length of X and y should be the same, but got {} and {}.".format(len(X), len(y)))
+    return ([[x] for x in X], [[y_item] for y_item in y], [reasoning_result] * len(y))
