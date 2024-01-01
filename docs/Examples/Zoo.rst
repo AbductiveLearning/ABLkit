@@ -32,7 +32,7 @@ further update the learning model.
     from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
     from abl.learning import ABLModel
     from abl.reasoning import Reasoner
-    from abl.utils import ABLLogger, confidence_dist, print_log
+    from abl.utils import ABLLogger, confidence_dist, print_log, tab_data_to_tuple
 
     from get_dataset import load_and_preprocess_dataset, split_dataset
     from kb import ZooKB
@@ -91,11 +91,9 @@ indicating no rules are violated.
 
 .. code:: ipython3
 
-    def transform_tab_data(X, y):
-        return ([[x] for x in X], [[y_item] for y_item in y], [0] * len(y))
-    label_data = transform_tab_data(X_label, y_label)
-    test_data = transform_tab_data(X_test, y_test)
-    train_data = transform_tab_data(X_unlabel, y_unlabel)
+    label_data = tab_data_to_tuple(X_label, y_label, reasoning_result = 0)
+    data = tab_data_to_tuple(X_test, y_test, reasoning_result = 0)
+    train_data = tab_data_to_tuple(X_unlabel, y_unlabel, reasoning_result = 0)
 
 Building the Learning Part
 --------------------------
