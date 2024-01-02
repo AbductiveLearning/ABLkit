@@ -30,14 +30,14 @@ class SymbolAccuracy(BaseMetric):
         This method takes in a batch of data examples, each containing a list of predicted
         pseudo-labels (pred_pseudo_label) and their ground truth (gt_pseudo_label). It
         calculates the accuracy by comparing the two lists. Then, a tuple of correct symbol
-        count and total symbol count is appended to `self.results`.
+        count and total symbol count is appended to ``self.results``.
 
         Parameters
         ----------
         data_examples : ListData
             A batch of data examples, each containing:
-            - `pred_pseudo_label`: List of predicted pseudo-labels.
-            - `gt_pseudo_label`: List of ground truth pseudo-labels.
+            - ``pred_pseudo_label``: List of predicted pseudo-labels.
+            - ``gt_pseudo_label``: List of ground truth pseudo-labels.
 
         Raises
         ------
