@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "abl"
-version = "0.1.4"
+version = "0.1.5"
 authors = [
   { name="LAMDA 2024" },
 ]
@@ -42,3 +42,6 @@ test = [
     "pytest-cov",
     "black==22.10.0",
 ]
+
+[tool.setuptools.packages.find]
+where = ["abl"] 
