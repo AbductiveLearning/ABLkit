@@ -158,6 +158,20 @@ def tab_data_to_tuple(X, y, reasoning_result = 0):
     '''
     Convert a tabular data to a tuple by adding a dimension to each element of X and y. The tuple contains three elements: data, label, and reasoning result.
     If X is None, return None.
+    
+    Parameters
+    ----------
+    X : list or other type
+        The data.
+    y : list or other type
+        The label.
+    reasoning_result : Any, optional
+        The reasoning result, by default 0.
+    
+    Returns
+    -------
+    Tuple[List[List[Any]], List[List[Any]], List[Any]]
+        A tuple of (data, label, reasoning_result).
     '''
     if X is None:
         return None
