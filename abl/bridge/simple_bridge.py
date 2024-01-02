@@ -170,7 +170,7 @@ class SimpleBridge(BaseBridge):
         ----------
         unlabel_data_examples : ListData
             Unlabeled data examples to concatenate.
-        label_data_examples : Optional[ListData]
+        label_data_examples : ListData, optional
             Labeled data examples to concatenate, if available.
 
         Returns
@@ -215,11 +215,11 @@ class SimpleBridge(BaseBridge):
             - ``gt_pseudo_label`` is only used to evaluate the performance of the ``ABLModel`` but not
             to train. ``gt_pseudo_label`` can be ``None``.
             - ``Y`` is a list representing the ground truth reasoning result for each sublist in ``X``.
-        label_data : Optional[Union[ListData, Tuple[List[List[Any]], List[List[Any]], List[Any]]]]
+        label_data : Union[ListData, Tuple[List[List[Any]], List[List[Any]], List[Any]]], optional
             Labeled data should be in the same format as ``train_data``. The only difference is
             that the ``gt_pseudo_label`` in ``label_data`` should not be ``None`` and will be
             utilized to train the model. Defaults to None.
-        val_data : Optional[Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]]]]
+        val_data : Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]]], optional
             Validation data should be in the same format as ``train_data``. Both ``gt_pseudo_label``
             and ``Y`` can be either None or not, which depends on the evaluation metircs in
             ``self.metric_list``. If ``val_data`` is None, ``train_data`` will be used to validate the
@@ -233,10 +233,10 @@ class SimpleBridge(BaseBridge):
         eval_interval : int
             The model will be evaluated every ``eval_interval`` loops during training,
             by default 1.
-        save_interval : Optional[int]
+        save_interval : int, optional
             The model will be saved every ``eval_interval`` loops during training, by
             default None.
-        save_dir : Optional[str]
+        save_dir : str, optional
             Directory to save the model, by default None.
         """
         data_examples = self.data_preprocess("train", train_data)

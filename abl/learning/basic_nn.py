@@ -163,7 +163,10 @@ class BasicNN:
         return self
 
     def fit(
-        self, data_loader: DataLoader = None, X: List[Any] = None, y: List[int] = None
+        self, 
+        data_loader: Optional[DataLoader] = None, 
+        X: Optional[List[Any]] = None, 
+        y: Optional[List[int]] = None,
     ) -> BasicNN:
         """
         Train the model for self.num_epochs times or until the average loss on one epoch
@@ -267,7 +270,11 @@ class BasicNN:
 
         return torch.cat(results, axis=0)
 
-    def predict(self, data_loader: DataLoader = None, X: List[Any] = None) -> numpy.ndarray:
+    def predict(
+        self, 
+        data_loader: Optional[DataLoader] = None, 
+        X: Optional[List[Any]] = None,
+    ) -> numpy.ndarray:
         """
         Predict the class of the input data. This method supports prediction with either
         a DataLoader object (data_loader) or a list of input data (X). If both data_loader
@@ -304,7 +311,11 @@ class BasicNN:
             )
         return self._predict(data_loader).argmax(axis=1).cpu().numpy()
 
-    def predict_proba(self, data_loader: DataLoader = None, X: List[Any] = None) -> numpy.ndarray:
+    def predict_proba(
+        self, 
+        data_loader: Optional[DataLoader] = None, 
+        X: Optional[List[Any]] = None,
+    ) -> numpy.ndarray:
         """
         Predict the probability of each class for the input data. This method supports
         prediction with either a DataLoader object (data_loader) or a list of input data (X).
@@ -392,7 +403,10 @@ class BasicNN:
         return mean_loss, accuracy
 
     def score(
-        self, data_loader: DataLoader = None, X: List[Any] = None, y: List[int] = None
+        self, 
+        data_loader: Optional[DataLoader] = None, 
+        X: Optional[List[Any]] = None, 
+        y: Optional[List[int]] = None,
     ) -> float:
         """
         Validate the model. It supports validation with either a DataLoader object (data_loader)
@@ -431,7 +445,12 @@ class BasicNN:
         print_log(f"mean loss: {mean_loss:.3f}, accuray: {accuracy:.3f}", logger="current")
         return accuracy
 
-    def _data_loader(self, X: List[Any], y: List[int] = None, shuffle: bool = True) -> DataLoader:
+    def _data_loader(
+        self,
+        X: Optional[List[Any]], 
+        y: Optional[List[int]] = None, 
+        shuffle: Optional[bool] = True,
+    ) -> DataLoader:
         """
         Generate a DataLoader for user-provided input data and target labels.
 
@@ -467,7 +486,7 @@ class BasicNN:
         )
         return data_loader
 
-    def save(self, epoch_id: int = 0, save_path: str = None) -> None:
+    def save(self, epoch_id: int = 0, save_path: Optional[str] = None) -> None:
         """
         Save the model and the optimizer. User can either provide a save_path or specify
         the epoch_id at which the model and optimizer is saved. if both save_path and

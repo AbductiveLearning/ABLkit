@@ -24,7 +24,7 @@ class FilterDuplicateWarning(logging.Filter):
         The name of the filter, by default "abl".
     """
 
-    def __init__(self, name: str = "abl"):
+    def __init__(self, name: Optional[str] = "abl"):
         super().__init__(name)
         self.seen: set = set()
 
@@ -85,7 +85,7 @@ class ABLFormatter(logging.Formatter):
         self.info_format = f"%(asctime)s - %(name)s - {info_prefix} - %(" "message)s"
         self.debug_format = f"%(asctime)s - %(name)s - {debug_prefix} - %(" "message)s"
 
-    def _get_prefix(self, level: str, color: bool, blink=False) -> str:
+    def _get_prefix(self, level: str, color: bool, blink: Optional[bool] = False) -> str:
         """
         Get the prefix of the target log level.
 
@@ -192,8 +192,8 @@ class ABLLogger(Logger, ManagerMixin):
         name: str,
         logger_name="abl",
         log_file: Optional[str] = None,
-        log_level: Union[int, str] = "INFO",
-        file_mode: str = "w",
+        log_level: Optional[Union[int, str]] = "INFO",
+        file_mode: Optional[str] = "w",
     ):
         Logger.__init__(self, logger_name)
         ManagerMixin.__init__(self, name)
@@ -286,7 +286,11 @@ class ABLLogger(Logger, ManagerMixin):
         _release_lock()
 
 
-def print_log(msg, logger: Optional[Union[Logger, str]] = None, level=logging.INFO) -> None:
+def print_log(
+    msg, 
+    logger: Optional[Union[Logger, str]] = None, 
+    level: Optional[int] = logging.INFO,
+) -> None:
     """
     Print a log message using the specified logger or a default method.
 
@@ -297,7 +301,7 @@ def print_log(msg, logger: Optional[Union[Logger, str]] = None, level=logging.IN
     ----------
     msg : str
         The message to be logged.
-    logger : Optional[Union[Logger, str]], optional
+    logger : Union[Logger, str], optional
         The logger to use for logging the message. It can be a `logging.Logger` instance, a string
         specifying the logger name, 'silent', 'current', or None. If None, the `print`
         method is used.

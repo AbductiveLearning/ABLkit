@@ -1,4 +1,4 @@
-from typing import List, Any, Union, Tuple
+from typing import List, Any, Union, Tuple, Optional
 
 import numpy as np
 
@@ -62,7 +62,7 @@ def reform_list(
     return reformed_list
 
 
-def hamming_dist(pred_pseudo_label, candidates):
+def hamming_dist(pred_pseudo_label: List[Any], candidates: List[List[Any]]) -> np.ndarray:
     """
     Compute the Hamming distance between two arrays.
 
@@ -87,7 +87,7 @@ def hamming_dist(pred_pseudo_label, candidates):
     return np.sum(pred_pseudo_label != candidates, axis=1)
 
 
-def confidence_dist(pred_prob, candidates_idxs):
+def confidence_dist(pred_prob: List[np.ndarray], candidates_idxs: List[List[Any]]) -> np.ndarray:
     """
     Compute the confidence distance between prediction probabilities and candidates.
 
@@ -109,7 +109,7 @@ def confidence_dist(pred_prob, candidates_idxs):
     return 1 - np.prod(pred_prob[cols, candidates_idxs], axis=1)
 
 
-def to_hashable(x):
+def to_hashable(x: Union[List[Any], Any]) -> Union[Tuple[Any, ...], Any]:
     """
     Convert a nested list to a nested tuple so it is hashable.
 
@@ -148,7 +148,11 @@ def restore_from_hashable(x):
         return [restore_from_hashable(item) for item in x]
     return x
 
-def tab_data_to_tuple(X, y, reasoning_result = 0):
+def tab_data_to_tuple(
+    X: Union[List[Any], Any], 
+    y: Union[List[Any], Any], 
+    reasoning_result: Optional[Any] = 0
+) -> Tuple[List[List[Any]], List[List[Any]], List[Any]]:
     '''
     Convert a tabular data to a tuple by adding a dimension to each element of 
     X and y. The tuple contains three elements: data, label, and reasoning result.

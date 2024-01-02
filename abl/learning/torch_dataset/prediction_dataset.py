@@ -1,4 +1,4 @@
-from typing import Any, Callable, List, Tuple
+from typing import Any, Callable, List, Tuple, Optional
 
 import torch
 from torch.utils.data import Dataset
@@ -17,7 +17,7 @@ class PredictionDataset(Dataset):
         Defaults to None.
     """
 
-    def __init__(self, X: List[Any], transform: Callable[..., Any] = None):
+    def __init__(self, X: List[Any], transform: Optional[Callable[..., Any]] = None):
         if not isinstance(X, list):
             raise ValueError("X should be of type list.")
 

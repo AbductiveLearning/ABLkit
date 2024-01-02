@@ -21,7 +21,7 @@ class KBBase(ABC):
 
     Parameters
     ----------
-    pseudo_label_list : list
+    pseudo_label_list : List[Any]
         List of possible pseudo-labels. It's recommended to arrange the pseudo-labels in this
         list so that each aligns with its corresponding index in the base model: the first with
         the 0th index, the second with the 1st, and so forth.
@@ -51,11 +51,11 @@ class KBBase(ABC):
 
     def __init__(
         self,
-        pseudo_label_list: list,
-        max_err: float = 1e-10,
-        use_cache: bool = True,
-        key_func: Callable = to_hashable,
-        cache_size: int = 4096,
+        pseudo_label_list: List[Any],
+        max_err: Optional[float] = 1e-10,
+        use_cache: Optional[bool] = True,
+        key_func: Optional[Callable] = to_hashable,
+        cache_size: Optional[int] = 4096,
     ):
         if not isinstance(pseudo_label_list, list):
             raise TypeError(f"pseudo_label_list should be list, got {type(pseudo_label_list)}")
@@ -88,7 +88,7 @@ class KBBase(ABC):
         ----------
         pseudo_label : List[Any]
             Pseudo-labels of an example.
-        x : Optional[List[Any]]
+        x : List[Any], optional
             The example. If deductive logical reasoning does not require any 
             information from the example, the overridden function provided by the user can omit 
             this parameter.
@@ -288,9 +288,9 @@ class GroundKB(KBBase):
 
     Parameters
     ----------
-    pseudo_label_list : list
+    pseudo_label_list : List[Any]
         Refer to class ``KBBase``.
-    GKB_len_list : list
+    GKB_len_list : List[int]
         List of possible lengths for pseudo-labels of an example.
     max_err : float, optional
         Refer to class ``KBBase``.
@@ -304,7 +304,12 @@ class GroundKB(KBBase):
     abductive reasoning) will be automatically set up.
     """
 
-    def __init__(self, pseudo_label_list, GKB_len_list, max_err=1e-10):
+    def __init__(
+        self, 
+        pseudo_label_list: List[Any], 
+        GKB_len_list: List[int], 
+        max_err: Optional[float] = 1e-10,
+    ):
         super().__init__(pseudo_label_list, max_err)
         if not isinstance(GKB_len_list, list):
             raise TypeError("GKB_len_list should be list, but got {type(GKB_len_list)}")
@@ -445,12 +450,10 @@ class PrologKB(KBBase):
 
     Parameters
     ----------
-    pseudo_label_list : list
+    pseudo_label_list : List[Any]
         Refer to class ``KBBase``.
-    pl_file :
+    pl_file : str
         Prolog file containing the KB.
-    max_err : float, optional
-        Refer to class ``KBBase``.
 
     Notes
     -----
