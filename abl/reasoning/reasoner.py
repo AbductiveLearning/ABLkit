@@ -118,7 +118,7 @@ class Reasoner:
         data_example : ListData
             Data example.
         candidates : List[List[Any]]
-            Multiple compatible candidates.
+            Multiple possible candidates.
         reasoning_results : List[Any]
             Corresponding reasoning results of the candidates.
 
@@ -150,7 +150,7 @@ class Reasoner:
         data_example : ListData
             Data example.
         candidates : List[List[Any]]
-            Multiple compatible candidates.
+            Multiple possible candidates.
         reasoning_results : List[Any]
             Corresponding reasoning results of the candidates.
 
@@ -162,8 +162,8 @@ class Reasoner:
         if self.dist_func == "hamming":
             return hamming_dist(data_example.pred_pseudo_label, candidates)
         elif self.dist_func == "confidence":
-            candidates = [[self.label_to_idx[x] for x in c] for c in candidates]
-            return confidence_dist(data_example.pred_prob, candidates)
+            candidates_idxs = [[self.label_to_idx[x] for x in c] for c in candidates]
+            return confidence_dist(data_example.pred_prob, candidates_idxs)
         else:
             candidate_idxs = [[self.label_to_idx[x] for x in c] for c in candidates]
             cost_list = self.dist_func(data_example, candidates, candidate_idxs, reasoning_results)
