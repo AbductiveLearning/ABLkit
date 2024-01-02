@@ -35,7 +35,7 @@ class KBBase(ABC):
         operations. Defaults to True.
     key_func : Callable, optional
         A function employed for hashing in abl_cache. This is only operational when use_cache
-        is set to True. Defaults to to_hashable.
+        is set to True. Defaults to ``to_hashable``.
     cache_size: int, optional
         The cache size in abl_cache. This is only operational when use_cache is set to
         True. Defaults to 4096.
@@ -52,10 +52,10 @@ class KBBase(ABC):
     def __init__(
         self,
         pseudo_label_list: List[Any],
-        max_err: Optional[float] = 1e-10,
-        use_cache: Optional[bool] = True,
-        key_func: Optional[Callable] = to_hashable,
-        cache_size: Optional[int] = 4096,
+        max_err: float = 1e-10,
+        use_cache: bool = True,
+        key_func: Callable = to_hashable,
+        cache_size: int = 4096,
     ):
         if not isinstance(pseudo_label_list, list):
             raise TypeError(f"pseudo_label_list should be list, got {type(pseudo_label_list)}")
@@ -308,7 +308,7 @@ class GroundKB(KBBase):
         self, 
         pseudo_label_list: List[Any], 
         GKB_len_list: List[int], 
-        max_err: Optional[float] = 1e-10,
+        max_err: float = 1e-10,
     ):
         super().__init__(pseudo_label_list, max_err)
         if not isinstance(GKB_len_list, list):

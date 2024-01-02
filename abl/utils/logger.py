@@ -53,12 +53,13 @@ class ABLFormatter(logging.Formatter):
 
     Parameters
     ----------
-    color : bool
+    color : bool, optional
         Whether to use colorful format. filehandler is not
         allowed to use color format, otherwise it will be garbled.
-    blink : bool
+        Defaults to True.
+    blink : bool, optional
         Whether to blink the ``INFO`` and ``DEBUG`` logging
-        level.
+        level. Defaults to False.
     kwargs : dict
         Keyword arguments passed to
         :meth:``logging.Formatter.__init__``.
@@ -85,7 +86,7 @@ class ABLFormatter(logging.Formatter):
         self.info_format = f"%(asctime)s - %(name)s - {info_prefix} - %(" "message)s"
         self.debug_format = f"%(asctime)s - %(name)s - {debug_prefix} - %(" "message)s"
 
-    def _get_prefix(self, level: str, color: bool, blink: Optional[bool] = False) -> str:
+    def _get_prefix(self, level: str, color: bool, blink: bool = False) -> str:
         """
         Get the prefix of the target log level.
 
@@ -96,7 +97,7 @@ class ABLFormatter(logging.Formatter):
         color : bool
             Whether to get a colorful prefix.
         blink : bool, optional
-            Whether the prefix will blink.
+            Whether the prefix will blink. Defaults to False.
 
         Returns
         -------
@@ -192,8 +193,8 @@ class ABLLogger(Logger, ManagerMixin):
         name: str,
         logger_name="abl",
         log_file: Optional[str] = None,
-        log_level: Optional[Union[int, str]] = "INFO",
-        file_mode: Optional[str] = "w",
+        log_level: Union[int, str] = "INFO",
+        file_mode: str = "w",
     ):
         Logger.__init__(self, logger_name)
         ManagerMixin.__init__(self, name)
