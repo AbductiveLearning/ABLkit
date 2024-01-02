@@ -11,3 +11,4 @@ examples/**/*.jpg
 .idea/
 build/
 docs/API/generated/
+.history
