@@ -1,4 +1,4 @@
-numpy>=1.21.6,
+numpy>=1.15.0,
 pyswip>=0.2.9,
 torch>=1.11.0,
 torchvision>=0.12.0,

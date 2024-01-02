@@ -188,7 +188,7 @@ sklearn-style interface.
         cls,
         loss_fn,
         optimizer,
-        device,
+        device=device,
         batch_size=32,
         num_epochs=1,
         stop_loss=None,
