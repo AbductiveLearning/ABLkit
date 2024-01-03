@@ -27,7 +27,7 @@ sys.path.append(os.path.abspath("./ABL/"))
 project = "ABL"
 slug = re.sub(r"\W+", "-", project.lower())
 project = "ABL-Package"
-copyright = "2023, Author"
+copyright = "LAMDA, 2024"
 author = "Author"
 
 # -- General configuration ---------------------------------------------------
