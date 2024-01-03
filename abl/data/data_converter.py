@@ -80,3 +80,21 @@ class DataConverter:
             test_data_examples = ListData(X=X, gt_pseudo_label=gt_pseudo_label, Y=Y)
         
         return label_data_examples, train_data_examples, valid_data_examples, test_data_examples
+    
+if __name__ == '__main__':
+    from lambdaLearn.Dataset.Tabular.BreastCancer import BreastCancer
+    breast_dataset=BreastCancer(labeled_size=0.1, stratified=True, shuffle=True)
+    dataconverter = DataConverter()
+    
+    label_data, train_data, valid_data, test_data = dataconverter.convert_lambdalearn_to_tuple(breast_dataset, 0)
+    print(type(label_data).__name__, type(train_data).__name__, type(valid_data).__name__, type(test_data).__name__)
+    print(len(label_data))
+    print(len(label_data[0]), len(label_data[1]), len(label_data[2]))
+    print(label_data[0][0], label_data[1][0], label_data[2][0])
+    print()
+    
+    label_data_examples, train_data_examples, valid_data_examples, test_data_examples = dataconverter.convert_lambdalearn_to_listdata(breast_dataset, 0)
+    print(type(label_data_examples).__name__, type(train_data_examples).__name__, type(valid_data_examples).__name__, type(test_data_examples).__name__)
+    print(len(label_data_examples.X), len(label_data_examples.gt_pseudo_label), len(label_data_examples.Y))
+    label_data_example = label_data_examples[0]
+    print(label_data_example.X, label_data_example.gt_pseudo_label, label_data_example.Y)

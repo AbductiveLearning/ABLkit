@@ -5,6 +5,15 @@ import sys
 from docutils import nodes
 from docutils.parsers.rst import roles
 
+import re
+from sphinx.application import Sphinx
+
+def remove_noqa(app: Sphinx, what: str, name: str, obj, options, lines):
+    new_lines = []
+    for line in lines:
+        new_line = re.sub(r'\s*#\s*noqa.*$', '', line)
+        new_lines.append(new_line)
+    lines[:] = new_lines
 
 def colored_text_role(role, rawtext, text, lineno, inliner, options={}, content=[]):
     node = nodes.inline(rawtext, text, classes=[role])
@@ -86,7 +95,7 @@ texinfo_documents = [
 def setup(app):
     from sphinx.domains.python import PyField
     from sphinx.util.docfields import Field
-
+    app.connect('autodoc-process-docstring', remove_noqa)
     app.add_object_type(
         "confval",
         "confval",
