@@ -17,8 +17,8 @@ class ModelConverter:
         self,
         lambdalearn_model, 
         loss_fn: torch.nn.Module,
-        optimizer: torch.optim.Optimizer,
-        scheduler: Optional[Callable[..., Any]] = None,
+        optimizer_dict: dict,
+        scheduler_dict: Optional[dict] = None,
         device: Optional[torch.device] = None,
         batch_size: int = 32,
         num_epochs: int = 1,
@@ -39,11 +39,13 @@ class ModelConverter:
             The LambdaLearn model to be converted.
         loss_fn : torch.nn.Module
             The loss function used for training.
-        optimizer : torch.optim.Optimizer
-            The optimizer used for training.
-        scheduler : Callable[..., Any], optional
-            The learning rate scheduler used for training, which will be called
-            at the end of each run of the ``fit`` method. It should implement the
+        optimizer_dict : dict
+            The dict contains necessary parameters to construct a optimizer used for training.
+            The optimizer class is specified by the ``optimizer`` key.
+        scheduler_dict : dict, optional
+            The dict contains necessary parameters to construct a learning rate scheduler used
+            for training, which will be called at the end of each run of the ``fit`` method.
+            The scheduler class is specified by the ``scheduler`` key. It should implement the
             ``step`` method, by default None.
         device : torch.device, optional
             The device on which the model will be trained or used for prediction,
@@ -75,7 +77,7 @@ class ModelConverter:
             The converted ABLModel instance.
         '''
         if isinstance(lambdalearn_model, DeepModelMixin):
-            base_model = self.convert_lambdalearn_to_basicnn(lambdalearn_model, loss_fn, optimizer, scheduler, device, batch_size, num_epochs, stop_loss, num_workers, save_interval, save_dir, train_transform, test_transform, collate_fn)
+            base_model = self.convert_lambdalearn_to_basicnn(lambdalearn_model, loss_fn, optimizer_dict, scheduler_dict, device, batch_size, num_epochs, stop_loss, num_workers, save_interval, save_dir, train_transform, test_transform, collate_fn)
             return ABLModel(base_model)
                 
         if not (hasattr(lambdalearn_model, "fit") and hasattr(lambdalearn_model, "predict")):
@@ -88,8 +90,8 @@ class ModelConverter:
         self,
         lambdalearn_model: DeepModelMixin,
         loss_fn: torch.nn.Module,
-        optimizer: torch.optim.Optimizer,
-        scheduler: Optional[Callable[..., Any]] = None,
+        optimizer_dict: dict,
+        scheduler_dict: Optional[dict] = None,
         device: Optional[torch.device] = None,
         batch_size: int = 32,
         num_epochs: int = 1,
@@ -110,11 +112,12 @@ class ModelConverter:
             The LambdaLearn model to be converted.
         loss_fn : torch.nn.Module
             The loss function used for training.
-        optimizer : torch.optim.Optimizer
-            The optimizer used for training.
-        scheduler : Callable[..., Any], optional
-            The learning rate scheduler used for training, which will be called
-            at the end of each run of the ``fit`` method. It should implement the
+        optimizer_dict : dict
+            The dict contains necessary parameters to construct a optimizer used for training.
+        scheduler_dict : dict, optional
+            The dict contains necessary parameters to construct a learning rate scheduler used
+            for training, which will be called at the end of each run of the ``fit`` method.
+            The scheduler class is specified by the ``scheduler`` key. It should implement the
             ``step`` method, by default None.
         device : torch.device, optional
             The device on which the model will be trained or used for prediction,
@@ -150,6 +153,15 @@ class ModelConverter:
                 raise NotImplementedError(f"Expected lambdalearn_model.network to be a torch.nn.Module, but got {type(lambdalearn_model.network)}")
             # Only use the network part and device of the lambdalearn model
             network = copy.deepcopy(lambdalearn_model.network)
+            optimizer_class = optimizer_dict["optimizer"]
+            optimizer_dict.pop("optimizer")
+            optimizer = optimizer_class(network.parameters(), **optimizer_dict)
+            if scheduler_dict is not None:
+                scheduler_class = scheduler_dict["scheduler"]
+                scheduler_dict.pop("scheduler")
+                scheduler = scheduler_class(optimizer, **scheduler_dict)
+            else:
+                scheduler = None
             device = lambdalearn_model.device if device is None else device
             base_model = BasicNN(model=network, loss_fn=loss_fn, optimizer=optimizer, scheduler=scheduler, device=device, batch_size=batch_size, num_epochs=num_epochs, stop_loss=stop_loss, num_workers=num_workers, save_interval=save_interval, save_dir=save_dir, train_transform=train_transform, test_transform=test_transform, collate_fn=collate_fn)
             return base_model
