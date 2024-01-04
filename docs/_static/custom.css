@@ -1,0 +1,24 @@
+div.code-out > div.highlight > pre {
+    background-color: #d3effd !important; 
+}
+.green-bold {
+    color: green; 
+    font-weight: bold;
+}
+.blue-bold {
+    color: blue;
+    font-weight: bold;
+}
+.yellow-bold {
+    color: rgb(255, 192, 0);
+    font-weight: bold;
+}
+.green {
+    color: green;
+}
+.blue {
+    color: blue;
+}
+.yellow {
+    color: rgb(255, 192, 0);
+}
