@@ -5,6 +5,7 @@ from torchvision.transforms import transforms
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 
+
 def get_dataset(train=True, get_pseudo_label=True):
     transform = transforms.Compose(
         [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]

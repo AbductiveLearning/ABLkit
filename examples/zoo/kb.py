@@ -11,18 +11,27 @@ class ZooKB(KBBase):
         self.solver = Solver()
 
         # Load information of Zoo dataset
-        dataset = openml.datasets.get_dataset(dataset_id = 62, download_data=False, download_qualities=False, download_features_meta_data=False)
-        X, y, categorical_indicator, attribute_names = dataset.get_data(target=dataset.default_target_attribute)
+        dataset = openml.datasets.get_dataset(
+            dataset_id=62,
+            download_data=False,
+            download_qualities=False,
+            download_features_meta_data=False,
+        )
+        X, y, categorical_indicator, attribute_names = dataset.get_data(
+            target=dataset.default_target_attribute
+        )
         self.attribute_names = attribute_names
         self.target_names = y.cat.categories.tolist()
         # print("Attribute names are: ", self.attribute_names)
         # print("Target names are: ", self.target_names)
-        # self.attribute_names = ["hair", "feathers", "eggs", "milk", "airborne", "aquatic", "predator", "toothed", "backbone", "breathes", "venomous", "fins", "legs", "tail", "domestic", "catsize"]
-        # self.target_names = ["mammal", "bird", "reptile", "fish", "amphibian", "insect", "invertebrate"]
+        # self.attribute_names = ["hair", "feathers", "eggs", "milk", "airborne", "aquatic", "predator", "toothed", "backbone", "breathes", "venomous", "fins", "legs", "tail", "domestic", "catsize"] # noqa: E501
+        # self.target_names = ["mammal", "bird", "reptile", "fish", "amphibian", "insect", "invertebrate"] # noqa: E501
 
         # Define variables
-        for name in self.attribute_names+self.target_names:
-            exec(f"globals()['{name}'] = Int('{name}')") ## or use dict to create var and modify rules
+        for name in self.attribute_names + self.target_names:
+            exec(
+                f"globals()['{name}'] = Int('{name}')"
+            )  # or use dict to create var and modify rules
         # Define rules
         rules = [
             Implies(milk == 1, mammal == 1),
@@ -54,11 +63,13 @@ class ZooKB(KBBase):
             Implies(insect == 1, eggs == 1),
             Implies(insect == 1, Not(backbone == 1)),
             Implies(insect == 1, legs == 6),
-            Implies(invertebrate == 1, Not(backbone == 1))
+            Implies(invertebrate == 1, Not(backbone == 1)),
         ]
         # Define weights and sum of violated weights
         self.weights = {rule: 1 for rule in rules}
-        self.total_violation_weight = Sum([If(Not(rule), self.weights[rule], 0) for rule in self.weights])
+        self.total_violation_weight = Sum(
+            [If(Not(rule), self.weights[rule], 0) for rule in self.weights]
+        )
 
     def logic_forward(self, pseudo_label, data_point):
         attribute_names, target_names = self.attribute_names, self.target_names
@@ -69,7 +80,7 @@ class ZooKB(KBBase):
         self.solver.reset()
         for name, value in zip(attribute_names, data_point):
             solver.add(eval(f"{name} == {value}"))
-        for cate, name in zip(self.pseudo_label_list,target_names):
+        for cate, name in zip(self.pseudo_label_list, target_names):
             value = 1 if (cate == pseudo_label) else 0
             solver.add(eval(f"{name} == {value}"))
 

@@ -26,7 +26,7 @@ class KBBase(ABC):
         list so that each aligns with its corresponding index in the base model: the first with
         the 0th index, the second with the 1st, and so forth.
     max_err : float, optional
-        The upper tolerance limit when comparing the similarity between the reasoning result of 
+        The upper tolerance limit when comparing the similarity between the reasoning result of
         pseudo-labels and the ground truth. This is only applicable when the reasoning
         result is of a numerical type. This is particularly relevant for regression problems where
         exact matches might not be feasible. Defaults to 1e-10.
@@ -65,10 +65,12 @@ class KBBase(ABC):
         self.use_cache = use_cache
         self.key_func = key_func
         self.cache_size = cache_size
-        
+
         argspec = inspect.getfullargspec(self.logic_forward)
         self._num_args = len(argspec.args) - 1
-        if self._num_args==2 and self.use_cache: # If the logic_forward function has 2 arguments, then disable cache
+        if (
+            self._num_args == 2 and self.use_cache
+        ):  # If the logic_forward function has 2 arguments, then disable cache
             self.use_cache = False
             print_log(
                 "The logic_forward function has 2 arguments, so the cache is disabled. ",
@@ -89,10 +91,10 @@ class KBBase(ABC):
         pseudo_label : List[Any]
             Pseudo-labels of an example.
         x : List[Any], optional
-            The example. If deductive logical reasoning does not require any 
-            information from the example, the overridden function provided by the user can omit 
+            The example. If deductive logical reasoning does not require any
+            information from the example, the overridden function provided by the user can omit
             this parameter.
-        
+
         Returns
         -------
         Any
@@ -100,11 +102,11 @@ class KBBase(ABC):
         """
 
     def abduce_candidates(
-        self, 
-        pseudo_label: List[Any], 
-        y: Any, 
-        x: List[Any], 
-        max_revision_num: int, 
+        self,
+        pseudo_label: List[Any],
+        y: Any,
+        x: List[Any],
+        max_revision_num: int,
         require_more_revision: int,
     ) -> List[List[Any]]:
         """
@@ -118,7 +120,7 @@ class KBBase(ABC):
             Ground truth of the reasoning result for the example.
         x : List[Any]
             The example. If the information from the example
-            is not required in the reasoning process, then this parameter will not have 
+            is not required in the reasoning process, then this parameter will not have
             any effect.
         max_revision_num : int
             The upper limit on the number of revised labels for each example.
@@ -129,9 +131,9 @@ class KBBase(ABC):
         -------
         Tuple[List[List[Any]], List[Any]]
             A tuple of two element. The first element is a list of candidate revisions, i.e. revised
-            pseudo-labels of the example. that are compatible with the knowledge base. The second element is 
-            a list of reasoning results corresponding to each candidate, i.e., the outcome of the 
-            logic_forward function.
+            pseudo-labels of the example. that are compatible with the knowledge base. The second
+            element is a list of reasoning results corresponding to each candidate, i.e., the
+            outcome of the ``logic_forward`` function.
         """
         return self._abduce_by_search(pseudo_label, y, x, max_revision_num, require_more_revision)
 
@@ -154,10 +156,10 @@ class KBBase(ABC):
             return reasoning_result == y
 
     def revise_at_idx(
-        self, 
-        pseudo_label: List[Any], 
-        y: Any, 
-        x: List[Any], 
+        self,
+        pseudo_label: List[Any],
+        y: Any,
+        x: List[Any],
         revision_idx: List[int],
     ) -> List[List[Any]]:
         """
@@ -171,7 +173,7 @@ class KBBase(ABC):
             Ground truth of the reasoning result for the example.
         x : List[Any]
             The example. If the information from the example
-            is not required in the reasoning process, then this parameter will not have 
+            is not required in the reasoning process, then this parameter will not have
             any effect.
         revision_idx : List[int]
             A list specifying indices of where revisions should be made to the pseudo-labels.
@@ -180,9 +182,9 @@ class KBBase(ABC):
         -------
         Tuple[List[List[Any]], List[Any]]
             A tuple of two element. The first element is a list of candidate revisions, i.e. revised
-            pseudo-labels of the example that are compatible with the knowledge base. The second element is 
-            a list of reasoning results corresponding to each candidate, i.e., the outcome of the 
-            logic_forward function.
+            pseudo-labels of the example that are compatible with the knowledge base. The second
+            element is a list of reasoning results corresponding to each candidate, i.e., the
+            outcome of the ``logic_forward`` function.
         """
         candidates, reasoning_results = [], []
         abduce_c = product(self.pseudo_label_list, repeat=len(revision_idx))
@@ -192,14 +194,15 @@ class KBBase(ABC):
                 candidate[idx] = c[i]
             reasoning_result = self.logic_forward(candidate, *(x,) if self._num_args == 2 else ())
             if self._check_equal(reasoning_result, y):
-                candidates.append(candidate); reasoning_results.append(reasoning_result)
+                candidates.append(candidate)
+                reasoning_results.append(reasoning_result)
         return candidates, reasoning_results
 
     def _revision(
-        self, 
-        revision_num: int, 
-        pseudo_label: List[Any], 
-        y: Any, 
+        self,
+        revision_num: int,
+        pseudo_label: List[Any],
+        y: Any,
         x: List[Any],
     ) -> List[List[Any]]:
         """
@@ -210,16 +213,17 @@ class KBBase(ABC):
         revision_idx_list = combinations(range(len(pseudo_label)), revision_num)
         for revision_idx in revision_idx_list:
             candidates, reasoning_results = self.revise_at_idx(pseudo_label, y, x, revision_idx)
-            new_candidates.extend(candidates); new_reasoning_results.extend(reasoning_results)
+            new_candidates.extend(candidates)
+            new_reasoning_results.extend(reasoning_results)
         return new_candidates, new_reasoning_results
 
     @abl_cache()
     def _abduce_by_search(
-        self, 
-        pseudo_label: List[Any], 
-        y: Any, 
-        x: List[Any], 
-        max_revision_num: int, 
+        self,
+        pseudo_label: List[Any],
+        y: Any,
+        x: List[Any],
+        max_revision_num: int,
         require_more_revision: int,
     ) -> List[List[Any]]:
         """
@@ -235,7 +239,7 @@ class KBBase(ABC):
             Ground truth of the reasoning result for the example.
         x : List[Any]
             The example. If the information from the example
-            is not required in the reasoning process, then this parameter will not have 
+            is not required in the reasoning process, then this parameter will not have
             any effect.
         max_revision_num : int
             The upper limit on the number of revisions.
@@ -248,14 +252,15 @@ class KBBase(ABC):
         -------
         Tuple[List[List[Any]], List[Any]]
             A tuple of two element. The first element is a list of candidate revisions, i.e. revised
-            pseudo-labels of the example that are compatible with the knowledge base. The second element is 
-            a list of reasoning results corresponding to each candidate, i.e., the outcome of the 
-            logic_forward function.
+            pseudo-labels of the example that are compatible with the knowledge base. The second
+            element is a list of reasoning results corresponding to each candidate, i.e., the
+            outcome of the ``logic_forward`` function.
         """
         candidates, reasoning_results = [], []
         for revision_num in range(len(pseudo_label) + 1):
             new_candidates, new_reasoning_results = self._revision(revision_num, pseudo_label, y, x)
-            candidates.extend(new_candidates); reasoning_results.extend(new_reasoning_results)
+            candidates.extend(new_candidates)
+            reasoning_results.extend(new_reasoning_results)
             if len(candidates) > 0:
                 min_revision_num = revision_num
                 break
@@ -268,7 +273,8 @@ class KBBase(ABC):
             if revision_num > max_revision_num:
                 return candidates, reasoning_results
             new_candidates, new_reasoning_results = self._revision(revision_num, pseudo_label, y, x)
-            candidates.extend(new_candidates); reasoning_results.extend(new_reasoning_results)
+            candidates.extend(new_candidates)
+            reasoning_results.extend(new_reasoning_results)
         return candidates, reasoning_results
 
     def __repr__(self):
@@ -305,16 +311,19 @@ class GroundKB(KBBase):
     """
 
     def __init__(
-        self, 
-        pseudo_label_list: List[Any], 
-        GKB_len_list: List[int], 
+        self,
+        pseudo_label_list: List[Any],
+        GKB_len_list: List[int],
         max_err: float = 1e-10,
     ):
         super().__init__(pseudo_label_list, max_err)
         if not isinstance(GKB_len_list, list):
             raise TypeError("GKB_len_list should be list, but got {type(GKB_len_list)}")
-        if self._num_args==2:
-            raise NotImplementedError(f"GroundKB only supports 1-argument logic_forward, but got {self._num_args}-argument logic_forward")
+        if self._num_args == 2:
+            raise NotImplementedError(
+                "GroundKB only supports 1-argument logic_forward, but got "
+                + f"{self._num_args}-argument logic_forward"
+            )
         self.GKB_len_list = GKB_len_list
         self.GKB = {}
         X, Y = self._get_GKB()
@@ -354,11 +363,11 @@ class GroundKB(KBBase):
         return X, Y
 
     def abduce_candidates(
-        self, 
-        pseudo_label: List[Any], 
-        y: Any, 
-        x: List[Any], 
-        max_revision_num: int, 
+        self,
+        pseudo_label: List[Any],
+        y: Any,
+        x: List[Any],
+        max_revision_num: int,
         require_more_revision: int,
     ) -> List[List[Any]]:
         """
@@ -383,9 +392,9 @@ class GroundKB(KBBase):
         -------
         Tuple[List[List[Any]], List[Any]]
             A tuple of two element. The first element is a list of candidate revisions, i.e. revised
-            pseudo-labels of THE example that are compatible with the knowledge base. The second element is 
-            a list of reasoning results corresponding to each candidate, i.e., the outcome of the 
-            logic_forward function.
+            pseudo-labels of the example that are compatible with the knowledge base. The second
+            element is a list of reasoning results corresponding to each candidate, i.e., the
+            outcome of the ``logic_forward`` function.
         """
         if self.GKB == {} or len(pseudo_label) not in self.GKB_len_list:
             return [], []
@@ -418,7 +427,8 @@ class GroundKB(KBBase):
             all_candidates, all_reasoning_results = [], []
             for key in key_list[low_key:high_key]:
                 for candidate in potential_candidates[key]:
-                    all_candidates.append(candidate); all_reasoning_results.append(key)
+                    all_candidates.append(candidate)
+                    all_reasoning_results.append(key)
         else:
             all_candidates = self.GKB[len(pseudo_label)][y]
             all_reasoning_results = [y] * len(all_candidates)
@@ -468,14 +478,17 @@ class PrologKB(KBBase):
 
     def __init__(self, pseudo_label_list: List[Any], pl_file: str):
         super().__init__(pseudo_label_list)
-        
+
         try:
             import pyswip
         except (IndexError, ImportError):
-            print("A Prolog-based knowledge base is in use. Please install Swi-Prolog \
-                   using the command 'sudo apt-get install swi-prolog' for Linux users, \
-                   or download it following the guide in https://github.com/yuce/pyswip/blob/master/INSTALL.md for Windows and Mac users.")
-        
+            print(
+                "A Prolog-based knowledge base is in use. Please install Swi-Prolog using the"
+                + "command 'sudo apt-get install swi-prolog' for Linux users, or download it "
+                + "following the guide in https://github.com/yuce/pyswip/blob/master/INSTALL.md "
+                + "for Windows and Mac users."
+            )
+
         self.prolog = pyswip.Prolog()
         self.pl_file = pl_file
         if not os.path.exists(self.pl_file):
@@ -519,9 +532,9 @@ class PrologKB(KBBase):
         return re.sub(regex, lambda x: x.group().replace("'", ""), str(revision_pseudo_label))
 
     def get_query_string(
-        self, 
-        pseudo_label: List[Any], 
-        y: Any, 
+        self,
+        pseudo_label: List[Any],
+        y: Any,
         x: List[Any],
         revision_idx: List[int],
     ) -> str:
@@ -538,8 +551,8 @@ class PrologKB(KBBase):
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
-            The corresponding input example. If the information from the input 
-            is not required in the reasoning process, then this parameter will not have 
+            The corresponding input example. If the information from the input
+            is not required in the reasoning process, then this parameter will not have
             any effect.
         revision_idx : List[int]
             A list specifying indices of where revisions should be made to the pseudo-labels.
@@ -556,10 +569,10 @@ class PrologKB(KBBase):
         return query_string
 
     def revise_at_idx(
-        self, 
-        pseudo_label: List[Any], 
-        y: Any, 
-        x: List[Any], 
+        self,
+        pseudo_label: List[Any],
+        y: Any,
+        x: List[Any],
         revision_idx: List[int],
     ) -> List[List[Any]]:
         """
@@ -572,8 +585,8 @@ class PrologKB(KBBase):
         y : Any
             Ground truth of the reasoning result for the example.
         x : List[Any]
-            The corresponding input example. If the information from the input 
-            is not required in the reasoning process, then this parameter will not have 
+            The corresponding input example. If the information from the input
+            is not required in the reasoning process, then this parameter will not have
             any effect.
         revision_idx : List[int]
             A list specifying indices of where revisions should be made to the pseudo-labels.
@@ -581,12 +594,10 @@ class PrologKB(KBBase):
         Returns
         -------
         Tuple[List[List[Any]], List[Any]]
-            A list of candidates, i.e. revised pseudo-labels of the example that are compatible with the
-            knowledge base.
             A tuple of two element. The first element is a list of candidate revisions, i.e. revised
-            pseudo-labels of the example that are compatible with the knowledge base. The second element is 
-            a list of reasoning results corresponding to each candidate, i.e., the outcome of the 
-            logic_forward function.
+            pseudo-labels of the example that are compatible with the knowledge base. The second
+            element is a list of reasoning results corresponding to each candidate, i.e., the
+            outcome of the ``logic_forward`` function.
         """
         candidates, reasoning_results = [], []
         query_string = self.get_query_string(pseudo_label, y, x, revision_idx)
@@ -598,7 +609,8 @@ class PrologKB(KBBase):
             for i, idx in enumerate(revision_idx):
                 candidate[idx] = c[i]
             candidate = reform_list(candidate, save_pseudo_label)
-            candidates.append(candidate); reasoning_results.append(y)
+            candidates.append(candidate)
+            reasoning_results.append(y)
         return candidates, reasoning_results
 
     def __repr__(self):

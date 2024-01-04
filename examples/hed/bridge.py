@@ -247,7 +247,7 @@ class HedBridge(SimpleBridge):
                                 logger="current",
                             )
                             self.model.load(
-                                load_path=os.path.join(save_dir, f"pretrain_weights.pth")
+                                load_path=os.path.join(save_dir, "pretrain_weights.pth")
                             )
                         else:
                             self.model.load(

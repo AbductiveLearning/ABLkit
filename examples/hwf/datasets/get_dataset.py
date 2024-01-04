@@ -10,26 +10,31 @@ CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 img_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (1,))])
 
+
 def download_and_unzip(url, zip_file_name):
     try:
         gdown.download(url, zip_file_name)
-        with zipfile.ZipFile(zip_file_name, 'r') as zip_ref:
+        with zipfile.ZipFile(zip_file_name, "r") as zip_ref:
             zip_ref.extractall(CURRENT_DIR)
         os.remove(zip_file_name)
     except Exception as e:
         if os.path.exists(zip_file_name):
             os.remove(zip_file_name)
-        raise Exception(f"An error occurred during download or unzip: {e}. Instead, you can download the dataset from {url} and unzip it in 'examples/hwf/datasets' folder")
+        raise Exception(
+            f"An error occurred during download or unzip: {e}. Instead, you can download "
+            + f"the dataset from {url} and unzip it in 'examples/hwf/datasets' folder"
+        )
+
 
 def get_dataset(train=True, get_pseudo_label=False):
-    data_dir = CURRENT_DIR + '/data'
-    
+    data_dir = CURRENT_DIR + "/data"
+
     if not os.path.exists(data_dir):
         print("Dataset not exist, downloading it...")
-        url = 'https://drive.google.com/u/0/uc?id=1G07kw-wK-rqbg_85tuB7FNfA49q8lvoy&export=download'
+        url = "https://drive.google.com/u/0/uc?id=1G07kw-wK-rqbg_85tuB7FNfA49q8lvoy&export=download"
         download_and_unzip(url, os.path.join(CURRENT_DIR, "HWF.zip"))
         print("Download and extraction complete.")
-    
+
     if train:
         file = os.path.join(data_dir, "expr_train.json")
     else:
@@ -59,4 +64,4 @@ def get_dataset(train=True, get_pseudo_label=False):
                 pseudo_label.append(imgs_pseudo_label)
             Y.append(data[idx]["res"])
 
-    return X, pseudo_label, Y    
+    return X, pseudo_label, Y

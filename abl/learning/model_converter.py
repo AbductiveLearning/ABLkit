@@ -6,16 +6,18 @@ from .abl_model import ABLModel
 from .basic_nn import BasicNN
 from lambdaLearn.Base.DeepModelMixin import DeepModelMixin
 
+
 class ModelConverter:
-    '''
+    """
     This class provides functionality to convert LambdaLearn models to ABL-Package models.
-    '''
+    """
+
     def __init__(self) -> None:
         pass
-    
+
     def convert_lambdalearn_to_ablmodel(
         self,
-        lambdalearn_model, 
+        lambdalearn_model,
         loss_fn: torch.nn.Module,
         optimizer_dict: dict,
         scheduler_dict: Optional[dict] = None,
@@ -28,11 +30,13 @@ class ModelConverter:
         save_dir: Optional[str] = None,
         train_transform: Callable[..., Any] = None,
         test_transform: Callable[..., Any] = None,
-        collate_fn: Callable[[List[Any]], Any] = None
+        collate_fn: Callable[[List[Any]], Any] = None,
     ):
-        '''
-        Convert a lambdalearn model to an ABLModel. If the lambdalearn model is an instance of DeepModelMixin, its network will be used as the model of BasicNN. Otherwise, the lambdalearn model should implement fit and predict methods.
-        
+        """
+        Convert a lambdalearn model to an ABLModel. If the lambdalearn model is an instance of
+        DeepModelMixin, its network will be used as the model of BasicNN. Otherwise, the lambdalearn
+        model should implement ``fit`` and ``predict`` methods.
+
         Parameters
         ----------
         lambdalearn_model : Union[DeepModelMixin, Any]
@@ -75,17 +79,34 @@ class ModelConverter:
         -------
         ABLModel
             The converted ABLModel instance.
-        '''
+        """
         if isinstance(lambdalearn_model, DeepModelMixin):
-            base_model = self.convert_lambdalearn_to_basicnn(lambdalearn_model, loss_fn, optimizer_dict, scheduler_dict, device, batch_size, num_epochs, stop_loss, num_workers, save_interval, save_dir, train_transform, test_transform, collate_fn)
+            base_model = self.convert_lambdalearn_to_basicnn(
+                lambdalearn_model,
+                loss_fn,
+                optimizer_dict,
+                scheduler_dict,
+                device,
+                batch_size,
+                num_epochs,
+                stop_loss,
+                num_workers,
+                save_interval,
+                save_dir,
+                train_transform,
+                test_transform,
+                collate_fn,
+            )
             return ABLModel(base_model)
-                
+
         if not (hasattr(lambdalearn_model, "fit") and hasattr(lambdalearn_model, "predict")):
-            raise NotImplementedError("The lambdalearn_model should be an instance of DeepModelMixin, or implement fit and predict methods.")
-        
+            raise NotImplementedError(
+                "The lambdalearn_model should be an instance of DeepModelMixin, or implement "
+                + "fit and predict methods."
+            )
+
         return ABLModel(lambdalearn_model)
-    
-    
+
     def convert_lambdalearn_to_basicnn(
         self,
         lambdalearn_model: DeepModelMixin,
@@ -103,9 +124,10 @@ class ModelConverter:
         test_transform: Callable[..., Any] = None,
         collate_fn: Callable[[List[Any]], Any] = None,
     ):
-        '''
-        Convert a lambdalearn model to a BasicNN. If the lambdalearn model is an instance of DeepModelMixin, its network will be used as the model of BasicNN.
-        
+        """
+        Convert a lambdalearn model to a BasicNN. If the lambdalearn model is an instance of
+        DeepModelMixin, its network will be used as the model of BasicNN.
+
         Parameters
         ----------
         lambdalearn_model : Union[DeepModelMixin, Any]
@@ -147,10 +169,13 @@ class ModelConverter:
         -------
         BasicNN
             The converted BasicNN instance.
-        '''
+        """
         if isinstance(lambdalearn_model, DeepModelMixin):
             if not isinstance(lambdalearn_model.network, torch.nn.Module):
-                raise NotImplementedError(f"Expected lambdalearn_model.network to be a torch.nn.Module, but got {type(lambdalearn_model.network)}")
+                raise NotImplementedError(
+                    "Expected lambdalearn_model.network to be a torch.nn.Module, "
+                    + f"but got {type(lambdalearn_model.network)}"
+                )
             # Only use the network part and device of the lambdalearn model
             network = copy.deepcopy(lambdalearn_model.network)
             optimizer_class = optimizer_dict["optimizer"]
@@ -163,7 +188,24 @@ class ModelConverter:
             else:
                 scheduler = None
             device = lambdalearn_model.device if device is None else device
-            base_model = BasicNN(model=network, loss_fn=loss_fn, optimizer=optimizer, scheduler=scheduler, device=device, batch_size=batch_size, num_epochs=num_epochs, stop_loss=stop_loss, num_workers=num_workers, save_interval=save_interval, save_dir=save_dir, train_transform=train_transform, test_transform=test_transform, collate_fn=collate_fn)
+            base_model = BasicNN(
+                model=network,
+                loss_fn=loss_fn,
+                optimizer=optimizer,
+                scheduler=scheduler,
+                device=device,
+                batch_size=batch_size,
+                num_epochs=num_epochs,
+                stop_loss=stop_loss,
+                num_workers=num_workers,
+                save_interval=save_interval,
+                save_dir=save_dir,
+                train_transform=train_transform,
+                test_transform=test_transform,
+                collate_fn=collate_fn,
+            )
             return base_model
         else:
-            raise NotImplementedError("The lambdalearn_model should be an instance of DeepModelMixin.")
+            raise NotImplementedError(
+                "The lambdalearn_model should be an instance of DeepModelMixin."
+            )

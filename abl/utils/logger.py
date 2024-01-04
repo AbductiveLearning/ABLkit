@@ -168,9 +168,11 @@ class ABLLogger(Logger, ManagerMixin):
     Notes
     -----
     - The ``name`` of the logger and the ``instance_name`` of ``ABLLogger`` could be different.
-      ``ABLLogger`` instances are retrieved using ``ABLLogger.get_instance``, not ``logging.getLogger``.
-      This ensures ``ABLLogger`` is not influenced by third-party logging configurations.
-    - Unlike ``logging.Logger``, ``ABLLogger`` will not log warning or error messages without ``Handler``.
+      ``ABLLogger`` instances are retrieved using ``ABLLogger.get_instance``, not
+      ``logging.getLogger``. This ensures ``ABLLogger`` is not influenced by third-party logging
+      configurations.
+    - Unlike ``logging.Logger``, ``ABLLogger`` will not log warning or error messages without
+      ``Handler``.
 
     Examples
     --------
@@ -288,15 +290,16 @@ class ABLLogger(Logger, ManagerMixin):
 
 
 def print_log(
-    msg, 
-    logger: Optional[Union[Logger, str]] = None, 
+    msg,
+    logger: Optional[Union[Logger, str]] = None,
     level: Optional[int] = logging.INFO,
 ) -> None:
     """
     Print a log message using the specified logger or a default method.
 
     This function logs a message with a given logger, if provided, or prints it using
-    the standard ``print`` function. It supports special logger types such as 'silent' and 'current'.
+    the standard ``print`` function. It supports special logger types such as 'silent'
+    and 'current'.
 
     Parameters
     ----------
@@ -308,8 +311,8 @@ def print_log(
         method is used.
         - 'silent': No message will be printed.
         - 'current': Use the latest created logger to log the message.
-        - other str: The instance name of the logger. A ``ValueError`` is raised if the logger has not
-        been created.
+        - other str: The instance name of the logger. A ``ValueError`` is raised if the logger has
+        not been created.
         - None: The ``print()`` method is used for logging.
     level : int, optional
         The logging level. This is only applicable when ``logger`` is a Logger object, 'current',

@@ -12,16 +12,20 @@ from torchvision.transforms import transforms
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 
+
 def download_and_unzip(url, zip_file_name):
     try:
         gdown.download(url, zip_file_name)
-        with zipfile.ZipFile(zip_file_name, 'r') as zip_ref:
+        with zipfile.ZipFile(zip_file_name, "r") as zip_ref:
             zip_ref.extractall(CURRENT_DIR)
         os.remove(zip_file_name)
     except Exception as e:
         if os.path.exists(zip_file_name):
             os.remove(zip_file_name)
-        raise Exception(f"An error occurred during download or unzip: {e}. Instead, you can download the dataset from {url} and unzip it in 'examples/hed/datasets' folder")
+        raise Exception(
+            f"An error occurred during download or unzip: {e}. Instead, you can download "
+            + f"the dataset from {url} and unzip it in 'examples/hed/datasets' folder"
+        )
 
 
 def get_pretrain_data(labels, image_size=(28, 28, 1)):
@@ -33,7 +37,7 @@ def get_pretrain_data(labels, image_size=(28, 28, 1)):
         img_path_list = os.listdir(label_path)
         for img_path in img_path_list:
             with Image.open(osp.join(label_path, img_path)) as img:
-                img = img.convert('L')
+                img = img.convert("L")
                 img = img.resize((image_size[1], image_size[0]))
                 img_array = np.array(img, dtype=np.float32)
                 normalized_img = (img_array - 127) / 128.0
@@ -72,19 +76,19 @@ def split_equation(equations_by_len, prop_train, prop_val):
 
 
 def get_dataset(dataset="mnist", train=True):
-    data_dir = CURRENT_DIR + '/mnist_images'
-    
+    data_dir = CURRENT_DIR + "/mnist_images"
+
     if not os.path.exists(data_dir):
         print("Dataset not exist, downloading it...")
-        url = 'https://drive.google.com/u/0/uc?id=1XoJDjO3cNUdytqVgXUKOBe9dOcUBobom&export=download'
+        url = "https://drive.google.com/u/0/uc?id=1XoJDjO3cNUdytqVgXUKOBe9dOcUBobom&export=download"
         download_and_unzip(url, os.path.join(CURRENT_DIR, "HED.zip"))
         print("Download and extraction complete.")
-    
+
     if train:
         file = os.path.join(data_dir, "expr_train.json")
     else:
         file = os.path.join(data_dir, "expr_test.json")
-    
+
     if dataset == "mnist":
         file = osp.join(CURRENT_DIR, "mnist_equation_data_train_len_26_test_len_26_sys_2_.pk")
     elif dataset == "random":
@@ -94,7 +98,7 @@ def get_dataset(dataset="mnist", train=True):
 
     with open(file, "rb") as f:
         img_dataset = pickle.load(f)
-        
+
     X, Y = [], []
     if train:
         positive = img_dataset["train:positive"]
@@ -117,4 +121,3 @@ def get_dataset(dataset="mnist", train=True):
 
     equations_by_len = divide_equations_by_len(X, Y)
     return equations_by_len
-

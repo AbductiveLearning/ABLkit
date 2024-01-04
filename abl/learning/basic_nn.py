@@ -81,7 +81,8 @@ class BasicNN:
         if not isinstance(device, torch.device):
             if not isinstance(device, str):
                 raise TypeError(
-                    "device must be an instance of torch.device or a str indicates the target device"
+                    "device must be an instance of torch.device or a str indicating "
+                    + "the target device"
                 )
             else:
                 device = torch.device(device)
@@ -163,9 +164,9 @@ class BasicNN:
         return self
 
     def fit(
-        self, 
-        data_loader: Optional[DataLoader] = None, 
-        X: Optional[List[Any]] = None, 
+        self,
+        data_loader: Optional[DataLoader] = None,
+        X: Optional[List[Any]] = None,
         y: Optional[List[int]] = None,
     ) -> BasicNN:
         """
@@ -271,8 +272,8 @@ class BasicNN:
         return torch.cat(results, axis=0)
 
     def predict(
-        self, 
-        data_loader: Optional[DataLoader] = None, 
+        self,
+        data_loader: Optional[DataLoader] = None,
         X: Optional[List[Any]] = None,
     ) -> numpy.ndarray:
         """
@@ -312,8 +313,8 @@ class BasicNN:
         return self._predict(data_loader).argmax(axis=1).cpu().numpy()
 
     def predict_proba(
-        self, 
-        data_loader: Optional[DataLoader] = None, 
+        self,
+        data_loader: Optional[DataLoader] = None,
         X: Optional[List[Any]] = None,
     ) -> numpy.ndarray:
         """
@@ -403,9 +404,9 @@ class BasicNN:
         return mean_loss, accuracy
 
     def score(
-        self, 
-        data_loader: Optional[DataLoader] = None, 
-        X: Optional[List[Any]] = None, 
+        self,
+        data_loader: Optional[DataLoader] = None,
+        X: Optional[List[Any]] = None,
         y: Optional[List[int]] = None,
     ) -> float:
         """
@@ -447,8 +448,8 @@ class BasicNN:
 
     def _data_loader(
         self,
-        X: Optional[List[Any]], 
-        y: Optional[List[int]] = None, 
+        X: Optional[List[Any]],
+        y: Optional[List[int]] = None,
         shuffle: Optional[bool] = True,
     ) -> DataLoader:
         """

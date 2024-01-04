@@ -113,19 +113,19 @@ def main():
     )
 
     args = parser.parse_args()
-    
+
     # Build logger
     print_log("Abductive Learning on the HWF example.", logger="current")
 
     ### Working with Data
     print_log("Working with Data.", logger="current")
-    
+
     train_data = get_dataset(train=True, get_pseudo_label=True)
     test_data = get_dataset(train=False, get_pseudo_label=True)
 
     ### Building the Learning Part
     print_log("Building the Learning Part.", logger="current")
-    
+
     # Build necessary components for BasicNN
     cls = SymbolNet(num_classes=13, image_size=(45, 45, 1))
     loss_fn = nn.CrossEntropyLoss()
@@ -148,7 +148,7 @@ def main():
 
     ### Building the Reasoning Part
     print_log("Building the Reasoning Part.", logger="current")
-    
+
     # Build knowledge base
     if args.ground:
         kb = HwfGroundKB()

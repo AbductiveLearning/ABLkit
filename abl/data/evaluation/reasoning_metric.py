@@ -38,7 +38,8 @@ class ReasoningMetric(BaseMetric):
         """
         Process a batch of data examples.
 
-        This method takes in a batch of data examples, each containing predicted pseudo-labels(pred_pseudo_label), ground truth of reasoning results (Y), and input data (X). It
+        This method takes in a batch of data examples, each containing predicted pseudo-labels
+        (pred_pseudo_label), ground truth of reasoning results (Y), and input data (X). It
         evaluates the reasoning accuracy of each example by comparing the logical reasoning
         result (derived using the knowledge base) of the predicted pseudo-labels against Y
         The result of this comparison (1 for correct reasoning, 0 for incorrect) is appended

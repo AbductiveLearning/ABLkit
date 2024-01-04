@@ -88,7 +88,7 @@ def main():
 
     ### Building the Learning Part
     print_log("Building the Learning Part.", logger="current")
-    
+
     # Build necessary components for BasicNN
     cls = LeNet5(num_classes=10)
     loss_fn = nn.CrossEntropyLoss(label_smoothing=0.2)
@@ -119,7 +119,7 @@ def main():
 
     ### Building the Reasoning Part
     print_log("Building the Reasoning Part.", logger="current")
-    
+
     # Build knowledge base
     if args.prolog:
         kb = PrologKB(pseudo_label_list=list(range(10)), pl_file="add.pl")

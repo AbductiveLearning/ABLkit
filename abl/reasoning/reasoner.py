@@ -28,10 +28,10 @@ class Reasoner:
         candidate, 'confidence': calculates the distance between the prediction
         and each candidate based on confidence derived from the predicted probability
         in the data example. The callable function should have the signature
-        dist_func(data_example, candidates, candidate_idxs, reasoning_results) and must return a cost list. Each element
-        in this cost list should be a numerical value representing the cost for each
-        candidate, and the list should have the same length as candidates.
-        Defaults to 'confidence'.
+        dist_func(data_example, candidates, candidate_idxs, reasoning_results) and must
+        return a cost list. Each element in this cost list should be a numerical value
+        representing the cost for each candidate, and the list should have the same length
+        as candidates. Defaults to 'confidence'.
     idx_to_label : dict, optional
         A mapping from index in the base model to label. If not provided, a default
         order-based index to label mapping is created. Defaults to None.
@@ -76,14 +76,16 @@ class Reasoner:
         if isinstance(dist_func, str):
             if dist_func not in ["hamming", "confidence"]:
                 raise NotImplementedError(
-                    f'Valid options for predefined dist_func include "hamming" and "confidence", but got {dist_func}.'
+                    'Valid options for predefined dist_func include "hamming" '
+                    + f'and "confidence", but got {dist_func}.'
                 )
             return
         elif callable(dist_func):
             params = inspect.signature(dist_func).parameters.values()
             if len(params) != 4:
                 raise ValueError(
-                    f"User-defined dist_func must have exactly four parameters, but got {len(params)}."
+                    "User-defined dist_func must have exactly four parameters, "
+                    + f"but got {len(params)}."
                 )
             return
         else:
@@ -99,7 +101,8 @@ class Reasoner:
                 raise ValueError(f"All keys in the idx_to_label must be integers, but got {key}.")
             if value not in self.kb.pseudo_label_list:
                 raise ValueError(
-                    f"All values in the idx_to_label must be in the pseudo_label_list, but got {value}."
+                    "All values in the idx_to_label must be in the pseudo_label_list, "
+                    + f"but got {value}."
                 )
 
     def _get_one_candidate(
@@ -169,8 +172,8 @@ class Reasoner:
             cost_list = self.dist_func(data_example, candidates, candidate_idxs, reasoning_results)
             if len(cost_list) != len(candidates):
                 raise ValueError(
-                    f"The length of the array returned by dist_func must be equal to the number of candidates. "
-                    f"Expected length {len(candidates)}, but got {len(cost_list)}."
+                    "The length of the array returned by dist_func must be equal to the number "
+                    + f"of candidates. Expected length {len(candidates)}, but got {len(cost_list)}."
                 )
             return cost_list
 
@@ -204,7 +207,9 @@ class Reasoner:
             dim=dimension,
             constraint=lambda sol: self._constrain_revision_num(sol, max_revision_num),
         )
-        parameter = Parameter(budget=self.zoopt_budget(symbol_num), intermediate_result=False, autoset=True)
+        parameter = Parameter(
+            budget=self.zoopt_budget(symbol_num), intermediate_result=False, autoset=True
+        )
         solution = Opt.min(objective, parameter)
         return solution
 
@@ -240,29 +245,28 @@ class Reasoner:
             return np.min(self._get_cost_list(data_example, candidates, reasoning_results))
         else:
             return symbol_num
-    
+
     def zoopt_budget(self, symbol_num: int) -> int:
         """
-        Set the budget for ZOOpt optimization. The function, in its default implementation, 
-        returns a fixed budget value of 100. However, it can be adjusted to return other fixed 
-        values, or a dynamic budget based on the number of symbols, if desired. For example, one might choose to 
-        set the budget as 100 times symbol_num.
+        Set the budget for ZOOpt optimization. The function, in its default implementation,
+        returns a fixed budget value of 100. However, it can be adjusted to return other fixed
+        values, or a dynamic budget based on the number of symbols, if desired. For example,
+        one might choose to set the budget as 100 times ``symbol_num``.
 
         Parameters
         ----------
         symbol_num : int
-            The number of symbols to be considered in the ZOOpt optimization process. Although this parameter
-            can be used to compute a dynamic optimization budget, by default it is not utilized in the
-            calculation.
+            The number of symbols to be considered in the ZOOpt optimization process. Although this
+            parameter can be used to compute a dynamic optimization budget, by default it is not
+            utilized in the calculation.
 
         Returns
         -------
         int
-            The budget for ZOOpt optimization. By default, this is a fixed value of 100, 
+            The budget for ZOOpt optimization. By default, this is a fixed value of 100,
             irrespective of the symbol_num value.
         """
         return 100
-        
 
     def _constrain_revision_num(self, solution: Solution, max_revision_num: int) -> int:
         """
@@ -284,7 +288,8 @@ class Reasoner:
         elif isinstance(max_revision, float):
             if not (0 <= max_revision <= 1):
                 raise ValueError(
-                    f"If max_revision is a float, it must be between 0 and 1, but got {max_revision}"
+                    "If max_revision is a float, it must be between 0 and 1, "
+                    + f"but got {max_revision}"
                 )
             return round(symbol_num * max_revision)
         else:

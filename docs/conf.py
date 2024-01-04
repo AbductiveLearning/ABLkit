@@ -5,27 +5,28 @@ import sys
 from docutils import nodes
 from docutils.parsers.rst import roles
 
-import re
 from sphinx.application import Sphinx
+
 
 def remove_noqa(app: Sphinx, what: str, name: str, obj, options, lines):
     new_lines = []
     for line in lines:
-        new_line = re.sub(r'\s*#\s*noqa.*$', '', line)
+        new_line = re.sub(r"\s*#\s*noqa.*$", "", line)
         new_lines.append(new_line)
     lines[:] = new_lines
+
 
 def colored_text_role(role, rawtext, text, lineno, inliner, options={}, content=[]):
     node = nodes.inline(rawtext, text, classes=[role])
     return [node], []
 
-roles.register_local_role('green-bold', colored_text_role)
-roles.register_local_role('blue-bold', colored_text_role)
-roles.register_local_role('yellow-bold', colored_text_role)
-roles.register_local_role('green', colored_text_role)
-roles.register_local_role('blue', colored_text_role)
-roles.register_local_role('yellow', colored_text_role)
 
+roles.register_local_role("green-bold", colored_text_role)
+roles.register_local_role("blue-bold", colored_text_role)
+roles.register_local_role("yellow-bold", colored_text_role)
+roles.register_local_role("green", colored_text_role)
+roles.register_local_role("blue", colored_text_role)
+roles.register_local_role("yellow", colored_text_role)
 
 
 if "READTHEDOCS" not in os.environ:
@@ -45,7 +46,7 @@ author = "Author"
 extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.autodoc",
-    'sphinx.ext.autosummary',
+    "sphinx.ext.autosummary",
     "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
     "sphinx_rtd_theme",
@@ -95,7 +96,8 @@ texinfo_documents = [
 def setup(app):
     from sphinx.domains.python import PyField
     from sphinx.util.docfields import Field
-    app.connect('autodoc-process-docstring', remove_noqa)
+
+    app.connect("autodoc-process-docstring", remove_noqa)
     app.add_object_type(
         "confval",
         "confval",

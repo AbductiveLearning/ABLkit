@@ -200,7 +200,7 @@ def kb_add_ground():
 
 @pytest.fixture
 def kb_add_prolog():
-    if platform.system() == 'Darwin':
+    if platform.system() == "Darwin":
         return
     kb = PrologKB(pseudo_label_list=list(range(10)), pl_file="examples/mnist_add/add.pl")
     return kb
@@ -218,7 +218,7 @@ def kb_hwf2():
 
 @pytest.fixture
 def kb_hed():
-    if platform.system() == 'Darwin':
+    if platform.system() == "Darwin":
         return
     kb = HedKB(
         pseudo_label_list=[1, 0, "+", "="],

@@ -89,23 +89,37 @@ def main():
 
     ### Building the Learning Part
     print_log("Building the Learning Part.", logger="current")
-    
+
     # Build necessary components for BasicNN
-    model=FixMatch(network=LeNet5(), threshold=0.95,lambda_u=1.0,mu=7,T=0.5,epoch=1,num_it_epoch=2**20,num_it_total=2**20,device='cuda')
+    model = FixMatch(
+        network=LeNet5(),
+        threshold=0.95,
+        lambda_u=1.0,
+        mu=7,
+        T=0.5,
+        epoch=1,
+        num_it_epoch=2**20,
+        num_it_total=2**20,
+        device="cuda",
+    )
 
     loss_fn = nn.CrossEntropyLoss(label_smoothing=0.2)
     optimizer_dict = dict(optimizer=RMSprop, lr=0.0003, alpha=0.9)
-    scheduler_dict = dict(scheduler=lr_scheduler.OneCycleLR, max_lr=0.0003, pct_start=0.15, total_steps=200)
+    scheduler_dict = dict(
+        scheduler=lr_scheduler.OneCycleLR, max_lr=0.0003, pct_start=0.15, total_steps=200
+    )
 
     converter = ModelConverter()
-    base_model = converter.convert_lambdalearn_to_basicnn(model, loss_fn=loss_fn, optimizer_dict=optimizer_dict, scheduler_dict=scheduler_dict)
+    base_model = converter.convert_lambdalearn_to_basicnn(
+        model, loss_fn=loss_fn, optimizer_dict=optimizer_dict, scheduler_dict=scheduler_dict
+    )
 
     # Build ABLModel
     model = ABLModel(base_model)
 
     ### Building the Reasoning Part
     print_log("Building the Reasoning Part.", logger="current")
-    
+
     # Build knowledge base
     if args.prolog:
         kb = PrologKB(pseudo_label_list=list(range(10)), pl_file="add.pl")

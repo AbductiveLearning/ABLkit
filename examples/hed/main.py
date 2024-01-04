@@ -46,20 +46,20 @@ def main():
     )
 
     args = parser.parse_args()
-    
+
     # Build logger
     print_log("Abductive Learning on the HED example.", logger="current")
 
     ### Working with Data
     print_log("Working with Data.", logger="current")
-    
+
     total_train_data = get_dataset(train=True)
     train_data, val_data = split_equation(total_train_data, 3, 1)
     test_data = get_dataset(train=False)
 
     ### Building the Learning Part
     print_log("Building the Learning Part.", logger="current")
-    
+
     # Build necessary components for BasicNN
     cls = SymbolNet(num_classes=4)
     loss_fn = nn.CrossEntropyLoss()
@@ -83,7 +83,7 @@ def main():
 
     ### Building the Reasoning Part
     print_log("Building the Reasoning Part.", logger="current")
-    
+
     # Build knowledge base
     kb = HedKB()
 

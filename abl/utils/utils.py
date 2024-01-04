@@ -15,7 +15,7 @@ def flatten(nested_list: List[Union[Any, List[Any], Tuple[Any, ...]]]) -> List[A
     Returns
     -------
     List[Any]
-        A flattened version of the input list, where only the first 
+        A flattened version of the input list, where only the first
         level of sublists and tuples are reduced.
     """
     if not isinstance(nested_list, list):
@@ -24,15 +24,15 @@ def flatten(nested_list: List[Union[Any, List[Any], Tuple[Any, ...]]]) -> List[A
     flattened_list = []
     for item in nested_list:
         if isinstance(item, (list, tuple)):
-            flattened_list.extend(item) 
+            flattened_list.extend(item)
         else:
             flattened_list.append(item)
 
     return flattened_list
 
+
 def reform_list(
-    flattened_list: List[Any], 
-    structured_list: List[Union[Any, List[Any], Tuple[Any, ...]]]
+    flattened_list: List[Any], structured_list: List[Union[Any, List[Any], Tuple[Any, ...]]]
 ) -> List[List[Any]]:
     """
     Reform the list based on the structure of ``structured_list``.
@@ -148,16 +148,15 @@ def restore_from_hashable(x):
         return [restore_from_hashable(item) for item in x]
     return x
 
+
 def tab_data_to_tuple(
-    X: Union[List[Any], Any], 
-    y: Union[List[Any], Any], 
-    reasoning_result: Optional[Any] = 0
+    X: Union[List[Any], Any], y: Union[List[Any], Any], reasoning_result: Optional[Any] = 0
 ) -> Tuple[List[List[Any]], List[List[Any]], List[Any]]:
-    '''
-    Convert a tabular data to a tuple by adding a dimension to each element of 
+    """
+    Convert a tabular data to a tuple by adding a dimension to each element of
     X and y. The tuple contains three elements: data, label, and reasoning result.
     If X is None, return None.
-    
+
     Parameters
     ----------
     X : Union[List[Any], Any]
@@ -166,14 +165,16 @@ def tab_data_to_tuple(
         The label.
     reasoning_result : Any, optional
         The reasoning result, by default 0.
-    
+
     Returns
     -------
     Tuple[List[List[Any]], List[List[Any]], List[Any]]
         A tuple of (data, label, reasoning_result).
-    '''
+    """
     if X is None:
         return None
     if len(X) != len(y):
-        raise ValueError("The length of X and y should be the same, but got {} and {}.".format(len(X), len(y)))
+        raise ValueError(
+            "The length of X and y should be the same, but got {} and {}.".format(len(X), len(y))
+        )
     return ([[x] for x in X], [[y_item] for y_item in y], [reasoning_result] * len(y))

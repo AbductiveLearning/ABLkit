@@ -8,8 +8,11 @@ from abl.utils import reform_list
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 
+
 class HedKB(PrologKB):
-    def __init__(self, pseudo_label_list=[1, 0, "+", "="], pl_file=os.path.join(CURRENT_DIR, "learn_add.pl")):
+    def __init__(
+        self, pseudo_label_list=[1, 0, "+", "="], pl_file=os.path.join(CURRENT_DIR, "learn_add.pl")
+    ):
         pl_file = pl_file.replace("\\", "/")
         super().__init__(pseudo_label_list, pl_file)
         self.learned_rules = {}
@@ -34,7 +37,7 @@ class HedReasoner(Reasoner):
             data_example.pred_pseudo_label, data_example.Y, data_example.X, revision_idx
         )
         return candidate
-    
+
     def zoopt_budget(self, symbol_num):
         return 200
 
@@ -53,7 +56,7 @@ class HedReasoner(Reasoner):
             max_candidate_idxs = []
             found = False
             for idx in range(-1, len(data_example.pred_idx)):
-                if (not idx in idxs) and (idx >= 0):
+                if (idx not in idxs) and (idx >= 0):
                     idxs.append(idx)
                 candidates, _ = self.revise_at_idx(data_example[idxs])
                 if len(candidates) == 0:

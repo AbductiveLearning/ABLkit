@@ -28,9 +28,13 @@ class TestKBBase(object):
         assert result == ([[0, 2], [1, 1], [2, 0]], [2, 2, 2])
 
     def test_abduce_candidates(self, kb_add):
-        result = kb_add.abduce_candidates([0, 1], 1, [0.1, -0.2, 0.2, -0.3], max_revision_num=2, require_more_revision=0)
+        result = kb_add.abduce_candidates(
+            [0, 1], 1, [0.1, -0.2, 0.2, -0.3], max_revision_num=2, require_more_revision=0
+        )
         assert result == ([[0, 1]], [1])
-        result = kb_add.abduce_candidates([1, 2], 1, [0.1, -0.2, 0.2, -0.3], max_revision_num=2, require_more_revision=0)
+        result = kb_add.abduce_candidates(
+            [1, 2], 1, [0.1, -0.2, 0.2, -0.3], max_revision_num=2, require_more_revision=0
+        )
         assert result == ([[1, 0]], [1])
 
 
@@ -53,19 +57,19 @@ class TestGroundKB(object):
 
 class TestPrologKB(object):
     def test_init_pl1(self, kb_add_prolog):
-        if platform.system() == 'Darwin':
+        if platform.system() == "Darwin":
             return
         assert kb_add_prolog.pseudo_label_list == list(range(10))
         assert kb_add_prolog.pl_file == "examples/mnist_add/add.pl"
 
     def test_init_pl2(self, kb_hed):
-        if platform.system() == 'Darwin':
+        if platform.system() == "Darwin":
             return
         assert kb_hed.pseudo_label_list == [1, 0, "+", "="]
         assert kb_hed.pl_file == "examples/hed/reasoning/learn_add.pl"
 
     def test_prolog_file_not_exist(self):
-        if platform.system() == 'Darwin':
+        if platform.system() == "Darwin":
             return
         pseudo_label_list = [1, 2]
         non_existing_file = "path/to/non_existing_file.pl"
@@ -74,13 +78,13 @@ class TestPrologKB(object):
         assert non_existing_file in str(excinfo.value)
 
     def test_logic_forward_pl1(self, kb_add_prolog):
-        if platform.system() == 'Darwin':
+        if platform.system() == "Darwin":
             return
         result = kb_add_prolog.logic_forward([1, 2])
         assert result == 3
 
     def test_logic_forward_pl2(self, kb_hed):
-        if platform.system() == 'Darwin':
+        if platform.system() == "Darwin":
             return
         consist_exs = [
             [1, 1, "+", 0, "=", 1, 1],
@@ -97,7 +101,7 @@ class TestPrologKB(object):
         assert kb_hed.logic_forward(inconsist_exs) is False
 
     def test_revise_at_idx(self, kb_add_prolog):
-        if platform.system() == 'Darwin':
+        if platform.system() == "Darwin":
             return
         result = kb_add_prolog.revise_at_idx([1, 2], 2, [0.1, -0.2, 0.2, -0.3], [0])
         assert result == ([[0, 2]], [2])
@@ -113,34 +117,34 @@ class TestReaonser(object):
         assert 'Valid options for predefined dist_func include "hamming" and "confidence"' in str(
             excinfo.value
         )
-        
+
     def random_dist(self, data_example, candidates, candidate_idxs, reasoning_results):
         cost_list = [np.random.rand() for _ in candidates]
         return cost_list
-    
+
     def test_user_defined_dist_func(self, kb_add):
         reasoner = Reasoner(kb_add, self.random_dist)
         assert reasoner.dist_func == self.random_dist
-    
+
     def invalid_dist1(self, candidates):
         cost_list = np.array([np.random.rand() for _ in candidates])
         return cost_list
-    
+
     def invalid_dist2(self, data_example, candidates, candidate_idxs, reasoning_results):
         cost_list = np.array([np.random.rand() for _ in candidates])
         return np.append(cost_list, np.random.rand())
-    
+
     def test_invalid_user_defined_dist_func(self, kb_add, data_examples_add):
         with pytest.raises(ValueError) as excinfo:
             Reasoner(kb_add, self.invalid_dist1)
-        assert 'User-defined dist_func must have exactly four parameters' in str(
-            excinfo.value
-        )
+        assert "User-defined dist_func must have exactly four parameters" in str(excinfo.value)
         with pytest.raises(ValueError) as excinfo:
             reasoner = Reasoner(kb_add, self.invalid_dist2)
             reasoner.batch_abduce(data_examples_add)
-        assert 'The length of the array returned by dist_func must be equal to the number of candidates' in str(
-            excinfo.value
+        assert (
+            "The length of the array returned by dist_func must be "
+            + "equal to the number of candidates"
+            in str(excinfo.value)
         )
 
 
@@ -186,7 +190,7 @@ class TestBatchAbduce(object):
         ]
 
     def test_batch_abduce_prolog(self, kb_add_prolog, data_examples_add):
-        if platform.system() == 'Darwin':
+        if platform.system() == "Darwin":
             return
         reasoner1 = Reasoner(kb_add_prolog, "confidence", max_revision=1, require_more_revision=0)
         reasoner2 = Reasoner(kb_add_prolog, "confidence", max_revision=1, require_more_revision=1)
@@ -208,7 +212,7 @@ class TestBatchAbduce(object):
         ]
 
     def test_batch_abduce_zoopt(self, kb_add_prolog, data_examples_add):
-        if platform.system() == 'Darwin':
+        if platform.system() == "Darwin":
             return
         reasoner1 = Reasoner(kb_add_prolog, "confidence", use_zoopt=True, max_revision=1)
         reasoner2 = Reasoner(kb_add_prolog, "confidence", use_zoopt=True, max_revision=2)
