@@ -9,7 +9,7 @@ Below shows an implementation of
 `Zoo <https://archive.ics.uci.edu/dataset/111/zoo>`__ dataset. In this task,
 attributes of animals (such as presence of hair, eggs, etc.) and their
 targets (the animal class they belong to) are given, along with a
-knowledge base which contain information about the relations between
+knowledge base which contains information about the relations between
 attributes and targets, e.g., Implies(milk == 1, mammal == 1).
 
 The goal of this task is to develop a learning model that can predict
@@ -168,7 +168,7 @@ Out:
 
 Then, we create a reasoner by instantiating the class ``Reasoner``. Due
 to the indeterminism of abductive reasoning, there could be multiple
-candidates compatible to the knowledge base. When this happens, reasoner
+candidates compatible with the knowledge base. When this happens, reasoner
 can minimize inconsistencies between the knowledge base and
 pseudo-labels predicted by the learning part, and then return only one
 candidate that has the highest consistency.

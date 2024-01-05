@@ -83,8 +83,8 @@ class KBBase(ABC):
     @abstractmethod
     def logic_forward(self, pseudo_label: List[Any], x: Optional[List[Any]] = None) -> Any:
         """
-        How to perform (deductive) logical reasoning, i.e. matching pseudo-labels to
-        their reasoning result. Users are required to provide this.
+        How to perform (deductive) logical reasoning, i.e. matching an example's
+        pseudo-labels to its reasoning result. Users are required to provide this.
 
         Parameters
         ----------
@@ -130,7 +130,7 @@ class KBBase(ABC):
         Returns
         -------
         Tuple[List[List[Any]], List[Any]]
-            A tuple of two element. The first element is a list of candidate revisions, i.e. revised
+            A tuple of two elements. The first element is a list of candidate revisions, i.e. revised
             pseudo-labels of the example. that are compatible with the knowledge base. The second
             element is a list of reasoning results corresponding to each candidate, i.e., the
             outcome of the ``logic_forward`` function.
@@ -181,7 +181,7 @@ class KBBase(ABC):
         Returns
         -------
         Tuple[List[List[Any]], List[Any]]
-            A tuple of two element. The first element is a list of candidate revisions, i.e. revised
+            A tuple of two elements. The first element is a list of candidate revisions, i.e. revised
             pseudo-labels of the example that are compatible with the knowledge base. The second
             element is a list of reasoning results corresponding to each candidate, i.e., the
             outcome of the ``logic_forward`` function.
@@ -206,7 +206,7 @@ class KBBase(ABC):
         x: List[Any],
     ) -> List[List[Any]]:
         """
-        For a specified number of labels in a pseudo-labels to revise, iterate through
+        For a specified number of labels in an example's pseudo-labels to revise, iterate through
         all possible indices to find any candidates that are compatible with the knowledge base.
         """
         new_candidates, new_reasoning_results = [], []
@@ -227,7 +227,7 @@ class KBBase(ABC):
         require_more_revision: int,
     ) -> List[List[Any]]:
         """
-        Perform abductive reasoning by exhastive search. Specifically, begin with 0 and
+        Perform abductive reasoning by exhaustive search. Specifically, begin with 0 and
         continuously increase the number of labels to revise, until
         candidates that are compatible with the knowledge base are found.
 
@@ -251,7 +251,7 @@ class KBBase(ABC):
         Returns
         -------
         Tuple[List[List[Any]], List[Any]]
-            A tuple of two element. The first element is a list of candidate revisions, i.e. revised
+            A tuple of two elements. The first element is a list of candidate revisions, i.e. revised
             pseudo-labels of the example that are compatible with the knowledge base. The second
             element is a list of reasoning results corresponding to each candidate, i.e., the
             outcome of the ``logic_forward`` function.
@@ -391,7 +391,7 @@ class GroundKB(KBBase):
         Returns
         -------
         Tuple[List[List[Any]], List[Any]]
-            A tuple of two element. The first element is a list of candidate revisions, i.e. revised
+            A tuple of two elements. The first element is a list of candidate revisions, i.e. revised
             pseudo-labels of the example that are compatible with the knowledge base. The second
             element is a list of reasoning results corresponding to each candidate, i.e., the
             outcome of the ``logic_forward`` function.
@@ -594,7 +594,7 @@ class PrologKB(KBBase):
         Returns
         -------
         Tuple[List[List[Any]], List[Any]]
-            A tuple of two element. The first element is a list of candidate revisions, i.e. revised
+            A tuple of two elements. The first element is a list of candidate revisions, i.e. revised
             pseudo-labels of the example that are compatible with the knowledge base. The second
             element is a list of reasoning results corresponding to each candidate, i.e., the
             outcome of the ``logic_forward`` function.

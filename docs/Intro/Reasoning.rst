@@ -42,7 +42,7 @@ and override the ``logic_forward`` function:
 -  ``pseudo_label_list`` is the list of possible pseudo-labels (also,
    the output of the machine learning model).
 -  ``logic_forward`` defines how to perform (deductive) reasoning,
-   i.e. matching each pseudo-labels to its reasoning result. 
+   i.e. matching each example's pseudo-labels to its reasoning result. 
 
 .. note::
 
@@ -239,7 +239,7 @@ for performing abductive reasoning, where the parameters are:
    method will only output candidates with the minimum possible
    revisions.)
 
-And it return a list of candidates (i.e., revised pseudo-labels of the example) 
+And it returns a list of candidates (i.e., revised pseudo-labels of the example) 
 that are all compatible with ``y``.
 
 MNIST Addition example (cont.)
@@ -286,7 +286,7 @@ Creating a reasoner
 
 After building our knowledge base, the next step is creating a
 reasoner. Due to the indeterminism of abductive reasoning, there could
-be multiple candidates compatible to the knowledge base. When this
+be multiple candidates compatible with the knowledge base. When this
 happens, reasoner can minimize inconsistencies between the knowledge
 base and pseudo-labels predicted by the learning part, and then return **only
 one** candidate that has the highest consistency.
@@ -356,7 +356,7 @@ As an example, consider these data examples for MNIST Addition:
    example2.Y = 8
 
 The compatible candidates after abductive reasoning for both examples
-would be ``[[1,7], [7,1]]``. However, when the reasoner call ``abduce`` 
+would be ``[[1,7], [7,1]]``. However, when the reasoner calls ``abduce`` 
 to select only one candidate based on the ``confidence`` distance function, 
 the output would differ for each example:
 

@@ -66,7 +66,7 @@ We provide several examples in `examples/`. Each example is stored in a separate
 
 ## Quick Start
 
-We use the MNIST Addition task as a quick start example. In this task, pairs of MNIST handwritten images and their sums are given, alongwith a domain knowledge base which contain information on how to perform addition operations. Our objective is to input a pair of handwritten images and accurately determine their sum.
+We use the MNIST Addition task as a quick start example. In this task, pairs of MNIST handwritten images and their sums are given, alongwith a domain knowledge base which contains information on how to perform addition operations. Our objective is to input a pair of handwritten images and accurately determine their sum.
 
 ### Working with Data
 
@@ -107,7 +107,7 @@ To facilitate uniform processing, ABL-Package provides the `BasicNN` class to co
 ​base_model = BasicNN(model=cls, loss_fn=loss_fn, optimizer=optimizer, device=device)
 ```
 
-The base model built above are trained to make predictions on instance-level data (e.g., a single image), while ABL deals with example-level data. To bridge this gap, we wrap the base_model into an instance of `ABLModel`. This class serves as a unified wrapper for base models, facilitating the learning part to train, test, and predict on example-level data, (e.g., images that comprise an equation).
+The base model built above is trained to make predictions on instance-level data (e.g., a single image), while ABL deals with example-level data. To bridge this gap, we wrap the base_model into an instance of `ABLModel`. This class serves as a unified wrapper for base models, facilitating the learning part to train, test, and predict on example-level data, (e.g., images that comprise an equation).
 
 ```python
 from abl.learning import ABLModel
@@ -117,7 +117,7 @@ from abl.learning import ABLModel
 
 ### Building the Reasoning Part
 
-To build the reasoning part, we first define a knowledge base by creating a subclass of `KBBase`. In the subclass, we initialize the `pseudo_label_list` parameter and override the `logic_forward` method, which specifies how to perform (deductive) reasoning that processes pseudo-labels of an example to the corresponding reasoning result. Specifically for the MNIST Addition task, this `logic_forward` method is tailored to execute the sum operation.
+To build the reasoning part, we first define a knowledge base by creating a subclass of `KBBase`. In the subclass, we initialize the `pseudo_label_list` parameter and override the `logic_forward` method, which specifies how to perform (deductive) reasoning that processes pseudo-labels of an example to the corresponding reasoning result. Specifically, for the MNIST Addition task, this `logic_forward` method is tailored to execute the sum operation.
 
 ```python
 from abl.reasoning import KBBase

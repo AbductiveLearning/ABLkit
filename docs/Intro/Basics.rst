@@ -44,7 +44,7 @@ Upon building the knowledge base, the ``Reasoner`` class is
 responsible for minimizing the inconsistency between the knowledge base
 and data.
 
-The integration of these three parts are achieved through the
+The integration of these three parts is achieved through the
 :yellow-bold:`Bridge` part, which features the ``SimpleBridge`` class (derived 
 from the ``BaseBridge`` class). The Bridge part synthesizes data, 
 learning, and reasoning, facilitating the training and testing 

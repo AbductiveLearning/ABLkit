@@ -81,7 +81,7 @@ The length and structures of datasets are illustrated as follows.
           f"with each element being a {type(gt_pseudo_label_0).__name__} " +
           f"of {type(gt_pseudo_label_0[0]).__name__}.")
     print(f"Y is a {type(train_Y).__name__}, " +
-          f"with each element being a {type(Y_0).__name__}.")
+          f"with each element being an {type(Y_0).__name__}.")
 
 
 Out:
@@ -95,7 +95,7 @@ Out:
         
         X is a list, with each element being a list of Tensor.
         gt_pseudo_label is a list, with each element being a list of str.
-        Y is a list, with each element being a int.
+        Y is a list, with each element being an int.
     
 
 The ith element of X, gt_pseudo_label, and Y together constitute the ith
@@ -266,8 +266,8 @@ Out:
 Building the Reasoning Part
 ---------------------------
 
-In the reasoning part, we first build a knowledge base which contain
-information on how to perform addition operations. We build it by
+In the reasoning part, we first build a knowledge base which contains
+information on how to compute a formula. We build it by
 creating a subclass of ``KBBase``. In the derived subclass, we
 initialize the ``pseudo_label_list`` parameter specifying list of
 possible pseudo-labels, and override the ``logic_forward`` function
@@ -332,7 +332,7 @@ Out:
 
 Then, we create a reasoner by instantiating the class ``Reasoner``. Due
 to the indeterminism of abductive reasoning, there could be multiple
-candidates compatible to the knowledge base. When this happens, reasoner
+candidates compatible with the knowledge base. When this happens, reasoner
 can minimize inconsistencies between the knowledge base and
 pseudo-labels predicted by the learning part, and then return only one
 candidate that has the highest consistency.

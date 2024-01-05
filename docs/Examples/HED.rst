@@ -14,7 +14,7 @@ and each equation is associated with a label indicating whether the
 equation is correct (i.e., positive) or not (i.e., negative). Also, we
 are given a knowledge base which involves the structure of the equations
 and a recursive definition of bit-wise operations. The task is to learn
-from a training set of above mentioned equations and then to predict
+from a training set of above-mentioned equations and then to predict
 labels of unseen equations.
 
 Intuitively, we first use a machine learning model (learning part) to
@@ -61,41 +61,41 @@ The dataset are shown below:
     true_train_equation = train_data[1]
     false_train_equation = train_data[0]
     print(f"Equations in the dataset is organized by equation length, " +
-          f"from {min(train_data[0].keys())} to {max(train_data[0].keys())}")
+          f"from {min(train_data[0].keys())} to {max(train_data[0].keys())}.")
     print()
     
     true_train_equation_with_length_5 = true_train_equation[5]
     false_train_equation_with_length_5 = false_train_equation[5]
     print(f"For each euqation length, there are {len(true_train_equation_with_length_5)} " +
-          f"true equation and {len(false_train_equation_with_length_5)} false equation " +
-          f"in the training set")
+          f"true equations and {len(false_train_equation_with_length_5)} false equation " +
+          f"in the training set.")
     
     true_val_equation = val_data[1]
     false_val_equation = val_data[0]
     true_val_equation_with_length_5 = true_val_equation[5]
     false_val_equation_with_length_5 = false_val_equation[5]
     print(f"For each euqation length, there are {len(true_val_equation_with_length_5)} " +
-          f"true equation and {len(false_val_equation_with_length_5)} false equation " +
-          f"in the validation set")
+          f"true equations and {len(false_val_equation_with_length_5)} false equation " +
+          f"in the validation set.")
     
     true_test_equation = test_data[1]
     false_test_equation = test_data[0]
     true_test_equation_with_length_5 = true_test_equation[5]
     false_test_equation_with_length_5 = false_test_equation[5]
     print(f"For each euqation length, there are {len(true_test_equation_with_length_5)} " +
-          f"true equation and {len(false_test_equation_with_length_5)} false equation " +
-          f"in the test set")
+          f"true equations and {len(false_test_equation_with_length_5)} false equation " +
+          f"in the test set.")
 
 
 Out:
     .. code:: none
         :class: code-out
 
-        Equations in the dataset is organized by equation length, from 5 to 26
+        Equations in the dataset is organized by equation length, from 5 to 26.
         
-        For each euqation length, there are 225 true equation and 225 false equation in the training set
-        For each euqation length, there are 75 true equation and 75 false equation in the validation set
-        For each euqation length, there are 300 true equation and 300 false equation in the test set
+        For each euqation length, there are 225 true equations and 225 false equation in the training set.
+        For each euqation length, there are 75 true equations and 75 false equation in the validation set.
+        For each euqation length, there are 300 true equations and 300 false equation in the test set.
     
 
 As illustrations, we show four equations in the training dataset:
@@ -238,7 +238,7 @@ files.
     ``examples/hed/reasoning/reasoning.py``
 
 Then, we create a reasoner. Due to the indeterminism of abductive
-reasoning, there could be multiple candidates compatible to the
+reasoning, there could be multiple candidates compatible with the
 knowledge base. When this happens, reasoner can minimize inconsistencies
 between the knowledge base and pseudo-labels predicted by the learning
 part, and then return only one candidate that has the highest

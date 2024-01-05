@@ -18,8 +18,8 @@ In this section, we will look at how to bridge learning and reasoning parts to t
 
 ``BaseBridge`` is an abstract class with the following initialization parameters:
 
-- ``model`` is an object of type ``ABLModel``. Learning part are wrapped in this object.
-- ``reasoner`` is a object of type ``Reasoner``. Reasoning part are wrapped in this object.
+- ``model`` is an object of type ``ABLModel``. The learning part is wrapped in this object.
+- ``reasoner`` is an object of type ``Reasoner``. The reasoning part is wrapped in this object.
 
 ``BaseBridge`` has the following important methods that need to be overridden in subclasses:
 
@@ -44,7 +44,7 @@ In this section, we will look at how to bridge learning and reasoning parts to t
 
 where ``train_data`` and ``test_data`` are both in the form of a tuple or a `ListData <../API/abl.data.html#structures.ListData>`_. Regardless of the form, they all need to include three components: ``X``, ``gt_pseudo_label`` and ``Y``. Since ``ListData`` is the underlying data structure used throughout the ABL-Package, tuple-formed data will be firstly transformed into ``ListData`` in the ``train`` and ``test`` methods, and such ``ListData`` instances are referred to as ``data_examples``. More details can be found in `preparing datasets <Datasets.html>`_.
 
-``SimpleBridge`` inherits from ``BaseBridge`` and provides a basic implementation. Besides the ``model`` and ``reasoner``, ``SimpleBridge`` has an extra initialization arguments, ``metric_list``, which will be used to evaluate model performance. Its training process involves several Abductive Learning loops and each loop consists of the following five steps:
+``SimpleBridge`` inherits from ``BaseBridge`` and provides a basic implementation. Besides the ``model`` and ``reasoner``, ``SimpleBridge`` has an extra initialization argument, ``metric_list``, which will be used to evaluate model performance. Its training process involves several Abductive Learning loops and each loop consists of the following five steps:
 
   1. Predict class probabilities and indices for the given data examples.
   2. Transform indices into pseudo-labels.
