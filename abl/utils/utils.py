@@ -94,7 +94,7 @@ def confidence_dist(pred_prob: List[np.ndarray], candidates_idxs: List[List[Any]
     Parameters
     ----------
     pred_prob : List[np.ndarray]
-        Prediction probability distributions, each element is an ndarray
+        Prediction probability distributions, each element is an array
         representing the probability distribution of a particular prediction.
     candidates_idxs : List[List[Any]]
         Multiple possible candidates' indices.

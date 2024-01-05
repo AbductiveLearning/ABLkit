@@ -233,10 +233,10 @@ class SimpleBridge(BaseBridge):
             Data will be split into segments of this size and data in each segment
             will be used together to train the model, by default 1.0.
         eval_interval : int
-            The model will be evaluated every ``eval_interval`` loops during training,
+            The model will be evaluated every ``eval_interval`` loop during training,
             by default 1.
         save_interval : int, optional
-            The model will be saved every ``eval_interval`` loops during training, by
+            The model will be saved every ``eval_interval`` loop during training, by
             default None.
         save_dir : str, optional
             Directory to save the model, by default None.

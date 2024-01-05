@@ -11,7 +11,7 @@ class SymbolAccuracy(BaseMetric):
     A metrics class for evaluating symbol-level accuracy.
 
     This class is designed to assess the accuracy of symbol prediction. Symbol accuracy
-    are calculated by comparing predicted presudo labels and their ground truth.
+    is calculated by comparing predicted presudo labels and their ground truth.
 
     Parameters
     ----------

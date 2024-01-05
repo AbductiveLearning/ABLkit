@@ -52,7 +52,7 @@ class BaseMetric(metaclass=ABCMeta):
         -------
         dict
             The computed metrics. The keys are the names of the metrics,
-            and the values are corresponding results.
+            and the values are the corresponding results.
         """
 
     def evaluate(self) -> dict:
@@ -64,7 +64,7 @@ class BaseMetric(metaclass=ABCMeta):
         -------
         dict
             Evaluation metrics dict on the val dataset. The keys are the
-            names of the metrics, and the values are corresponding results.
+            names of the metrics, and the values are the corresponding results.
         """
         if len(self.results) == 0:
             print_log(
