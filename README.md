@@ -170,23 +170,27 @@ bridge.test(test_data)
 
 ## References
 
-For more information about ABL, please refer to: [Zhou, 2019](https://link.springer.com/epdf/10.1007/s11432-018-9801-4?author_access_token=jgJe1Ox3Mk-K7ORSnX7jtfe4RwlQNchNByi7wbcMAY7_PxTx-xNLP7Lp0mIZ04ORp3VG4wioIBHSCIAO3B_TBJkj87YzapmdnYVSQvgBIO3aEpQWppxZG25KolINetygc2W_Cj2gtoBdiG_J1hU3pA==) and [Zhou and Huang, 2022](https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf).
+For more information about ABL, please refer to: [Zhou, 2019](http://scis.scichina.com/en/2019/076101.pdf) and [Zhou and Huang, 2022](https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf).
 
 ```latex
 @article{zhou2019abductive,
-  title={Abductive learning: towards bridging machine learning and logical reasoning},
-  author={Zhou, Zhi-Hua},
-  journal={Science China Information Sciences},
-  volume={62},
-  pages={1--3},
-  year={2019},
-  publisher={Science China Press}}
+  title     = {Abductive learning: towards bridging machine learning and logical reasoning},
+  author    = {Zhou, Zhi-Hua},
+  journal   = {Science China Information Sciences},
+  volume    = {62},
+  number    = {7},
+  pages     = {76101},
+  year      = {2019}
+}
 
 @incollection{zhou2022abductive,
-  title={Abductive Learning},
-  author={Zhou, Zhi-Hua and Huang, Yu-Xuan},
-  booktitle={Neuro-Symbolic Artificial Intelligence: The State of the Art},
-  pages={353--369},
-  year={2022},
-  publisher={IOS Press}}
+  title     = {Abductive Learning},
+  author    = {Zhou, Zhi-Hua and Huang, Yu-Xuan},
+  booktitle = {Neuro-Symbolic Artificial Intelligence: The State of the Art},
+  editor    = {Pascal Hitzler and Md. Kamruzzaman Sarker},
+  publisher = {{IOS} Press},
+  pages     = {353--369},
+  address   = {Amsterdam},
+  year      = {2022}
+}
 ```
