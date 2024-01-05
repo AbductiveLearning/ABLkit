@@ -11,7 +11,7 @@ Reasoning part
 ===============
 
 In this section, we will look at how to build the reasoning part, which 
-leverage domain knowledge and perform deductive or abductive reasoning.
+leverages domain knowledge and performs deductive or abductive reasoning.
 In ABL-Package, building the reasoning part involves two steps:
 
 1. Build a knowledge base by creating a subclass of ``KBBase``, which
@@ -292,7 +292,7 @@ base and pseudo-labels predicted by the learning part, and then return **only
 one** candidate that has the highest consistency.
 
 We can create a reasoner simply by instantiating class
-``Reasoner`` and passing our knowledge base as an parameter. As an
+``Reasoner`` and passing our knowledge base as a parameter. As an
 example for MNIST Addition, the reasoner definition would be:
 
 .. code:: python

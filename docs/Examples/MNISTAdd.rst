@@ -3,7 +3,7 @@ MNIST Addition
 
 .. raw:: html
     
-    <p>For detailed code implementation, please view on <a class="reference external" href="https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/mnist_add" target="_blank">GitHub</a>.</p>
+    <p>For detailed code implementation, please view it on <a class="reference external" href="https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/mnist_add" target="_blank">GitHub</a>.</p>
 
 Below shows an implementation of `MNIST
 Addition <https://arxiv.org/abs/1805.10872>`__. In this task, pairs of
@@ -301,7 +301,7 @@ candidate that has the highest consistency.
     confidence derived from the predicted probability. In ``examples/mnist_add/main.py``, we
     provide options for utilizing other forms of consistency measurement.
 
-    Also, during process of inconsistency minimization, we can leverage
+    Also, during the process of inconsistency minimization, we can leverage
     `ZOOpt library <https://github.com/polixir/ZOOpt>`__ for acceleration.
     Options for this are also available in ``examples/mnist_add/main.py``. Those interested are
     encouraged to explore these features.
@@ -324,7 +324,7 @@ Bridge Learning and Reasoning
 -----------------------------
 
 Now, the last step is to bridge the learning and reasoning part. We
-proceed this step by creating an instance of ``SimpleBridge``.
+proceed with this step by creating an instance of ``SimpleBridge``.
 
 .. code:: ipython3
 

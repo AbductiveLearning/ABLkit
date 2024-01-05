@@ -60,8 +60,8 @@ to obtain the reasoning result. During training,
 alongside the aforementioned forward flow (i.e., prediction --> deduction reasoning), 
 there also exists a reverse flow, which starts from the reasoning result and 
 involves abductive reasoning ``KBBase.abduce_candidates`` to generate possible revised pseudo-labels. 
-Subsequently, these pseudo-labels are processed to minimize inconsistencies with the learning part, 
-which in turn revise the outcomes of the learning model, and then 
+Subsequently, these pseudo-labels are processed to minimize inconsistencies with the learning part.
+They in turn revise the outcomes of the learning model, which are then
 fed back for further training ``ABLModel.train``.  
 
 .. image:: ../_static/img/usage.png
