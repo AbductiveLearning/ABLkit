@@ -24,8 +24,7 @@ To learn how to use it, please refer to - [document](https://www.lamda.nju.edu.c
 
 ## Installation
 
-ABL is distributed on [PyPI](https://pypi.org/) and can be installed with ``pip``:
-
+The easiest way to install ABL-Package is using ``pip``:
 ```bash
 # (TODO)
 $ pip install abl
@@ -37,7 +36,7 @@ For testing purposes, you can install it using:
 $ pip install -i https://test.pypi.org/simple/ --extra-index-url https://mirrors.nju.edu.cn/pypi/web/simple/ abl
 ```
 
-Alternatively, to install ABL by source code, sequentially run following commands in your terminal/command line.
+Alternatively, to install by source code, sequentially run following commands in your terminal/command line.
 
 ```bash
 $ git clone https://github.com/AbductiveLearning/ABL-Package.git
@@ -69,7 +68,6 @@ We provide several examples in `examples/`. Each example is stored in a separate
 We use the MNIST Addition task as a quick start example. In this task, pairs of MNIST handwritten images and their sums are given, alongwith a domain knowledge base which contains information on how to perform addition operations. Our objective is to input a pair of handwritten images and accurately determine their sum.
 
 ### Working with Data
-
 
 ABL-Package requires data in the format of `(X, gt_pseudo_label, Y)` where `X` is a list of input examples containing instances, `gt_pseudo_label` is the ground-truth label of each example in `X` and `Y` is the ground-truth reasoning result of each example in `X`. Note that `gt_pseudo_label` is only used to evaluate the machine learning model's performance but not to train it. 
 
