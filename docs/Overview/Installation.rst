@@ -1,7 +1,7 @@
 Installation
 ==================
 
-ABL is distributed on `PyPI <https://pypi.org/>`__ and can be installed with ``pip``:
+The easiest way to install ABL-Package is using ``pip``:
 
 .. code:: console
 
@@ -14,7 +14,7 @@ For testing purposes, you can install it using:
 
     $ pip install -i https://test.pypi.org/simple/ --extra-index-url https://mirrors.nju.edu.cn/pypi/web/simple/ abl
 
-Alternatively, to install ABL by source code, 
+Alternatively, to install by source code, 
 sequentially run following commands in your terminal/command line.
 
 .. code:: console
