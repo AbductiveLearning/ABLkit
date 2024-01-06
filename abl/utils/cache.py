@@ -1,3 +1,15 @@
+# Python module wrapper for _functools C module
+# to allow utilities written in Python to be added
+# to the functools module.
+# Written by Nick Coghlan <ncoghlan at gmail.com>,
+# Raymond Hettinger <python at rcn.com>,
+# and Łukasz Langa <lukasz at langa.pl>.
+#   Copyright (C) 2006-2013 Python Software Foundation.
+# See C source code for _functools credits/copyright
+# Modified from
+# https://github.com/python/cpython/blob/3.12/Lib/functools.py
+
+
 from typing import Callable, Generic, TypeVar
 
 K = TypeVar("K")

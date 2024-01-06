@@ -1,4 +1,7 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+# Modified from
+# https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/data_structures/instance_data.py # noqa
+
 from typing import List, Union
 
 import numpy as np
@@ -13,9 +16,6 @@ LongTypeTensor = Union[torch.LongTensor, torch.cuda.LongTensor]
 
 IndexType = Union[str, slice, int, list, LongTypeTensor, BoolTypeTensor, np.ndarray]
 
-
-# Modified from
-# https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/data_structures/instance_data.py # noqa
 class ListData(BaseDataElement):
     """
     Abstract Data Interface used throughout the ABL-Package.
