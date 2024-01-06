@@ -6,7 +6,7 @@ from zoopt import Dimension, Objective, Opt, Parameter, Solution
 
 from ..data.structures import ListData
 from ..reasoning import KBBase
-from ..utils.utils import confidence_dist, hamming_dist
+from ..utils.utils import hamming_dist, confidence_dist, avg_confidence_dist
 
 
 class Reasoner:
@@ -74,10 +74,10 @@ class Reasoner:
 
     def _check_valid_dist(self, dist_func):
         if isinstance(dist_func, str):
-            if dist_func not in ["hamming", "confidence"]:
+            if dist_func not in ["hamming", "confidence", "avg_confidence"]:
                 raise NotImplementedError(
                     'Valid options for predefined dist_func include "hamming" '
-                    + f'and "confidence", but got {dist_func}.'
+                    + f' "confidence" and "avg_confidence", but got {dist_func}.'
                 )
             return
         elif callable(dist_func):
@@ -167,6 +167,9 @@ class Reasoner:
         elif self.dist_func == "confidence":
             candidates_idxs = [[self.label_to_idx[x] for x in c] for c in candidates]
             return confidence_dist(data_example.pred_prob, candidates_idxs)
+        elif self.dist_func == "avg_confidence":
+            candidates_idxs = [[self.label_to_idx[x] for x in c] for c in candidates]
+            return avg_confidence_dist(data_example.pred_prob, candidates_idxs)
         else:
             candidate_idxs = [[self.label_to_idx[x] for x in c] for c in candidates]
             cost_list = self.dist_func(data_example, candidates, candidate_idxs, reasoning_results)

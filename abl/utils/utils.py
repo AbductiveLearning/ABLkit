@@ -87,13 +87,14 @@ def hamming_dist(pred_pseudo_label: List[Any], candidates: List[List[Any]]) -> n
     return np.sum(pred_pseudo_label != candidates, axis=1)
 
 
-def confidence_dist(pred_prob: List[np.ndarray], candidates_idxs: List[List[Any]]) -> np.ndarray:
+def confidence_dist(pred_prob: np.ndarray, candidates_idxs: List[List[Any]]) -> np.ndarray:
     """
-    Compute the confidence distance between prediction probabilities and candidates.
+    Compute the confidence distance between prediction probabilities and candidates,
+    where the confidence distance is defined as 1 - the product of prediction probabilities.
 
     Parameters
     ----------
-    pred_prob : List[np.ndarray]
+    pred_prob : np.ndarray
         Prediction probability distributions, each element is an array
         representing the probability distribution of a particular prediction.
     candidates_idxs : List[List[Any]]
@@ -105,9 +106,29 @@ def confidence_dist(pred_prob: List[np.ndarray], candidates_idxs: List[List[Any]
         Confidence distances computed for each candidate.
     """
     pred_prob = np.clip(pred_prob, 1e-9, 1)
-    _, cols = np.indices((len(candidates_idxs), len(candidates_idxs[0])))
+    cols = np.arange(len(candidates_idxs[0]))[None, :]
     return 1 - np.prod(pred_prob[cols, candidates_idxs], axis=1)
 
+def avg_confidence_dist(pred_prob: np.ndarray, candidates_idxs: List[List[Any]]) -> np.ndarray:
+    """
+    Compute the average confidence distance between prediction probabilities and candidates,
+    where the confidence distance is defined as 1 - the average of prediction probabilities.
+
+    Parameters
+    ----------
+    pred_prob : np.ndarray
+        Prediction probability distributions, each element is an array
+        representing the probability distribution of a particular prediction.
+    candidates_idxs : List[List[Any]]
+        Multiple possible candidates' indices.
+
+    Returns
+    -------
+    np.ndarray
+        Confidence distances computed for each candidate.
+    """
+    cols = np.arange(len(candidates_idxs[0]))[None, :]
+    return 1 - np.average(pred_prob[cols, candidates_idxs], axis=1)
 
 def to_hashable(x: Union[List[Any], Any]) -> Union[Tuple[Any, ...], Any]:
     """

@@ -8,7 +8,7 @@ from abl.bridge import SimpleBridge
 from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
 from abl.learning import ABLModel
 from abl.reasoning import Reasoner
-from abl.utils import ABLLogger, confidence_dist, print_log, tab_data_to_tuple
+from abl.utils import ABLLogger, avg_confidence_dist, print_log, tab_data_to_tuple
 
 from get_dataset import load_and_preprocess_dataset, split_dataset
 from kb import ZooKB
@@ -16,7 +16,7 @@ from kb import ZooKB
 
 def consitency(data_example, candidates, candidate_idxs, reasoning_results):
     pred_prob = data_example.pred_prob
-    model_scores = confidence_dist(pred_prob, candidate_idxs)
+    model_scores = avg_confidence_dist(pred_prob, candidate_idxs)
     rule_scores = np.array(reasoning_results)
     scores = model_scores + rule_scores
     return scores
