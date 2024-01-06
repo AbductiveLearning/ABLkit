@@ -77,8 +77,6 @@ class KBBase(ABC):
                 logger="current",
                 level=logging.WARNING,
             )
-            # TODO 添加半监督
-            # TODO 添加consistency measure+max_err容忍错误
 
     @abstractmethod
     def logic_forward(self, pseudo_label: List[Any], x: Optional[List[Any]] = None) -> Any:
