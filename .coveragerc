@@ -7,7 +7,6 @@ include = */abl/*
 omit =
 	*/abl/__init__.py
 	abl/bridge/__init__.py
-	abl/dataset/__init__.py
 	abl/data/__init__.py
 	abl/learning/__init__.py
 	abl/reasoning/__init__.py
