@@ -1,10 +1,10 @@
 <div align="center">
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/abl)](https://pypi.org/project/abl/)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/LICENSE)
-[![flake8 Lint](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/lint.yaml/badge.svg?branch=Dev)](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/lint.yaml)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/AbductiveLearning/ABL-Package/blob/main/LICENSE)
+[![flake8 Lint](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/lint.yaml/badge.svg)](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/lint.yaml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![ABL-Package-CI](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/build-and-test.yaml/badge.svg?branch=Dev)](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/build-and-test.yaml)
+[![ABL-Package-CI](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/build-and-test.yaml)
 
 [📘Documentation](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/index.html) |
 [💬Reporting Issues](https://github.com/AbductiveLearning/ABL-Package/issues/new)
