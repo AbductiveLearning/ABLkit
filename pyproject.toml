@@ -8,21 +8,25 @@ version = "0.1.5"
 authors = [
   { name="LAMDA 2024" },
 ]
-description = "Abductive learning package project"
+description = "Abductive Learning (ABL) package"
 readme = "README.md"
 requires-python = ">=3.6.0"
 license = {text = "MIT LICENSE"}
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Developers",
     "Programming Language :: Python",
     "Topic :: Software Development",
     "Topic :: Scientific/Engineering",
     "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS :: MacOS X",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
 ]
 dependencies = [
     "numpy>=1.15.0",
