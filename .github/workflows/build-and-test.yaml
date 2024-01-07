@@ -50,7 +50,7 @@ jobs:
 
     - name: Run tests
       run: |
-        pytest --cov-config=.coveragerc --cov-report=xml --cov=abl ./tests 
+        pytest --cov-config=.coveragerc --cov-report=xml --cov=ablkit ./tests 
 
     - name: Publish code coverage
       uses: codecov/codecov-action@v1
