@@ -76,7 +76,7 @@ class Reasoner:
         if isinstance(dist_func, str):
             if dist_func not in ["hamming", "confidence", "avg_confidence"]:
                 raise NotImplementedError(
-                    'Valid options for predefined dist_func include "hamming" '
+                    'Valid options for predefined dist_func include "hamming", '
                     + f'"confidence" and "avg_confidence", but got {dist_func}.'
                 )
             return
