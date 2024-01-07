@@ -1,7 +1,7 @@
 ABL Kit
 =======
 
-**ABL Kit** is an open source toolkit library for **Abductive Learning (ABL)**.
+**ABL Kit** is an open source Python toolkit for **Abductive Learning (ABL)**.
 ABL is a novel paradigm that integrates machine learning and 
 logical reasoning in a unified framework. It is suitable for tasks
 where both data and (logical) domain knowledge are available. 
