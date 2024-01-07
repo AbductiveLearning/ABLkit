@@ -75,7 +75,9 @@ We provide several examples in `examples/`. Each example is stored in a separate
 
 We use the MNIST Addition task as a quick start example. In this task, pairs of MNIST handwritten images and their sums are given, alongwith a domain knowledge base which contains information on how to perform addition operations. Our objective is to input a pair of handwritten images and accurately determine their sum.
 
-### Working with Data
+<details>
+<summary>Working with Data</summary>
+<br>
 
 ABL-Package requires data in the format of `(X, gt_pseudo_label, Y)` where `X` is a list of input examples containing instances, `gt_pseudo_label` is the ground-truth label of each example in `X` and `Y` is the ground-truth reasoning result of each example in `X`. Note that `gt_pseudo_label` is only used to evaluate the machine learning model's performance but not to train it. 
 
@@ -90,7 +92,11 @@ train_data = get_dataset(train=True)
 test_data = get_dataset(train=False)
 ```
 
-### Building the Learning Part
+</details>
+
+<details>
+<summary>Building the Learning Part</summary>
+<br>
 
 Learning part is constructed by first defining a base model for machine learning. The ABL-Package offers considerable flexibility, supporting any base model that conforms to the scikit-learn style (which requires the implementation of fit and predict methods), or a PyTorch-based neural network (which has defined the architecture and implemented forward method). In this example, we build a simple LeNet5 network as the base model.
 
@@ -121,7 +127,11 @@ from abl.learning import ABLModel
 ​model = ABLModel(base_model)
 ```
 
-### Building the Reasoning Part
+</details>
+
+<details>
+<summary>Building the Reasoning Part</summary>
+<br>
 
 To build the reasoning part, we first define a knowledge base by creating a subclass of `KBBase`. In the subclass, we initialize the `pseudo_label_list` parameter and override the `logic_forward` method, which specifies how to perform (deductive) reasoning that processes pseudo-labels of an example to the corresponding reasoning result. Specifically, for the MNIST Addition task, this `logic_forward` method is tailored to execute the sum operation.
 
@@ -146,7 +156,11 @@ from abl.reasoning import Reasoner
 reasoner = Reasoner(kb)
 ```
 
-### Building Evaluation Metrics
+</details>
+
+<details>
+<summary>Building Evaluation Metrics</summary>
+<br>
 
 ABL-Package provides two basic metrics, namely `SymbolAccuracy` and `ReasoningMetric`, which are used to evaluate the accuracy of the machine learning model's predictions and the accuracy of the `logic_forward` results, respectively.
 
@@ -156,7 +170,11 @@ from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
 metric_list = [SymbolAccuracy(), ReasoningMetric(kb=kb)]
 ```
 
-### Bridging Learning and Reasoning
+</details>
+
+<details>
+<summary>Bridging Learning and Reasoning</summary>
+<br>
 
 Now, we use `SimpleBridge` to combine learning and reasoning in a
 unified ABL framework.
@@ -173,6 +191,8 @@ Finally, we proceed with training and testing.
 ​bridge.train(train_data, loops=1, segment_size=0.01)
 bridge.test(test_data)
 ```
+
+</details>
 
 ## References
 
