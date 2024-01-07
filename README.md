@@ -2,14 +2,14 @@
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ablkit)](https://pypi.org/project/ablkit/)
 [![PyPI version](https://badgen.net/pypi/v/ablkit)](https://pypi.org/project/ablkit/)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/AbductiveLearning/ABL-Package/blob/main/LICENSE)
-[![flake8 Lint](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/lint.yaml/badge.svg)](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/lint.yaml)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/AbductiveLearning/ABLKit/blob/main/LICENSE)
+[![flake8 Lint](https://github.com/AbductiveLearning/ABLKit/actions/workflows/lint.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLKit/actions/workflows/lint.yaml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![ABL-Package-CI](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/build-and-test.yaml)
+[![ABLKit-CI](https://github.com/AbductiveLearning/ABLKit/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLKit/actions/workflows/build-and-test.yaml)
 
 [📘Documentation](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/index.html) |
-[📚Examples](https://github.com/AbductiveLearning/ABL-Package/tree/main/examples) |
-[💬Reporting Issues](https://github.com/AbductiveLearning/ABL-Package/issues/new)
+[📚Examples](https://github.com/AbductiveLearning/ABLKit/tree/main/examples) |
+[💬Reporting Issues](https://github.com/AbductiveLearning/ABLKit/issues/new)
 
 </div>
 
@@ -47,8 +47,8 @@ pip install ablkit
 Alternatively, to install from source code, sequentially run following commands in your terminal/command line.
 
 ```bash
-git clone https://github.com/AbductiveLearning/ABL-Package.git
-cd ABL-Package
+git clone https://github.com/AbductiveLearning/ABLKit.git
+cd ABLKit
 pip install -v -e .
 ```
 
@@ -68,10 +68,10 @@ For Windows and Mac users, please refer to the [SWI-Prolog Install Guide](https:
 
 We provide several examples in `examples/`. Each example is stored in a separate folder containing a README file.
 
-+ [MNIST Addition](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/mnist_add)
-+ [Handwritten Formula](https://github.com/AbductiveLearning/ABL-Package/blob/Dev/examples/hwf)
-+ [Handwritten Equation Decipherment](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed)
-+ [Zoo](https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/zoo)
++ [MNIST Addition](https://github.com/AbductiveLearning/ABLKit/blob/Dev/examples/mnist_add)
++ [Handwritten Formula](https://github.com/AbductiveLearning/ABLKit/blob/Dev/examples/hwf)
++ [Handwritten Equation Decipherment](https://github.com/AbductiveLearning/ABLKit/tree/Dev/examples/hed)
++ [Zoo](https://github.com/AbductiveLearning/ABLKit/tree/Dev/examples/zoo)
 
 ## Quick Start
 

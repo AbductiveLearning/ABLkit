@@ -40,8 +40,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/AbductiveLearning/ABL-Package"
-Issues = "https://github.com/AbductiveLearning/ABL-Package/issues"
+Homepage = "https://github.com/AbductiveLearning/ABLKit"
+Issues = "https://github.com/AbductiveLearning/ABLKit/issues"
 
 [project.optional-dependencies]
 test = [
