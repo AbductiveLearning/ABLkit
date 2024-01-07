@@ -3,7 +3,7 @@ MNIST Addition
 
 .. raw:: html
     
-    <p>For detailed code implementation, please view it on <a class="reference external" href="https://github.com/AbductiveLearning/ABLKit/tree/Dev/examples/mnist_add" target="_blank">GitHub</a>.</p>
+    <p>For detailed code implementation, please view it on <a class="reference external" href="https://github.com/AbductiveLearning/ABLKit/tree/main/examples/mnist_add" target="_blank">GitHub</a>.</p>
 
 Below shows an implementation of `MNIST
 Addition <https://arxiv.org/abs/1805.10872>`__. In this task, pairs of

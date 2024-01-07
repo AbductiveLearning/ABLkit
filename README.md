@@ -68,10 +68,10 @@ For Windows and Mac users, please refer to the [SWI-Prolog Install Guide](https:
 
 We provide several examples in `examples/`. Each example is stored in a separate folder containing a README file.
 
-+ [MNIST Addition](https://github.com/AbductiveLearning/ABLKit/blob/Dev/examples/mnist_add)
-+ [Handwritten Formula](https://github.com/AbductiveLearning/ABLKit/blob/Dev/examples/hwf)
-+ [Handwritten Equation Decipherment](https://github.com/AbductiveLearning/ABLKit/tree/Dev/examples/hed)
-+ [Zoo](https://github.com/AbductiveLearning/ABLKit/tree/Dev/examples/zoo)
++ [MNIST Addition](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/mnist_add)
++ [Handwritten Formula](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/hwf)
++ [Handwritten Equation Decipherment](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/hed)
++ [Zoo](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/zoo)
 
 ## Quick Start
 
