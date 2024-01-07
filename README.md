@@ -32,32 +32,38 @@ To learn how to use it, please refer to - [document](https://www.lamda.nju.edu.c
 
 ## Installation
 
+### Install from PyPI
+
 The easiest way to install ABL-Package is using ``pip``:
 ```bash
 # (TODO)
-$ pip install abl
+pip install abl
 ```
 
 For testing purposes, you can install it using:
 
 ```bash
-$ pip install -i https://test.pypi.org/simple/ --extra-index-url https://mirrors.nju.edu.cn/pypi/web/simple/ abl
+pip install -i https://test.pypi.org/simple/ --extra-index-url https://mirrors.nju.edu.cn/pypi/web/simple/ abl
 ```
 
-Alternatively, to install by source code, sequentially run following commands in your terminal/command line.
+### Install from Source
+
+Alternatively, to install from source code, sequentially run following commands in your terminal/command line.
 
 ```bash
-$ git clone https://github.com/AbductiveLearning/ABL-Package.git
-$ cd ABL-Package
-$ pip install -v -e .
+git clone https://github.com/AbductiveLearning/ABL-Package.git
+cd ABL-Package
+pip install -v -e .
 ```
 
-(Optional) If the use of a [Prolog-based knowledge base](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/Intro/Reasoning.html#prolog) is necessary, the installation of [Swi-Prolog](https://www.swi-prolog.org/) is also required:
+### (Optional) Install Swi-Prolog
+
+If the use of a [Prolog-based knowledge base](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/Intro/Reasoning.html#prolog) is necessary, please also install [Swi-Prolog](https://www.swi-prolog.org/):
 
 For Linux users:
 
 ```bash
-$ sudo apt-get install swi-prolog
+sudo apt-get install swi-prolog
 ```
 
 For Windows and Mac users, please refer to the [Swi-Prolog Install Guide](https://github.com/yuce/pyswip/blob/master/INSTALL.md).
