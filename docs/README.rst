@@ -49,10 +49,10 @@ sequentially run following commands in your terminal/command line.
     cd ABL-Package
     pip install -v -e .
 
-(Optional) Install Swi-Prolog
+(Optional) Install SWI-Prolog
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If the use of a :ref:`Prolog-based knowledge base <prolog>` is necessary, the installation of `Swi-Prolog <https://www.swi-prolog.org/>`_ is also required:
+If the use of a :ref:`Prolog-based knowledge base <prolog>` is necessary, the installation of `SWI-Prolog <https://www.swi-prolog.org/>`_ is also required:
 
 For Linux users:
 
@@ -60,7 +60,7 @@ For Linux users:
 
     sudo apt-get install swi-prolog
 
-For Windows and Mac users, please refer to the `Swi-Prolog Install Guide <https://github.com/yuce/pyswip/blob/master/INSTALL.md>`_.
+For Windows and Mac users, please refer to the `SWI-Prolog Install Guide <https://github.com/yuce/pyswip/blob/master/INSTALL.md>`_.
 
 References
 ----------

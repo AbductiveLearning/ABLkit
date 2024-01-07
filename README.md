@@ -56,9 +56,9 @@ cd ABL-Package
 pip install -v -e .
 ```
 
-### (Optional) Install Swi-Prolog
+### (Optional) Install SWI-Prolog
 
-If the use of a [Prolog-based knowledge base](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/Intro/Reasoning.html#prolog) is necessary, please also install [Swi-Prolog](https://www.swi-prolog.org/):
+If the use of a [Prolog-based knowledge base](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/Intro/Reasoning.html#prolog) is necessary, please also install [SWI-Prolog](https://www.swi-prolog.org/):
 
 For Linux users:
 
@@ -66,7 +66,7 @@ For Linux users:
 sudo apt-get install swi-prolog
 ```
 
-For Windows and Mac users, please refer to the [Swi-Prolog Install Guide](https://github.com/yuce/pyswip/blob/master/INSTALL.md).
+For Windows and Mac users, please refer to the [SWI-Prolog Install Guide](https://github.com/yuce/pyswip/blob/master/INSTALL.md).
 
 ## Examples
 
