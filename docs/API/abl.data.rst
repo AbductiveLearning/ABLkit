@@ -1,10 +1,10 @@
-abl.data
+ablkit.data
 ===================
 
 ``structures``
 --------------
 
-.. autoclass:: abl.data.structures.ListData
+.. autoclass:: ablkit.data.structures.ListData
    :members:
    :undoc-members:
    :show-inheritance:
@@ -12,7 +12,7 @@ abl.data
 ``evaluation``
 --------------
 
-.. automodule:: abl.data.evaluation
+.. automodule:: ablkit.data.evaluation
    :members:
    :undoc-members:
    :show-inheritance:

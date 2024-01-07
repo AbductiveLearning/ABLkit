@@ -1,12 +1,12 @@
-abl.learning
+ablkit.learning
 ==================
 
-.. autoclass:: abl.learning.ABLModel
+.. autoclass:: ablkit.learning.ABLModel
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: abl.learning.BasicNN
+.. autoclass:: ablkit.learning.BasicNN
    :members:
    :undoc-members:
    :show-inheritance:
@@ -14,7 +14,7 @@ abl.learning
 ``torch_dataset``
 -----------------
 
-.. automodule:: abl.learning.torch_dataset
+.. automodule:: ablkit.learning.torch_dataset
    :members:
    :undoc-members:
    :show-inheritance:

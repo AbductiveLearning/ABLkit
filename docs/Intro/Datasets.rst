@@ -15,7 +15,7 @@ In this section, we will look at the dataset and data structure in ABL Kit.
 .. code:: python
 
     import torch
-    from abl.data.structures import ListData
+    from ablkit.data.structures import ListData
 
 Dataset
 -------
@@ -62,11 +62,11 @@ where each sublist in ``X``, e.g., |data_example|, is a data example and each im
 Data Structure
 --------------
 
-Besides the user-provided dataset, various forms of data are utilized and dynamicly generated throughout the training and testing process of ABL framework. Examples include raw data, predicted pseudo-label, abduced pseudo-label, pseudo-label indices, etc. To manage this diversity and ensure a stable, versatile interface, ABL Kit employs `abstract data interfaces <../API/abl.data.html#structure>`_ to encapsulate different forms of data that will be used in the total learning process.
+Besides the user-provided dataset, various forms of data are utilized and dynamicly generated throughout the training and testing process of ABL framework. Examples include raw data, predicted pseudo-label, abduced pseudo-label, pseudo-label indices, etc. To manage this diversity and ensure a stable, versatile interface, ABL Kit employs `abstract data interfaces <../API/ablkit.data.html#structure>`_ to encapsulate different forms of data that will be used in the total learning process.
 
 ``ListData`` is the underlying abstract data interface utilized in ABL Kit. As the fundamental data structure, ``ListData`` implements commonly used data manipulation methods and is responsible for transferring data between various components of ABL, ensuring that stages such as prediction, abductive reasoning, and training can utilize ``ListData`` as a unified input format. Before proceeding to other stages, user-provided datasets will be firstly converted into ``ListData``.
 
-Besides providing a tuple of ``(X, gt_pseudo_label, Y)``, ABL Kit also allows users to directly supply data in ``ListData`` format, which similarly requires the inclusion of these three attributes. The following code shows the basic usage of ``ListData``. More information can be found in the `API documentation <../API/abl.data.html#structure>`_.
+Besides providing a tuple of ``(X, gt_pseudo_label, Y)``, ABL Kit also allows users to directly supply data in ``ListData`` format, which similarly requires the inclusion of these three attributes. The following code shows the basic usage of ``ListData``. More information can be found in the `API documentation <../API/ablkit.data.html#structure>`_.
 
 .. code-block:: python
 

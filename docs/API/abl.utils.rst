@@ -1,7 +1,7 @@
-abl.utils
+ablkit.utils
 ==================
 
-.. automodule:: abl.utils
+.. automodule:: ablkit.utils
    :members:
    :undoc-members:
    :show-inheritance:

@@ -57,7 +57,7 @@ class ListData(BaseDataElement):
     class implemented in `MMEngine <https://github.com/open-mmlab/mmengine/blob/main/mmengine/structures/base_data_element.py>`_. # noqa: E501
 
     Examples:
-        >>> from abl.data.structures import ListData
+        >>> from ablkit.data.structures import ListData
         >>> import numpy as np
         >>> import torch
         >>> data_examples = ListData()

@@ -34,8 +34,8 @@ model.
     import torch
     import torch.nn as nn
 
-    from abl.learning import ABLModel, BasicNN
-    from abl.utils import ABLLogger, print_log
+    from ablkit.learning import ABLModel, BasicNN
+    from ablkit.utils import ABLLogger, print_log
 
     from bridge import HedBridge
     from consistency_metric import ConsistencyMetric

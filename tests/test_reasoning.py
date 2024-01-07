@@ -2,7 +2,7 @@ import numpy as np
 import platform
 import pytest
 
-from abl.reasoning import PrologKB, Reasoner
+from ablkit.reasoning import PrologKB, Reasoner
 
 
 class TestKBBase(object):

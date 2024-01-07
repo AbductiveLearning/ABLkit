@@ -4,11 +4,11 @@ import os.path as osp
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 
-from abl.bridge import SimpleBridge
-from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
-from abl.learning import ABLModel
-from abl.reasoning import Reasoner
-from abl.utils import ABLLogger, avg_confidence_dist, print_log, tab_data_to_tuple
+from ablkit.bridge import SimpleBridge
+from ablkit.data.evaluation import ReasoningMetric, SymbolAccuracy
+from ablkit.learning import ABLModel
+from ablkit.reasoning import Reasoner
+from ablkit.utils import ABLLogger, avg_confidence_dist, print_log, tab_data_to_tuple
 
 from get_dataset import load_and_preprocess_dataset, split_dataset
 from kb import ZooKB

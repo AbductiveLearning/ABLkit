@@ -5,9 +5,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from abl.data.structures import ListData
-from abl.learning import BasicNN
-from abl.reasoning import GroundKB, KBBase, PrologKB, Reasoner
+from ablkit.data.structures import ListData
+from ablkit.learning import BasicNN
+from ablkit.reasoning import GroundKB, KBBase, PrologKB, Reasoner
 
 
 class LeNet5(nn.Module):

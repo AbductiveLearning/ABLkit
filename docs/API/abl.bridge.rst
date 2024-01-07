@@ -1,7 +1,7 @@
-abl.bridge
+ablkit.bridge
 ==================
 
-.. automodule:: abl.bridge
+.. automodule:: ablkit.bridge
    :members:
    :undoc-members:
    :show-inheritance:

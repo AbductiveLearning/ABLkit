@@ -1,7 +1,7 @@
 import openml
 from z3 import If, Implies, Int, Not, Solver, Sum, sat  # noqa: F401
 
-from abl.reasoning import KBBase
+from ablkit.reasoning import KBBase
 
 
 class ZooKB(KBBase):

@@ -22,7 +22,7 @@ In ABL Kit, building the reasoning part involves two steps:
 
 .. code:: python
 
-   from abl.reasoning import KBBase, GroundKB, PrologKB, Reasoner
+   from ablkit.reasoning import KBBase, GroundKB, PrologKB, Reasoner
 
 Building a knowledge base
 -------------------------

@@ -31,11 +31,11 @@ machine learning model.
     import torch.nn as nn
     from torch.optim import RMSprop, lr_scheduler
 
-    from abl.bridge import SimpleBridge
-    from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
-    from abl.learning import ABLModel, BasicNN
-    from abl.reasoning import KBBase, Reasoner
-    from abl.utils import ABLLogger, print_log
+    from ablkit.bridge import SimpleBridge
+    from ablkit.data.evaluation import ReasoningMetric, SymbolAccuracy
+    from ablkit.learning import ABLModel, BasicNN
+    from ablkit.reasoning import KBBase, Reasoner
+    from ablkit.utils import ABLLogger, print_log
 
     from datasets import get_dataset
     from models.nn import LeNet5
@@ -202,7 +202,7 @@ examples.
 
 .. code:: ipython3
 
-    from abl.data.structures import ListData
+    from ablkit.data.structures import ListData
     # ListData is a data structure provided by ABL Kit that can be used to organize data examples
     data_examples = ListData()
     # We use the first 100 data examples in the training set as an illustration

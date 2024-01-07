@@ -48,7 +48,7 @@ To facilitate uniform processing, ABL Kit provides the ``BasicNN`` class to conv
 .. code:: python
 
    import torch
-   from abl.learning import BasicNN
+   from ablkit.learning import BasicNN
 
    loss_fn = torch.nn.CrossEntropyLoss()
    optimizer = torch.optim.RMSprop(cls.parameters(), lr=0.001)
@@ -59,7 +59,7 @@ The base model built above is trained to make predictions on instance-level data
 
 .. code:: python
 
-   from abl.learning import ABLModel
+   from ablkit.learning import ABLModel
 
    model = ABLModel(base_model)
 
@@ -72,7 +72,7 @@ To build the reasoning part, we first define a knowledge base by creating a subc
 
 .. code:: python
 
-   from abl.reasoning import KBBase
+   from ablkit.reasoning import KBBase
 
    class AddKB(KBBase):
       def __init__(self, pseudo_label_list=list(range(10))):
@@ -89,7 +89,7 @@ In such scenarios, the reasoner can minimize inconsistency and return the pseudo
 
 .. code:: python
 
-   from abl.reasoning import Reasoner
+   from ablkit.reasoning import Reasoner
    
    reasoner = Reasoner(kb)
 
@@ -102,7 +102,7 @@ ABL Kit provides two basic metrics, namely ``SymbolAccuracy`` and ``ReasoningMet
 
 .. code:: python
 
-   from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
+   from ablkit.data.evaluation import ReasoningMetric, SymbolAccuracy
 
    metric_list = [SymbolAccuracy(), ReasoningMetric(kb=kb)]
 
@@ -115,7 +115,7 @@ Now, we use ``SimpleBridge`` to combine learning and reasoning in a unified ABL 
 
 .. code:: python
 
-   from abl.bridge import SimpleBridge
+   from ablkit.bridge import SimpleBridge
 
    bridge = SimpleBridge(model, reasoner, metric_list)
 

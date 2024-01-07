@@ -113,7 +113,7 @@ To facilitate uniform processing, ABL Kit provides the `BasicNN` class to conver
 
 ```python
 ​import torch
-​from abl.learning import BasicNN
+​from ablkit.learning import BasicNN
 ​    
 ​loss_fn = torch.nn.CrossEntropyLoss()
 ​optimizer = torch.optim.RMSprop(cls.parameters(), lr=0.001, alpha=0.9)
@@ -124,7 +124,7 @@ To facilitate uniform processing, ABL Kit provides the `BasicNN` class to conver
 The base model built above is trained to make predictions on instance-level data (e.g., a single image), while ABL deals with example-level data. To bridge this gap, we wrap the base_model into an instance of `ABLModel`. This class serves as a unified wrapper for base models, facilitating the learning part to train, test, and predict on example-level data, (e.g., images that comprise an equation).
 
 ```python
-from abl.learning import ABLModel
+from ablkit.learning import ABLModel
 ​    
 ​model = ABLModel(base_model)
 ```
@@ -138,7 +138,7 @@ from abl.learning import ABLModel
 To build the reasoning part, we first define a knowledge base by creating a subclass of `KBBase`. In the subclass, we initialize the `pseudo_label_list` parameter and override the `logic_forward` method, which specifies how to perform (deductive) reasoning that processes pseudo-labels of an example to the corresponding reasoning result. Specifically, for the MNIST Addition task, this `logic_forward` method is tailored to execute the sum operation.
 
 ```python
-from abl.reasoning import KBBase
+from ablkit.reasoning import KBBase
 ​    
 class AddKB(KBBase):
     def __init__(self, pseudo_label_list=list(range(10))):
@@ -153,7 +153,7 @@ kb = AddKB()
 Next, we create a reasoner by instantiating the class `Reasoner`, passing the knowledge base as a parameter. Due to the indeterminism of abductive reasoning, there could be multiple candidate pseudo-labels compatible to the knowledge base. In such scenarios, the reasoner can minimize inconsistency and return the pseudo-label with the highest consistency.
 
 ```python
-from abl.reasoning import Reasoner
+from ablkit.reasoning import Reasoner
 ​    
 reasoner = Reasoner(kb)
 ```
@@ -167,7 +167,7 @@ reasoner = Reasoner(kb)
 ABL Kit provides two basic metrics, namely `SymbolAccuracy` and `ReasoningMetric`, which are used to evaluate the accuracy of the machine learning model's predictions and the accuracy of the `logic_forward` results, respectively.
 
 ```python
-from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
+from ablkit.data.evaluation import ReasoningMetric, SymbolAccuracy
 ​    
 metric_list = [SymbolAccuracy(), ReasoningMetric(kb=kb)]
 ```
@@ -182,7 +182,7 @@ Now, we use `SimpleBridge` to combine learning and reasoning in a
 unified ABL framework.
 
 ```python
-from abl.bridge import SimpleBridge
+from ablkit.bridge import SimpleBridge
 ​    
 bridge = SimpleBridge(model, reasoner, metric_list)
 ```

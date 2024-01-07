@@ -1,6 +1,6 @@
 from typing import Any, Tuple
 
-from abl.utils import tab_data_to_tuple
+from ablkit.utils import tab_data_to_tuple
 from .structures.list_data import ListData
 from lambdaLearn.Base.TabularMixin import TabularMixin
 

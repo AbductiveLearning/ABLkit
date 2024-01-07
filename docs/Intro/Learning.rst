@@ -21,7 +21,7 @@ In ABL Kit, building the learning part involves two steps:
 
     import sklearn
     import torchvision
-    from abl.learning import BasicNN, ABLModel
+    from ablkit.learning import BasicNN, ABLModel
 
 Building a base model
 ---------------------
