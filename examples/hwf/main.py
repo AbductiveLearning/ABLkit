@@ -117,13 +117,13 @@ def main():
     # Build logger
     print_log("Abductive Learning on the HWF example.", logger="current")
 
-    ### Working with Data
+    # -- Working with Data ------------------------------
     print_log("Working with Data.", logger="current")
 
     train_data = get_dataset(train=True, get_pseudo_label=True)
     test_data = get_dataset(train=False, get_pseudo_label=True)
 
-    ### Building the Learning Part
+    # -- Building the Learning Part ---------------------
     print_log("Building the Learning Part.", logger="current")
 
     # Build necessary components for BasicNN
@@ -146,7 +146,7 @@ def main():
     # Build ABLModel
     model = ABLModel(base_model)
 
-    ### Building the Reasoning Part
+    # -- Building the Reasoning Part --------------------
     print_log("Building the Reasoning Part.", logger="current")
 
     # Build knowledge base
@@ -160,11 +160,11 @@ def main():
         kb, max_revision=args.max_revision, require_more_revision=args.require_more_revision
     )
 
-    ### Building Evaluation Metrics
+    # -- Building Evaluation Metrics --------------------
     print_log("Building Evaluation Metrics.", logger="current")
     metric_list = [SymbolAccuracy(prefix="hwf"), ReasoningMetric(kb=kb, prefix="hwf")]
 
-    ### Bridge Learning and Reasoning
+    # -- Bridging Learning and Reasoning ----------------
     print_log("Bridge Learning and Reasoning.", logger="current")
     bridge = SimpleBridge(model, reasoner, metric_list)
 
