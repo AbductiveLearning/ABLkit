@@ -7,6 +7,7 @@
 [![ABL-Package-CI](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/AbductiveLearning/ABL-Package/actions/workflows/build-and-test.yaml)
 
 [📘Documentation](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/index.html) |
+[📚Examples](https://github.com/AbductiveLearning/ABL-Package/tree/main/examples) |
 [💬Reporting Issues](https://github.com/AbductiveLearning/ABL-Package/issues/new)
 
 </div>
