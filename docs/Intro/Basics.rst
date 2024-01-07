@@ -9,16 +9,16 @@
 Learn the Basics
 ================
 
-Modules in ABL-Package
+Modules in ABL Kit
 ----------------------
 
-ABL-Package is an efficient implementation of `Abductive Learning <../Overview/Abductive-Learning.html>`_ (ABL), 
+ABL Kit is an efficient toolkit for `Abductive Learning <../Overview/Abductive-Learning.html>`_ (ABL), 
 a paradigm which integrates machine learning and logical reasoning in a balanced-loop.
-The ABL-Package comprises three primary parts: **Data**, **Learning**, and
+ABL Kit comprises three primary parts: **Data**, **Learning**, and
 **Reasoning**, corresponding to the three pivotal components of current
-AI: data, models, and knowledge. Below is an overview of the ABL-Package.
+AI: data, models, and knowledge. Below is an overview of the ABL Kit.
 
-.. image:: ../_static/img/ABL-Package.png
+.. image:: ../_static/img/ABLKit.png
 
 **Data** part manages the storage, operation, and evaluation of data efficiently.
 It includes the ``ListData`` class, which defines the data structures used in
@@ -50,7 +50,7 @@ from the ``BaseBridge`` class). The Bridge part synthesizes data,
 learning, and reasoning, facilitating the training and testing 
 of the entire ABL framework.
 
-Use ABL-Package Step by Step
+Use ABL Kit Step by Step
 ----------------------------
 
 In a typical ABL process, as illustrated below, 

@@ -3,12 +3,12 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "abl"
-version = "0.1.7"
+name = "ablkit"
+version = "0.1.8"
 authors = [
   { name="LAMDA 2024", email = "abductivelearning@gmail.com" },
 ]
-description = "Abductive Learning (ABL) package"
+description = "Abductive Learning (ABL) toolkit"
 readme = "README.md"
 requires-python = ">=3.7.0"
 license = {text = "MIT LICENSE"}

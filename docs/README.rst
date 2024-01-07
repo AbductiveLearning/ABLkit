@@ -1,19 +1,19 @@
-ABL-Package
-===========
+ABL Kit
+=======
 
-**ABL-Package** is an open source library for **Abductive Learning (ABL)**.
+**ABL Kit** is an open source toolkit library for **Abductive Learning (ABL)**.
 ABL is a novel paradigm that integrates machine learning and 
 logical reasoning in a unified framework. It is suitable for tasks
 where both data and (logical) domain knowledge are available. 
 
-Key Features of ABL-Package:
+Key Features of ABL Kit:
 
 - **Great Flexibility**: Adaptable to various machine learning modules and logical reasoning components.
 - **User-Friendly**: Provide data, model, and KB, and get started with just a few lines of code.
 - **High-Performance**: Optimization for high accuracy and fast training speed.
 
-ABL-Package encapsulates advanced ABL techniques, providing users with
-an efficient and convenient package to develop dual-driven ABL systems,
+ABL Kit encapsulates advanced ABL techniques, providing users with
+an efficient and convenient toolkit to develop dual-driven ABL systems,
 which leverage the power of both data and knowledge.
 
 .. image:: _static/img/ABL.png
@@ -24,18 +24,11 @@ Installation
 Install from PyPI
 ^^^^^^^^^^^^^^^^^
 
-The easiest way to install ABL-Package is using ``pip``:
+The easiest way to install ABL Kit is using ``pip``:
 
 .. code:: bash
 
-    # (TODO)
-    pip install abl
-
-For testing purposes, you can install it using:
-
-.. code:: bash
-
-    pip install -i https://test.pypi.org/simple/ --extra-index-url https://mirrors.nju.edu.cn/pypi/web/simple/ abl
+    pip install ablkit
 
 Install from Source
 ^^^^^^^^^^^^^^^^^^^
@@ -67,3 +60,26 @@ References
 
 For more information about ABL, please refer to: `Zhou, 2019 <http://scis.scichina.com/en/2019/076101.pdf>`_ 
 and `Zhou and Huang, 2022 <https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf>`_.
+
+.. code-block:: latex
+
+    @article{zhou2019abductive,
+        title     = {Abductive learning: towards bridging machine learning and logical reasoning},
+        author    = {Zhou, Zhi-Hua},
+        journal   = {Science China Information Sciences},
+        volume    = {62},
+        number    = {7},
+        pages     = {76101},
+        year      = {2019}
+    }
+
+    @incollection{zhou2022abductive,
+        title     = {Abductive Learning},
+        author    = {Zhou, Zhi-Hua and Huang, Yu-Xuan},
+        booktitle = {Neuro-Symbolic Artificial Intelligence: The State of the Art},
+        editor    = {Pascal Hitzler and Md. Kamruzzaman Sarker},
+        publisher = {{IOS} Press},
+        pages     = {353--369},
+        address   = {Amsterdam},
+        year      = {2022}
+    }

@@ -9,7 +9,7 @@ from lambdaLearn.Base.DeepModelMixin import DeepModelMixin
 
 class ModelConverter:
     """
-    This class provides functionality to convert LambdaLearn models to ABL-Package models.
+    This class provides functionality to convert LambdaLearn models to ABL Kit models.
     """
 
     def __init__(self) -> None:

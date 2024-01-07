@@ -14,7 +14,7 @@ We use the MNIST Addition task as a quick start example. In this task, pairs of 
 Working with Data
 -----------------
 
-ABL-Package requires data in the format of ``(X, gt_pseudo_label, Y)``  where ``X`` is a list of input examples containing instances, 
+ABL Kit requires data in the format of ``(X, gt_pseudo_label, Y)``  where ``X`` is a list of input examples containing instances, 
 ``gt_pseudo_label`` is the ground-truth label of each example in ``X`` and ``Y`` is the ground-truth reasoning result of each example in ``X``. Note that ``gt_pseudo_label`` is only used to evaluate the machine learning model's performance but not to train it.
 
 In the MNIST Addition task, the data loading looks like
@@ -33,7 +33,7 @@ Read more about `preparing datasets <Datasets.html>`_.
 Building the Learning Part
 --------------------------
 
-Learning part is constructed by first defining a base model for machine learning. The ABL-Package offers considerable flexibility, supporting any base model that conforms to the scikit-learn style (which requires the implementation of ``fit`` and ``predict`` methods), or a PyTorch-based neural network (which has defined the architecture and implemented ``forward`` method).
+Learning part is constructed by first defining a base model for machine learning. ABL Kit offers considerable flexibility, supporting any base model that conforms to the scikit-learn style (which requires the implementation of ``fit`` and ``predict`` methods), or a PyTorch-based neural network (which has defined the architecture and implemented ``forward`` method).
 In this example, we build a simple LeNet5 network as the base model.
 
 .. code:: python
@@ -43,7 +43,7 @@ In this example, we build a simple LeNet5 network as the base model.
 
    cls = LeNet5(num_classes=10)
 
-To facilitate uniform processing, ABL-Package provides the ``BasicNN`` class to convert a PyTorch-based neural network into a format compatible with scikit-learn models. To construct a ``BasicNN`` instance, aside from the network itself, we also need to define a loss function, an optimizer, and the computing device.
+To facilitate uniform processing, ABL Kit provides the ``BasicNN`` class to convert a PyTorch-based neural network into a format compatible with scikit-learn models. To construct a ``BasicNN`` instance, aside from the network itself, we also need to define a loss function, an optimizer, and the computing device.
 
 .. code:: python
 
@@ -98,7 +98,7 @@ Read more about `building the reasoning part <Reasoning.html>`_.
 Building Evaluation Metrics
 ---------------------------
 
-ABL-Package provides two basic metrics, namely ``SymbolAccuracy`` and ``ReasoningMetric``, which are used to evaluate the accuracy of the machine learning model's predictions and the accuracy of the ``logic_forward`` results, respectively.
+ABL Kit provides two basic metrics, namely ``SymbolAccuracy`` and ``ReasoningMetric``, which are used to evaluate the accuracy of the machine learning model's predictions and the accuracy of the ``logic_forward`` results, respectively.
 
 .. code:: python
 

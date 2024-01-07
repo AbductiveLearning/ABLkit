@@ -4,18 +4,11 @@ Installation
 Install from PyPI
 ^^^^^^^^^^^^^^^^^
 
-The easiest way to install ABL-Package is using ``pip``:
+The easiest way to install ABL Kit is using ``pip``:
 
 .. code:: bash
 
-    # (TODO)
-    pip install abl
-
-For testing purposes, you can install it using:
-
-.. code:: bash
-
-    pip install -i https://test.pypi.org/simple/ --extra-index-url https://mirrors.nju.edu.cn/pypi/web/simple/ abl
+    pip install ablkit
 
 Install from Source
 ^^^^^^^^^^^^^^^^^^^

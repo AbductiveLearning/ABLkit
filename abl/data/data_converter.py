@@ -7,7 +7,7 @@ from lambdaLearn.Base.TabularMixin import TabularMixin
 
 class DataConverter:
     """
-    This class provides functionality to convert LambdaLearn data to ABL-Package data.
+    This class provides functionality to convert LambdaLearn data to ABL Kit data.
     """
 
     def __init__(self) -> None:
