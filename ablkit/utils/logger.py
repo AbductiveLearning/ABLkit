@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 # Modified from
-# https://github.com/open-mmlab/mmengine/blob/main/mmengine/logging/logger.py # noqa
+# https://github.com/open-mmlab/mmengine/blob/main/mmengine/logging/logger.py
 
 import logging
 import os

@@ -57,8 +57,7 @@ is dual-driven by both data and domain knowledge, integrating and
 balancing the use of machine learning and logical reasoning in a unified
 model.
 
-For more information about ABL, please refer to: `Zhou, 2019 <http://scis.scichina.com/en/2019/076101.pdf>`_ 
-and `Zhou and Huang, 2022 <https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf>`_.
+For more information about ABL, please refer to `References <../References.html>`_.
 
 .. _abd:
 
