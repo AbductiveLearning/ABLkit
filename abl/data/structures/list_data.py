@@ -16,6 +16,7 @@ LongTypeTensor = Union[torch.LongTensor, torch.cuda.LongTensor]
 
 IndexType = Union[str, slice, int, list, LongTypeTensor, BoolTypeTensor, np.ndarray]
 
+
 class ListData(BaseDataElement):
     """
     Abstract Data Interface used throughout the ABL-Package.

@@ -309,7 +309,7 @@ class BasicNN:
                 batch_size=self.batch_size,
                 num_workers=self.num_workers,
                 collate_fn=self.collate_fn,
-                pin_memory=torch.cuda.is_available()
+                pin_memory=torch.cuda.is_available(),
             )
         return self._predict(data_loader).argmax(axis=1).cpu().numpy()
 
@@ -351,7 +351,7 @@ class BasicNN:
                 batch_size=self.batch_size,
                 num_workers=self.num_workers,
                 collate_fn=self.collate_fn,
-                pin_memory=torch.cuda.is_available()
+                pin_memory=torch.cuda.is_available(),
             )
         return self._predict(data_loader).softmax(axis=1).cpu().numpy()
 
@@ -484,7 +484,7 @@ class BasicNN:
             shuffle=shuffle,
             num_workers=self.num_workers,
             collate_fn=self.collate_fn,
-            pin_memory=torch.cuda.is_available()
+            pin_memory=torch.cuda.is_available(),
         )
         return data_loader
 

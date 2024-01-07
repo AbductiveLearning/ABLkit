@@ -109,6 +109,7 @@ def confidence_dist(pred_prob: np.ndarray, candidates_idxs: List[List[Any]]) -> 
     cols = np.arange(len(candidates_idxs[0]))[None, :]
     return 1 - np.prod(pred_prob[cols, candidates_idxs], axis=1)
 
+
 def avg_confidence_dist(pred_prob: np.ndarray, candidates_idxs: List[List[Any]]) -> np.ndarray:
     """
     Compute the average confidence distance between prediction probabilities and candidates,
@@ -129,6 +130,7 @@ def avg_confidence_dist(pred_prob: np.ndarray, candidates_idxs: List[List[Any]])
     """
     cols = np.arange(len(candidates_idxs[0]))[None, :]
     return 1 - np.average(pred_prob[cols, candidates_idxs], axis=1)
+
 
 def to_hashable(x: Union[List[Any], Any]) -> Union[Tuple[Any, ...], Any]:
     """
