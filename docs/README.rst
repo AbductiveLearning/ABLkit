@@ -26,14 +26,14 @@ Install from PyPI
 
 The easiest way to install ABL-Package is using ``pip``:
 
-.. code:: console
+.. code:: bash
 
     # (TODO)
     pip install abl
 
 For testing purposes, you can install it using:
 
-.. code:: console
+.. code:: bash
 
     pip install -i https://test.pypi.org/simple/ --extra-index-url https://mirrors.nju.edu.cn/pypi/web/simple/ abl
 
@@ -43,7 +43,7 @@ Install from Source
 Alternatively, to install from source code, 
 sequentially run following commands in your terminal/command line.
 
-.. code:: console
+.. code:: bash
 
     git clone https://github.com/AbductiveLearning/ABL-Package.git
     cd ABL-Package
@@ -56,7 +56,7 @@ If the use of a :ref:`Prolog-based knowledge base <prolog>` is necessary, the in
 
 For Linux users:
 
-.. code:: console
+.. code:: bash
 
     sudo apt-get install swi-prolog
 
