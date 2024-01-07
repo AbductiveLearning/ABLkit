@@ -64,15 +64,6 @@ sudo apt-get install swi-prolog
 
 For Windows and Mac users, please refer to the [SWI-Prolog Install Guide](https://github.com/yuce/pyswip/blob/master/INSTALL.md).
 
-## Examples
-
-We provide several examples in `examples/`. Each example is stored in a separate folder containing a README file.
-
-+ [MNIST Addition](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/mnist_add)
-+ [Handwritten Formula](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/hwf)
-+ [Handwritten Equation Decipherment](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/hed)
-+ [Zoo](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/zoo)
-
 ## Quick Start
 
 We use the MNIST Addition task as a quick start example. In this task, pairs of MNIST handwritten images and their sums are given, alongwith a domain knowledge base which contains information on how to perform addition operations. Our objective is to input a pair of handwritten images and accurately determine their sum.
@@ -195,6 +186,15 @@ bridge.test(test_data)
 ```
 
 </details>
+
+## Examples
+
+We provide several examples in `examples/`. Each example is stored in a separate folder containing a README file.
+
++ [MNIST Addition](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/mnist_add)
++ [Handwritten Formula](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/hwf)
++ [Handwritten Equation Decipherment](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/hed)
++ [Zoo](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/zoo)
 
 ## References
 
