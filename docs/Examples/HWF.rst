@@ -197,7 +197,7 @@ for images. As shown below:
 
 .. code:: ipython3
 
-    data_instances = [torch.randn(1, 45, 45).to(device) for _ in range(32)]
+    data_instances = [torch.randn(1, 45, 45) for _ in range(32)]
     pred_idx = base_model.predict(X=data_instances)
     print(f"Predicted class index for a batch of 32 instances: " +
           f"{type(pred_idx).__name__} with shape {pred_idx.shape}")

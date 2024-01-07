@@ -169,7 +169,7 @@ for images. As shown below:
 
 .. code:: ipython3
 
-    data_instances = [torch.randn(1, 28, 28).to(device) for _ in range(32)]
+    data_instances = [torch.randn(1, 28, 28) for _ in range(32)]
     pred_idx = base_model.predict(X=data_instances)
     print(f"Predicted class index for a batch of 32 instances: np.ndarray with shape {pred_idx.shape}")
     pred_prob = base_model.predict_proba(X=data_instances)
