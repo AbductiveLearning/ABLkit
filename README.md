@@ -30,8 +30,6 @@ ABL Kit encapsulates advanced ABL techniques, providing users with
 an efficient and convenient toolkit to develop dual-driven ABL systems,
 which leverage the power of both data and knowledge.
 
-To learn how to use it, please refer to - [document](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/index.html).
-
 ## Installation
 
 ### Install from PyPI
@@ -186,6 +184,8 @@ bridge.test(test_data)
 ```
 
 </details>
+
+To explore detailed tutorials and information, please refer to - [document](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/index.html).
 
 ## Examples
 
