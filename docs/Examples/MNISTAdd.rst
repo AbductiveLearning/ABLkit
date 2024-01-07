@@ -348,34 +348,59 @@ Out:
         :class: code-out
 
         abl - INFO - Abductive Learning on the MNIST Addition example.
-        abl - INFO - loop(train) [1/1] segment(train) [1/100] 
-        abl - INFO - model loss: 2.23587
-        abl - INFO - loop(train) [1/1] segment(train) [2/100] 
-        abl - INFO - model loss: 2.23756
-        abl - INFO - loop(train) [1/1] segment(train) [3/100] 
-        abl - INFO - model loss: 2.04475
-        abl - INFO - loop(train) [1/1] segment(train) [4/100] 
-        abl - INFO - model loss: 2.01035
-        abl - INFO - loop(train) [1/1] segment(train) [5/100] 
-        abl - INFO - model loss: 1.97584
-        abl - INFO - loop(train) [1/1] segment(train) [6/100] 
-        abl - INFO - model loss: 1.91570
-        abl - INFO - loop(train) [1/1] segment(train) [7/100] 
-        abl - INFO - model loss: 1.90268
-        abl - INFO - loop(train) [1/1] segment(train) [8/100] 
-        abl - INFO - model loss: 1.77436
-        abl - INFO - loop(train) [1/1] segment(train) [9/100] 
-        abl - INFO - model loss: 1.73454
-        abl - INFO - loop(train) [1/1] segment(train) [10/100] 
-        abl - INFO - model loss: 1.62495
-        abl - INFO - loop(train) [1/1] segment(train) [11/100] 
-        abl - INFO - model loss: 1.58456
-        abl - INFO - loop(train) [1/1] segment(train) [12/100] 
-        abl - INFO - model loss: 1.62575
+        abl - INFO - Working with Data.
+        abl - INFO - Building the Learning Part.
+        abl - INFO - Building the Reasoning Part.
+        abl - INFO - Building Evaluation Metrics.
+        abl - INFO - Bridge Learning and Reasoning.
+        abl - INFO - loop(train) [1/2] segment(train) [1/100] 
+        abl - INFO - model loss: 2.25980
+        abl - INFO - loop(train) [1/2] segment(train) [2/100] 
+        abl - INFO - model loss: 2.14168
+        abl - INFO - loop(train) [1/2] segment(train) [3/100] 
+        abl - INFO - model loss: 2.02010
+        abl - INFO - loop(train) [1/2] segment(train) [4/100] 
+        abl - INFO - model loss: 2.01933
+        abl - INFO - loop(train) [1/2] segment(train) [5/100] 
+        abl - INFO - model loss: 2.02230
+        abl - INFO - loop(train) [1/2] segment(train) [6/100] 
+        abl - INFO - model loss: 1.97602
+        abl - INFO - loop(train) [1/2] segment(train) [7/100] 
+        abl - INFO - model loss: 1.97942
+        abl - INFO - loop(train) [1/2] segment(train) [8/100] 
+        abl - INFO - model loss: 1.92800
+        abl - INFO - loop(train) [1/2] segment(train) [9/100] 
+        abl - INFO - model loss: 1.91512
+        abl - INFO - loop(train) [1/2] segment(train) [10/100] 
+        abl - INFO - model loss: 1.83939
+        abl - INFO - loop(train) [1/2] segment(train) [11/100] 
+        abl - INFO - model loss: 1.78795
+        abl - INFO - loop(train) [1/2] segment(train) [12/100] 
+        abl - INFO - model loss: 1.78538
         ...
-        abl - INFO - Eval start: loop(val) [1]
-        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.986 mnist_add/reasoning_accuracy: 0.973 
-        abl - INFO - Saving model: loop(save) [1]
-        abl - INFO - Checkpoints will be saved to log_dir/weights/model_checkpoint_loop_1.pth
+        abl - INFO - Eval start: loop(val) [2]
+        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.993 mnist_add/reasoning_accuracy: 0.986 
+        abl - INFO - Saving model: loop(save) [2]
+        abl - INFO - Checkpoints will be saved to results/20240107_20_56_09/weights/model_checkpoint_loop_2.pth
         abl - INFO - Test start:
-        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.983 mnist_add/reasoning_accuracy: 0.967 
+        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.991 mnist_add/reasoning_accuracy: 0.980 
+
+
+
+Performance
+-----------
+
+.. table::
+   :class: centered
+
+   +--------------+----------+------------------------------+
+   | Method       | Accuracy | Time to achieve the Acc. (s) |
+   +==============+==========+==============================+
+   | NeurASP      | 0.964    | 354                          |
+   +--------------+----------+------------------------------+
+   | DeepProbLog  | 0.965    | 1965                         |
+   +--------------+----------+------------------------------+
+   | DeepStochLog | 0.975    | 727                          |
+   +--------------+----------+------------------------------+
+   | ABL          | 0.980    | 42                           |
+   +--------------+----------+------------------------------+
