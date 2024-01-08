@@ -3,7 +3,7 @@ Handwritten Equation Decipherment (HED)
 
 .. raw:: html
     
-    <p>For detailed code implementation, please view on <a class="reference external" href="https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/hed" target="_blank">GitHub</a>.</p>
+    <p>For detailed code implementation, please view it on <a class="reference external" href="https://github.com/AbductiveLearning/ABLKit/tree/main/examples/hed" target="_blank">GitHub</a>.</p>
 
 Below shows an implementation of `Handwritten Equation
 Decipherment <https://proceedings.neurips.cc/paper_files/paper/2019/file/9c19a2aa1d84e04b0bd4bc888792bd1e-Paper.pdf>`__.
@@ -14,7 +14,7 @@ and each equation is associated with a label indicating whether the
 equation is correct (i.e., positive) or not (i.e., negative). Also, we
 are given a knowledge base which involves the structure of the equations
 and a recursive definition of bit-wise operations. The task is to learn
-from a training set of above mentioned equations and then to predict
+from a training set of above-mentioned equations and then to predict
 labels of unseen equations.
 
 Intuitively, we first use a machine learning model (learning part) to
@@ -34,8 +34,8 @@ model.
     import torch
     import torch.nn as nn
 
-    from abl.learning import ABLModel, BasicNN
-    from abl.utils import ABLLogger, print_log
+    from ablkit.learning import ABLModel, BasicNN
+    from ablkit.utils import ABLLogger, print_log
 
     from bridge import HedBridge
     from consistency_metric import ConsistencyMetric
@@ -54,48 +54,48 @@ First, we get the datasets of handwritten equations:
     train_data, val_data = split_equation(total_train_data, 3, 1)
     test_data = get_dataset(train=False)
 
-The dataset are shown below:
+The datasets are shown below:
 
 .. code:: ipython3
 
     true_train_equation = train_data[1]
     false_train_equation = train_data[0]
     print(f"Equations in the dataset is organized by equation length, " +
-          f"from {min(train_data[0].keys())} to {max(train_data[0].keys())}")
+          f"from {min(train_data[0].keys())} to {max(train_data[0].keys())}.")
     print()
     
     true_train_equation_with_length_5 = true_train_equation[5]
     false_train_equation_with_length_5 = false_train_equation[5]
-    print(f"For each euqation length, there are {len(true_train_equation_with_length_5)} " +
-          f"true equation and {len(false_train_equation_with_length_5)} false equation " +
-          f"in the training set")
+    print(f"For each eqaation length, there are {len(true_train_equation_with_length_5)} " +
+          f"true equations and {len(false_train_equation_with_length_5)} false equations " +
+          f"in the training set.")
     
     true_val_equation = val_data[1]
     false_val_equation = val_data[0]
     true_val_equation_with_length_5 = true_val_equation[5]
     false_val_equation_with_length_5 = false_val_equation[5]
-    print(f"For each euqation length, there are {len(true_val_equation_with_length_5)} " +
-          f"true equation and {len(false_val_equation_with_length_5)} false equation " +
-          f"in the validation set")
+    print(f"For each equation length, there are {len(true_val_equation_with_length_5)} " +
+          f"true equations and {len(false_val_equation_with_length_5)} false equations " +
+          f"in the validation set.")
     
     true_test_equation = test_data[1]
     false_test_equation = test_data[0]
     true_test_equation_with_length_5 = true_test_equation[5]
     false_test_equation_with_length_5 = false_test_equation[5]
-    print(f"For each euqation length, there are {len(true_test_equation_with_length_5)} " +
-          f"true equation and {len(false_test_equation_with_length_5)} false equation " +
-          f"in the test set")
+    print(f"For each equation length, there are {len(true_test_equation_with_length_5)} " +
+          f"true equations and {len(false_test_equation_with_length_5)} false equations " +
+          f"in the test set.")
 
 
 Out:
     .. code:: none
         :class: code-out
 
-        Equations in the dataset is organized by equation length, from 5 to 26
+        Equations in the dataset is organized by equation length, from 5 to 26.
         
-        For each euqation length, there are 225 true equation and 225 false equation in the training set
-        For each euqation length, there are 75 true equation and 75 false equation in the validation set
-        For each euqation length, there are 300 true equation and 300 false equation in the test set
+        For each equation length, there are 225 true equations and 225 false equations in the training set.
+        For each equation length, there are 75 true equations and 75 false equations in the validation set.
+        For each equation length, there are 300 true equations and 300 false equations in the test set.
     
 
 As illustrations, we show four equations in the training dataset:
@@ -238,7 +238,7 @@ files.
     ``examples/hed/reasoning/reasoning.py``
 
 Then, we create a reasoner. Due to the indeterminism of abductive
-reasoning, there could be multiple candidates compatible to the
+reasoning, there could be multiple candidates compatible with the
 knowledge base. When this happens, reasoner can minimize inconsistencies
 between the knowledge base and pseudo-labels predicted by the learning
 part, and then return only one candidate that has the highest
@@ -272,11 +272,11 @@ respectively.
     # Set up metrics
     metric_list = [SymbolAccuracy(prefix="hed"), ReasoningMetric(kb=kb, prefix="hed")]
 
-Bridge Learning and Reasoning
------------------------------
+Bridging Learning and Reasoning
+-------------------------------
 
 Now, the last step is to bridge the learning and reasoning part. We
-proceed this step by creating an instance of ``HedBridge``, which is
+proceed with this step by creating an instance of ``HedBridge``, which is
 derived from ``SimpleBridge`` and tailored specific for this task.
 
 .. code:: ipython3

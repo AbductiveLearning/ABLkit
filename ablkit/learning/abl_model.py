@@ -86,7 +86,7 @@ class ABLModel:
         Returns
         -------
         float
-            The accuracy the trained model.
+            The accuracy of the trained model.
         """
         data_X = data_examples.flatten("X")
         data_y = data_examples.flatten("abduced_idx")

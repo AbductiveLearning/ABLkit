@@ -11,8 +11,8 @@ Reasoning part
 ===============
 
 In this section, we will look at how to build the reasoning part, which 
-leverage domain knowledge and perform deductive or abductive reasoning.
-In ABL-Package, building the reasoning part involves two steps:
+leverages domain knowledge and performs deductive or abductive reasoning.
+In ABL Kit, building the reasoning part involves two steps:
 
 1. Build a knowledge base by creating a subclass of ``KBBase``, which
    specifies how to process pseudo-label of an example to the reasoning result.
@@ -22,13 +22,13 @@ In ABL-Package, building the reasoning part involves two steps:
 
 .. code:: python
 
-   from abl.reasoning import KBBase, GroundKB, PrologKB, Reasoner
+   from ablkit.reasoning import KBBase, GroundKB, PrologKB, Reasoner
 
 Building a knowledge base
 -------------------------
 
 Generally, we can create a subclass derived from ``KBBase`` to build our own
-knowledge base. In addition, ABL-Package also offers several predefined 
+knowledge base. In addition, ABL Kit also offers several predefined 
 subclasses of ``KBBase`` (e.g., ``PrologKB`` and ``GroundKB``), 
 which we can utilize to build our knowledge base more conveniently.
 
@@ -42,7 +42,7 @@ and override the ``logic_forward`` function:
 -  ``pseudo_label_list`` is the list of possible pseudo-labels (also,
    the output of the machine learning model).
 -  ``logic_forward`` defines how to perform (deductive) reasoning,
-   i.e. matching each pseudo-labels to its reasoning result. 
+   i.e. matching each example's pseudo-labels to its reasoning result. 
 
 .. note::
 
@@ -239,7 +239,7 @@ for performing abductive reasoning, where the parameters are:
    method will only output candidates with the minimum possible
    revisions.)
 
-And it return a list of candidates (i.e., revised pseudo-labels of the example) 
+And it returns a list of candidates (i.e., revised pseudo-labels of the example) 
 that are all compatible with ``y``.
 
 MNIST Addition example (cont.)
@@ -286,13 +286,13 @@ Creating a reasoner
 
 After building our knowledge base, the next step is creating a
 reasoner. Due to the indeterminism of abductive reasoning, there could
-be multiple candidates compatible to the knowledge base. When this
+be multiple candidates compatible with the knowledge base. When this
 happens, reasoner can minimize inconsistencies between the knowledge
 base and pseudo-labels predicted by the learning part, and then return **only
 one** candidate that has the highest consistency.
 
 We can create a reasoner simply by instantiating class
-``Reasoner`` and passing our knowledge base as an parameter. As an
+``Reasoner`` and passing our knowledge base as a parameter. As an
 example for MNIST Addition, the reasoner definition would be:
 
 .. code:: python
@@ -356,7 +356,7 @@ As an example, consider these data examples for MNIST Addition:
    example2.Y = 8
 
 The compatible candidates after abductive reasoning for both examples
-would be ``[[1,7], [7,1]]``. However, when the reasoner call ``abduce`` 
+would be ``[[1,7], [7,1]]``. However, when the reasoner calls ``abduce`` 
 to select only one candidate based on the ``confidence`` distance function, 
 the output would differ for each example:
 

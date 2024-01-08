@@ -4,8 +4,8 @@ import os.path as osp
 import torch
 import torch.nn as nn
 
-from abl.learning import ABLModel, BasicNN
-from abl.utils import ABLLogger, print_log
+from ablkit.learning import ABLModel, BasicNN
+from ablkit.utils import ABLLogger, print_log
 
 from bridge import HedBridge
 from consistency_metric import ConsistencyMetric
@@ -50,14 +50,14 @@ def main():
     # Build logger
     print_log("Abductive Learning on the HED example.", logger="current")
 
-    ### Working with Data
+    # -- Working with Data ------------------------------
     print_log("Working with Data.", logger="current")
 
     total_train_data = get_dataset(train=True)
     train_data, val_data = split_equation(total_train_data, 3, 1)
     test_data = get_dataset(train=False)
 
-    ### Building the Learning Part
+    # -- Building the Learning Part ---------------------
     print_log("Building the Learning Part.", logger="current")
 
     # Build necessary components for BasicNN
@@ -81,7 +81,7 @@ def main():
     # Build ABLModel
     model = ABLModel(base_model)
 
-    ### Building the Reasoning Part
+    # -- Building the Reasoning Part --------------------
     print_log("Building the Reasoning Part.", logger="current")
 
     # Build knowledge base
@@ -90,11 +90,11 @@ def main():
     # Create reasoner
     reasoner = HedReasoner(kb, dist_func="hamming", use_zoopt=True, max_revision=args.max_revision)
 
-    ### Building Evaluation Metrics
+    # -- Building Evaluation Metrics --------------------
     print_log("Building Evaluation Metrics.", logger="current")
     metric_list = [ConsistencyMetric(kb=kb)]
 
-    ### Bridge Learning and Reasoning
+    # -- Bridging Learning and Reasoning ----------------
     print_log("Bridge Learning and Reasoning.", logger="current")
     bridge = HedBridge(model, reasoner, metric_list)
 

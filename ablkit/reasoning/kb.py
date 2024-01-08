@@ -77,14 +77,12 @@ class KBBase(ABC):
                 logger="current",
                 level=logging.WARNING,
             )
-            # TODO 添加半监督
-            # TODO 添加consistency measure+max_err容忍错误
 
     @abstractmethod
     def logic_forward(self, pseudo_label: List[Any], x: Optional[List[Any]] = None) -> Any:
         """
-        How to perform (deductive) logical reasoning, i.e. matching pseudo-labels to
-        their reasoning result. Users are required to provide this.
+        How to perform (deductive) logical reasoning, i.e. matching an example's
+        pseudo-labels to its reasoning result. Users are required to provide this.
 
         Parameters
         ----------
@@ -130,10 +128,10 @@ class KBBase(ABC):
         Returns
         -------
         Tuple[List[List[Any]], List[Any]]
-            A tuple of two element. The first element is a list of candidate revisions, i.e. revised
-            pseudo-labels of the example. that are compatible with the knowledge base. The second
-            element is a list of reasoning results corresponding to each candidate, i.e., the
-            outcome of the ``logic_forward`` function.
+            A tuple of two elements. The first element is a list of candidate revisions,
+            i.e. revised pseudo-labels of the example. that are compatible with the knowledge
+            base. The second element is a list of reasoning results corresponding to each
+            candidate, i.e., the outcome of the ``logic_forward`` function.
         """
         return self._abduce_by_search(pseudo_label, y, x, max_revision_num, require_more_revision)
 
@@ -181,10 +179,10 @@ class KBBase(ABC):
         Returns
         -------
         Tuple[List[List[Any]], List[Any]]
-            A tuple of two element. The first element is a list of candidate revisions, i.e. revised
-            pseudo-labels of the example that are compatible with the knowledge base. The second
-            element is a list of reasoning results corresponding to each candidate, i.e., the
-            outcome of the ``logic_forward`` function.
+            A tuple of two elements. The first element is a list of candidate revisions,
+            i.e. revised pseudo-labels of the example. that are compatible with the knowledge
+            base. The second element is a list of reasoning results corresponding to each
+            candidate, i.e., the outcome of the ``logic_forward`` function.
         """
         candidates, reasoning_results = [], []
         abduce_c = product(self.pseudo_label_list, repeat=len(revision_idx))
@@ -206,7 +204,7 @@ class KBBase(ABC):
         x: List[Any],
     ) -> List[List[Any]]:
         """
-        For a specified number of labels in a pseudo-labels to revise, iterate through
+        For a specified number of labels in an example's pseudo-labels to revise, iterate through
         all possible indices to find any candidates that are compatible with the knowledge base.
         """
         new_candidates, new_reasoning_results = [], []
@@ -227,7 +225,7 @@ class KBBase(ABC):
         require_more_revision: int,
     ) -> List[List[Any]]:
         """
-        Perform abductive reasoning by exhastive search. Specifically, begin with 0 and
+        Perform abductive reasoning by exhaustive search. Specifically, begin with 0 and
         continuously increase the number of labels to revise, until
         candidates that are compatible with the knowledge base are found.
 
@@ -251,10 +249,10 @@ class KBBase(ABC):
         Returns
         -------
         Tuple[List[List[Any]], List[Any]]
-            A tuple of two element. The first element is a list of candidate revisions, i.e. revised
-            pseudo-labels of the example that are compatible with the knowledge base. The second
-            element is a list of reasoning results corresponding to each candidate, i.e., the
-            outcome of the ``logic_forward`` function.
+            A tuple of two elements. The first element is a list of candidate revisions,
+            i.e. revised pseudo-labels of the example. that are compatible with the knowledge
+            base. The second element is a list of reasoning results corresponding to each
+            candidate, i.e., the outcome of the ``logic_forward`` function.
         """
         candidates, reasoning_results = [], []
         for revision_num in range(len(pseudo_label) + 1):
@@ -391,10 +389,10 @@ class GroundKB(KBBase):
         Returns
         -------
         Tuple[List[List[Any]], List[Any]]
-            A tuple of two element. The first element is a list of candidate revisions, i.e. revised
-            pseudo-labels of the example that are compatible with the knowledge base. The second
-            element is a list of reasoning results corresponding to each candidate, i.e., the
-            outcome of the ``logic_forward`` function.
+            A tuple of two elements. The first element is a list of candidate revisions,
+            i.e. revised pseudo-labels of the example. that are compatible with the knowledge
+            base. The second element is a list of reasoning results corresponding to each
+            candidate, i.e., the outcome of the ``logic_forward`` function.
         """
         if self.GKB == {} or len(pseudo_label) not in self.GKB_len_list:
             return [], []
@@ -483,7 +481,7 @@ class PrologKB(KBBase):
             import pyswip
         except (IndexError, ImportError):
             print(
-                "A Prolog-based knowledge base is in use. Please install Swi-Prolog using the"
+                "A Prolog-based knowledge base is in use. Please install SWI-Prolog using the"
                 + "command 'sudo apt-get install swi-prolog' for Linux users, or download it "
                 + "following the guide in https://github.com/yuce/pyswip/blob/master/INSTALL.md "
                 + "for Windows and Mac users."
@@ -594,10 +592,10 @@ class PrologKB(KBBase):
         Returns
         -------
         Tuple[List[List[Any]], List[Any]]
-            A tuple of two element. The first element is a list of candidate revisions, i.e. revised
-            pseudo-labels of the example that are compatible with the knowledge base. The second
-            element is a list of reasoning results corresponding to each candidate, i.e., the
-            outcome of the ``logic_forward`` function.
+            A tuple of two elements. The first element is a list of candidate revisions,
+            i.e. revised pseudo-labels of the example. that are compatible with the knowledge
+            base. The second element is a list of reasoning results corresponding to each
+            candidate, i.e., the outcome of the ``logic_forward`` function.
         """
         candidates, reasoning_results = [], []
         query_string = self.get_query_string(pseudo_label, y, x, revision_idx)

@@ -9,7 +9,7 @@ from lambdaLearn.Base.DeepModelMixin import DeepModelMixin
 
 class ModelConverter:
     """
-    This class provides functionality to convert LambdaLearn models to ABL-Package models.
+    This class provides functionality to convert LambdaLearn models to ABL Kit models.
     """
 
     def __init__(self) -> None:
@@ -63,7 +63,7 @@ class ModelConverter:
         num_workers : int
             The number of workers used for loading data, by default 0.
         save_interval : int, optional
-            The model will be saved every ``save_interval`` epochs during training, by default None.
+            The model will be saved every ``save_interval`` epoch during training, by default None.
         save_dir : str, optional
             The directory in which to save the model during training, by default None.
         train_transform : Callable[..., Any], optional
@@ -153,7 +153,7 @@ class ModelConverter:
         num_workers : int
             The number of workers used for loading data, by default 0.
         save_interval : int, optional
-            The model will be saved every ``save_interval`` epochs during training, by default None.
+            The model will be saved every ``save_interval`` epoch during training, by default None.
         save_dir : str, optional
             The directory in which to save the model during training, by default None.
         train_transform : Callable[..., Any], optional

@@ -1,4 +1,4 @@
-name: ABL-Package-CI
+name: ABLKit-CI
 
 on:
   push:
@@ -21,18 +21,13 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Cache Python virtual environment
-      uses: actions/cache@v2
+    - uses: syphar/restore-virtualenv@v1
+      id: cache-virtualenv
       with:
-        path: |
-          ~/.venv
-          !~/.venv/*/lib/python*/no-global-site-packages.txt
-        key: ${{ runner.os }}-python-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-python-${{ matrix.python-version }}-
+        requirement_files: requirements.txt
 
-    - name: Display python version
-      run: python -c "import sys; print(sys.version)"
+    - uses: syphar/restore-pip-download-cache@v1
+      if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
     - name: Install SWI-Prolog on Ubuntu
       if: matrix.os == 'ubuntu-latest'
@@ -45,15 +40,17 @@ jobs:
       run: brew install swi-prolog
 
     - name: Install package dependencies
+      if : steps.cache-virtualenv.outputs.cache-hit != 'true'
       run: |
         python -m pip install --upgrade pip
         pip install pytest pytest-cov
     - name: Install
+      if : steps.cache-virtualenv.outputs.cache-hit != 'true'
       run: pip install -v -e .
 
     - name: Run tests
       run: |
-        pytest --cov-config=.coveragerc --cov-report=xml --cov=abl ./tests 
+        pytest --cov-config=.coveragerc --cov-report=xml --cov=ablkit ./tests 
 
     - name: Publish code coverage
       uses: codecov/codecov-action@v1

@@ -3,26 +3,32 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "abl"
-version = "0.1.5"
+name = "ablkit"
+version = "0.1.8"
 authors = [
-  { name="LAMDA 2024" },
+  { name="LAMDA 2024", email = "abductivelearning@gmail.com" },
 ]
-description = "Abductive learning package project"
+description = "Abductive Learning (ABL) toolkit"
 readme = "README.md"
-requires-python = ">=3.6.0"
+requires-python = ">=3.7.0"
 license = {text = "MIT LICENSE"}
+keywords = ["machine-learning", "framework", "abductive-learning", "neuro-symbolic"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Software Development",
-    "Topic :: Scientific/Engineering",
     "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS :: MacOS X",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
 ]
 dependencies = [
     "numpy>=1.15.0",
@@ -34,8 +40,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/AbductiveLearning/ABL-Package"
-Issues = "https://github.com/AbductiveLearning/ABL-Package/issues"
+Homepage = "https://github.com/AbductiveLearning/ABLKit"
+Issues = "https://github.com/AbductiveLearning/ABLKit/issues"
 
 [project.optional-dependencies]
 test = [

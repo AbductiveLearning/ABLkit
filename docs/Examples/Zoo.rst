@@ -3,13 +3,13 @@ Zoo
 
 .. raw:: html
     
-    <p>For detailed code implementation, please view on <a class="reference external" href="https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/zoo" target="_blank">GitHub</a>.</p>
+    <p>For detailed code implementation, please view it on <a class="reference external" href="https://github.com/AbductiveLearning/ABLKit/tree/main/examples/zoo" target="_blank">GitHub</a>.</p>
 
 Below shows an implementation of
 `Zoo <https://archive.ics.uci.edu/dataset/111/zoo>`__ dataset. In this task,
 attributes of animals (such as presence of hair, eggs, etc.) and their
 targets (the animal class they belong to) are given, along with a
-knowledge base which contain information about the relations between
+knowledge base which contains information about the relations between
 attributes and targets, e.g., Implies(milk == 1, mammal == 1).
 
 The goal of this task is to develop a learning model that can predict
@@ -28,11 +28,11 @@ further update the learning model.
     import numpy as np
     from sklearn.ensemble import RandomForestClassifier
 
-    from abl.bridge import SimpleBridge
-    from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
-    from abl.learning import ABLModel
-    from abl.reasoning import Reasoner
-    from abl.utils import ABLLogger, confidence_dist, print_log, tab_data_to_tuple
+    from ablkit.bridge import SimpleBridge
+    from ablkit.data.evaluation import ReasoningMetric, SymbolAccuracy
+    from ablkit.learning import ABLModel
+    from ablkit.reasoning import Reasoner
+    from ablkit.utils import ABLLogger, confidence_dist, print_log, tab_data_to_tuple
 
     from get_dataset import load_and_preprocess_dataset, split_dataset
     from kb import ZooKB
@@ -49,9 +49,9 @@ into labeled/unlabeled/test data
     X, y = load_and_preprocess_dataset(dataset_id=62)
     X_label, y_label, X_unlabel, y_unlabel, X_test, y_test = split_dataset(X, y, test_size=0.3)
 
-Zoo dataset consist of tabular data. The attributes contains 17 boolean
+Zoo dataset consists of tabular data. The attributes contain 17 boolean
 values (e.g., hair, feathers, eggs, milk, airborne, aquatic, etc.) and
-the target is a integer value in range [0,6] representing 7 classes
+the target is an integer value in the range [0,6] representing 7 classes
 (e.g., mammal, bird, reptile, fish, amphibian, insect, and other). Below
 is an illustration:
 
@@ -84,7 +84,7 @@ Out:
     
 
 Next, we transform the tabular data to the format required by
-ABL-Package, which is a tuple of (X, gt_pseudo_label, Y). In this task,
+ABL Kit, which is a tuple of (X, gt_pseudo_label, Y). In this task,
 we treat the attributes as X and the targets as gt_pseudo_label (ground
 truth pseudo-labels). Y (reasoning results) are expected to be 0,
 indicating no rules are violated.
@@ -168,7 +168,7 @@ Out:
 
 Then, we create a reasoner by instantiating the class ``Reasoner``. Due
 to the indeterminism of abductive reasoning, there could be multiple
-candidates compatible to the knowledge base. When this happens, reasoner
+candidates compatible with the knowledge base. When this happens, reasoner
 can minimize inconsistencies between the knowledge base and
 pseudo-labels predicted by the learning part, and then return only one
 candidate that has the highest consistency.
@@ -202,7 +202,7 @@ Bridging Learning and Reasoning
 -------------------------------
 
 Now, the last step is to bridge the learning and reasoning part. We
-proceed this step by creating an instance of ``SimpleBridge``.
+proceed with this step by creating an instance of ``SimpleBridge``.
 
 .. code:: ipython3
 
@@ -227,8 +227,9 @@ methods of ``SimpleBridge``.
     print_log("------- Test the final model -----------", logger="current")
     bridge.test(test_data)
 
+The log will appear similar to the following:
 
-Out:
+Log:
     .. code:: none
         :class: code-out
 

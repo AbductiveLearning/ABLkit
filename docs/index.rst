@@ -9,7 +9,7 @@
 
 .. toctree::
    :maxdepth: 1
-   :caption: Introduction to ABL-Package
+   :caption: Introduction to ABL Kit
 
    Intro/Basics
    Intro/Quick-Start
@@ -32,11 +32,11 @@
    :maxdepth: 1
    :caption: API
 
-   API/abl.data
-   API/abl.learning
-   API/abl.reasoning
-   API/abl.bridge
-   API/abl.utils
+   API/ablkit.data
+   API/ablkit.learning
+   API/ablkit.reasoning
+   API/ablkit.bridge
+   API/ablkit.utils
 
 .. toctree::
    :maxdepth: 1

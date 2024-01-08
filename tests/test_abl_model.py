@@ -3,7 +3,7 @@ from unittest.mock import Mock, create_autospec
 import numpy as np
 import pytest
 
-from abl.learning import ABLModel
+from ablkit.learning import ABLModel
 
 
 class TestABLModel(object):

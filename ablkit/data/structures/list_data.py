@@ -1,4 +1,7 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+# Modified from
+# https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/data_structures/instance_data.py # noqa
+
 from typing import List, Union
 
 import numpy as np
@@ -14,13 +17,11 @@ LongTypeTensor = Union[torch.LongTensor, torch.cuda.LongTensor]
 IndexType = Union[str, slice, int, list, LongTypeTensor, BoolTypeTensor, np.ndarray]
 
 
-# Modified from
-# https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/data_structures/instance_data.py # noqa
 class ListData(BaseDataElement):
     """
-    Abstract Data Interface used throughout the ABL-Package.
+    Abstract Data Interface used throughout the ABL Kit.
 
-    ``ListData`` is the underlying data structure used in the ABL-Package,
+    ``ListData`` is the underlying data structure used in the ABL Kit,
     designed to manage diverse forms of data dynamically generated throughout the
     Abductive Learning (ABL) framework. This includes handling raw data, predicted
     pseudo-labels, abduced pseudo-labels, pseudo-label indices, etc.
@@ -56,7 +57,7 @@ class ListData(BaseDataElement):
     class implemented in `MMEngine <https://github.com/open-mmlab/mmengine/blob/main/mmengine/structures/base_data_element.py>`_. # noqa: E501
 
     Examples:
-        >>> from abl.data.structures import ListData
+        >>> from ablkit.data.structures import ListData
         >>> import numpy as np
         >>> import torch
         >>> data_examples = ListData()

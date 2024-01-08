@@ -9,12 +9,12 @@
 Quick Start
 ===========
 
-We use the MNIST Addition task as a quick start example. In this task, pairs of MNIST handwritten images and their sums are given, alongwith a domain knowledge base which contain information on how to perform addition operations. Our objective is to input a pair of handwritten images and accurately determine their sum. Refer to the links in each section to dive deeper.
+We use the MNIST Addition task as a quick start example. In this task, pairs of MNIST handwritten images and their sums are given, alongwith a domain knowledge base which contains information on how to perform addition operations. Our objective is to input a pair of handwritten images and accurately determine their sum. Refer to the links in each section to dive deeper.
 
 Working with Data
 -----------------
 
-ABL-Package requires data in the format of ``(X, gt_pseudo_label, Y)``  where ``X`` is a list of input examples containing instances, 
+ABL Kit requires data in the format of ``(X, gt_pseudo_label, Y)``  where ``X`` is a list of input examples containing instances, 
 ``gt_pseudo_label`` is the ground-truth label of each example in ``X`` and ``Y`` is the ground-truth reasoning result of each example in ``X``. Note that ``gt_pseudo_label`` is only used to evaluate the machine learning model's performance but not to train it.
 
 In the MNIST Addition task, the data loading looks like
@@ -33,7 +33,7 @@ Read more about `preparing datasets <Datasets.html>`_.
 Building the Learning Part
 --------------------------
 
-Learning part is constructed by first defining a base model for machine learning. The ABL-Package offers considerable flexibility, supporting any base model that conforms to the scikit-learn style (which requires the implementation of ``fit`` and ``predict`` methods), or a PyTorch-based neural network (which has defined the architecture and implemented ``forward`` method).
+Learning part is constructed by first defining a base model for machine learning. ABL Kit offers considerable flexibility, supporting any base model that conforms to the scikit-learn style (which requires the implementation of ``fit`` and ``predict`` methods), or a PyTorch-based neural network (which has defined the architecture and implemented ``forward`` method).
 In this example, we build a simple LeNet5 network as the base model.
 
 .. code:: python
@@ -43,23 +43,23 @@ In this example, we build a simple LeNet5 network as the base model.
 
    cls = LeNet5(num_classes=10)
 
-To facilitate uniform processing, ABL-Package provides the ``BasicNN`` class to convert a PyTorch-based neural network into a format compatible with scikit-learn models. To construct a ``BasicNN`` instance, aside from the network itself, we also need to define a loss function, an optimizer, and the computing device.
+To facilitate uniform processing, ABL Kit provides the ``BasicNN`` class to convert a PyTorch-based neural network into a format compatible with scikit-learn models. To construct a ``BasicNN`` instance, aside from the network itself, we also need to define a loss function, an optimizer, and the computing device.
 
 .. code:: python
 
    import torch
-   from abl.learning import BasicNN
+   from ablkit.learning import BasicNN
 
    loss_fn = torch.nn.CrossEntropyLoss()
    optimizer = torch.optim.RMSprop(cls.parameters(), lr=0.001)
    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
    base_model = BasicNN(model=cls, loss_fn=loss_fn, optimizer=optimizer, device=device)
 
-The base model built above are trained to make predictions on instance-level data (e.g., a single image), while ABL deals with example-level data. To bridge this gap, we wrap the ``base_model`` into an instance of ``ABLModel``. This class serves as a unified wrapper for base models, facilitating the learning part to train, test, and predict on example-level data, (e.g., images that comprise an equation).
+The base model built above is trained to make predictions on instance-level data (e.g., a single image), while ABL deals with example-level data. To bridge this gap, we wrap the ``base_model`` into an instance of ``ABLModel``. This class serves as a unified wrapper for base models, facilitating the learning part to train, test, and predict on example-level data, (e.g., images that comprise an equation).
 
 .. code:: python
 
-   from abl.learning import ABLModel
+   from ablkit.learning import ABLModel
 
    model = ABLModel(base_model)
 
@@ -68,11 +68,11 @@ Read more about `building the learning part <Learning.html>`_.
 Building the Reasoning Part
 ---------------------------
 
-To build the reasoning part, we first define a knowledge base by creating a subclass of ``KBBase``. In the subclass, we initialize the ``pseudo_label_list`` parameter and override the ``logic_forward`` method, which specifies how to perform (deductive) reasoning that processes pseudo-labels of an example to the corresponding reasoning result. Specifically for the MNIST Addition task, this ``logic_forward`` method is tailored to execute the sum operation.
+To build the reasoning part, we first define a knowledge base by creating a subclass of ``KBBase``. In the subclass, we initialize the ``pseudo_label_list`` parameter and override the ``logic_forward`` method, which specifies how to perform (deductive) reasoning that processes pseudo-labels of an example to the corresponding reasoning result. Specifically, for the MNIST Addition task, this ``logic_forward`` method is tailored to execute the sum operation.
 
 .. code:: python
 
-   from abl.reasoning import KBBase
+   from ablkit.reasoning import KBBase
 
    class AddKB(KBBase):
       def __init__(self, pseudo_label_list=list(range(10))):
@@ -84,12 +84,12 @@ To build the reasoning part, we first define a knowledge base by creating a subc
    kb = AddKB()
 
 Next, we create a reasoner by instantiating the class ``Reasoner``, passing the knowledge base as a parameter.
-Due to the indeterminism of abductive reasoning, there could be multiple candidate pseudo-labels compatible to the knowledge base. 
+Due to the indeterminism of abductive reasoning, there could be multiple candidate pseudo-labels compatible with the knowledge base. 
 In such scenarios, the reasoner can minimize inconsistency and return the pseudo-label with the highest consistency.
 
 .. code:: python
 
-   from abl.reasoning import Reasoner
+   from ablkit.reasoning import Reasoner
    
    reasoner = Reasoner(kb)
 
@@ -98,11 +98,11 @@ Read more about `building the reasoning part <Reasoning.html>`_.
 Building Evaluation Metrics
 ---------------------------
 
-ABL-Package provides two basic metrics, namely ``SymbolAccuracy`` and ``ReasoningMetric``, which are used to evaluate the accuracy of the machine learning model's predictions and the accuracy of the ``logic_forward`` results, respectively.
+ABL Kit provides two basic metrics, namely ``SymbolAccuracy`` and ``ReasoningMetric``, which are used to evaluate the accuracy of the machine learning model's predictions and the accuracy of the ``logic_forward`` results, respectively.
 
 .. code:: python
 
-   from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
+   from ablkit.data.evaluation import ReasoningMetric, SymbolAccuracy
 
    metric_list = [SymbolAccuracy(), ReasoningMetric(kb=kb)]
 
@@ -115,7 +115,7 @@ Now, we use ``SimpleBridge`` to combine learning and reasoning in a unified ABL 
 
 .. code:: python
 
-   from abl.bridge import SimpleBridge
+   from ablkit.bridge import SimpleBridge
 
    bridge = SimpleBridge(model, reasoner, metric_list)
 

@@ -1,60 +1,87 @@
-ABL-Package
-===========
+ABL Kit
+=======
 
-**ABL-Package** is an open source library for **Abductive Learning (ABL)**.
+**ABL Kit** is an efficient Python toolkit for **Abductive Learning (ABL)**.
 ABL is a novel paradigm that integrates machine learning and 
 logical reasoning in a unified framework. It is suitable for tasks
 where both data and (logical) domain knowledge are available. 
 
-Key Features of ABL-Package:
+.. image:: _static/img/ABL.png
+
+Key Features of ABL Kit:
 
 - **Great Flexibility**: Adaptable to various machine learning modules and logical reasoning components.
-- **User-Friendly**: Provide data, model, and KB, and get started with just a few lines of code.
+- **User-Friendly**: Provide **data**, :blue-bold:`model`, and :green-bold:`KB`, and get started with just a few lines of code.
 - **High-Performance**: Optimization for high accuracy and fast training speed.
 
-ABL-Package encapsulates advanced ABL techniques, providing users with
-an efficient and convenient package to develop dual-driven ABL systems,
+ABL Kit encapsulates advanced ABL techniques, providing users with
+an efficient and convenient toolkit to develop dual-driven ABL systems,
 which leverage the power of both data and knowledge.
 
-.. image:: _static/img/ABL.png
+.. image:: _static/img/ABLKit.png
 
 Installation
 ------------
 
-ABL is distributed on `PyPI <https://pypi.org/>`__ and can be installed with ``pip``:
+Install from PyPI
+^^^^^^^^^^^^^^^^^
 
-.. code:: console
+The easiest way to install ABL Kit is using ``pip``:
 
-    # (TODO)
-    $ pip install abl
+.. code:: bash
 
-For testing purposes, you can install it using:
+    pip install ablkit
 
-.. code:: console
+Install from Source
+^^^^^^^^^^^^^^^^^^^
 
-    $ pip install -i https://test.pypi.org/simple/ --extra-index-url https://mirrors.nju.edu.cn/pypi/web/simple/ abl
-
-Alternatively, to install ABL by source code, 
+Alternatively, to install from source code, 
 sequentially run following commands in your terminal/command line.
 
-.. code:: console
+.. code:: bash
 
-    $ git clone https://github.com/AbductiveLearning/ABL-Package.git
-    $ cd ABL-Package
-    $ pip install -v -e .
+    git clone https://github.com/AbductiveLearning/ABLKit.git
+    cd ABLKit
+    pip install -v -e .
 
-(Optional) If the use of a :ref:`Prolog-based knowledge base <prolog>` is necessary, the installation of `Swi-Prolog <https://www.swi-prolog.org/>`_ is also required:
+(Optional) Install SWI-Prolog
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If the use of a :ref:`Prolog-based knowledge base <prolog>` is necessary, the installation of `SWI-Prolog <https://www.swi-prolog.org/>`_ is also required:
 
 For Linux users:
 
-.. code:: console
+.. code:: bash
 
-    $ sudo apt-get install swi-prolog
+    sudo apt-get install swi-prolog
 
-For Windows and Mac users, please refer to the `Swi-Prolog Install Guide <https://github.com/yuce/pyswip/blob/master/INSTALL.md>`_.
+For Windows and Mac users, please refer to the `SWI-Prolog Install Guide <https://github.com/yuce/pyswip/blob/master/INSTALL.md>`_.
 
 References
 ----------
 
-For more information about ABL, please refer to: `Zhou, 2019 <https://link.springer.com/epdf/10.1007/s11432-018-9801-4?author_access_token=jgJe1Ox3Mk-K7ORSnX7jtfe4RwlQNchNByi7wbcMAY7_PxTx-xNLP7Lp0mIZ04ORp3VG4wioIBHSCIAO3B_TBJkj87YzapmdnYVSQvgBIO3aEpQWppxZG25KolINetygc2W_Cj2gtoBdiG_J1hU3pA==>`_ 
+For more information about ABL, please refer to: `Zhou, 2019 <http://scis.scichina.com/en/2019/076101.pdf>`_ 
 and `Zhou and Huang, 2022 <https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf>`_.
+
+.. code-block:: latex
+
+    @article{zhou2019abductive,
+        title     = {Abductive learning: towards bridging machine learning and logical reasoning},
+        author    = {Zhou, Zhi-Hua},
+        journal   = {Science China Information Sciences},
+        volume    = {62},
+        number    = {7},
+        pages     = {76101},
+        year      = {2019}
+    }
+
+    @incollection{zhou2022abductive,
+        title     = {Abductive Learning},
+        author    = {Zhou, Zhi-Hua and Huang, Yu-Xuan},
+        booktitle = {Neuro-Symbolic Artificial Intelligence: The State of the Art},
+        editor    = {Pascal Hitzler and Md. Kamruzzaman Sarker},
+        publisher = {{IOS} Press},
+        pages     = {353--369},
+        address   = {Amsterdam},
+        year      = {2022}
+    }

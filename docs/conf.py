@@ -7,6 +7,56 @@ from docutils.parsers.rst import roles
 
 from sphinx.application import Sphinx
 
+# -- Path setup --------------------------------------------------------------
+
+if "READTHEDOCS" not in os.environ:
+    sys.path.insert(0, os.path.abspath(".."))
+
+# -- Project information -----------------------------------------------------
+
+project = "ABL Kit"
+copyright = "LAMDA, 2024"
+
+# -- General configuration ---------------------------------------------------
+
+extensions = [
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.viewcode",
+    "sphinx_rtd_theme",
+    "recommonmark",
+    "sphinx_markdown_tables",
+    "sphinx.ext.napoleon",
+    "sphinx_copybutton",
+]
+
+templates_path = ["_templates"]
+source_suffix = [".rst", ".md"]
+exclude_patterns = []
+gettext_compact = False
+
+master_doc = "index"
+suppress_warnings = ["image.nonlocal_uri"]
+pygments_style = "default"
+
+# -- Options for HTML output -------------------------------------------------
+
+html_theme = "sphinx_rtd_theme"
+html_theme_options = {"display_version": True}
+html_static_path = ["_static"]
+html_css_files = ["custom.css"]
+
+slug = re.sub(r"\W+", "", project.lower())
+htmlhelp_basename = slug
+man_pages = [("index", slug, project, 1)]
+texinfo_documents = [
+    ("index", slug, project, slug, project, "Miscellaneous"),
+]
+
+copybutton_selector = "div:not(.code-out) > div.highlight > pre"
+
 
 def remove_noqa(app: Sphinx, what: str, name: str, obj, options, lines):
     new_lines = []
@@ -27,69 +77,6 @@ roles.register_local_role("yellow-bold", colored_text_role)
 roles.register_local_role("green", colored_text_role)
 roles.register_local_role("blue", colored_text_role)
 roles.register_local_role("yellow", colored_text_role)
-
-
-if "READTHEDOCS" not in os.environ:
-    sys.path.insert(0, os.path.abspath(".."))
-sys.path.append(os.path.abspath("./ABL/"))
-
-
-project = "ABL"
-slug = re.sub(r"\W+", "-", project.lower())
-project = "ABL-Package"
-copyright = "LAMDA, 2024"
-author = "Author"
-
-# -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
-
-extensions = [
-    "sphinx.ext.intersphinx",
-    "sphinx.ext.autodoc",
-    "sphinx.ext.autosummary",
-    "sphinx.ext.mathjax",
-    "sphinx.ext.viewcode",
-    "sphinx_rtd_theme",
-    "recommonmark",
-    "sphinx_markdown_tables",
-    "sphinx.ext.napoleon",
-    "sphinx_copybutton",
-]
-
-templates_path = ["_templates"]
-source_suffix = [".rst", ".md"]
-exclude_patterns = []
-# locale_dirs = ['locale/']
-gettext_compact = False
-
-master_doc = "index"
-suppress_warnings = ["image.nonlocal_uri"]
-pygments_style = "default"
-
-# intersphinx_mapping = {
-#     'rtd': ('https://docs.readthedocs.io/en/latest/', None),
-#     'sphinx': ('http://www.sphinx-doc.org/en/stable/', None),
-# }
-
-html_theme = "sphinx_rtd_theme"
-html_theme_options = {"display_version": True}
-html_static_path = ["_static"]
-html_css_files = ["custom.css"]
-# html_theme_path = ["../.."]
-# html_logo = "demo/static/logo-wordmark-light.svg"
-# html_show_sourcelink = True
-
-htmlhelp_basename = slug
-
-# latex_documents = [
-#   ('index', '{0}.tex'.format(slug), project, author, 'manual'),
-# ]
-
-man_pages = [("index", slug, project, [author], 1)]
-
-texinfo_documents = [
-    ("index", slug, project, author, slug, project, "Miscellaneous"),
-]
 
 
 # Extensions to theme docs

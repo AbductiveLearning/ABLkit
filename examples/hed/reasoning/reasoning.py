@@ -3,8 +3,8 @@ import os
 
 import numpy as np
 
-from abl.reasoning import PrologKB, Reasoner
-from abl.utils import reform_list
+from ablkit.reasoning import PrologKB, Reasoner
+from ablkit.utils import reform_list
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 

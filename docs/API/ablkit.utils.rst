@@ -1,7 +1,7 @@
-abl.reasoning
+ablkit.utils
 ==================
 
-.. automodule:: abl.reasoning
+.. automodule:: ablkit.utils
    :members:
    :undoc-members:
    :show-inheritance:

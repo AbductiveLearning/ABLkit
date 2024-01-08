@@ -3,7 +3,7 @@ MNIST Addition
 
 .. raw:: html
     
-    <p>For detailed code implementation, please view on <a class="reference external" href="https://github.com/AbductiveLearning/ABL-Package/tree/Dev/examples/mnist_add" target="_blank">GitHub</a>.</p>
+    <p>For detailed code implementation, please view it on <a class="reference external" href="https://github.com/AbductiveLearning/ABLKit/tree/main/examples/mnist_add" target="_blank">GitHub</a>.</p>
 
 Below shows an implementation of `MNIST
 Addition <https://arxiv.org/abs/1805.10872>`__. In this task, pairs of
@@ -31,11 +31,11 @@ machine learning model.
     import torch.nn as nn
     from torch.optim import RMSprop, lr_scheduler
 
-    from abl.bridge import SimpleBridge
-    from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
-    from abl.learning import ABLModel, BasicNN
-    from abl.reasoning import KBBase, Reasoner
-    from abl.utils import ABLLogger, print_log
+    from ablkit.bridge import SimpleBridge
+    from ablkit.data.evaluation import ReasoningMetric, SymbolAccuracy
+    from ablkit.learning import ABLModel, BasicNN
+    from ablkit.reasoning import KBBase, Reasoner
+    from ablkit.utils import ABLLogger, print_log
 
     from datasets import get_dataset
     from models.nn import LeNet5
@@ -82,7 +82,7 @@ of datasets are illustrated as follows.
           f"with each element being a {type(gt_pseudo_label_0).__name__} " +
           f"of {len(gt_pseudo_label_0)} {type(gt_pseudo_label_0[0]).__name__}.")
     print(f"Y is a {type(train_Y).__name__}, " +
-          f"with each element being a {type(Y_0).__name__}.")
+          f"with each element being an {type(Y_0).__name__}.")
 
 
 Out:
@@ -96,7 +96,7 @@ Out:
 
         X is a list, with each element being a list of 2 Tensor.
         gt_pseudo_label is a list, with each element being a list of 2 int.
-        Y is a list, with each element being a int.
+        Y is a list, with each element being an int.
     
 
 The ith element of X, gt_pseudo_label, and Y together constitute the ith
@@ -143,7 +143,7 @@ base model. We use a simple `LeNet-5 neural
 network <https://en.wikipedia.org/wiki/LeNet>`__, and encapsulate it
 within a ``BasicNN`` object to create the base model. ``BasicNN`` is a
 class that encapsulates a PyTorch model, transforming it into a base
-model with an sklearn-style interface.
+model with a sklearn-style interface.
 
 .. code:: ipython3
 
@@ -169,7 +169,7 @@ for images. As shown below:
 
 .. code:: ipython3
 
-    data_instances = [torch.randn(1, 28, 28).to(device) for _ in range(32)]
+    data_instances = [torch.randn(1, 28, 28) for _ in range(32)]
     pred_idx = base_model.predict(X=data_instances)
     print(f"Predicted class index for a batch of 32 instances: np.ndarray with shape {pred_idx.shape}")
     pred_prob = base_model.predict_proba(X=data_instances)
@@ -202,8 +202,8 @@ examples.
 
 .. code:: ipython3
 
-    from abl.data.structures import ListData
-    # ListData is a data structure provided by ABL-Package that can be used to organize data examples
+    from ablkit.data.structures import ListData
+    # ListData is a data structure provided by ABL Kit that can be used to organize data examples
     data_examples = ListData()
     # We use the first 100 data examples in the training set as an illustration
     data_examples.X = train_X[:100]
@@ -234,7 +234,7 @@ Out:
 Building the Reasoning Part
 ---------------------------
 
-In the reasoning part, we first build a knowledge base which contain
+In the reasoning part, we first build a knowledge base which contains
 information on how to perform addition operations. We build it by
 creating a subclass of ``KBBase``. In the derived subclass, we
 initialize the ``pseudo_label_list`` parameter specifying list of
@@ -283,7 +283,7 @@ Out:
 
 Then, we create a reasoner by instantiating the class ``Reasoner``. Due
 to the indeterminism of abductive reasoning, there could be multiple
-candidates compatible to the knowledge base. When this happens, reasoner
+candidates compatible with the knowledge base. When this happens, reasoner
 can minimize inconsistencies between the knowledge base and
 pseudo-labels predicted by the learning part, and then return only one
 candidate that has the highest consistency.
@@ -301,7 +301,7 @@ candidate that has the highest consistency.
     confidence derived from the predicted probability. In ``examples/mnist_add/main.py``, we
     provide options for utilizing other forms of consistency measurement.
 
-    Also, during process of inconsistency minimization, we can leverage
+    Also, during the process of inconsistency minimization, we can leverage
     `ZOOpt library <https://github.com/polixir/ZOOpt>`__ for acceleration.
     Options for this are also available in ``examples/mnist_add/main.py``. Those interested are
     encouraged to explore these features.
@@ -320,11 +320,11 @@ respectively.
 
     metric_list = [SymbolAccuracy(prefix="mnist_add"), ReasoningMetric(kb=kb, prefix="mnist_add")]
 
-Bridge Learning and Reasoning
------------------------------
+Bridging Learning and Reasoning
+-------------------------------
 
 Now, the last step is to bridge the learning and reasoning part. We
-proceed this step by creating an instance of ``SimpleBridge``.
+proceed with this step by creating an instance of ``SimpleBridge``.
 
 .. code:: ipython3
 
@@ -343,39 +343,55 @@ methods of ``SimpleBridge``.
     bridge.train(train_data, loops=1, segment_size=0.01, save_interval=1, save_dir=weights_dir)
     bridge.test(test_data)
 
-Out:
+The log will appear similar to the following:
+
+Log:
     .. code:: none
         :class: code-out
 
         abl - INFO - Abductive Learning on the MNIST Addition example.
-        abl - INFO - loop(train) [1/1] segment(train) [1/100] 
-        abl - INFO - model loss: 2.23587
-        abl - INFO - loop(train) [1/1] segment(train) [2/100] 
-        abl - INFO - model loss: 2.23756
-        abl - INFO - loop(train) [1/1] segment(train) [3/100] 
-        abl - INFO - model loss: 2.04475
-        abl - INFO - loop(train) [1/1] segment(train) [4/100] 
-        abl - INFO - model loss: 2.01035
-        abl - INFO - loop(train) [1/1] segment(train) [5/100] 
-        abl - INFO - model loss: 1.97584
-        abl - INFO - loop(train) [1/1] segment(train) [6/100] 
-        abl - INFO - model loss: 1.91570
-        abl - INFO - loop(train) [1/1] segment(train) [7/100] 
-        abl - INFO - model loss: 1.90268
-        abl - INFO - loop(train) [1/1] segment(train) [8/100] 
-        abl - INFO - model loss: 1.77436
-        abl - INFO - loop(train) [1/1] segment(train) [9/100] 
-        abl - INFO - model loss: 1.73454
-        abl - INFO - loop(train) [1/1] segment(train) [10/100] 
-        abl - INFO - model loss: 1.62495
-        abl - INFO - loop(train) [1/1] segment(train) [11/100] 
-        abl - INFO - model loss: 1.58456
-        abl - INFO - loop(train) [1/1] segment(train) [12/100] 
-        abl - INFO - model loss: 1.62575
+        abl - INFO - Working with Data.
+        abl - INFO - Building the Learning Part.
+        abl - INFO - Building the Reasoning Part.
+        abl - INFO - Building Evaluation Metrics.
+        abl - INFO - Bridge Learning and Reasoning.
+        abl - INFO - loop(train) [1/2] segment(train) [1/100] 
+        abl - INFO - model loss: 2.25980
+        abl - INFO - loop(train) [1/2] segment(train) [2/100] 
+        abl - INFO - model loss: 2.14168
+        abl - INFO - loop(train) [1/2] segment(train) [3/100] 
+        abl - INFO - model loss: 2.02010
         ...
-        abl - INFO - Eval start: loop(val) [1]
-        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.986 mnist_add/reasoning_accuracy: 0.973 
-        abl - INFO - Saving model: loop(save) [1]
-        abl - INFO - Checkpoints will be saved to log_dir/weights/model_checkpoint_loop_1.pth
+        abl - INFO - loop(train) [2/2] segment(train) [1/100] 
+        abl - INFO - model loss: 0.90260
+        ...
+        abl - INFO - Eval start: loop(val) [2]
+        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.993 mnist_add/reasoning_accuracy: 0.986 
         abl - INFO - Test start:
-        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.983 mnist_add/reasoning_accuracy: 0.967 
+        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.991 mnist_add/reasoning_accuracy: 0.980 
+
+
+
+Performance
+-----------
+
+We present the results of ABL as follows, which include the reasoning accuracy (the proportion of equations that are correctly summed), and the training time used to achieve this accuracy. These results are compared with the following methods:
+
+- `NeurASP <https://github.com/azreasoners/NeurASP>`_: An extension of answer set programs by treating the neural network output as the probability distribution over atomic facts;
+- `DeepProbLog <https://github.com/ML-KULeuven/deepproblog>`_: An extension of ProbLog by introducing neural predicates in Probabilistic Logic Programming;
+- `DeepStochLog <https://github.com/ML-KULeuven/deepstochlog>`_: A neural-symbolic framework based on stochastic logic program.
+
+.. table::
+   :class: centered
+
+   +--------------+----------+------------------------------+
+   | Method       | Accuracy | Time to achieve the Acc. (s) |
+   +==============+==========+==============================+
+   | NeurASP      | 0.964    | 354                          |
+   +--------------+----------+------------------------------+
+   | DeepProbLog  | 0.965    | 1965                         |
+   +--------------+----------+------------------------------+
+   | DeepStochLog | 0.975    | 727                          |
+   +--------------+----------+------------------------------+
+   | ABL          | 0.980    | 42                           |
+   +--------------+----------+------------------------------+

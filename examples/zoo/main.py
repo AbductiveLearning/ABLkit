@@ -4,11 +4,11 @@ import os.path as osp
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 
-from abl.bridge import SimpleBridge
-from abl.data.evaluation import ReasoningMetric, SymbolAccuracy
-from abl.learning import ABLModel
-from abl.reasoning import Reasoner
-from abl.utils import ABLLogger, confidence_dist, print_log, tab_data_to_tuple
+from ablkit.bridge import SimpleBridge
+from ablkit.data.evaluation import ReasoningMetric, SymbolAccuracy
+from ablkit.learning import ABLModel
+from ablkit.reasoning import Reasoner
+from ablkit.utils import ABLLogger, avg_confidence_dist, print_log, tab_data_to_tuple
 
 from get_dataset import load_and_preprocess_dataset, split_dataset
 from kb import ZooKB
@@ -16,7 +16,7 @@ from kb import ZooKB
 
 def consitency(data_example, candidates, candidate_idxs, reasoning_results):
     pred_prob = data_example.pred_prob
-    model_scores = confidence_dist(pred_prob, candidate_idxs)
+    model_scores = avg_confidence_dist(pred_prob, candidate_idxs)
     rule_scores = np.array(reasoning_results)
     scores = model_scores + rule_scores
     return scores
@@ -32,7 +32,7 @@ def main():
     # Build logger
     print_log("Abductive Learning on the ZOO example.", logger="current")
 
-    ### Working with Data
+    # -- Working with Data ------------------------------
     print_log("Working with Data.", logger="current")
 
     X, y = load_and_preprocess_dataset(dataset_id=62)
@@ -41,7 +41,7 @@ def main():
     test_data = tab_data_to_tuple(X_test, y_test)
     train_data = tab_data_to_tuple(X_unlabel, y_unlabel)
 
-    ### Building the Learning Part
+    # -- Building the Learning Part ---------------------
     print_log("Building the Learning Part.", logger="current")
 
     # Build base model
@@ -50,7 +50,7 @@ def main():
     # Build ABLModel
     model = ABLModel(base_model)
 
-    ### Building the Reasoning Part
+    # -- Building the Reasoning Part --------------------
     print_log("Building the Reasoning Part.", logger="current")
 
     # Build knowledge base
@@ -59,11 +59,11 @@ def main():
     # Create reasoner
     reasoner = Reasoner(kb, dist_func=consitency)
 
-    ### Building Evaluation Metrics
+    # -- Building Evaluation Metrics --------------------
     print_log("Building Evaluation Metrics.", logger="current")
     metric_list = [SymbolAccuracy(prefix="zoo"), ReasoningMetric(kb=kb, prefix="zoo")]
 
-    ### Bridging learning and reasoning
+    # -- Bridging Learning and Reasoning ----------------
     print_log("Bridge Learning and Reasoning.", logger="current")
     bridge = SimpleBridge(model, reasoner, metric_list)
 

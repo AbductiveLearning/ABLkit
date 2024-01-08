@@ -1,13 +1,13 @@
 from typing import Any, Tuple
 
-from abl.utils import tab_data_to_tuple
+from ablkit.utils import tab_data_to_tuple
 from .structures.list_data import ListData
 from lambdaLearn.Base.TabularMixin import TabularMixin
 
 
 class DataConverter:
     """
-    This class provides functionality to convert LambdaLearn data to ABL-Package data.
+    This class provides functionality to convert LambdaLearn data to ABL Kit data.
     """
 
     def __init__(self) -> None:

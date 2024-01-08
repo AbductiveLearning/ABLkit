@@ -1,34 +1,36 @@
 Installation
 ==================
 
-ABL is distributed on `PyPI <https://pypi.org/>`__ and can be installed with ``pip``:
+Install from PyPI
+^^^^^^^^^^^^^^^^^
 
-.. code:: console
+The easiest way to install ABL Kit is using ``pip``:
 
-    # (TODO)
-    $ pip install abl
+.. code:: bash
 
-For testing purposes, you can install it using:
+    pip install ablkit
 
-.. code:: console
+Install from Source
+^^^^^^^^^^^^^^^^^^^
 
-    $ pip install -i https://test.pypi.org/simple/ --extra-index-url https://mirrors.nju.edu.cn/pypi/web/simple/ abl
-
-Alternatively, to install ABL by source code, 
+Alternatively, to install from source code, 
 sequentially run following commands in your terminal/command line.
 
-.. code:: console
+.. code:: bash
 
-    $ git clone https://github.com/AbductiveLearning/ABL-Package.git
-    $ cd ABL-Package
-    $ pip install -v -e .
+    git clone https://github.com/AbductiveLearning/ABLKit.git
+    cd ABLKit
+    pip install -v -e .
 
-(Optional) If the use of a :ref:`Prolog-based knowledge base <prolog>` is necessary, the installation of `Swi-Prolog <https://www.swi-prolog.org/>`_ is also required:
+(Optional) Install SWI-Prolog
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If the use of a :ref:`Prolog-based knowledge base <prolog>` is necessary, the installation of `SWI-Prolog <https://www.swi-prolog.org/>`_ is also required:
 
 For Linux users:
 
-.. code:: console
+.. code:: bash
 
-    $ sudo apt-get install swi-prolog
+    sudo apt-get install swi-prolog
 
-For Windows and Mac users, please refer to the `Swi-Prolog Install Guide <https://github.com/yuce/pyswip/blob/master/INSTALL.md>`_.
+For Windows and Mac users, please refer to the `SWI-Prolog Install Guide <https://github.com/yuce/pyswip/blob/master/INSTALL.md>`_.

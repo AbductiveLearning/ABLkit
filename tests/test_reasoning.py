@@ -2,7 +2,7 @@ import numpy as np
 import platform
 import pytest
 
-from abl.reasoning import PrologKB, Reasoner
+from ablkit.reasoning import PrologKB, Reasoner
 
 
 class TestKBBase(object):
@@ -114,8 +114,10 @@ class TestReaonser(object):
     def test_invalid_predefined_dist_func(self, kb_add):
         with pytest.raises(NotImplementedError) as excinfo:
             Reasoner(kb_add, "invalid_dist_func")
-        assert 'Valid options for predefined dist_func include "hamming" and "confidence"' in str(
-            excinfo.value
+        assert (
+            'Valid options for predefined dist_func include "hamming", "confidence" '
+            + 'and "avg_confidence"'
+            in str(excinfo.value)
         )
 
     def random_dist(self, data_example, candidates, candidate_idxs, reasoning_results):

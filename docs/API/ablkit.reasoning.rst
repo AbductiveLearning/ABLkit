@@ -1,7 +1,7 @@
-abl.bridge
+ablkit.reasoning
 ==================
 
-.. automodule:: abl.bridge
+.. automodule:: ablkit.reasoning
    :members:
    :undoc-members:
    :show-inheritance:
