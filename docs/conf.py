@@ -55,6 +55,8 @@ texinfo_documents = [
     ("index", slug, project, slug, project, "Miscellaneous"),
 ]
 
+copybutton_selector = "div:not(.code-out) > div.highlight > pre"
+
 
 def remove_noqa(app: Sphinx, what: str, name: str, obj, options, lines):
     new_lines = []
