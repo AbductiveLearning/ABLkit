@@ -3,9 +3,3 @@ sphinx-rtd-theme
 recommonmark
 sphinx-markdown-tables
 sphinx-copybutton
-numpy
-pyswip
-torch
-torchvision
-zoopt
-termcolor
