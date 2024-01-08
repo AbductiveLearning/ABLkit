@@ -42,3 +42,76 @@ optional arguments:
   --max-err MAX_ERR     max tolerance during abductive reasoning (default : 1e-10)
 
 ```
+
+## Performance
+
+We present the results of ABL as follows, which include the reasoning accuracy (for different equation lengths in the HWF dataset), and the training time (to achieve the accuracy using all equation lengths). These results are compared with the following methods:
+
+- [**NGS**](https://github.com/liqing-ustc/NGS): A neural-symbolic framework that uses a grammar model and a back-search algorithm to improve its computing process;
+
+- [**DeepProbLog**](https://github.com/ML-KULeuven/deepproblog/tree/master): An extension of ProbLog by introducing neural predicates in Probabilistic Logic Programming;
+
+- [**DeepStochLog**](https://github.com/ML-KULeuven/deepstochlog/tree/main): A neural-symbolic framework based on stochastic logic program.
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;margin-bottom:20px;}
+.tg td, .tg th {border:1px solid #ddd;padding:10px 15px;text-align:center;}
+.tg th {background-color:#f5f5f5;color:#333333;}
+.tg tr:nth-child(even) {background-color:#f9f9f9;}
+.tg tr:nth-child(odd) {background-color:#ffffff;}
+</style>
+<table class="tg" style="margin-left: auto; margin-right: auto;">
+<thead>
+  <tr>
+    <th rowspan="2"></th>
+    <th colspan="5">Reasoning Accuracy<br><span style="font-weight: normal; font-size: smaller;">(for different equation lengths)</span></th>
+    <th rowspan="2">Training Time (s)<br><span style="font-weight: normal; font-size: smaller;">(to achieve the Acc. using all lengths)</span></th>
+  </tr>
+  <tr>
+    <th>1</th>
+    <th>3</th>
+    <th>5</th>
+    <th>7</th>
+    <th>All</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>NGS</td>
+    <td>91.2</td>
+    <td>89.1</td>
+    <td>92.7</td>
+    <td>5.2</td>
+    <td>98.4</td>
+    <td>426.2</td>
+  </tr>
+  <tr>
+    <td>DeepProbLog</td>
+    <td>90.8</td>
+    <td>85.6</td>
+    <td>timeout*</td>
+    <td>timeout</td>
+    <td>timeout</td>
+    <td>timeout</td>
+  </tr>
+  <tr>
+    <td>DeepStochLog</td>
+    <td>92.8</td>
+    <td>87.5</td>
+    <td>92.1</td>
+    <td>timeout</td>
+    <td>timeout</td>
+    <td>timeout</td>
+  </tr>
+  <tr>
+    <td>ABL</td>
+    <td><span style="font-weight:bold">94.0</span></td>
+    <td><span style="font-weight:bold">89.7</span></td>
+    <td><span style="font-weight:bold">96.5</span></td>
+    <td><span style="font-weight:bold">97.2</span></td>
+    <td><span style="font-weight:bold">98.6</span></td>
+    <td><span style="font-weight:bold">77.3</span></td>
+  </tr>
+</tbody>
+</table>
+<p style="font-size: 13px;">* timeout: need more than 1 hour to execute</p>
