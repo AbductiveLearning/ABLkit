@@ -22,7 +22,7 @@ and revise the initial symbols yielded by the learning part through
 abductive reasoning. This process enables us to further update the
 machine learning model.
 
-.. code:: ipython3
+.. code:: python
 
     # Import necessary libraries and modules
     import os.path as osp
@@ -46,7 +46,7 @@ Working with Data
 
 First, we get the training and testing datasets:
 
-.. code:: ipython3
+.. code:: python
 
     train_data = get_dataset(train=True, get_pseudo_label=True)
     test_data = get_dataset(train=False, get_pseudo_label=True)
@@ -62,7 +62,7 @@ The length and structures of datasets are illustrated as follows.
     ``gt_pseudo_label`` is only used to evaluate the performance of
     the learning part but not to train the model.
 
-.. code:: ipython3
+.. code:: python
 
     print(f"Both train_data and test_data consist of 3 components: X, gt_pseudo_label, Y")
     print()
@@ -102,7 +102,7 @@ The ith element of X, gt_pseudo_label, and Y together constitute the ith
 data example. Here we use two of them (the 1001st and the 3001st) as
 illstrations:
 
-.. code:: ipython3
+.. code:: python
 
     X_1000, gt_pseudo_label_1000, Y_1000 = train_X[1000], train_gt_pseudo_label[1000], train_Y[1000]
     print(f"X in the 1001st data example (a list of images):")
@@ -175,7 +175,7 @@ object to create the base model. ``BasicNN`` is a class that
 encapsulates a PyTorch model, transforming it into a base model with an
 sklearn-style interface.
 
-.. code:: ipython3
+.. code:: python
 
     # class of symbol may be one of ['1', ..., '9', '+', '-', '*', '/'], total of 14 classes
     cls = SymbolNet(num_classes=13, image_size=(45, 45, 1))
@@ -196,7 +196,7 @@ sklearn-style interface.
 are used to predict the class index and the probabilities of each class
 for images. As shown below:
 
-.. code:: ipython3
+.. code:: python
 
     data_instances = [torch.randn(1, 45, 45) for _ in range(32)]
     pred_idx = base_model.predict(X=data_instances)
@@ -221,7 +221,7 @@ data (i.e., a list of images comprising the formula). Therefore, we wrap
 the base model into ``ABLModel``, which enables the learning part to
 train, test, and predict on example-level data.
 
-.. code:: ipython3
+.. code:: python
 
     model = ABLModel(base_model)
 
@@ -231,7 +231,7 @@ method accepts data examples as input and outputs the class labels and
 the probabilities of each class for all instances within these data
 examples.
 
-.. code:: ipython3
+.. code:: python
 
     from ablkit.data.structures import ListData
     # ListData is a data structure provided by ABL Kit that can be used to organize data examples
@@ -274,7 +274,7 @@ initialize the ``pseudo_label_list`` parameter specifying list of
 possible pseudo-labels, and override the ``logic_forward`` function
 defining how to perform (deductive) reasoning.
 
-.. code:: ipython3
+.. code:: python
 
     class HwfKB(KBBase):
         def __init__(self, pseudo_label_list=["1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "-", "*", "/"]):
@@ -303,7 +303,7 @@ reasoning and abductive reasoning). Below is an example of performing
 (deductive) reasoning, and users can refer to :ref:`Performing abductive 
 reasoning in the knowledge base <kb-abd>` for details of abductive reasoning.
 
-.. code:: ipython3
+.. code:: python
 
     pseudo_labels = ["1", "-", "2", "*", "5"]
     reasoning_result = kb.logic_forward(pseudo_labels)
@@ -338,7 +338,7 @@ can minimize inconsistencies between the knowledge base and
 pseudo-labels predicted by the learning part, and then return only one
 candidate that has the highest consistency.
 
-.. code:: ipython3
+.. code:: python
 
     reasoner = Reasoner(kb)
 
@@ -366,7 +366,7 @@ used to evaluate the accuracy of the machine learning model’s
 predictions and the accuracy of the final reasoning results,
 respectively.
 
-.. code:: ipython3
+.. code:: python
 
     metric_list = [SymbolAccuracy(prefix="hwf"), ReasoningMetric(kb=kb, prefix="hwf")]
 
@@ -376,14 +376,14 @@ Bridging Learning and Reasoning
 Now, the last step is to bridge the learning and reasoning part. We
 proceed with this step by creating an instance of ``SimpleBridge``.
 
-.. code:: ipython3
+.. code:: python
 
     bridge = SimpleBridge(model, reasoner, metric_list)
 
 Perform training and testing by invoking the ``train`` and ``test``
 methods of ``SimpleBridge``.
 
-.. code:: ipython3
+.. code:: python
 
     # Build logger
     print_log("Abductive Learning on the HWF example.", logger="current")

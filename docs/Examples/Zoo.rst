@@ -20,7 +20,7 @@ this happens, abductive reasoning can be employed to adjust these
 results and retrain the model accordingly. This process enables us to
 further update the learning model.
 
-.. code:: ipython3
+.. code:: python
 
     # Import necessary libraries and modules
     import os.path as osp
@@ -44,7 +44,7 @@ First, we load and preprocess the `Zoo
 dataset <https://archive.ics.uci.edu/dataset/111/zoo>`__, and split it
 into labeled/unlabeled/test data
 
-.. code:: ipython3
+.. code:: python
 
     X, y = load_and_preprocess_dataset(dataset_id=62)
     X_label, y_label, X_unlabel, y_unlabel, X_test, y_test = split_dataset(X, y, test_size=0.3)
@@ -55,7 +55,7 @@ the target is an integer value in the range [0,6] representing 7 classes
 (e.g., mammal, bird, reptile, fish, amphibian, insect, and other). Below
 is an illustration:
 
-.. code:: ipython3
+.. code:: python
 
     print("Shape of X and y:", X.shape, y.shape)
     print("First five elements of X:")
@@ -89,7 +89,7 @@ we treat the attributes as X and the targets as gt_pseudo_label (ground
 truth pseudo-labels). Y (reasoning results) are expected to be 0,
 indicating no rules are violated.
 
-.. code:: ipython3
+.. code:: python
 
     label_data = tab_data_to_tuple(X_label, y_label, reasoning_result = 0)
     data = tab_data_to_tuple(X_test, y_test, reasoning_result = 0)
@@ -103,7 +103,7 @@ base model. We use a `Random
 Forest <https://en.wikipedia.org/wiki/Random_forest>`__ as the base
 model.
 
-.. code:: ipython3
+.. code:: python
 
     base_model = RandomForestClassifier()
 
@@ -112,7 +112,7 @@ can not directly deal with example-level data. Therefore, we wrap the
 base model into ``ABLModel``, which enables the learning part to train,
 test, and predict on example-level data.
 
-.. code:: ipython3
+.. code:: python
 
     model = ABLModel(base_model)
 
@@ -125,7 +125,7 @@ information about the relations between attributes (X) and targets
 base is built in the ``ZooKB`` class within file ``examples/zoo/kb.py``, and is
 derived from the ``KBBase`` class.
 
-.. code:: ipython3
+.. code:: python
 
     kb = ZooKB()
 
@@ -133,7 +133,7 @@ As mentioned, for all attributes and targets in the dataset, the
 reasoning results are expected to be 0 since there should be no
 violations of the established knowledge in real data. As shown below:
 
-.. code:: ipython3
+.. code:: python
 
     for idx, (x, y_item) in enumerate(zip(X[:5], y[:5])):
         print(f"Example {idx}: the attributes are: {x}, and the target is {y_item}.")
@@ -173,7 +173,7 @@ can minimize inconsistencies between the knowledge base and
 pseudo-labels predicted by the learning part, and then return only one
 candidate that has the highest consistency.
 
-.. code:: ipython3
+.. code:: python
 
     def consitency(data_example, candidates, candidate_idxs, reasoning_results):
         pred_prob = data_example.pred_prob
@@ -194,7 +194,7 @@ are used to evaluate the accuracy of the machine learning model’s
 predictions and the accuracy of the final reasoning results,
 respectively.
 
-.. code:: ipython3
+.. code:: python
 
     metric_list = [SymbolAccuracy(prefix="zoo"), ReasoningMetric(kb=kb, prefix="zoo")]
 
@@ -204,14 +204,14 @@ Bridging Learning and Reasoning
 Now, the last step is to bridge the learning and reasoning part. We
 proceed with this step by creating an instance of ``SimpleBridge``.
 
-.. code:: ipython3
+.. code:: python
 
     bridge = SimpleBridge(model, reasoner, metric_list)
 
 Perform training and testing by invoking the ``train`` and ``test``
 methods of ``SimpleBridge``.
 
-.. code:: ipython3
+.. code:: python
 
     # Build logger
     print_log("Abductive Learning on the Zoo example.", logger="current")

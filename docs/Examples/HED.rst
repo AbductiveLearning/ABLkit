@@ -25,7 +25,7 @@ explanations to the observed facts, suggesting some pseudo-labels to be
 revised. This process enables us to further update the machine learning
 model.
 
-.. code:: ipython3
+.. code:: python
 
     # Import necessary libraries and modules
     import os.path as osp
@@ -48,7 +48,7 @@ Working with Data
 
 First, we get the datasets of handwritten equations:
 
-.. code:: ipython3
+.. code:: python
 
     total_train_data = get_dataset(train=True)
     train_data, val_data = split_equation(total_train_data, 3, 1)
@@ -56,7 +56,7 @@ First, we get the datasets of handwritten equations:
 
 The datasets are shown below:
 
-.. code:: ipython3
+.. code:: python
 
     true_train_equation = train_data[1]
     false_train_equation = train_data[0]
@@ -100,7 +100,7 @@ Out:
 
 As illustrations, we show four equations in the training dataset:
 
-.. code:: ipython3
+.. code:: python
 
     true_train_equation_with_length_5 = true_train_equation[5]
     true_train_equation_with_length_8 = true_train_equation[8]
@@ -176,7 +176,7 @@ object to create the base model. ``BasicNN`` is a class that
 encapsulates a PyTorch model, transforming it into a base model with an
 sklearn-style interface.
 
-.. code:: ipython3
+.. code:: python
 
     # class of symbol may be one of ['0', '1', '+', '='], total of 4 classes
     cls = SymbolNet(num_classes=4)
@@ -200,7 +200,7 @@ data (i.e., a list of images comprising the equation). Therefore, we
 wrap the base model into ``ABLModel``, which enables the learning part
 to train, test, and predict on example-level data.
 
-.. code:: ipython3
+.. code:: python
 
     model = ABLModel(base_model)
 
@@ -223,7 +223,7 @@ The knowledge base is already built in ``HedKB``.
 ``HedKB`` is derived from class ``PrologKB``, and is built upon the aformentioned Prolog 
 files. 
 
-.. code:: ipython3
+.. code:: python
 
     kb = HedKB()
 
@@ -253,7 +253,7 @@ Additionally, methods for abducing rules from data have been
 incorporated. Users interested can refer to the specific implementation
 of ``HedReasoner`` in ``reasoning/reasoning.py``.
 
-.. code:: ipython3
+.. code:: python
 
     reasoner = HedReasoner(kb, dist_func="hamming", use_zoopt=True, max_revision=10)
 
@@ -267,7 +267,7 @@ used to evaluate the accuracy of the machine learning model’s
 predictions and the accuracy of the final reasoning results,
 respectively.
 
-.. code:: ipython3
+.. code:: python
 
     # Set up metrics
     metric_list = [SymbolAccuracy(prefix="hed"), ReasoningMetric(kb=kb, prefix="hed")]
@@ -279,13 +279,13 @@ Now, the last step is to bridge the learning and reasoning part. We
 proceed with this step by creating an instance of ``HedBridge``, which is
 derived from ``SimpleBridge`` and tailored specific for this task.
 
-.. code:: ipython3
+.. code:: python
 
     bridge = HedBridge(model, reasoner, metric_list)
 
 Perform pretraining, training and testing by invoking the ``pretrain``, ``train`` and ``test`` methods of ``HedBridge``.
 
-.. code:: ipython3
+.. code:: python
 
     # Build logger
     print_log("Abductive Learning on the HED example.", logger="current")
