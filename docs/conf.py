@@ -20,7 +20,18 @@ class Mock(MagicMock):
         return MagicMock()
 
 
-MOCK_MODULES = ["numpy", "pyswip", "torch", "torchvision", "zoopt", "termcolor"]
+MOCK_MODULES = [
+    "numpy",
+    "pyswip",
+    "torch",
+    "torchvision",
+    "zoopt",
+    "termcolor",
+    "torch.nn",
+    "torch.utils",
+    "torch.optim",
+    "torchvision.transform",
+]
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
