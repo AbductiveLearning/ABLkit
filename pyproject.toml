@@ -48,3 +48,7 @@ test = [
     "pytest-cov",
     "black==22.10.0",
 ]
+
+[tool.setuptools.packages.find]
+where = ["ablkit"]
+namespaces = false
