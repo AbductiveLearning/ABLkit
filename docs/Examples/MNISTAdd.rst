@@ -392,6 +392,12 @@ Log:
 Performance
 -----------
 
+We present the results of ABL as follows, which include the reasoning accuracy (the proportion of equations that are correctly summed), and the training time used to achieve this accuracy. These results are compared with the following methods:
+
+- `NeurASP <https://github.com/azreasoners/NeurASP>`_: An extension of answer set programs by treating the neural network output as the probability distribution over atomic facts;
+- `DeepProbLog <https://github.com/ML-KULeuven/deepproblog>`_: An extension of ProbLog by introducing neural predicates in Probabilistic Logic Programming;
+- `DeepStochLog <https://github.com/ML-KULeuven/deepstochlog>`_: A neural-symbolic framework based on stochastic logic program.
+
 .. table::
    :class: centered
 
