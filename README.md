@@ -28,14 +28,16 @@ where both data and (logical) domain knowledge are available.
 Key Features of ABL Kit:
 
 - **Great Flexibility**: Adaptable to various machine learning modules and logical reasoning components.
-- **User-Friendly**: Provide **data**, <span style="color: blue;">**model**</span>, and <span style="color: green;">**KB**</span>, and get started with just a few lines of code.
+- **User-Friendly**: Provide data, model, and KB, and get started with just a few lines of code.
 - **High-Performance**: Optimization for high accuracy and fast training speed.
 
 ABL Kit encapsulates advanced ABL techniques, providing users with
 an efficient and convenient toolkit to develop dual-driven ABL systems,
 which leverage the power of both data and knowledge.
 
-![ABL Kit](img/ABLKit.png)
+<p align="center">
+<img src="img/ABLKit.png" alt="ABL Kit" style="width: 80%;"/>
+</p>
 
 ## Installation
 
