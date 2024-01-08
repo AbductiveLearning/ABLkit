@@ -320,8 +320,8 @@ respectively.
 
     metric_list = [SymbolAccuracy(prefix="mnist_add"), ReasoningMetric(kb=kb, prefix="mnist_add")]
 
-Bridge Learning and Reasoning
------------------------------
+Bridging Learning and Reasoning
+-------------------------------
 
 Now, the last step is to bridge the learning and reasoning part. We
 proceed with this step by creating an instance of ``SimpleBridge``.
@@ -343,7 +343,9 @@ methods of ``SimpleBridge``.
     bridge.train(train_data, loops=1, segment_size=0.01, save_interval=1, save_dir=weights_dir)
     bridge.test(test_data)
 
-Out:
+The log will appear similar to the following:
+
+Log:
     .. code:: none
         :class: code-out
 

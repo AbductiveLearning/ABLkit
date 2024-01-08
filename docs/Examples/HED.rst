@@ -272,8 +272,8 @@ respectively.
     # Set up metrics
     metric_list = [SymbolAccuracy(prefix="hed"), ReasoningMetric(kb=kb, prefix="hed")]
 
-Bridge Learning and Reasoning
------------------------------
+Bridging Learning and Reasoning
+-------------------------------
 
 Now, the last step is to bridge the learning and reasoning part. We
 proceed with this step by creating an instance of ``HedBridge``, which is

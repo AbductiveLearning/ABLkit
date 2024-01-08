@@ -227,8 +227,9 @@ methods of ``SimpleBridge``.
     print_log("------- Test the final model -----------", logger="current")
     bridge.test(test_data)
 
+The log will appear similar to the following:
 
-Out:
+Log:
     .. code:: none
         :class: code-out
 
