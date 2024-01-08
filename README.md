@@ -21,8 +21,9 @@ ABL is a novel paradigm that integrates machine learning and
 logical reasoning in a unified framework. It is suitable for tasks
 where both data and (logical) domain knowledge are available. 
 
-<img src="img/ABL.png" alt="Abductive Learning" style="display: block; margin-left: auto; margin-right: auto; width: 80%;"/>
-<br>
+<p align="center">
+<img src="img/ABL.png" alt="Abductive Learning" style="width: 80%;"/>
+</p>
 
 Key Features of ABL Kit:
 
@@ -34,7 +35,7 @@ ABL Kit encapsulates advanced ABL techniques, providing users with
 an efficient and convenient toolkit to develop dual-driven ABL systems,
 which leverage the power of both data and knowledge.
 
-![Abductive Learning](img/ABLKit.png)
+![ABL Kit](img/ABLKit.png)
 
 ## Installation
 
