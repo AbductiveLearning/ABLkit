@@ -406,20 +406,7 @@ Log:
         abl - INFO - model loss: 0.00011
         abl - INFO - loop(train) [1/3] segment(train) [3/10] 
         abl - INFO - model loss: 0.00332
-        abl - INFO - loop(train) [1/3] segment(train) [4/10] 
-        abl - INFO - model loss: 0.00218
-        abl - INFO - loop(train) [1/3] segment(train) [5/10] 
-        abl - INFO - model loss: 0.00162
-        abl - INFO - loop(train) [1/3] segment(train) [6/10] 
-        abl - INFO - model loss: 0.00140
-        abl - INFO - loop(train) [1/3] segment(train) [7/10] 
-        abl - INFO - model loss: 0.00736
-        abl - INFO - loop(train) [1/3] segment(train) [8/10] 
-        abl - INFO - model loss: 0.00532
-        abl - INFO - loop(train) [1/3] segment(train) [9/10] 
-        abl - INFO - model loss: 0.00504
-        abl - INFO - loop(train) [1/3] segment(train) [10/10] 
-        abl - INFO - model loss: 0.00259
+        ...
         abl - INFO - Eval start: loop(val) [1]
         abl - INFO - Evaluation ended, hwf/character_accuracy: 0.997 hwf/reasoning_accuracy: 0.985 
         abl - INFO - loop(train) [2/3] segment(train) [1/10] 
