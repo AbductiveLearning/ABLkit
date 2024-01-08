@@ -440,11 +440,11 @@ Performance
 
 We present the results of ABL as follows, which include the reasoning accuracy (for different equation lengths in the HWF dataset), and the training time (to achieve the accuracy using all equation lengths). These results are compared with the following methods:
 
+- `NGS <https://github.com/liqing-ustc/NGS>`_: A neural-symbolic framework that uses a grammar model and a back-search algorithm to improve its computing process;
+
 - `DeepProbLog <https://github.com/ML-KULeuven/deepproblog/tree/master>`_: An extension of ProbLog by introducing neural predicates in Probabilistic Logic Programming;
 
-- `DeepStochLog <https://github.com/ML-KULeuven/deepstochlog/tree/main>`_: A neural-symbolic framework based on stochastic logic program;
-
-- `NGS <https://github.com/liqing-ustc/NGS>`_: A neural-symbolic framework that uses a grammar model and a back-search algorithm to improve its computing process.
+- `DeepStochLog <https://github.com/ML-KULeuven/deepstochlog/tree/main>`_: A neural-symbolic framework based on stochastic logic program.
 
 .. raw:: html
 
