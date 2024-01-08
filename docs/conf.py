@@ -11,6 +11,8 @@ from sphinx.application import Sphinx
 
 sys.path.insert(0, os.path.abspath(".."))
 
+import ablkit  # noqa: E402
+
 # -- Project information -----------------------------------------------------
 
 project = "ABL Kit"
