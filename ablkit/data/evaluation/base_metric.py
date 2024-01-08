@@ -1,3 +1,9 @@
+"""
+This module contains the base class used for evaluation.
+
+Copyright (c) 2024 LAMDA.  All rights reserved.
+"""
+
 import logging
 from abc import ABCMeta, abstractmethod
 from typing import Any, List, Optional

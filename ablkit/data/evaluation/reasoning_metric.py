@@ -1,3 +1,10 @@
+"""
+This module contains the ReasoningMetric, which is used for evaluating the model performance
+on tasks need reasoning.
+
+Copyright (c) 2024 LAMDA.  All rights reserved.
+"""
+
 from typing import Optional
 
 from ...reasoning import KBBase
@@ -34,6 +41,7 @@ class ReasoningMetric(BaseMetric):
         super().__init__(prefix)
         self.kb = kb
 
+    # pylint: disable=protected-access
     def process(self, data_examples: ListData) -> None:
         """
         Process a batch of data examples.

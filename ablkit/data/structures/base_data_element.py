@@ -1,6 +1,8 @@
-# Copyright (c) OpenMMLab. All rights reserved.
-# Modified from
-# https://github.com/open-mmlab/mmengine/blob/main/mmengine/structures/base_data_element.py
+"""
+Copyright (c) OpenMMLab. All rights reserved.
+Modified from
+https://github.com/open-mmlab/mmengine/blob/main/mmengine/structures/base_data_element.py # noqa: E501 pylint: disable=line-too-long
+"""
 
 import copy
 from typing import Any, Iterator, Optional, Tuple, Type, Union

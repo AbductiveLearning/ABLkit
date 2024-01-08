@@ -1,3 +1,9 @@
+"""
+This module contains a simple implementation of the Bridge part.
+
+Copyright (c) 2024 LAMDA.  All rights reserved.
+"""
+
 import os.path as osp
 from typing import Any, List, Optional, Tuple, Union
 
@@ -221,7 +227,7 @@ class SimpleBridge(BaseBridge):
             Labeled data should be in the same format as ``train_data``. The only difference is
             that the ``gt_pseudo_label`` in ``label_data`` should not be ``None`` and will be
             utilized to train the model. Defaults to None.
-        val_data : Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]]], optional # noqa: E501
+        val_data : Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]]], optional # noqa: E501 pylint: disable=line-too-long
             Validation data should be in the same format as ``train_data``. Both ``gt_pseudo_label``
             and ``Y`` can be either None or not, which depends on the evaluation metircs in
             ``self.metric_list``. If ``val_data`` is None, ``train_data`` will be used to validate
@@ -327,10 +333,11 @@ class SimpleBridge(BaseBridge):
 
         Parameters
         ----------
-        val_data : Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]]] # noqa: E501
-            Validation data should be in the form of ``(X, gt_pseudo_label, Y)`` or a ``ListData`` object
-            with ``X``, ``gt_pseudo_label`` and ``Y`` attributes. Both ``gt_pseudo_label`` and ``Y`` can be
-            either None or not, which depends on the evaluation metircs in ``self.metric_list``.
+        val_data : Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]]] # noqa: E501 pylint: disable=line-too-long
+            Validation data should be in the form of ``(X, gt_pseudo_label, Y)`` or a ``ListData``
+            object with ``X``, ``gt_pseudo_label`` and ``Y`` attributes. Both ``gt_pseudo_label``
+            and ``Y`` can be either None or not, which depends on the evaluation metircs in
+            ``self.metric_list``.
         """
         val_data_examples = self.data_preprocess("val", val_data)
         self._valid(val_data_examples)
@@ -346,10 +353,11 @@ class SimpleBridge(BaseBridge):
 
         Parameters
         ----------
-        test_data : Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]]] # noqa: E501
+        test_data : Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]]] # noqa: E501 pylint: disable=line-too-long
             Test data should be in the form of ``(X, gt_pseudo_label, Y)`` or a ``ListData`` object
             with ``X``, ``gt_pseudo_label`` and ``Y`` attributes. Both ``gt_pseudo_label`` and ``Y``
-            can be either None or not, which depends on the evaluation metircs in ``self.metric_list``.
+            can be either None or not, which depends on the evaluation metircs in
+            ``self.metric_list``.
         """
         print_log("Test start:", logger="current")
         test_data_examples = self.data_preprocess("test", test_data)

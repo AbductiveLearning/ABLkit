@@ -1,6 +1,8 @@
-# Copyright (c) OpenMMLab. All rights reserved.
-# Modified from
-# https://github.com/open-mmlab/mmengine/blob/main/mmengine/logging/logger.py
+"""
+Copyright (c) OpenMMLab. All rights reserved.
+Modified from
+https://github.com/open-mmlab/mmengine/blob/main/mmengine/logging/logger.py
+"""
 
 import logging
 import os
@@ -132,13 +134,13 @@ class ABLFormatter(logging.Formatter):
             Formatted result.
         """
         if record.levelno == logging.ERROR:
-            self._style._fmt = self.err_format
+            self._style._fmt = self.err_format  # pylint: disable=protected-access
         elif record.levelno == logging.WARNING:
-            self._style._fmt = self.warn_format
+            self._style._fmt = self.warn_format  # pylint: disable=protected-access
         elif record.levelno == logging.INFO:
-            self._style._fmt = self.info_format
+            self._style._fmt = self.info_format  # pylint: disable=protected-access
         elif record.levelno == logging.DEBUG:
-            self._style._fmt = self.debug_format
+            self._style._fmt = self.debug_format  # pylint: disable=protected-access
 
         result = logging.Formatter.format(self, record)
         return result
@@ -215,7 +217,7 @@ class ABLLogger(Logger, ManagerMixin):
         self.handlers.append(stream_handler)
 
         if log_file is None:
-            import time
+            import time  # pylint: disable=import-outside-toplevel
 
             local_time = time.strftime("%Y%m%d_%H_%M_%S", time.localtime())
 
@@ -234,10 +236,20 @@ class ABLLogger(Logger, ManagerMixin):
 
     @property
     def log_file(self):
+        """Get the file path of the log.
+
+        Returns:
+            str: Path of the log.
+        """
         return self._log_file
 
     @property
     def log_dir(self):
+        """Get the directory where the log is stored.
+
+        Returns:
+            str: Directory where the log is stored.
+        """
         return self._log_dir
 
     @classmethod
@@ -284,11 +296,11 @@ class ABLLogger(Logger, ManagerMixin):
         level : Union[int, str]
             The logging level to set.
         """
-        self.level = logging._checkLevel(level)
+        self.level = logging._checkLevel(level)  # pylint: disable=protected-access
         _accquire_lock()
         # The same logic as ``logging.Manager._clear_cache``.
         for logger in ABLLogger._instance_dict.values():
-            logger._cache.clear()
+            logger._cache.clear()  # pylint: disable=protected-access
         _release_lock()
 
 

@@ -1,3 +1,10 @@
+"""
+This module contains the class ABLModel, which provides a unified interface for different
+machine learning models.
+
+Copyright (c) 2024 LAMDA.  All rights reserved.
+"""
+
 import pickle
 from typing import Any, Dict
 
@@ -99,21 +106,20 @@ class ABLModel:
             method = getattr(model, operation)
             method(*args, **kwargs)
         else:
-            if f"{operation}_path" not in kwargs.keys():
+            if f"{operation}_path" not in kwargs:
                 raise ValueError(f"'{operation}_path' should not be None")
-            else:
-                try:
-                    if operation == "save":
-                        with open(kwargs["save_path"], "wb") as file:
-                            pickle.dump(model, file, protocol=pickle.HIGHEST_PROTOCOL)
-                    elif operation == "load":
-                        with open(kwargs["load_path"], "rb") as file:
-                            self.base_model = pickle.load(file)
-                except (OSError, pickle.PickleError):
-                    raise NotImplementedError(
-                        f"{type(model).__name__} object doesn't have the {operation} method \
-                            and the default pickle-based {operation} method failed."
-                    )
+            try:
+                if operation == "save":
+                    with open(kwargs["save_path"], "wb") as file:
+                        pickle.dump(model, file, protocol=pickle.HIGHEST_PROTOCOL)
+                elif operation == "load":
+                    with open(kwargs["load_path"], "rb") as file:
+                        self.base_model = pickle.load(file)
+            except (OSError, pickle.PickleError) as exc:
+                raise NotImplementedError(
+                    f"{type(model).__name__} object doesn't have the {operation} method \
+                        and the default pickle-based {operation} method failed."
+                ) from exc
 
     def save(self, *args, **kwargs) -> None:
         """

@@ -1,3 +1,9 @@
+"""
+Implementation of PyTorch dataset class used for regression.
+
+Copyright (c) 2024 LAMDA.  All rights reserved.
+"""
+
 from typing import Any, List, Tuple
 
 from torch.utils.data import Dataset

@@ -1,3 +1,9 @@
+"""
+Implementation of PyTorch dataset class used for classification.
+
+Copyright (c) 2024 LAMDA.  All rights reserved.
+"""
+
 from typing import Any, Callable, List, Tuple, Optional
 
 import torch
