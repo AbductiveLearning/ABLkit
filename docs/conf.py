@@ -10,33 +10,6 @@ from sphinx.application import Sphinx
 # -- Path setup --------------------------------------------------------------
 
 sys.path.insert(0, os.path.abspath(".."))
-
-from unittest.mock import MagicMock
-
-
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return MagicMock()
-
-
-MOCK_MODULES = [
-    "numpy",
-    "pyswip",
-    "torch",
-    "torchvision",
-    "zoopt",
-    "termcolor",
-    "torch.nn",
-    "torch.utils",
-    "torch.optim",
-    "torchvision.transform",
-    "torch.utils.data",
-    "torch.utils.data.sampler"
-]
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
-
 import ablkit  # noqa: E402
 
 # -- Project information -----------------------------------------------------
