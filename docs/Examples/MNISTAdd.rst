@@ -21,7 +21,7 @@ and revise the initial digits yielded by the learning part through
 abductive reasoning. This process enables us to further update the
 machine learning model.
 
-.. code:: ipython3
+.. code:: python
 
     # Import necessary libraries and modules
     import os.path as osp
@@ -45,7 +45,7 @@ Working with Data
 
 First, we get the training and testing datasets:
 
-.. code:: ipython3
+.. code:: python
 
     train_data = get_dataset(train=True, get_pseudo_label=True)
     test_data = get_dataset(train=False, get_pseudo_label=True)
@@ -62,7 +62,7 @@ of datasets are illustrated as follows.
     ``gt_pseudo_label`` is only used to evaluate the performance of
     the learning part but not to train the model.
 
-.. code:: ipython3
+.. code:: python
 
     print(f"Both train_data and test_data consist of 3 components: X, gt_pseudo_label, Y")
     print("\n")
@@ -103,7 +103,7 @@ The ith element of X, gt_pseudo_label, and Y together constitute the ith
 data example. As an illustration, in the first data example of the
 training set, we have:
 
-.. code:: ipython3
+.. code:: python
 
     X_0, gt_pseudo_label_0, Y_0 = train_X[0], train_gt_pseudo_label[0], train_Y[0]
     print(f"X in the first data example (a list of two images):")
@@ -145,7 +145,7 @@ within a ``BasicNN`` object to create the base model. ``BasicNN`` is a
 class that encapsulates a PyTorch model, transforming it into a base
 model with a sklearn-style interface.
 
-.. code:: ipython3
+.. code:: python
 
     cls = LeNet5(num_classes=10)
     loss_fn = nn.CrossEntropyLoss(label_smoothing=0.1)
@@ -167,7 +167,7 @@ model with a sklearn-style interface.
 are used to predict the class index and the probabilities of each class
 for images. As shown below:
 
-.. code:: ipython3
+.. code:: python
 
     data_instances = [torch.randn(1, 28, 28) for _ in range(32)]
     pred_idx = base_model.predict(X=data_instances)
@@ -190,7 +190,7 @@ data (i.e., a pair of images). Therefore, we wrap the base model into
 ``ABLModel``, which enables the learning part to train, test, and
 predict on example-level data.
 
-.. code:: ipython3
+.. code:: python
 
     model = ABLModel(base_model)
 
@@ -200,7 +200,7 @@ method accepts data examples as input and outputs the class labels and
 the probabilities of each class for all instances within these data
 examples.
 
-.. code:: ipython3
+.. code:: python
 
     from ablkit.data.structures import ListData
     # ListData is a data structure provided by ABL Kit that can be used to organize data examples
@@ -241,7 +241,7 @@ initialize the ``pseudo_label_list`` parameter specifying list of
 possible pseudo-labels, and override the ``logic_forward`` function
 defining how to perform (deductive) reasoning.
 
-.. code:: ipython3
+.. code:: python
 
     class AddKB(KBBase):
         def __init__(self, pseudo_label_list=list(range(10))):
@@ -258,7 +258,7 @@ reasoning and abductive reasoning). Below is an example of performing
 (deductive) reasoning, and users can refer to :ref:`Performing abductive 
 reasoning in the knowledge base <kb-abd>` for details of abductive reasoning.
 
-.. code:: ipython3
+.. code:: python
 
     pseudo_labels = [1, 2]
     reasoning_result = kb.logic_forward(pseudo_labels)
@@ -288,7 +288,7 @@ can minimize inconsistencies between the knowledge base and
 pseudo-labels predicted by the learning part, and then return only one
 candidate that has the highest consistency.
 
-.. code:: ipython3
+.. code:: python
 
     reasoner = Reasoner(kb)
 
@@ -316,7 +316,7 @@ used to evaluate the accuracy of the machine learning model’s
 predictions and the accuracy of the final reasoning results,
 respectively.
 
-.. code:: ipython3
+.. code:: python
 
     metric_list = [SymbolAccuracy(prefix="mnist_add"), ReasoningMetric(kb=kb, prefix="mnist_add")]
 
@@ -326,14 +326,14 @@ Bridging Learning and Reasoning
 Now, the last step is to bridge the learning and reasoning part. We
 proceed with this step by creating an instance of ``SimpleBridge``.
 
-.. code:: ipython3
+.. code:: python
 
     bridge = SimpleBridge(model, reasoner, metric_list)
 
 Perform training and testing by invoking the ``train`` and ``test``
 methods of ``SimpleBridge``.
 
-.. code:: ipython3
+.. code:: python
 
     # Build logger
     print_log("Abductive Learning on the MNIST Addition example.", logger="current")
