@@ -8,7 +8,7 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![ABLKit-CI](https://github.com/AbductiveLearning/ABLKit/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLKit/actions/workflows/build-and-test.yaml)
 
-[📘Documentation](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/index.html) |
+[📘Documentation](https://ablkit.readthedocs.io/en/latest/index.html) |
 [📚Examples](https://github.com/AbductiveLearning/ABLKit/tree/main/examples) |
 [💬Reporting Issues](https://github.com/AbductiveLearning/ABLKit/issues/new)
 
@@ -61,7 +61,7 @@ pip install -v -e .
 
 ### (Optional) Install SWI-Prolog
 
-If the use of a [Prolog-based knowledge base](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/Intro/Reasoning.html#prolog) is necessary, please also install [SWI-Prolog](https://www.swi-prolog.org/):
+If the use of a [Prolog-based knowledge base](https://ablkit.readthedocs.io/en/latest/Intro/Reasoning.html#prolog) is necessary, please also install [SWI-Prolog](https://www.swi-prolog.org/):
 
 For Linux users:
 
@@ -194,7 +194,7 @@ bridge.test(test_data)
 
 </details>
 
-To explore detailed tutorials and information, please refer to - [document](https://www.lamda.nju.edu.cn/abl_test/docs/build/html/index.html).
+To explore detailed tutorials and information, please refer to - [document](https://ablkit.readthedocs.io/en/latest/index.html).
 
 ## Examples
 
