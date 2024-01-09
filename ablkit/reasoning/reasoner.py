@@ -258,8 +258,8 @@ class Reasoner:
 
     def zoopt_budget(self, symbol_num: int) -> int:
         """
-        Set the budget for ZOOpt optimization. The budget can be dynamic relying on 
-        the number of symbols considered, e.g., the default implementation shown below. 
+        Set the budget for ZOOpt optimization. The budget can be dynamic relying on
+        the number of symbols considered, e.g., the default implementation shown below.
         Alternatively, it can be a fixed value, such as simply setting it to 100.
 
         Parameters
