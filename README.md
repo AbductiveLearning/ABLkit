@@ -22,7 +22,7 @@ logical reasoning in a unified framework. It is suitable for tasks
 where both data and (logical) domain knowledge are available. 
 
 <p align="center">
-<img src="docs/_static/img/ABL.png" alt="Abductive Learning" style="width: 80%;"/>
+<img src="https://github.com/AbductiveLearning/ABLKit/tree/main/docs/_static/img/ABL.png" alt="Abductive Learning" style="width: 80%;"/>
 </p>
 
 Key Features of ABL Kit:
@@ -36,7 +36,7 @@ an efficient and convenient toolkit to develop dual-driven ABL systems,
 which leverage the power of both data and knowledge.
 
 <p align="center">
-<img src="docs/_static/img/ABLKit.png" alt="ABL Kit" style="width: 80%;"/>
+<img src="https://github.com/AbductiveLearning/ABLKit/tree/main/docs/_static/img/ABLKit.png" alt="ABL Kit" style="width: 80%;"/>
 </p>
 
 ## Installation

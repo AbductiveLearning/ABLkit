@@ -13,3 +13,4 @@ examples/**/*.jpg
 build/
 docs/API/generated/
 .history
+dist
