@@ -1,3 +1,9 @@
+"""
+This module contains the class BasicNN, which servers as a wrapper for PyTorch NN models.
+
+Copyright (c) 2024 LAMDA.  All rights reserved.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -474,7 +480,7 @@ class BasicNN:
             raise ValueError("X should not be None.")
         if y is None:
             y = [0] * len(X)
-        if not (len(y) == len(X)):
+        if not len(y) == len(X):
             raise ValueError("X and y should have equal length.")
 
         dataset = ClassificationDataset(X, y, transform=self.train_transform)

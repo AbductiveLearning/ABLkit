@@ -1,3 +1,10 @@
+"""
+This module contains the classes KBBase, GroundKB, and PrologKB, which provide wrappers
+for different kinds of knowledge bases.
+
+Copyright (c) 2024 LAMDA.  All rights reserved.
+"""
+
 import bisect
 import inspect
 import logging
@@ -394,7 +401,7 @@ class GroundKB(KBBase):
             base. The second element is a list of reasoning results corresponding to each
             candidate, i.e., the outcome of the ``logic_forward`` function.
         """
-        if self.GKB == {} or len(pseudo_label) not in self.GKB_len_list:
+        if not self.GKB or len(pseudo_label) not in self.GKB_len_list:
             return [], []
 
         all_candidates, all_reasoning_results = self._find_candidate_GKB(pseudo_label, y)
@@ -478,7 +485,7 @@ class PrologKB(KBBase):
         super().__init__(pseudo_label_list)
 
         try:
-            import pyswip
+            import pyswip  # pylint: disable=import-outside-toplevel
         except (IndexError, ImportError):
             print(
                 "A Prolog-based knowledge base is in use. Please install SWI-Prolog using the"
@@ -493,7 +500,7 @@ class PrologKB(KBBase):
             raise FileNotFoundError(f"The Prolog file {self.pl_file} does not exist.")
         self.prolog.consult(self.pl_file)
 
-    def logic_forward(self, pseudo_label: List[Any]) -> Any:
+    def logic_forward(self, pseudo_label: List[Any], x: Optional[List[Any]] = None) -> Any:
         """
         Consult prolog with the query ``logic_forward(pseudo_labels, Res).``, and set the
         returned ``Res`` as the reasoning results. To use this default function, there must be
@@ -504,11 +511,15 @@ class PrologKB(KBBase):
         ----------
         pseudo_label : List[Any]
             Pseudo-labels of an example.
+        x : List[Any]
+            The corresponding input example. If the information from the input
+            is not required in the reasoning process, then this parameter will not have
+            any effect.
         """
-        result = list(self.prolog.query("logic_forward(%s, Res)." % pseudo_label))[0]["Res"]
+        result = list(self.prolog.query(f"logic_forward({pseudo_label}, Res)."))[0]["Res"]
         if result == "true":
             return True
-        elif result == "false":
+        if result == "false":
             return False
         return result
 
@@ -517,7 +528,7 @@ class PrologKB(KBBase):
         pseudo_label: List[Any],
         revision_idx: List[int],
     ) -> List[Any]:
-        import re
+        import re  # pylint: disable=import-outside-toplevel
 
         revision_pseudo_label = pseudo_label.copy()
         revision_pseudo_label = flatten(revision_pseudo_label)
@@ -533,7 +544,7 @@ class PrologKB(KBBase):
         self,
         pseudo_label: List[Any],
         y: Any,
-        x: List[Any],
+        x: List[Any],  # pylint: disable=unused-argument
         revision_idx: List[int],
     ) -> str:
         """
@@ -563,7 +574,7 @@ class PrologKB(KBBase):
         query_string = "logic_forward("
         query_string += self._revision_pseudo_label(pseudo_label, revision_idx)
         key_is_none_flag = y is None or (isinstance(y, list) and y[0] is None)
-        query_string += ",%s)." % y if not key_is_none_flag else ")."
+        query_string += f",{y})." if not key_is_none_flag else ")."
         return query_string
 
     def revise_at_idx(

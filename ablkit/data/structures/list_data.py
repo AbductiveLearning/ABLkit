@@ -1,6 +1,8 @@
-# Copyright (c) OpenMMLab. All rights reserved.
-# Modified from
-# https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/data_structures/instance_data.py # noqa
+"""
+Copyright (c) OpenMMLab. All rights reserved.
+Modified from
+https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/data_structures/instance_data.py # noqa: E501 pylint: disable=line-too-long
+"""
 
 from typing import List, Union
 
@@ -54,7 +56,7 @@ class ListData(BaseDataElement):
     ``torch.Tensor``, ``numpy.ndarray``, ``list``, ``str`` and ``tuple``.
 
     This design is inspired by and extends the functionalities of the ``BaseDataElement``
-    class implemented in `MMEngine <https://github.com/open-mmlab/mmengine/blob/main/mmengine/structures/base_data_element.py>`_. # noqa: E501
+    class implemented in `MMEngine <https://github.com/open-mmlab/mmengine/blob/main/mmengine/structures/base_data_element.py>`_. # noqa: E501 pylint: disable=line-too-long
 
     Examples:
         >>> from ablkit.data.structures import ListData
@@ -72,7 +74,7 @@ class ListData(BaseDataElement):
             DATA FIELDS
             Y: [1, 2, 3]
             gt_pseudo_label: [[1, 2], [3, 4], [5, 6]]
-            X: [[tensor(1.1949), tensor(-0.9378)], [tensor(0.7414), tensor(0.7603)], [tensor(1.0587), tensor(1.9697)]] # noqa: E501
+            X: [[tensor(1.1949), tensor(-0.9378)], [tensor(0.7414), tensor(0.7603)], [tensor(1.0587), tensor(1.9697)]] # noqa: E501 pylint: disable=line-too-long
         ) at 0x7f3bbf1991c0>
         >>> print(data_examples[:1])
         <ListData(

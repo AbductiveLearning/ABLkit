@@ -1,4 +1,8 @@
-from typing import Optional
+"""
+This module contains the class SymbolAccuracy, which is used for evaluating symbol-level accuracy.
+
+Copyright (c) 2024 LAMDA.  All rights reserved.
+"""
 
 import numpy as np
 
@@ -19,9 +23,6 @@ class SymbolAccuracy(BaseMetric):
         The prefix that will be added to the metrics names to disambiguate homonymous
         metrics of different tasks. Inherits from BaseMetric. Default to None.
     """
-
-    def __init__(self, prefix: Optional[str] = None) -> None:
-        super().__init__(prefix)
 
     def process(self, data_examples: ListData) -> None:
         """

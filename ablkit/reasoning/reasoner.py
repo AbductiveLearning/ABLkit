@@ -1,3 +1,10 @@
+"""
+This module contains the class Reasoner, which is used for minimizing the inconsistency
+between the knowledge base and learning models.
+
+Copyright (c) 2024 LAMDA.  All rights reserved.
+"""
+
 import inspect
 from typing import Any, Callable, List, Optional, Union
 
@@ -251,25 +258,21 @@ class Reasoner:
 
     def zoopt_budget(self, symbol_num: int) -> int:
         """
-        Set the budget for ZOOpt optimization. The function, in its default implementation,
-        returns a fixed budget value of 100. However, it can be adjusted to return other fixed
-        values, or a dynamic budget based on the number of symbols, if desired. For example,
-        one might choose to set the budget as 100 times ``symbol_num``.
+        Set the budget for ZOOpt optimization. The budget can be dynamic relying on 
+        the number of symbols considered, e.g., the default implementation shown below. 
+        Alternatively, it can be a fixed value, such as simply setting it to 100.
 
         Parameters
         ----------
         symbol_num : int
-            The number of symbols to be considered in the ZOOpt optimization process. Although this
-            parameter can be used to compute a dynamic optimization budget, by default it is not
-            utilized in the calculation.
+            The number of symbols to be considered in the ZOOpt optimization process.
 
         Returns
         -------
         int
-            The budget for ZOOpt optimization. By default, this is a fixed value of 100,
-            irrespective of the symbol_num value.
+            The budget for ZOOpt optimization.
         """
-        return 100
+        return 10 * symbol_num
 
     def _constrain_revision_num(self, solution: Solution, max_revision_num: int) -> int:
         """
@@ -288,19 +291,18 @@ class Reasoner:
 
         if max_revision == -1:
             return symbol_num
-        elif isinstance(max_revision, float):
-            if not (0 <= max_revision <= 1):
+        if isinstance(max_revision, float):
+            if not 0 <= max_revision <= 1:
                 raise ValueError(
                     "If max_revision is a float, it must be between 0 and 1, "
                     + f"but got {max_revision}"
                 )
             return round(symbol_num * max_revision)
-        else:
-            if max_revision < 0:
-                raise ValueError(
-                    f"If max_revision is an int, it must be non-negative, but got {max_revision}"
-                )
-            return max_revision
+        if max_revision < 0:
+            raise ValueError(
+                f"If max_revision is an int, it must be non-negative, but got {max_revision}"
+            )
+        return max_revision
 
     def abduce(self, data_example: ListData) -> List[Any]:
         """

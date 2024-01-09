@@ -1,3 +1,9 @@
+"""
+This module contains the base class for the Bridge part.
+
+Copyright (c) 2024 LAMDA.  All rights reserved.
+"""
+
 from abc import ABCMeta, abstractmethod
 from typing import Any, List, Optional, Tuple, Union
 
@@ -31,11 +37,11 @@ class BaseBridge(metaclass=ABCMeta):
     def __init__(self, model: ABLModel, reasoner: Reasoner) -> None:
         if not isinstance(model, ABLModel):
             raise TypeError(
-                "Expected an instance of ABLModel, but received type: {}".format(type(model))
+                f"Expected an instance of ABLModel, but received type: {type(model)}"
             )
         if not isinstance(reasoner, Reasoner):
             raise TypeError(
-                "Expected an instance of Reasoner, but received type: {}".format(type(reasoner))
+                f"Expected an instance of Reasoner, but received type: {type(reasoner)}"
             )
 
         self.model = model

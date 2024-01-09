@@ -14,7 +14,7 @@
 
 </div>
 
-# Abductive Learning (ABL) Kit
+# ABL Kit: A Python Toolkit for Abductive Learning
 
 **ABL Kit** is an efficient Python toolkit for **Abductive Learning (ABL)**.
 ABL is a novel paradigm that integrates machine learning and 

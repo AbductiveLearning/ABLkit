@@ -1,4 +1,7 @@
-# Copyright (c) OpenMMLab. All rights reserved.
+"""
+Copyright (c) OpenMMLab. All rights reserved.
+"""
+
 import inspect
 import threading
 import warnings
@@ -72,7 +75,7 @@ class ManagerMixin(metaclass=ManagerMeta):
         name (str): Name of the instance. Defaults to ''.
     """
 
-    def __init__(self, name: str = "", **kwargs):
+    def __init__(self, name: str = ""):
         assert isinstance(name, str) and name, "name argument must be an non-empty string."
         self._instance_name = name
 

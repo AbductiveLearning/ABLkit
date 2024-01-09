@@ -1,3 +1,9 @@
+"""
+Implementation of utilities used in ablkit.
+
+Copyright (c) 2024 LAMDA.  All rights reserved.
+"""
+
 from typing import List, Any, Union, Tuple, Optional
 
 import numpy as np
@@ -198,6 +204,6 @@ def tab_data_to_tuple(
         return None
     if len(X) != len(y):
         raise ValueError(
-            "The length of X and y should be the same, but got {} and {}.".format(len(X), len(y))
+            f"The length of X and y should be the same, but got {len(X)} and {len(y)}."
         )
     return ([[x] for x in X], [[y_item] for y_item in y], [reasoning_result] * len(y))
