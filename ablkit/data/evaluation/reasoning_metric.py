@@ -25,10 +25,10 @@ class ReasoningMetric(BaseMetric):
     ----------
     kb : KBBase
         An instance of a knowledge base, used for logical reasoning and validation.
-        If not provided, reasoning checks are not performed. Default to None.
+        If not provided, reasoning checks are not performed. Defaults to None.
     prefix : str, optional
         The prefix that will be added to the metrics names to disambiguate homonymous
-        metrics of different tasks. Inherits from BaseMetric. Default to None.
+        metrics of different tasks. Inherits from BaseMetric. Defaults to None.
 
     Notes
     -----
