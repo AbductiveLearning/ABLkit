@@ -68,8 +68,7 @@ The fundamental part of the ``train`` method is as follows:
             to train. ``gt_pseudo_label`` can be ``None``.
             - ``Y`` is a list representing the ground truth reasoning result for each sublist in ``X``.
         loops : int
-            Machine Learning part and Reasoning part will be iteratively optimized
-            for ``loops`` times.
+            Learning part and Reasoning part will be iteratively optimized for ``loops`` times.
         segment_size : Union[int, float]
             Data will be split into segments of this size and data in each segment
             will be used together to train the model.
