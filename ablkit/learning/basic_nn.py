@@ -337,6 +337,12 @@ class BasicNN:
         X : List[Any], optional
             The input data. Defaults to None.
 
+        Warning
+        -------
+        This method calculates the probability by applying a softmax function to the output
+        of the neural network. If your neural network already includes a softmax function
+        as its final activation, applying softmax again here will lead to incorrect probabilities.
+
         Returns
         -------
         numpy.ndarray
