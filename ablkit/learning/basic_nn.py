@@ -54,7 +54,7 @@ class BasicNN:
         in the ``fit`` and ``train_epoch`` methods. Defaults to None.
     test_transform : Callable[..., Any], optional
         A function/transform that takes an object and returns a transformed version in the
-        ``predict``, ``predict_proba`` and ``score`` methods, . Defaults to None.
+        ``predict``, ``predict_proba`` and ``score`` methods.Defaults to None.
     collate_fn : Callable[[List[T]], Any], optional
         The function used to collate data. Defaults to None.
     """
