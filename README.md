@@ -1,5 +1,10 @@
 <div align="center">
 
+<p align="center">
+<img src="./docs/_static/img/logo.png" alt="ABLKit logo" style="width: 35%;"/>
+</p>
+<br>
+
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ablkit)](https://pypi.org/project/ablkit/)
 [![PyPI version](https://badgen.net/pypi/v/ablkit)](https://pypi.org/project/ablkit/)
 [![Documentation Status](https://readthedocs.org/projects/ablkit/badge/?version=latest)](https://ablkit.readthedocs.io/en/latest/?badge=latest)
