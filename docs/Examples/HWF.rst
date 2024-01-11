@@ -3,7 +3,7 @@ Handwritten Formula (HWF)
 
 .. raw:: html
     
-    <p>For detailed code implementation, please view it on <a class="reference external" href="https://github.com/AbductiveLearning/ABLKit/tree/main/examples/hwf" target="_blank">GitHub</a>.</p>
+    <p>For detailed code implementation, please view it on <a class="reference external" href="https://github.com/AbductiveLearning/ABLkit/tree/main/examples/hwf" target="_blank">GitHub</a>.</p>
 
 Below shows an implementation of `Handwritten
 Formula <https://arxiv.org/abs/2006.06649>`__. In this

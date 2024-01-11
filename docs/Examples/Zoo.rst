@@ -3,7 +3,7 @@ Zoo
 
 .. raw:: html
     
-    <p>For detailed code implementation, please view it on <a class="reference external" href="https://github.com/AbductiveLearning/ABLKit/tree/main/examples/zoo" target="_blank">GitHub</a>.</p>
+    <p>For detailed code implementation, please view it on <a class="reference external" href="https://github.com/AbductiveLearning/ABLkit/tree/main/examples/zoo" target="_blank">GitHub</a>.</p>
 
 Below shows an implementation of
 `Zoo <https://archive.ics.uci.edu/dataset/111/zoo>`__ dataset. In this task,

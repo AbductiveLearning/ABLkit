@@ -18,8 +18,8 @@ sequentially run following commands in your terminal/command line.
 
 .. code:: bash
 
-    git clone https://github.com/AbductiveLearning/ABLKit.git
-    cd ABLKit
+    git clone https://github.com/AbductiveLearning/ABLkit.git
+    cd ABLkit
     pip install -v -e .
 
 (Optional) Install SWI-Prolog

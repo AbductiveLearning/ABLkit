@@ -1,21 +1,21 @@
 <div align="center">
 
 <p align="center">
-<img src="./docs/_static/img/logo.png" alt="ABLKit logo" style="width: 35%;"/>
+<img src="./docs/_static/img/logo.png" alt="ABLkit logo" style="width: 35%;"/>
 </p>
 <br>
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ablkit)](https://pypi.org/project/ablkit/)
 [![PyPI version](https://badgen.net/pypi/v/ablkit)](https://pypi.org/project/ablkit/)
 [![Documentation Status](https://readthedocs.org/projects/ablkit/badge/?version=latest)](https://ablkit.readthedocs.io/en/latest/?badge=latest)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/AbductiveLearning/ABLKit/blob/main/LICENSE)
-[![flake8 Lint](https://github.com/AbductiveLearning/ABLKit/actions/workflows/lint.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLKit/actions/workflows/lint.yaml)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/AbductiveLearning/ABLkit/blob/main/LICENSE)
+[![flake8 Lint](https://github.com/AbductiveLearning/ABLkit/actions/workflows/lint.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLkit/actions/workflows/lint.yaml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![ABLKit-CI](https://github.com/AbductiveLearning/ABLKit/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLKit/actions/workflows/build-and-test.yaml)
+[![ABLkit-CI](https://github.com/AbductiveLearning/ABLkit/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLkit/actions/workflows/build-and-test.yaml)
 
 [📘Documentation](https://ablkit.readthedocs.io/en/latest/index.html) |
-[📚Examples](https://github.com/AbductiveLearning/ABLKit/tree/main/examples) |
-[💬Reporting Issues](https://github.com/AbductiveLearning/ABLKit/issues/new)
+[📚Examples](https://github.com/AbductiveLearning/ABLkit/tree/main/examples) |
+[💬Reporting Issues](https://github.com/AbductiveLearning/ABLkit/issues/new)
 
 </div>
 
@@ -41,7 +41,7 @@ an efficient and convenient toolkit to develop dual-driven ABL systems,
 which leverage the power of both data and knowledge.
 
 <p align="center">
-<img src="./docs/_static/img/ABLKit.png" alt="ABL kit" style="width: 80%;"/>
+<img src="./docs/_static/img/ABLkit.png" alt="ABL kit" style="width: 80%;"/>
 </p>
 
 ## Installation
@@ -59,8 +59,8 @@ pip install ablkit
 Alternatively, to install from source code, sequentially run following commands in your terminal/command line.
 
 ```bash
-git clone https://github.com/AbductiveLearning/ABLKit.git
-cd ABLKit
+git clone https://github.com/AbductiveLearning/ABLkit.git
+cd ABLkit
 pip install -v -e .
 ```
 
@@ -205,10 +205,10 @@ To explore detailed tutorials and information, please refer to - [document](http
 
 We provide several examples in `examples/`. Each example is stored in a separate folder containing a README file.
 
-+ [MNIST Addition](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/mnist_add)
-+ [Handwritten Formula (HWF)](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/hwf)
-+ [Handwritten Equation Decipherment](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/hed)
-+ [Zoo](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/zoo)
++ [MNIST Addition](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/mnist_add)
++ [Handwritten Formula (HWF)](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/hwf)
++ [Handwritten Equation Decipherment](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/hed)
++ [Zoo](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/zoo)
 
 ## References
 

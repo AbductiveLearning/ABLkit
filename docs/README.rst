@@ -18,7 +18,7 @@ ABL kit encapsulates advanced ABL techniques, providing users with
 an efficient and convenient toolkit to develop dual-driven ABL systems,
 which leverage the power of both data and knowledge.
 
-.. image:: _static/img/ABLKit.png
+.. image:: _static/img/ABLkit.png
 
 Installation
 ------------
@@ -40,8 +40,8 @@ sequentially run following commands in your terminal/command line.
 
 .. code:: bash
 
-    git clone https://github.com/AbductiveLearning/ABLKit.git
-    cd ABLKit
+    git clone https://github.com/AbductiveLearning/ABLkit.git
+    cd ABLkit
     pip install -v -e .
 
 (Optional) Install SWI-Prolog
