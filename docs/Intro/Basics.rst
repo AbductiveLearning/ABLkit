@@ -18,7 +18,7 @@ ABL kit comprises three primary parts: **Data**, **Learning**, and
 **Reasoning**, corresponding to the three pivotal components of current
 AI: data, models, and knowledge. Below is an overview of the ABL kit.
 
-.. image:: ../_static/img/ABLKit.png
+.. image:: ../_static/img/ABLkit.png
 
 **Data** part manages the storage, operation, and evaluation of data efficiently.
 It includes the ``ListData`` class, which defines the data structures used in
