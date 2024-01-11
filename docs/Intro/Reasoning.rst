@@ -12,7 +12,7 @@ Reasoning part
 
 In this section, we will look at how to build the reasoning part, which 
 leverages domain knowledge and performs deductive or abductive reasoning.
-In ABL kit, building the reasoning part involves two steps:
+In ABLkit, building the reasoning part involves two steps:
 
 1. Build a knowledge base by creating a subclass of ``KBBase``, which
    specifies how to process pseudo-label of an example to the reasoning result.
@@ -28,7 +28,7 @@ Building a knowledge base
 -------------------------
 
 Generally, we can create a subclass derived from ``KBBase`` to build our own
-knowledge base. In addition, ABL kit also offers several predefined 
+knowledge base. In addition, ABLkit also offers several predefined 
 subclasses of ``KBBase`` (e.g., ``PrologKB`` and ``GroundKB``), 
 which we can utilize to build our knowledge base more conveniently.
 

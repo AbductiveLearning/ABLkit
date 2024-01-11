@@ -84,7 +84,7 @@ Out:
     
 
 Next, we transform the tabular data to the format required by
-ABL kit, which is a tuple of (X, gt_pseudo_label, Y). In this task,
+ABLkit, which is a tuple of (X, gt_pseudo_label, Y). In this task,
 we treat the attributes as X and the targets as gt_pseudo_label (ground
 truth pseudo-labels). Y (reasoning results) are expected to be 0,
 indicating no rules are violated.

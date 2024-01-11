@@ -4,7 +4,7 @@ Installation
 Install from PyPI
 ^^^^^^^^^^^^^^^^^
 
-The easiest way to install ABL kit is using ``pip``:
+The easiest way to install ABLkit is using ``pip``:
 
 .. code:: bash
 

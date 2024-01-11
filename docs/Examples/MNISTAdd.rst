@@ -203,7 +203,7 @@ examples.
 .. code:: python
 
     from ablkit.data.structures import ListData
-    # ListData is a data structure provided by ABL kit that can be used to organize data examples
+    # ListData is a data structure provided by ABLkit that can be used to organize data examples
     data_examples = ListData()
     # We use the first 100 data examples in the training set as an illustration
     data_examples.X = train_X[:100]

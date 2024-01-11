@@ -12,7 +12,7 @@ Learning Part
 
 In this section, we will look at how to build the learning part. 
 
-In ABL kit, building the learning part involves two steps:
+In ABLkit, building the learning part involves two steps:
 
 1. Build a machine learning base model used to make predictions on instance-level data.
 2. Instantiate an ``ABLModel`` with the base model, which enables the learning part to process example-level data.
@@ -76,7 +76,7 @@ Besides the necessary methods required to instantiate an ``ABLModel``, i.e., ``f
 Instantiating an ABLModel
 -------------------------
 
-Typically, base model is trained to make predictions on instance-level data, and can not directly process example-level data, which is not suitable for most neural-symbolic tasks. ABL kit provides the ``ABLModel`` to solve this problem. This class serves as a unified wrapper for all base models, which enables the learning part to train, test, and predict on example-level data.
+Typically, base model is trained to make predictions on instance-level data, and can not directly process example-level data, which is not suitable for most neural-symbolic tasks. ABLkit provides the ``ABLModel`` to solve this problem. This class serves as a unified wrapper for all base models, which enables the learning part to train, test, and predict on example-level data.
 
 Generally, we can simply instantiate an ``ABLModel`` by:
 

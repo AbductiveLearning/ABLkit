@@ -9,7 +9,7 @@
 
 .. toctree::
    :maxdepth: 1
-   :caption: Introduction to ABL kit
+   :caption: Introduction to ABLkit
 
    Intro/Basics
    Intro/Quick-Start

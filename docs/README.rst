@@ -1,20 +1,20 @@
-ABL kit
+ABLkit
 =======
 
-**ABL kit** is an efficient Python toolkit for **Abductive Learning (ABL)**.
+**ABLkit** is an efficient Python toolkit for **Abductive Learning (ABL)**.
 ABL is a novel paradigm that integrates machine learning and 
 logical reasoning in a unified framework. It is suitable for tasks
 where both data and (logical) domain knowledge are available. 
 
 .. image:: _static/img/ABL.png
 
-Key Features of ABL kit:
+Key Features of ABLkit:
 
 - **Great Flexibility**: Adaptable to various machine learning modules and logical reasoning components.
 - **User-Friendly**: Provide **data**, :blue-bold:`model`, and :green-bold:`KB`, and get started with just a few lines of code.
 - **High-Performance**: Optimization for high accuracy and fast training speed.
 
-ABL kit encapsulates advanced ABL techniques, providing users with
+ABLkit encapsulates advanced ABL techniques, providing users with
 an efficient and convenient toolkit to develop dual-driven ABL systems,
 which leverage the power of both data and knowledge.
 
@@ -26,7 +26,7 @@ Installation
 Install from PyPI
 ^^^^^^^^^^^^^^^^^
 
-The easiest way to install ABL kit is using ``pip``:
+The easiest way to install ABLkit is using ``pip``:
 
 .. code:: bash
 
