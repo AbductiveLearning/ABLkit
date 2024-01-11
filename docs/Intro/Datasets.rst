@@ -10,7 +10,7 @@
 Dataset & Data Structure
 ========================
 
-In this section, we will look at the dataset and data structure in ABL Kit.
+In this section, we will look at the dataset and data structure in ABL kit.
 
 .. code:: python
 
@@ -20,7 +20,7 @@ In this section, we will look at the dataset and data structure in ABL Kit.
 Dataset
 -------
 
-ABL Kit requires user data to be either structured as a tuple ``(X, gt_pseudo_label, Y)`` or a ``ListData`` (the underlying data structure utilized in ABL Kit, cf. the next section) object with ``X``, ``gt_pseudo_label`` and ``Y`` attributes. Regardless of the chosen format, the data should encompass three essential components:
+ABL kit requires user data to be either structured as a tuple ``(X, gt_pseudo_label, Y)`` or a ``ListData`` (the underlying data structure utilized in ABL kit, cf. the next section) object with ``X``, ``gt_pseudo_label`` and ``Y`` attributes. Regardless of the chosen format, the data should encompass three essential components:
 
 - ``X``: List[List[Any]]
     
@@ -62,11 +62,11 @@ where each sublist in ``X``, e.g., |data_example|, is a data example and each im
 Data Structure
 --------------
 
-Besides the user-provided dataset, various forms of data are utilized and dynamicly generated throughout the training and testing process of ABL framework. Examples include raw data, predicted pseudo-label, abduced pseudo-label, pseudo-label indices, etc. To manage this diversity and ensure a stable, versatile interface, ABL Kit employs `abstract data interfaces <../API/ablkit.data.html#structures>`_ to encapsulate different forms of data that will be used in the total learning process.
+Besides the user-provided dataset, various forms of data are utilized and dynamicly generated throughout the training and testing process of ABL framework. Examples include raw data, predicted pseudo-label, abduced pseudo-label, pseudo-label indices, etc. To manage this diversity and ensure a stable, versatile interface, ABL kit employs `abstract data interfaces <../API/ablkit.data.html#structures>`_ to encapsulate different forms of data that will be used in the total learning process.
 
-``ListData`` is the underlying abstract data interface utilized in ABL Kit. As the fundamental data structure, ``ListData`` implements commonly used data manipulation methods and is responsible for transferring data between various components of ABL, ensuring that stages such as prediction, abductive reasoning, and training can utilize ``ListData`` as a unified input format. Before proceeding to other stages, user-provided datasets will be firstly converted into ``ListData``.
+``ListData`` is the underlying abstract data interface utilized in ABL kit. As the fundamental data structure, ``ListData`` implements commonly used data manipulation methods and is responsible for transferring data between various components of ABL, ensuring that stages such as prediction, abductive reasoning, and training can utilize ``ListData`` as a unified input format. Before proceeding to other stages, user-provided datasets will be firstly converted into ``ListData``.
 
-Besides providing a tuple of ``(X, gt_pseudo_label, Y)``, ABL Kit also allows users to directly supply data in ``ListData`` format, which similarly requires the inclusion of these three attributes. The following code shows the basic usage of ``ListData``. More information can be found in the `API documentation <../API/ablkit.data.html#structures>`_.
+Besides providing a tuple of ``(X, gt_pseudo_label, Y)``, ABL kit also allows users to directly supply data in ``ListData`` format, which similarly requires the inclusion of these three attributes. The following code shows the basic usage of ``ListData``. More information can be found in the `API documentation <../API/ablkit.data.html#structures>`_.
 
 .. code-block:: python
 

@@ -21,9 +21,9 @@ IndexType = Union[str, slice, int, list, LongTypeTensor, BoolTypeTensor, np.ndar
 
 class ListData(BaseDataElement):
     """
-    Abstract Data Interface used throughout the ABL Kit.
+    Abstract Data Interface used throughout the ABL kit.
 
-    ``ListData`` is the underlying data structure used in the ABL Kit,
+    ``ListData`` is the underlying data structure used in the ABL kit,
     designed to manage diverse forms of data dynamically generated throughout the
     Abductive Learning (ABL) framework. This includes handling raw data, predicted
     pseudo-labels, abduced pseudo-labels, pseudo-label indices, etc.
