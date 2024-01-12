@@ -6,11 +6,9 @@ examples/**/*.png
 *.ckpt
 results
 raw/
-abl.egg-info/
-ablkit.egg-info/
+*.egg-info/
 examples/**/*.jpg
 .idea/
 build/
-docs/API/generated/
 .history
 dist

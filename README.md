@@ -103,7 +103,7 @@ test_data = get_dataset(train=False)
 <summary>Building the Learning Part</summary>
 <br>
 
-Learning part is constructed by first defining a base model for machine learning. ABLkit offers considerable flexibility, supporting any base model that conforms to the scikit-learn style (which requires the implementation of fit and predict methods), or a PyTorch-based neural network (which has defined the architecture and implemented forward method). In this example, we build a simple LeNet5 network as the base model.
+Learning part is constructed by first defining a base model for machine learning. ABLkit offers considerable flexibility, supporting any base model that conforms to the scikit-learn style (which requires the implementation of `fit` and `predict` methods), or a PyTorch-based neural network (which has defined the architecture and implemented `forward` method). In this example, we build a simple LeNet5 network as the base model.
 
 ```python
 # The 'models' module below is located in 'examples/mnist_add/'
@@ -124,7 +124,7 @@ To facilitate uniform processing, ABLkit provides the `BasicNN` class to convert
 ​base_model = BasicNN(model=cls, loss_fn=loss_fn, optimizer=optimizer, device=device)
 ```
 
-The base model built above is trained to make predictions on instance-level data (e.g., a single image), while ABL deals with example-level data. To bridge this gap, we wrap the base_model into an instance of `ABLModel`. This class serves as a unified wrapper for base models, facilitating the learning part to train, test, and predict on example-level data, (e.g., images that comprise an equation).
+The base model built above is trained to make predictions on instance-level data (e.g., a single image), while ABL deals with example-level data. To bridge this gap, we wrap the `base_model` into an instance of `ABLModel`. This class serves as a unified wrapper for base models, facilitating the learning part to train, test, and predict on example-level data, (e.g., images that comprise an equation).
 
 ```python
 from ablkit.learning import ABLModel
