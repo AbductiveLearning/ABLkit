@@ -1,7 +1,7 @@
 <div align="center">
 
 <p align="center">
-<img src="./docs/_static/img/logo.png" alt="ABLkit logo" style="width: 35%;"/>
+<img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/logo.png" alt="ABLkit logo" style="width: 35%;"/>
 </p>
 <br>
 
@@ -27,7 +27,7 @@ logical reasoning in a unified framework. It is suitable for tasks
 where both data and (logical) domain knowledge are available. 
 
 <p align="center">
-<img src="./docs/_static/img/ABL.png" alt="Abductive Learning" style="width: 80%;"/>
+<img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/ABL.png" alt="Abductive Learning" style="width: 80%;"/>
 </p>
 
 Key Features of ABLkit:
@@ -41,7 +41,7 @@ an efficient and convenient toolkit to develop dual-driven ABL systems,
 which leverage the power of both data and knowledge.
 
 <p align="center">
-<img src="./docs/_static/img/ABLkit.png" alt="ABLkit" style="width: 80%;"/>
+<img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/ABLKit.png" alt="ABLkit" style="width: 80%;"/>
 </p>
 
 ## Installation
