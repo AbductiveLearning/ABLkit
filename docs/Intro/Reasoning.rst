@@ -12,7 +12,7 @@ Reasoning part
 
 In this section, we will look at how to build the reasoning part, which 
 leverages domain knowledge and performs deductive or abductive reasoning.
-In ABL Kit, building the reasoning part involves two steps:
+In ABLkit, building the reasoning part involves two steps:
 
 1. Build a knowledge base by creating a subclass of ``KBBase``, which
    specifies how to process pseudo-label of an example to the reasoning result.
@@ -28,7 +28,7 @@ Building a knowledge base
 -------------------------
 
 Generally, we can create a subclass derived from ``KBBase`` to build our own
-knowledge base. In addition, ABL Kit also offers several predefined 
+knowledge base. In addition, ABLkit also offers several predefined 
 subclasses of ``KBBase`` (e.g., ``PrologKB`` and ``GroundKB``), 
 which we can utilize to build our knowledge base more conveniently.
 
@@ -316,12 +316,14 @@ specify:
    accelerate consistency minimization. Defaults to False.
 -  ``dist_func`` (str, optional), specifying the distance function to be
    used when determining consistency between your prediction and
-   candidate returned from knowledge base. Valid options include
-   “confidence” (default) and “hamming”. For “confidence”, it calculates
-   the distance between the prediction and candidate based on confidence
-   derived from the predicted probability in the data example. For
-   “hamming”, it directly calculates the Hamming distance between the
-   predicted pseudo-label in the data example and candidate.
+   candidate returned from knowledge base. This can be either a user-defined function
+   or one that is predefined. Valid predefined options include
+   “hamming”, “confidence” and “avg_confidence”. For “hamming”, it directly calculates the Hamming distance between the
+   predicted pseudo-label in the data example and candidate. For “confidence”, it
+   calculates the confidence distance between the predicted probabilities in the data
+   example and each candidate, where the confidence distance is defined as 1 - the product
+   of prediction probabilities in “confidence” and 1 - the average of prediction probabilities in “avg_confidence”.
+   Defaults to “confidence”.
 - ``idx_to_label`` (dict, optional), a mapping from index in the base model to label. 
    If not provided, a default order-based index to label mapping is created. 
    Defaults to None.
@@ -357,7 +359,7 @@ As an example, consider these data examples for MNIST Addition:
 
 The compatible candidates after abductive reasoning for both examples
 would be ``[[1,7], [7,1]]``. However, when the reasoner calls ``abduce`` 
-to select only one candidate based on the ``confidence`` distance function, 
+to select only one candidate based on the “confidence” distance function, 
 the output would differ for each example:
 
 .. code:: python
@@ -373,7 +375,7 @@ Out:
 
       The outputs for example1 and example2 are [1,7] and [7,1], respectively.
 
-Specifically, as mentioned before, ``confidence`` calculates the distance between the data 
+Specifically, as mentioned before, “confidence” calculates the distance between the data 
 example and candidates based on the confidence derived from the predicted probability. 
 Take ``example1`` as an example, the ``pred_prob`` in it indicates a higher 
 confidence that the first label should be "1" rather than "7". Therefore, among the 

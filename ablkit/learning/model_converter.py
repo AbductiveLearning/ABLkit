@@ -9,7 +9,7 @@ from lambdaLearn.Base.DeepModelMixin import DeepModelMixin
 
 class ModelConverter:
     """
-    This class provides functionality to convert LambdaLearn models to ABL Kit models.
+    This class provides functionality to convert LambdaLearn models to ABLkit models.
     """
 
     def __init__(self) -> None:
@@ -50,30 +50,30 @@ class ModelConverter:
             The dict contains necessary parameters to construct a learning rate scheduler used
             for training, which will be called at the end of each run of the ``fit`` method.
             The scheduler class is specified by the ``scheduler`` key. It should implement the
-            ``step`` method, by default None.
+            ``step`` method. Defaults to None.
         device : torch.device, optional
             The device on which the model will be trained or used for prediction,
-            by default torch.device("cpu").
+            Defaults to torch.device("cpu").
         batch_size : int, optional
-            The batch size used for training, by default 32.
+            The batch size used for training. Defaults to 32.
         num_epochs : int, optional
-            The number of epochs used for training, by default 1.
+            The number of epochs used for training. Defaults to 1.
         stop_loss : float, optional
-            The loss value at which to stop training, by default 0.0001.
+            The loss value at which to stop training. Defaults to 0.0001.
         num_workers : int
-            The number of workers used for loading data, by default 0.
+            The number of workers used for loading data. Defaults to 0.
         save_interval : int, optional
-            The model will be saved every ``save_interval`` epoch during training, by default None.
+            The model will be saved every ``save_interval`` epoch during training. Defaults to None.
         save_dir : str, optional
-            The directory in which to save the model during training, by default None.
+            The directory in which to save the model during training. Defaults to None.
         train_transform : Callable[..., Any], optional
             A function/transform that takes an object and returns a transformed version used
-            in the `fit` and `train_epoch` methods, by default None.
+            in the `fit` and `train_epoch` methods. Defaults to None.
         test_transform : Callable[..., Any], optional
             A function/transform that takes an object and returns a transformed version in the
-            `predict`, `predict_proba` and `score` methods, , by default None.
+            `predict`, `predict_proba` and `score` methods. Defaults to None.
         collate_fn : Callable[[List[T]], Any], optional
-            The function used to collate data, by default None.
+            The function used to collate data. Defaults to None.
 
         Returns
         -------
@@ -140,30 +140,30 @@ class ModelConverter:
             The dict contains necessary parameters to construct a learning rate scheduler used
             for training, which will be called at the end of each run of the ``fit`` method.
             The scheduler class is specified by the ``scheduler`` key. It should implement the
-            ``step`` method, by default None.
+            ``step`` method. Defaults to None.
         device : torch.device, optional
             The device on which the model will be trained or used for prediction,
-            by default torch.device("cpu").
+            Defaults to torch.device("cpu").
         batch_size : int, optional
-            The batch size used for training, by default 32.
+            The batch size used for training. Defaults to 32.
         num_epochs : int, optional
-            The number of epochs used for training, by default 1.
+            The number of epochs used for training. Defaults to 1.
         stop_loss : float, optional
-            The loss value at which to stop training, by default 0.0001.
+            The loss value at which to stop training. Defaults to 0.0001.
         num_workers : int
-            The number of workers used for loading data, by default 0.
+            The number of workers used for loading data. Defaults to 0.
         save_interval : int, optional
-            The model will be saved every ``save_interval`` epoch during training, by default None.
+            The model will be saved every ``save_interval`` epoch during training. Defaults to None.
         save_dir : str, optional
-            The directory in which to save the model during training, by default None.
+            The directory in which to save the model during training. Defaults to None.
         train_transform : Callable[..., Any], optional
             A function/transform that takes an object and returns a transformed version used
-            in the `fit` and `train_epoch` methods, by default None.
+            in the `fit` and `train_epoch` methods. Defaults to None.
         test_transform : Callable[..., Any], optional
             A function/transform that takes an object and returns a transformed version in the
-            `predict`, `predict_proba` and `score` methods, , by default None.
+            `predict`, `predict_proba` and `score` methods. Defaults to None.
         collate_fn : Callable[[List[T]], Any], optional
-            The function used to collate data, by default None.
+            The function used to collate data. Defaults to None.
 
         Returns
         -------

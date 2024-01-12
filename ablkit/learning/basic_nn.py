@@ -33,30 +33,30 @@ class BasicNN:
     scheduler : Callable[..., Any], optional
         The learning rate scheduler used for training, which will be called
         at the end of each run of the ``fit`` method. It should implement the
-        ``step`` method, by default None.
+        ``step`` method. Defaults to None.
     device : Union[torch.device, str]
         The device on which the model will be trained or used for prediction,
-        by default torch.device("cpu").
+        Defaults to torch.device("cpu").
     batch_size : int, optional
-        The batch size used for training, by default 32.
+        The batch size used for training. Defaults to 32.
     num_epochs : int, optional
-        The number of epochs used for training, by default 1.
+        The number of epochs used for training. Defaults to 1.
     stop_loss : float, optional
-        The loss value at which to stop training, by default 0.0001.
+        The loss value at which to stop training. Defaults to 0.0001.
     num_workers : int
-        The number of workers used for loading data, by default 0.
+        The number of workers used for loading data. Defaults to 0.
     save_interval : int, optional
-        The model will be saved every ``save_interval`` epoch during training, by default None.
+        The model will be saved every ``save_interval`` epoch during training. Defaults to None.
     save_dir : str, optional
-        The directory in which to save the model during training, by default None.
+        The directory in which to save the model during training. Defaults to None.
     train_transform : Callable[..., Any], optional
         A function/transform that takes an object and returns a transformed version used
-        in the ``fit`` and ``train_epoch`` methods, by default None.
+        in the ``fit`` and ``train_epoch`` methods. Defaults to None.
     test_transform : Callable[..., Any], optional
         A function/transform that takes an object and returns a transformed version in the
-        ``predict``, ``predict_proba`` and ``score`` methods, , by default None.
+        ``predict``, ``predict_proba`` and ``score`` methods. Defaults to None.
     collate_fn : Callable[[List[T]], Any], optional
-        The function used to collate data, by default None.
+        The function used to collate data. Defaults to None.
     """
 
     def __init__(
@@ -184,11 +184,11 @@ class BasicNN:
         Parameters
         ----------
         data_loader : DataLoader, optional
-            The data loader used for training, by default None.
+            The data loader used for training. Defaults to None.
         X : List[Any], optional
-            The input data, by default None.
+            The input data. Defaults to None.
         y : List[int], optional
-            The target data, by default None.
+            The target data. Defaults to None.
 
         Returns
         -------
@@ -291,9 +291,9 @@ class BasicNN:
         Parameters
         ----------
         data_loader : DataLoader, optional
-            The data loader used for prediction, by default None.
+            The data loader used for prediction. Defaults to None.
         X : List[Any], optional
-            The input data, by default None.
+            The input data. Defaults to None.
 
         Returns
         -------
@@ -333,9 +333,15 @@ class BasicNN:
         Parameters
         ----------
         data_loader : DataLoader, optional
-            The data loader used for prediction, by default None.
+            The data loader used for prediction. Defaults to None.
         X : List[Any], optional
-            The input data, by default None.
+            The input data. Defaults to None.
+
+        Warning
+        -------
+        This method calculates the probability by applying a softmax function to the output
+        of the neural network. If your neural network already includes a softmax function
+        as its final activation, applying softmax again here will lead to incorrect probabilities.
 
         Returns
         -------
@@ -423,11 +429,11 @@ class BasicNN:
         Parameters
         ----------
         data_loader : DataLoader, optional
-            The data loader used for scoring, by default None.
+            The data loader used for scoring. Defaults to None.
         X : List[Any], optional
-            The input data, by default None.
+            The input data. Defaults to None.
         y : List[int], optional
-            The target data, by default None.
+            The target data. Defaults to None.
 
         Returns
         -------
@@ -466,9 +472,9 @@ class BasicNN:
         X : List[Any]
             Input samples.
         y : List[int], optional
-            Target labels. If None, dummy labels are created, by default None.
+            Target labels. If None, dummy labels are created. Defaults to None.
         shuffle : bool, optional
-            Whether to shuffle the data, by default True.
+            Whether to shuffle the data. Defaults to True.
 
         Returns
         -------
@@ -507,7 +513,7 @@ class BasicNN:
         epoch_id : int
             The epoch id.
         save_path : str, optional
-            The path to save the model, by default None.
+            The path to save the model. Defaults to None.
         """
         if self.save_dir is None and save_path is None:
             raise ValueError("'save_dir' and 'save_path' should not be None simultaneously.")
@@ -536,7 +542,7 @@ class BasicNN:
         Parameters
         ----------
         load_path : str
-            The directory to load the model, by default "".
+            The directory to load the model. Defaults to "".
         """
 
         if load_path is None:

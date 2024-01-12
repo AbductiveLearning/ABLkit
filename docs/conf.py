@@ -14,7 +14,7 @@ import ablkit  # noqa: E402,F401
 
 # -- Project information -----------------------------------------------------
 
-project = "ABL Kit"
+project = "ABLkit"
 copyright = "LAMDA, 2024"
 
 # -- General configuration ---------------------------------------------------

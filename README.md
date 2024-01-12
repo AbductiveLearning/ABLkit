@@ -1,49 +1,54 @@
 <div align="center">
 
+<p align="center">
+<img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/logo.png" alt="ABLkit logo" style="width: 35%;"/>
+</p>
+<br>
+
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ablkit)](https://pypi.org/project/ablkit/)
 [![PyPI version](https://badgen.net/pypi/v/ablkit)](https://pypi.org/project/ablkit/)
 [![Documentation Status](https://readthedocs.org/projects/ablkit/badge/?version=latest)](https://ablkit.readthedocs.io/en/latest/?badge=latest)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/AbductiveLearning/ABLKit/blob/main/LICENSE)
-[![flake8 Lint](https://github.com/AbductiveLearning/ABLKit/actions/workflows/lint.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLKit/actions/workflows/lint.yaml)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/AbductiveLearning/ABLkit/blob/main/LICENSE)
+[![flake8 Lint](https://github.com/AbductiveLearning/ABLkit/actions/workflows/lint.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLkit/actions/workflows/lint.yaml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![ABLKit-CI](https://github.com/AbductiveLearning/ABLKit/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLKit/actions/workflows/build-and-test.yaml)
+[![ABLkit-CI](https://github.com/AbductiveLearning/ABLkit/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLkit/actions/workflows/build-and-test.yaml)
 
 [📘Documentation](https://ablkit.readthedocs.io/en/latest/index.html) |
-[📚Examples](https://github.com/AbductiveLearning/ABLKit/tree/main/examples) |
-[💬Reporting Issues](https://github.com/AbductiveLearning/ABLKit/issues/new)
+[📚Examples](https://github.com/AbductiveLearning/ABLkit/tree/main/examples) |
+[💬Reporting Issues](https://github.com/AbductiveLearning/ABLkit/issues/new)
 
 </div>
 
-# ABL Kit: A Python Toolkit for Abductive Learning
+# ABLkit: A Python Toolkit for Abductive Learning
 
-**ABL Kit** is an efficient Python toolkit for **Abductive Learning (ABL)**.
+**ABLkit** is an efficient Python toolkit for [**Abductive Learning (ABL)**](https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf).
 ABL is a novel paradigm that integrates machine learning and 
 logical reasoning in a unified framework. It is suitable for tasks
 where both data and (logical) domain knowledge are available. 
 
 <p align="center">
-<img src="docs/_static/img/ABL.png" alt="Abductive Learning" style="width: 80%;"/>
+<img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/ABL.png" alt="Abductive Learning" style="width: 80%;"/>
 </p>
 
-Key Features of ABL Kit:
+Key Features of ABLkit:
 
 - **Great Flexibility**: Adaptable to various machine learning modules and logical reasoning components.
 - **User-Friendly**: Provide data, model, and KB, and get started with just a few lines of code.
 - **High-Performance**: Optimization for high accuracy and fast training speed.
 
-ABL Kit encapsulates advanced ABL techniques, providing users with
+ABLkit encapsulates advanced ABL techniques, providing users with
 an efficient and convenient toolkit to develop dual-driven ABL systems,
 which leverage the power of both data and knowledge.
 
 <p align="center">
-<img src="docs/_static/img/ABLKit.png" alt="ABL Kit" style="width: 80%;"/>
+<img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/ABLKit.png" alt="ABLkit" style="width: 80%;"/>
 </p>
 
 ## Installation
 
 ### Install from PyPI
 
-The easiest way to install ABL Kit is using ``pip``:
+The easiest way to install ABLkit is using ``pip``:
 
 ```bash
 pip install ablkit
@@ -54,8 +59,8 @@ pip install ablkit
 Alternatively, to install from source code, sequentially run following commands in your terminal/command line.
 
 ```bash
-git clone https://github.com/AbductiveLearning/ABLKit.git
-cd ABLKit
+git clone https://github.com/AbductiveLearning/ABLkit.git
+cd ABLkit
 pip install -v -e .
 ```
 
@@ -79,7 +84,7 @@ We use the MNIST Addition task as a quick start example. In this task, pairs of 
 <summary>Working with Data</summary>
 <br>
 
-ABL Kit requires data in the format of `(X, gt_pseudo_label, Y)` where `X` is a list of input examples containing instances, `gt_pseudo_label` is the ground-truth label of each example in `X` and `Y` is the ground-truth reasoning result of each example in `X`. Note that `gt_pseudo_label` is only used to evaluate the machine learning model's performance but not to train it. 
+ABLkit requires data in the format of `(X, gt_pseudo_label, Y)` where `X` is a list of input examples containing instances, `gt_pseudo_label` is the ground-truth label of each example in `X` and `Y` is the ground-truth reasoning result of each example in `X`. Note that `gt_pseudo_label` is only used to evaluate the machine learning model's performance but not to train it. 
 
 In the MNIST Addition task, the data loading looks like:
 
@@ -98,7 +103,7 @@ test_data = get_dataset(train=False)
 <summary>Building the Learning Part</summary>
 <br>
 
-Learning part is constructed by first defining a base model for machine learning. ABL Kit offers considerable flexibility, supporting any base model that conforms to the scikit-learn style (which requires the implementation of fit and predict methods), or a PyTorch-based neural network (which has defined the architecture and implemented forward method). In this example, we build a simple LeNet5 network as the base model.
+Learning part is constructed by first defining a base model for machine learning. ABLkit offers considerable flexibility, supporting any base model that conforms to the scikit-learn style (which requires the implementation of `fit` and `predict` methods), or a PyTorch-based neural network (which has defined the architecture and implemented `forward` method). In this example, we build a simple LeNet5 network as the base model.
 
 ```python
 # The 'models' module below is located in 'examples/mnist_add/'
@@ -107,7 +112,7 @@ from models.nn import LeNet5
 cls = LeNet5(num_classes=10)
 ``` 
 
-To facilitate uniform processing, ABL Kit provides the `BasicNN` class to convert a PyTorch-based neural network into a format compatible with scikit-learn models. To construct a `BasicNN` instance, aside from the network itself, we also need to define a loss function, an optimizer, and the computing device.
+To facilitate uniform processing, ABLkit provides the `BasicNN` class to convert a PyTorch-based neural network into a format compatible with scikit-learn models. To construct a `BasicNN` instance, aside from the network itself, we also need to define a loss function, an optimizer, and the computing device.
 
 ```python
 ​import torch
@@ -119,7 +124,7 @@ To facilitate uniform processing, ABL Kit provides the `BasicNN` class to conver
 ​base_model = BasicNN(model=cls, loss_fn=loss_fn, optimizer=optimizer, device=device)
 ```
 
-The base model built above is trained to make predictions on instance-level data (e.g., a single image), while ABL deals with example-level data. To bridge this gap, we wrap the base_model into an instance of `ABLModel`. This class serves as a unified wrapper for base models, facilitating the learning part to train, test, and predict on example-level data, (e.g., images that comprise an equation).
+The base model built above is trained to make predictions on instance-level data (e.g., a single image), while ABL deals with example-level data. To bridge this gap, we wrap the `base_model` into an instance of `ABLModel`. This class serves as a unified wrapper for base models, facilitating the learning part to train, test, and predict on example-level data, (e.g., images that comprise an equation).
 
 ```python
 from ablkit.learning import ABLModel
@@ -162,7 +167,7 @@ reasoner = Reasoner(kb)
 <summary>Building Evaluation Metrics</summary>
 <br>
 
-ABL Kit provides two basic metrics, namely `SymbolAccuracy` and `ReasoningMetric`, which are used to evaluate the accuracy of the machine learning model's predictions and the accuracy of the `logic_forward` results, respectively.
+ABLkit provides two basic metrics, namely `SymbolAccuracy` and `ReasoningMetric`, which are used to evaluate the accuracy of the machine learning model's predictions and the accuracy of the `logic_forward` results, respectively.
 
 ```python
 from ablkit.data.evaluation import ReasoningMetric, SymbolAccuracy
@@ -200,10 +205,10 @@ To explore detailed tutorials and information, please refer to - [document](http
 
 We provide several examples in `examples/`. Each example is stored in a separate folder containing a README file.
 
-+ [MNIST Addition](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/mnist_add)
-+ [Handwritten Formula (HWF)](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/hwf)
-+ [Handwritten Equation Decipherment](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/hed)
-+ [Zoo](https://github.com/AbductiveLearning/ABLKit/tree/main/examples/zoo)
++ [MNIST Addition](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/mnist_add)
++ [Handwritten Formula (HWF)](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/hwf)
++ [Handwritten Equation Decipherment](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/hed)
++ [Zoo](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/zoo)
 
 ## References
 

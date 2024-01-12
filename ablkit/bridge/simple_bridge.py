@@ -49,6 +49,15 @@ class SimpleBridge(BaseBridge):
     ) -> None:
         super().__init__(model, reasoner)
         self.metric_list = metric_list
+        if not hasattr(model.base_model, "predict_proba") and reasoner.dist_func in [
+            "confidence",
+            "avg_confidence",
+        ]:
+            raise ValueError(
+                "If the base model does not implement the predict_proba method, "
+                + "then the dist_func in the reasoner cannot be set to 'confidence'"
+                + "or 'avg_confidence', which are related to predicted probability."
+            )
 
     def predict(self, data_examples: ListData) -> Tuple[List[ndarray], List[ndarray]]:
         """
@@ -233,19 +242,19 @@ class SimpleBridge(BaseBridge):
             ``self.metric_list``. If ``val_data`` is None, ``train_data`` will be used to validate
             the model during training time. Defaults to None.
         loops : int
-            Machine Learning part and Reasoning part will be iteratively optimized
-            for ``loops`` times, by default 50.
+            Learning part and Reasoning part will be iteratively optimized
+            for ``loops`` times. Defaults to 50.
         segment_size : Union[int, float]
             Data will be split into segments of this size and data in each segment
-            will be used together to train the model, by default 1.0.
+            will be used together to train the model. Defaults to 1.0.
         eval_interval : int
             The model will be evaluated every ``eval_interval`` loop during training,
-            by default 1.
+            Defaults to 1.
         save_interval : int, optional
-            The model will be saved every ``eval_interval`` loop during training, by
-            default None.
+            The model will be saved every ``eval_interval`` loop during training.
+            Defaults to None.
         save_dir : str, optional
-            Directory to save the model, by default None.
+            Directory to save the model. Defaults to None.
         """
         data_examples = self.data_preprocess("train", train_data)
 

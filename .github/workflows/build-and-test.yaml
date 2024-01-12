@@ -1,4 +1,4 @@
-name: ABLKit-CI
+name: ABLkit-CI
 
 on:
   push:

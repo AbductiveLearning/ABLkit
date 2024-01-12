@@ -36,9 +36,7 @@ class BaseBridge(metaclass=ABCMeta):
 
     def __init__(self, model: ABLModel, reasoner: Reasoner) -> None:
         if not isinstance(model, ABLModel):
-            raise TypeError(
-                f"Expected an instance of ABLModel, but received type: {type(model)}"
-            )
+            raise TypeError(f"Expected an instance of ABLModel, but received type: {type(model)}")
         if not isinstance(reasoner, Reasoner):
             raise TypeError(
                 f"Expected an instance of Reasoner, but received type: {type(reasoner)}"

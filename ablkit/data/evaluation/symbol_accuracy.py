@@ -21,7 +21,7 @@ class SymbolAccuracy(BaseMetric):
     ----------
     prefix : str, optional
         The prefix that will be added to the metrics names to disambiguate homonymous
-        metrics of different tasks. Inherits from BaseMetric. Default to None.
+        metrics of different tasks. Inherits from BaseMetric. Defaults to None.
     """
 
     def process(self, data_examples: ListData) -> None:

@@ -24,7 +24,7 @@ class BaseMetric(metaclass=ABCMeta):
     prefix : str, optional
         The prefix that will be added in the metrics names to disambiguate homonymous
         metrics of different tasks. If prefix is not provided in the argument,
-        self.default_prefix will be used instead. Default to None.
+        self.default_prefix will be used instead. Defaults to None.
 
     """
 

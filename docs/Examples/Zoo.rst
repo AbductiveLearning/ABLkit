@@ -3,7 +3,7 @@ Zoo
 
 .. raw:: html
     
-    <p>For detailed code implementation, please view it on <a class="reference external" href="https://github.com/AbductiveLearning/ABLKit/tree/main/examples/zoo" target="_blank">GitHub</a>.</p>
+    <p>For detailed code implementation, please view it on <a class="reference external" href="https://github.com/AbductiveLearning/ABLkit/tree/main/examples/zoo" target="_blank">GitHub</a>.</p>
 
 Below shows an implementation of
 `Zoo <https://archive.ics.uci.edu/dataset/111/zoo>`__ dataset. In this task,
@@ -84,7 +84,7 @@ Out:
     
 
 Next, we transform the tabular data to the format required by
-ABL Kit, which is a tuple of (X, gt_pseudo_label, Y). In this task,
+ABLkit, which is a tuple of (X, gt_pseudo_label, Y). In this task,
 we treat the attributes as X and the targets as gt_pseudo_label (ground
 truth pseudo-labels). Y (reasoning results) are expected to be 0,
 indicating no rules are violated.

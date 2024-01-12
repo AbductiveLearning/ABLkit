@@ -3,7 +3,7 @@ Handwritten Formula (HWF)
 
 .. raw:: html
     
-    <p>For detailed code implementation, please view it on <a class="reference external" href="https://github.com/AbductiveLearning/ABLKit/tree/main/examples/hwf" target="_blank">GitHub</a>.</p>
+    <p>For detailed code implementation, please view it on <a class="reference external" href="https://github.com/AbductiveLearning/ABLkit/tree/main/examples/hwf" target="_blank">GitHub</a>.</p>
 
 Below shows an implementation of `Handwritten
 Formula <https://arxiv.org/abs/2006.06649>`__. In this
@@ -234,7 +234,7 @@ examples.
 .. code:: python
 
     from ablkit.data.structures import ListData
-    # ListData is a data structure provided by ABL Kit that can be used to organize data examples
+    # ListData is a data structure provided by ABLkit that can be used to organize data examples
     data_examples = ListData()
     # We use the first 1001st and 3001st data examples in the training set as an illustration
     data_examples.X = [X_1000, X_3000]

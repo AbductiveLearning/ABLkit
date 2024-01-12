@@ -193,7 +193,7 @@ def tab_data_to_tuple(
     y : Union[List[Any], Any]
         The label.
     reasoning_result : Any, optional
-        The reasoning result, by default 0.
+        The reasoning result. Defaults to 0.
 
     Returns
     -------

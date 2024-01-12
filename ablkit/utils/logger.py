@@ -26,7 +26,7 @@ class FilterDuplicateWarning(logging.Filter):
     Parameters
     ----------
     name : str, optional
-        The name of the filter, by default "abl".
+        The name of the filter. Defaults to "abl".
     """
 
     def __init__(self, name: Optional[str] = "abl"):

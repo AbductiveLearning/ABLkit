@@ -30,12 +30,14 @@ class Reasoner:
         measure, wherein the candidate with lowest cost is selected as the final
         abduced label. It can be either a string representing a predefined distance
         function or a callable function. The available predefined distance functions:
-        'hamming' | 'confidence'. 'hamming': directly calculates the Hamming
-        distance between the predicted pseudo-label in the data example and each
-        candidate, 'confidence': calculates the distance between the prediction
-        and each candidate based on confidence derived from the predicted probability
-        in the data example. The callable function should have the signature
-        dist_func(data_example, candidates, candidate_idxs, reasoning_results) and must
+        'hamming' | 'confidence' | 'avg_confidence'. 'hamming' directly calculates the
+        Hamming distance between the predicted pseudo-label in the data example and each
+        candidate. 'confidence' and 'avg_confidence' calculates the confidence distance
+        between the predicted probabilities in the data example and each candidate, where
+        the confidence distance is defined as 1 - the product of prediction probabilities
+        in 'confidence' and 1 - the average of prediction probabilities in 'avg_confidence'.
+        Alternatively, the callable function should have the signature
+        ``dist_func(data_example, candidates, candidate_idxs, reasoning_results)`` and must
         return a cost list. Each element in this cost list should be a numerical value
         representing the cost for each candidate, and the list should have the same length
         as candidates. Defaults to 'confidence'.
