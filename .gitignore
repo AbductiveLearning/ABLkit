@@ -11,4 +11,3 @@ examples/**/*.jpg
 .idea/
 build/
 .history
-dist
