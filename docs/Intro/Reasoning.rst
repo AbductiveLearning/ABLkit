@@ -36,8 +36,8 @@ Building a knowledge base from ``KBBase``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For the user-built KB from ``KBBase`` (a derived subclass), it's only
-required to pass the ``pseudo_label_list`` parameter in the ``__init__`` function
-and override the ``logic_forward`` function:
+required to pass the ``pseudo_label_list`` parameter in the ``__init__`` method
+and override the ``logic_forward`` method:
 
 -  ``pseudo_label_list`` is the list of possible pseudo-labels (also,
    the output of the machine learning model).
@@ -46,7 +46,7 @@ and override the ``logic_forward`` function:
 
 .. note::
 
-   Generally, the overridden function ``logic_forward`` provided by the user accepts 
+   Generally, the overridden method ``logic_forward`` provided by the user accepts 
    only one parameter, ``pseudo_label`` (pseudo-labels of an example). However, for certain 
    scenarios, deductive reasoning in the knowledge base may necessitate information 
    from the input. In these scenarios, ``logic_forward`` can also accept two parameters: 
@@ -93,7 +93,7 @@ Out:
 Other optional parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We can also pass the following parameters in the ``__init__`` function when building our
+We can also pass the following parameters in the ``__init__`` method when building our
 knowledge base:
 
 -  ``max_err`` (float, optional), specifying the upper tolerance limit
@@ -119,7 +119,7 @@ When aiming to leverage knowledge base from an external Prolog file
 (which contains how to perform reasoning), we can directly create an
 instance of class ``PrologKB``. Upon instantiation of
 ``PrologKB``, we are required to pass the ``pseudo_label_list`` (same as ``KBBase``)
-and ``pl_file`` (the Prolog file) in the ``__init__`` function.
+and ``pl_file`` (the Prolog file) in the ``__init__`` method.
 
 .. admonition:: What is a Prolog file?
 
@@ -176,10 +176,10 @@ knowledge base. In this way, the knowledge built will have a Ground KB
    accelerate abductive reasoning.
 
 ``GroundKB`` is a subclass of ``GKBBase``. Similar to ``KBBase``, we
-are required to pass the ``pseudo_label_list`` parameter in the ``__init__`` function and
-override the ``logic_forward`` function, and are allowed to pass other
+are required to pass the ``pseudo_label_list`` parameter in the ``__init__`` method and
+override the ``logic_forward`` method, and are allowed to pass other
 :ref:`optional parameters <other-par>`. Additionally, we are required pass the
-``GKB_len_list`` parameter in the ``__init__`` function.
+``GKB_len_list`` parameter in the ``__init__`` method.
 
 -  ``GKB_len_list`` is the list of possible lengths for pseudo-labels of an example.
 
