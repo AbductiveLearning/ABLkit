@@ -20,29 +20,28 @@ AI: data, models, and knowledge. Below is an overview of the ABLkit.
 
 .. image:: ../_static/img/ABLkit.png
 
-**Data** part manages the storage, operation, and evaluation of data efficiently.
+**Data** part efficiently manages data storage, operations, and evaluations.
 It includes the ``ListData`` class, which defines the data structures used in
-ABL, and comprises common data operations like insertion, deletion, 
+ABLkit, and comprises common data operations like insertion, deletion, 
 retrieval, slicing, etc. Additionally, it contains a series of evaluation metrics 
 such as ``SymbolAccuracy`` and ``ReasoningMetric`` (both specialized metrics 
-inherited from the ``BaseMetric`` class), for evaluating model quality from a 
+inherited from the ``BaseMetric`` class), for evaluating performance from a 
 data perspective.
 
 :blue-bold:`Learning` part focuses on the construction, training, and
 prediction of machine learning models. The ``ABLModel`` class is the 
 central class that encapsulates the machine learning model. This class is
-compatible with various frameworks, including those based on Scikit-learn
+compatible with various frameworks, including those based on scikit-learn
 or PyTorch neural networks constructed by the ``BasicNN`` class.
 
 :green-bold:`Reasoning` part concentrates on constructing domain knowledge and 
-performing reasoning. The ``KBBase`` class allows users to define a 
+performing reasoning. The ``KBBase`` class allows users to customize a 
 domain knowledge base. For diverse types of knowledge, we also offer
 implementations like ``GroundKB`` and ``PrologKB`` (both inherited 
-from the ``KBBase`` class). The latter, for instance, enables 
-knowledge bases to be imported in the form of Prolog files.
-Upon building the knowledge base, the ``Reasoner`` class is
-responsible for minimizing the inconsistency between the knowledge base
-and data.
+from the ``KBBase`` class). The latter, for instance, imports
+knowledge bases via Prolog files. Upon building the knowledge base, 
+the ``Reasoner`` class is responsible for minimizing the inconsistency
+between the knowledge base and data.
 
 The integration of these three parts is achieved through the
 :yellow-bold:`Bridge` part, which features the ``SimpleBridge`` class (derived 
