@@ -1,7 +1,7 @@
 <div align="center">
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/logo.png" alt="ABLkit logo" style="width: 35%;"/>
+<img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/logo.png" alt="ABLkit logo" style="width: 30%;"/>
 </p>
 <br>
 
