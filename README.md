@@ -167,8 +167,7 @@ metric_list = [SymbolAccuracy(), ReasoningMetric(kb=kb)]
 <summary>Bridging Learning and Reasoning</summary>
 <br>
 
-Now, we use `SimpleBridge` to combine learning and reasoning in a
-unified ABL framework.
+Now, we use `SimpleBridge` to combine learning and reasoning in a unified ABL framework.
 
 ```python
 from ablkit.bridge import SimpleBridge
