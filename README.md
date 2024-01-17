@@ -20,9 +20,9 @@
 
 Key Features of ABLkit:
 
-- **Great Flexibility**: Adaptable to various machine learning modules and logical reasoning components.
-- **User-Friendly**: Provide data, model, and KB, and get started with just a few lines of code.
-- **High-Performance**: Optimization for high accuracy and fast training speed.
+- **High Flexibility**: Compatible with various machine learning modules and logical reasoning components.
+- **User-Friendly Interface**: Provide data, model, and knowledge, and get started with just a few lines of code.
+- **Optimized Performance**: Optimization for high performance and accelerated training speed.
 
 ABLkit encapsulates advanced ABL techniques, providing users with an efficient and convenient toolkit to develop dual-driven ABL systems, which leverage the power of both data and knowledge.
 
