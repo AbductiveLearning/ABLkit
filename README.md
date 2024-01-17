@@ -1,30 +1,18 @@
 <div align="center">
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/logo.png" alt="ABLkit logo" style="width: 35%;"/>
+<img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/logo.png" alt="ABLkit logo" style="width: 25%;"/>
 </p>
-<br>
 
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ablkit)](https://pypi.org/project/ablkit/)
-[![PyPI version](https://badgen.net/pypi/v/ablkit)](https://pypi.org/project/ablkit/)
-[![Documentation Status](https://readthedocs.org/projects/ablkit/badge/?version=latest)](https://ablkit.readthedocs.io/en/latest/?badge=latest)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/AbductiveLearning/ABLkit/blob/main/LICENSE)
-[![flake8 Lint](https://github.com/AbductiveLearning/ABLkit/actions/workflows/lint.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLkit/actions/workflows/lint.yaml)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![ABLkit-CI](https://github.com/AbductiveLearning/ABLkit/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLkit/actions/workflows/build-and-test.yaml)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ablkit)](https://pypi.org/project/ablkit/) [![PyPI version](https://badgen.net/pypi/v/ablkit)](https://pypi.org/project/ablkit/) [![Documentation Status](https://readthedocs.org/projects/ablkit/badge/?version=latest)](https://ablkit.readthedocs.io/en/latest/?badge=latest) [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/AbductiveLearning/ABLkit/blob/main/LICENSE) [![flake8 Lint](https://github.com/AbductiveLearning/ABLkit/actions/workflows/lint.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLkit/actions/workflows/lint.yaml) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) [![ABLkit-CI](https://github.com/AbductiveLearning/ABLkit/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLkit/actions/workflows/build-and-test.yaml)
 
-[📘Documentation](https://ablkit.readthedocs.io/en/latest/index.html) |
-[📚Examples](https://github.com/AbductiveLearning/ABLkit/tree/main/examples) |
-[💬Reporting Issues](https://github.com/AbductiveLearning/ABLkit/issues/new)
+[📘Documentation](https://ablkit.readthedocs.io/en/latest/index.html) | [📚Examples](https://github.com/AbductiveLearning/ABLkit/tree/main/examples) | [💬Reporting Issues](https://github.com/AbductiveLearning/ABLkit/issues/new)
 
 </div>
 
 # ABLkit: A Python Toolkit for Abductive Learning
 
-**ABLkit** is an efficient Python toolkit for [**Abductive Learning (ABL)**](https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf).
-ABL is a novel paradigm that integrates machine learning and 
-logical reasoning in a unified framework. It is suitable for tasks
-where both data and (logical) domain knowledge are available. 
+**ABLkit** is an efficient Python toolkit for [**Abductive Learning (ABL)**](https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf). ABL is a novel paradigm that integrates machine learning and logical reasoning in a unified framework. It is suitable for tasks where both data and (logical) domain knowledge are available. 
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/ABL.png" alt="Abductive Learning" style="width: 80%;"/>
@@ -36,9 +24,7 @@ Key Features of ABLkit:
 - **User-Friendly**: Provide data, model, and KB, and get started with just a few lines of code.
 - **High-Performance**: Optimization for high accuracy and fast training speed.
 
-ABLkit encapsulates advanced ABL techniques, providing users with
-an efficient and convenient toolkit to develop dual-driven ABL systems,
-which leverage the power of both data and knowledge.
+ABLkit encapsulates advanced ABL techniques, providing users with an efficient and convenient toolkit to develop dual-driven ABL systems, which leverage the power of both data and knowledge.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/ABLkit.png" alt="ABLkit" style="width: 80%;"/>
@@ -214,7 +200,7 @@ We provide several examples in `examples/`. Each example is stored in a separate
 
 For more information about ABL, please refer to: [Zhou, 2019](http://scis.scichina.com/en/2019/076101.pdf) and [Zhou and Huang, 2022](https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf).
 
-```latex
+```
 @article{zhou2019abductive,
   title     = {Abductive learning: towards bridging machine learning and logical reasoning},
   author    = {Zhou, Zhi-Hua},
