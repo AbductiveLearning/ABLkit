@@ -12,7 +12,8 @@ python main.py
 ## Usage
 
 ```bash
-usage: main.py [-h] [--no-cuda] [--epochs EPOCHS] [--lr LR] 
+usage: main.py [-h] [--no-cuda] [--epochs EPOCHS] 
+               [--label_smoothing LABEL_SMOOTHING] [--lr LR] 
                [--alpha ALPHA] [--batch-size BATCH_SIZE]
                [--loops LOOPS] [--segment_size SEGMENT_SIZE]
                [--save_interval SAVE_INTERVAL] [--max-revision MAX_REVISION]
@@ -26,6 +27,8 @@ optional arguments:
   --no-cuda             disables CUDA training
   --epochs EPOCHS       number of epochs in each learning loop iteration
                         (default : 1)
+  --label_smoothing LABEL_SMOOTHING
+                        label smoothing in cross entropy loss (default : 0.2)
   --lr LR               base model learning rate (default : 0.001)
   --alpha ALPHA         alpha in RMSprop (default : 0.9)
   --batch-size BATCH_SIZE

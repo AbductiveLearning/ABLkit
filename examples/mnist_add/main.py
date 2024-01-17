@@ -43,6 +43,12 @@ def main():
         help="number of epochs in each learning loop iteration (default : 1)",
     )
     parser.add_argument(
+        "--label-smoothing",
+        type=float,
+        default=0.2,
+        help="label smoothing in cross entropy loss (default : 0.2)",
+    )
+    parser.add_argument(
         "--lr", type=float, default=3e-4, help="base model learning rate (default : 0.0003)"
     )
     parser.add_argument("--alpha", type=float, default=0.9, help="alpha in RMSprop (default : 0.9)")
@@ -57,10 +63,7 @@ def main():
     )
     parser.add_argument("--save_interval", type=int, default=1, help="save interval (default : 1)")
     parser.add_argument(
-        "--max-revision",
-        type=int,
-        default=-1,
-        help="maximum revision in reasoner (default : -1)",
+        "--max-revision", type=int, default=-1, help="maximum revision in reasoner (default : -1)"
     )
     parser.add_argument(
         "--require-more-revision",
@@ -91,7 +94,7 @@ def main():
 
     # Build necessary components for BasicNN
     cls = LeNet5(num_classes=10)
-    loss_fn = nn.CrossEntropyLoss(label_smoothing=0.2)
+    loss_fn = nn.CrossEntropyLoss(label_smoothing=args.label_smoothing)
     optimizer = RMSprop(cls.parameters(), lr=args.lr, alpha=args.alpha)
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
