@@ -10,7 +10,7 @@
 
 </div>
 
-## ABLkit: A Python Toolkit for Abductive Learning
+# ABLkit: A Toolkit for Abductive Learning
 
 **ABLkit** is an efficient Python toolkit for [**Abductive Learning (ABL)**](https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf). ABL is a novel paradigm that integrates machine learning and logical reasoning in a unified framework. It is suitable for tasks where both data and (logical) domain knowledge are available. 
 
