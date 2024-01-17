@@ -10,7 +10,7 @@
 
 </div>
 
-# ABLkit: A Python Toolkit for Abductive Learning
+## ABLkit: A Python Toolkit for Abductive Learning
 
 **ABLkit** is an efficient Python toolkit for [**Abductive Learning (ABL)**](https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf). ABL is a novel paradigm that integrates machine learning and logical reasoning in a unified framework. It is suitable for tasks where both data and (logical) domain knowledge are available. 
 
@@ -30,9 +30,9 @@ ABLkit encapsulates advanced ABL techniques, providing users with an efficient a
 <img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/ABLkit.png" alt="ABLkit" style="width: 80%;"/>
 </p>
 
-## Installation
+### Installation
 
-### Install from PyPI
+#### Install from PyPI
 
 The easiest way to install ABLkit is using ``pip``:
 
@@ -40,7 +40,7 @@ The easiest way to install ABLkit is using ``pip``:
 pip install ablkit
 ```
 
-### Install from Source
+#### Install from Source
 
 Alternatively, to install from source code, sequentially run following commands in your terminal/command line.
 
@@ -50,7 +50,7 @@ cd ABLkit
 pip install -v -e .
 ```
 
-### (Optional) Install SWI-Prolog
+#### (Optional) Install SWI-Prolog
 
 If the use of a [Prolog-based knowledge base](https://ablkit.readthedocs.io/en/latest/Intro/Reasoning.html#prolog) is necessary, please also install [SWI-Prolog](https://www.swi-prolog.org/):
 
@@ -62,7 +62,7 @@ sudo apt-get install swi-prolog
 
 For Windows and Mac users, please refer to the [SWI-Prolog Install Guide](https://github.com/yuce/pyswip/blob/master/INSTALL.md).
 
-## Quick Start
+### Quick Start
 
 We use the MNIST Addition task as a quick start example. In this task, pairs of MNIST handwritten images and their sums are given, alongwith a domain knowledge base which contains information on how to perform addition operations. Our objective is to input a pair of handwritten images and accurately determine their sum.
 
@@ -167,8 +167,7 @@ metric_list = [SymbolAccuracy(), ReasoningMetric(kb=kb)]
 <summary>Bridging Learning and Reasoning</summary>
 <br>
 
-Now, we use `SimpleBridge` to combine learning and reasoning in a
-unified ABL framework.
+Now, we use `SimpleBridge` to combine learning and reasoning in a unified ABL framework.
 
 ```python
 from ablkit.bridge import SimpleBridge
@@ -187,7 +186,7 @@ bridge.test(test_data)
 
 To explore detailed tutorials and information, please refer to - [document](https://ablkit.readthedocs.io/en/latest/index.html).
 
-## Examples
+### Examples
 
 We provide several examples in `examples/`. Each example is stored in a separate folder containing a README file.
 
@@ -196,7 +195,7 @@ We provide several examples in `examples/`. Each example is stored in a separate
 + [Handwritten Equation Decipherment](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/hed)
 + [Zoo](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/zoo)
 
-## References
+### References
 
 For more information about ABL, please refer to: [Zhou, 2019](http://scis.scichina.com/en/2019/076101.pdf) and [Zhou and Huang, 2022](https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf).
 
