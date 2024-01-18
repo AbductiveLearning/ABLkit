@@ -58,7 +58,7 @@ We present the results of ABL as follows, which include the reasoning accuracy (
 
 |  Method      | Accuracy | Time to achieve the Acc. (s) |
 | :----------: | :------: | :--------------------------: |
-|  NeurASP     |  0.964   |             354              |
-| DeepProbLog  |  0.965   |             1965             |
-| DeepStochLog |  0.975   |             727              |
-|     ABL      |  0.980   |              42              |
+|  NeurASP     |  0.962   |             966              |
+| DeepProbLog  |  0.971   |             2045             |
+| DeepStochLog |  0.975   |             257              |
+|     ABL      |  0.981   |              47              |
