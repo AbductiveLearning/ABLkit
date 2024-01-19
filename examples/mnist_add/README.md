@@ -56,9 +56,34 @@ We present the results of ABL as follows, which include the reasoning accuracy (
 - [**DeepProbLog**](https://github.com/ML-KULeuven/deepproblog): An extension of ProbLog by introducing neural predicates in Probabilistic Logic Programming;
 - [**DeepStochLog**](https://github.com/ML-KULeuven/deepstochlog): A neural-symbolic framework based on stochastic logic program.
 
-|  Method      | Accuracy | Time to achieve the Acc. (s) |
-| :----------: | :------: | :--------------------------: |
-|  NeurASP     |  0.962   |             966              |
-| DeepProbLog  |  0.971   |             2045             |
-| DeepStochLog |  0.975   |             257              |
-|     ABL      |  0.981   |              47              |
+<table class="tg" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+    <th>Method</th>
+    <th>Accuracy</th>
+    <th>Time to achieve the Acc. (s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td>NeurASP</td>
+    <td>96.2</td>
+    <td>966</td>
+</tr>
+<tr>
+    <td>DeepProbLog</td>
+    <td>97.1</td>
+    <td>2045</td>
+</tr>
+<tr>
+    <td>DeepStochLog</td>
+    <td>97.5</td>
+    <td>257</td>
+</tr>
+<tr>
+    <td>ABL</td>
+    <td><span style="font-weight:bold">98.1</span></td>
+<td><span style="font-weight:bold">47</span></td>
+</tr>
+</tbody>
+</table>

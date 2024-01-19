@@ -381,17 +381,44 @@ We present the results of ABL as follows, which include the reasoning accuracy (
 - `DeepProbLog <https://github.com/ML-KULeuven/deepproblog>`_: An extension of ProbLog by introducing neural predicates in Probabilistic Logic Programming;
 - `DeepStochLog <https://github.com/ML-KULeuven/deepstochlog>`_: A neural-symbolic framework based on stochastic logic program.
 
-.. table::
-   :class: centered
+.. raw:: html
 
-   +--------------+----------+------------------------------+
-   | Method       | Accuracy | Time to achieve the Acc. (s) |
-   +==============+==========+==============================+
-   | NeurASP      | 0.962    | 966                          |
-   +--------------+----------+------------------------------+
-   | DeepProbLog  | 0.971    | 2045                         |
-   +--------------+----------+------------------------------+
-   | DeepStochLog | 0.975    | 257                          |
-   +--------------+----------+------------------------------+
-   | ABL          | 0.981    | 47                           |
-   +--------------+----------+------------------------------+
+    <style type="text/css">
+    .tg  {border-collapse:collapse;border-spacing:0;margin-bottom:20px;}
+    .tg td, .tg th {border:1px solid #ddd;padding:10px 15px;text-align:center;}
+    .tg th {background-color:#f5f5f5;color:#333333;}
+    .tg tr:nth-child(even) {background-color:#f9f9f9;}
+    .tg tr:nth-child(odd) {background-color:#ffffff;}
+    </style>
+
+    <table class="tg" style="margin-left: auto; margin-right: auto;">
+    <thead>
+    <tr>
+        <th>Method</th>
+        <th>Accuracy</th>
+        <th>Time to achieve the Acc. (s)</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>NeurASP</td>
+        <td>96.2</td>
+        <td>966</td>
+    </tr>
+    <tr>
+        <td>DeepProbLog</td>
+        <td>97.1</td>
+        <td>2045</td>
+    </tr>
+    <tr>
+        <td>DeepStochLog</td>
+        <td>97.5</td>
+        <td>257</td>
+    </tr>
+    <tr>
+        <td>ABL</td>
+        <td><span style="font-weight:bold">98.1</span></td>
+    <td><span style="font-weight:bold">47</span></td>
+    </tr>
+    </tbody>
+    </table>
