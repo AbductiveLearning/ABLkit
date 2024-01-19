@@ -163,7 +163,7 @@ model with a sklearn-style interface.
         num_epochs=1,
     )
 
-``BasicNN`` offers methods like ``predict`` and ``predict_prob``, which
+``BasicNN`` offers methods like ``predict`` and ``predict_proba``, which
 are used to predict the class index and the probabilities of each class
 for images. As shown below:
 
@@ -385,7 +385,7 @@ We present the results of ABL as follows, which include the reasoning accuracy (
 
     <style type="text/css">
     .tg  {border-collapse:collapse;border-spacing:0;margin-bottom:20px;}
-    .tg td, .tg th {border:1px solid #ddd;padding:10px 15px;text-align:center;}
+    .tg td, .tg th {border:1px solid #ddd;padding:8px 22px;text-align:center;}
     .tg th {background-color:#f5f5f5;color:#333333;}
     .tg tr:nth-child(even) {background-color:#f9f9f9;}
     .tg tr:nth-child(odd) {background-color:#ffffff;}
@@ -394,9 +394,9 @@ We present the results of ABL as follows, which include the reasoning accuracy (
     <table class="tg" style="margin-left: auto; margin-right: auto;">
     <thead>
     <tr>
-        <th>Method</th>
-        <th>Accuracy</th>
-        <th>Time to achieve the Acc. (s)</th>
+        <th>方法</th>
+        <th>推理准确率(%)</th>
+        <th>训练时间(秒)</th>
     </tr>
     </thead>
     <tbody>
@@ -416,7 +416,7 @@ We present the results of ABL as follows, which include the reasoning accuracy (
         <td>257</td>
     </tr>
     <tr>
-        <td>ABL</td>
+        <td>ABLkit</td>
         <td><span style="font-weight:bold">98.1</span></td>
     <td><span style="font-weight:bold">47</span></td>
     </tr>
