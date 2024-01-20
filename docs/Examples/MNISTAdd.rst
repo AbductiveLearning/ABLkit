@@ -394,9 +394,9 @@ We present the results of ABL as follows, which include the reasoning accuracy (
     <table class="tg" style="margin-left: auto; margin-right: auto;">
     <thead>
     <tr>
-        <th>方法</th>
-        <th>推理准确率(%)</th>
-        <th>训练时间(秒)</th>
+        <th>Method</th>
+        <th>Accuracy</th>
+        <th>Time to achieve the Acc. (s)</th>
     </tr>
     </thead>
     <tbody>
@@ -416,7 +416,7 @@ We present the results of ABL as follows, which include the reasoning accuracy (
         <td>257</td>
     </tr>
     <tr>
-        <td>ABLkit</td>
+        <td>ABL</td>
         <td><span style="font-weight:bold">98.1</span></td>
     <td><span style="font-weight:bold">47</span></td>
     </tr>
