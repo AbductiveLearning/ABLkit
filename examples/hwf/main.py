@@ -78,23 +78,26 @@ def main():
         help="number of epochs in each learning loop iteration (default : 3)",
     )
     parser.add_argument(
+        "--label-smoothing", 
+        type=float, 
+        default=0.2, 
+        help="label smoothing in cross entropy loss (default : 0.2)"
+    )
+    parser.add_argument(
         "--lr", type=float, default=1e-3, help="base model learning rate (default : 0.001)"
     )
     parser.add_argument(
         "--batch-size", type=int, default=128, help="base model batch size (default : 128)"
     )
     parser.add_argument(
-        "--loops", type=int, default=5, help="number of loop iterations (default : 5)"
+        "--loops", type=int, default=3, help="number of loop iterations (default : 3)"
     )
     parser.add_argument(
         "--segment_size", type=int, default=1000, help="segment size (default : 1000)"
     )
     parser.add_argument("--save_interval", type=int, default=1, help="save interval (default : 1)")
     parser.add_argument(
-        "--max-revision",
-        type=int,
-        default=-1,
-        help="maximum revision in reasoner (default : -1)",
+        "--max-revision", type=int, default=-1, help="maximum revision in reasoner (default : -1)"
     )
     parser.add_argument(
         "--require-more-revision",
@@ -128,19 +131,14 @@ def main():
 
     # Build necessary components for BasicNN
     cls = SymbolNet(num_classes=13, image_size=(45, 45, 1))
-    loss_fn = nn.CrossEntropyLoss()
+    loss_fn = nn.CrossEntropyLoss(label_smoothing=args.label_smoothing)
     optimizer = torch.optim.Adam(cls.parameters(), lr=args.lr)
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 
     # Build BasicNN
     base_model = BasicNN(
-        cls,
-        loss_fn,
-        optimizer,
-        device=device,
-        batch_size=args.batch_size,
-        num_epochs=args.epochs,
+        cls, loss_fn, optimizer, device=device, batch_size=args.batch_size, num_epochs=args.epochs,
     )
 
     # Build ABLModel
@@ -175,6 +173,7 @@ def main():
     #  Train and Test
     bridge.train(
         train_data,
+        val_data=test_data,
         loops=args.loops,
         segment_size=args.segment_size,
         save_interval=args.save_interval,

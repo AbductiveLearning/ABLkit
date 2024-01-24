@@ -192,7 +192,7 @@ sklearn-style interface.
         num_epochs=3,
     )
 
-``BasicNN`` offers methods like ``predict`` and ``predict_prob``, which
+``BasicNN`` offers methods like ``predict`` and ``predict_proba``, which
 are used to predict the class index and the probabilities of each class
 for images. As shown below:
 

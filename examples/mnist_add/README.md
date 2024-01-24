@@ -12,7 +12,8 @@ python main.py
 ## Usage
 
 ```bash
-usage: main.py [-h] [--no-cuda] [--epochs EPOCHS] [--lr LR] 
+usage: main.py [-h] [--no-cuda] [--epochs EPOCHS] 
+               [--label_smoothing LABEL_SMOOTHING] [--lr LR] 
                [--alpha ALPHA] [--batch-size BATCH_SIZE]
                [--loops LOOPS] [--segment_size SEGMENT_SIZE]
                [--save_interval SAVE_INTERVAL] [--max-revision MAX_REVISION]
@@ -26,6 +27,8 @@ optional arguments:
   --no-cuda             disables CUDA training
   --epochs EPOCHS       number of epochs in each learning loop iteration
                         (default : 1)
+  --label_smoothing LABEL_SMOOTHING
+                        label smoothing in cross entropy loss (default : 0.2)
   --lr LR               base model learning rate (default : 0.001)
   --alpha ALPHA         alpha in RMSprop (default : 0.9)
   --batch-size BATCH_SIZE
@@ -53,9 +56,34 @@ We present the results of ABL as follows, which include the reasoning accuracy (
 - [**DeepProbLog**](https://github.com/ML-KULeuven/deepproblog): An extension of ProbLog by introducing neural predicates in Probabilistic Logic Programming;
 - [**DeepStochLog**](https://github.com/ML-KULeuven/deepstochlog): A neural-symbolic framework based on stochastic logic program.
 
-|  Method      | Accuracy | Time to achieve the Acc. (s) |
-| :----------: | :------: | :--------------------------: |
-|  NeurASP     |  0.964   |             354              |
-| DeepProbLog  |  0.965   |             1965             |
-| DeepStochLog |  0.975   |             727              |
-|     ABL      |  0.980   |              42              |
+<table class="tg" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+    <th>Method</th>
+    <th>Accuracy</th>
+    <th>Time to achieve the Acc. (s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td>NeurASP</td>
+    <td>96.2</td>
+    <td>966</td>
+</tr>
+<tr>
+    <td>DeepProbLog</td>
+    <td>97.1</td>
+    <td>2045</td>
+</tr>
+<tr>
+    <td>DeepStochLog</td>
+    <td>97.5</td>
+    <td>257</td>
+</tr>
+<tr>
+    <td>ABL</td>
+    <td><span style="font-weight:bold">98.1</span></td>
+<td><span style="font-weight:bold">47</span></td>
+</tr>
+</tbody>
+</table>
