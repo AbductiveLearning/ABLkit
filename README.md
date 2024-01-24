@@ -1,6 +1,6 @@
 <div align="center">
 
-![ABLkit logo](https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/logo.png)
+<img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/logo.png" width="180">
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ablkit)](https://pypi.org/project/ablkit/) [![PyPI version](https://badgen.net/pypi/v/ablkit)](https://pypi.org/project/ablkit/) [![Documentation Status](https://readthedocs.org/projects/ablkit/badge/?version=latest)](https://ablkit.readthedocs.io/en/latest/?badge=latest) [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/AbductiveLearning/ABLkit/blob/main/LICENSE) [![flake8 Lint](https://github.com/AbductiveLearning/ABLkit/actions/workflows/lint.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLkit/actions/workflows/lint.yaml) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) [![ABLkit-CI](https://github.com/AbductiveLearning/ABLkit/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLkit/actions/workflows/build-and-test.yaml)
 

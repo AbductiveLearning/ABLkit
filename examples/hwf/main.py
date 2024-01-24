@@ -78,9 +78,9 @@ def main():
         help="number of epochs in each learning loop iteration (default : 3)",
     )
     parser.add_argument(
-        "--label-smoothing", 
-        type=float, 
-        default=0.2, 
+        "--label-smoothing",
+        type=float,
+        default=0.2,
         help="label smoothing in cross entropy loss (default : 0.2)"
     )
     parser.add_argument(
