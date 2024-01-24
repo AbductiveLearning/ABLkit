@@ -6,7 +6,7 @@ examples/**/*.png
 *.ckpt
 results
 raw/
-*.egg-info/
+ablkit.egg-info/
 examples/**/*.jpg
 .idea/
 build/
