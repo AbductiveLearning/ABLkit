@@ -54,6 +54,7 @@ We present the results of ABL as follows, which include the reasoning accuracy (
 
 - [**NeurASP**](https://github.com/azreasoners/NeurASP): An extension of answer set programs by treating the neural network output as the probability distribution over atomic facts;
 - [**DeepProbLog**](https://github.com/ML-KULeuven/deepproblog): An extension of ProbLog by introducing neural predicates in Probabilistic Logic Programming;
+- [**LTN**](https://github.com/logictensornetworks/logictensornetworks): A neural-symbolic framework that uses differentiable first-order logic language to incorporate data and logic.
 - [**DeepStochLog**](https://github.com/ML-KULeuven/deepstochlog): A neural-symbolic framework based on stochastic logic program.
 
 <table class="tg" style="margin-left: auto; margin-right: auto;">
@@ -74,6 +75,11 @@ We present the results of ABL as follows, which include the reasoning accuracy (
     <td>DeepProbLog</td>
     <td>97.1</td>
     <td>2045</td>
+</tr>
+<tr>
+    <td>LTN</td>
+    <td>97.4</td>
+    <td>251</td>
 </tr>
 <tr>
     <td>DeepStochLog</td>
