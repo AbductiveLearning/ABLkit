@@ -432,7 +432,7 @@ We present the results of ABL as follows, which include the reasoning accuracy (
         <th>Method</th>
         <th>Accuracy</th>
         <th>Time to achieve the Acc. (s)</th>
-        <th>Peak Memory Usage (MB)</th>
+        <th>Average Memory Usage (MB)</th>
     </tr>
     </thead>
     <tbody>
