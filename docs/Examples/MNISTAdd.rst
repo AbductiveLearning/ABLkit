@@ -371,6 +371,40 @@ Log:
         abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.991 mnist_add/reasoning_accuracy: 0.980 
 
 
+Environment
+-----------
+
+For all experiments, we used a single linux server. Details on the specifications are listed in the table below.
+
+.. raw:: html
+
+    <style type="text/css">
+    .tg  {border-collapse:collapse;border-spacing:0;margin-bottom:20px;}
+    .tg td, .tg th {border:1px solid #ddd;padding:8px 22px;text-align:center;}
+    .tg th {background-color:#f5f5f5;color:#333333;}
+    .tg tr:nth-child(even) {background-color:#f9f9f9;}
+    .tg tr:nth-child(odd) {background-color:#ffffff;}
+    </style>
+
+    <table class="tg" style="margin-left: auto; margin-right: auto;">
+    <thead>
+    <tr>
+        <th>CPU</th>
+        <th>GPU</th>
+        <th>Memory</th>
+        <th>OS</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>2 * Xeon Platinum 8358, 32 Cores, 2.6 GHz Base Frequency</td>
+        <td>A100 80GB</td>
+        <td>512GB</td>
+        <td>Ubuntu 20.04</td>
+    </tr>
+    </tbody>
+    </table>
+
 
 Performance
 -----------
@@ -379,6 +413,7 @@ We present the results of ABL as follows, which include the reasoning accuracy (
 
 - `NeurASP <https://github.com/azreasoners/NeurASP>`_: An extension of answer set programs by treating the neural network output as the probability distribution over atomic facts;
 - `DeepProbLog <https://github.com/ML-KULeuven/deepproblog>`_: An extension of ProbLog by introducing neural predicates in Probabilistic Logic Programming;
+- `LTN <https://github.com/logictensornetworks/logictensornetworks>`_: A neural-symbolic framework that uses differentiable first-order logic language to incorporate data and logic;
 - `DeepStochLog <https://github.com/ML-KULeuven/deepstochlog>`_: A neural-symbolic framework based on stochastic logic program.
 
 .. raw:: html
@@ -397,6 +432,7 @@ We present the results of ABL as follows, which include the reasoning accuracy (
         <th>Method</th>
         <th>Accuracy</th>
         <th>Time to achieve the Acc. (s)</th>
+        <th>Average Memory Usage (MB)</th>
     </tr>
     </thead>
     <tbody>
@@ -404,21 +440,31 @@ We present the results of ABL as follows, which include the reasoning accuracy (
         <td>NeurASP</td>
         <td>96.2</td>
         <td>966</td>
+        <td>3552</td>
     </tr>
     <tr>
         <td>DeepProbLog</td>
         <td>97.1</td>
         <td>2045</td>
+        <td>3521</td>
+    </tr>
+    <tr>
+        <td>LTN</td>
+        <td>97.4</td>
+        <td>251</td>
+        <td>3860</td>
     </tr>
     <tr>
         <td>DeepStochLog</td>
         <td>97.5</td>
         <td>257</td>
+        <td>3545</td>
     </tr>
     <tr>
         <td>ABL</td>
         <td><span style="font-weight:bold">98.1</span></td>
-    <td><span style="font-weight:bold">47</span></td>
+        <td><span style="font-weight:bold">47</span></td>
+        <td><span style="font-weight:bold">2482</span></td>
     </tr>
     </tbody>
     </table>
