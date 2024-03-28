@@ -17,7 +17,7 @@ where both data and (logical) domain knowledge are available.
 Key Features of ABLkit:
 
 - **High Flexibility**: Compatible with various machine learning modules and logical reasoning components.
-- **User-Friendly Interface**: Provide **data**, :blue-bold:`model`, and :green-bold:`knowledge`, and get started with just a few lines of code.
+- **Easy-to-Use Interface**: Provide **data**, :blue-bold:`model`, and :green-bold:`knowledge`, and get started with just a few lines of code.
 - **Optimized Performance**: Optimization for high performance and accelerated training speed.
 
 ABLkit encapsulates advanced ABL techniques, providing users with

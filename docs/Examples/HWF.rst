@@ -422,10 +422,44 @@ Log:
         abl - INFO - Test start:
         abl - INFO - Evaluation ended, hwf/character_accuracy: 0.997 hwf/reasoning_accuracy: 0.986
 
+Environment
+-----------
+
+For all experiments, we used a single linux server. Details on the specifications are listed in the table below.
+
+.. raw:: html
+
+    <style type="text/css">
+    .tg  {border-collapse:collapse;border-spacing:0;margin-bottom:20px;}
+    .tg td, .tg th {border:1px solid #ddd;padding:8px 22px;text-align:center;}
+    .tg th {background-color:#f5f5f5;color:#333333;}
+    .tg tr:nth-child(even) {background-color:#f9f9f9;}
+    .tg tr:nth-child(odd) {background-color:#ffffff;}
+    </style>
+
+    <table class="tg" style="margin-left: auto; margin-right: auto;">
+    <thead>
+    <tr>
+        <th>CPU</th>
+        <th>GPU</th>
+        <th>Memory</th>
+        <th>OS</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>2 * Xeon Platinum 8358, 32 Cores, 2.6 GHz Base Frequency</td>
+        <td>A100 80GB</td>
+        <td>512GB</td>
+        <td>Ubuntu 20.04</td>
+    </tr>
+    </tbody>
+    </table>
+
 Performance
 -----------
 
-We present the results of ABL as follows, which include the reasoning accuracy (for different equation lengths in the HWF dataset), and the training time (to achieve the accuracy using all equation lengths). These results are compared with the following methods:
+We present the results of ABL as follows, which include the reasoning accuracy (for different equation lengths in the HWF dataset), training time (to achieve the accuracy using all equation lengths), and average memory usage (using all equation lengths). These results are compared with the following methods:
 
 - `NGS <https://github.com/liqing-ustc/NGS>`_: A neural-symbolic framework that uses a grammar model and a back-search algorithm to improve its computing process;
 
@@ -448,6 +482,7 @@ We present the results of ABL as follows, which include the reasoning accuracy (
         <th rowspan="2"></th>
         <th colspan="5">Reasoning Accuracy<br><span style="font-weight: normal; font-size: smaller;">(for different equation lengths)</span></th>
         <th rowspan="2">Training Time (s)<br><span style="font-weight: normal; font-size: smaller;">(to achieve the Acc. using all lengths)</span></th>
+        <th rowspan="2">Average Memory Usage (MB)<br><span style="font-weight: normal; font-size: smaller;">(using all lengths)</span></th>
     </tr>
     <tr>
         <th>1</th>
@@ -466,6 +501,7 @@ We present the results of ABL as follows, which include the reasoning accuracy (
         <td>5.2</td>
         <td>98.4</td>
         <td>426.2</td>
+        <td>3705</td>
     </tr>
     <tr>
         <td>DeepProbLog</td>
@@ -475,6 +511,7 @@ We present the results of ABL as follows, which include the reasoning accuracy (
         <td>timeout</td>
         <td>timeout</td>
         <td>timeout</td>
+        <td>4315</td>
     </tr>
     <tr>
         <td>DeepStochLog</td>
@@ -484,6 +521,7 @@ We present the results of ABL as follows, which include the reasoning accuracy (
         <td>timeout</td>
         <td>timeout</td>
         <td>timeout</td>
+        <td>4355</td>
     </tr>
     <tr>
         <td>ABL</td>
@@ -493,6 +531,7 @@ We present the results of ABL as follows, which include the reasoning accuracy (
         <td><span style="font-weight:bold">97.2</span></td>
         <td><span style="font-weight:bold">98.6</span></td>
         <td><span style="font-weight:bold">77.3</span></td>
+        <td><span style="font-weight:bold">3074</span></td>
     </tr>
     </tbody>
     </table>
