@@ -92,9 +92,9 @@ and `Zhou and Huang, 2022 <https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf
         year      = {2022}
     }
 
-Cite
-----
-To cite ABLkit, please cite the following paper:  `Huang et al., 2024 <https://journal.hep.com.cn/fcs/EN/10.1007/s11704-024-40085-7>`.
+Citation
+--------
+To cite ABLkit, please cite the following paper:  `Huang et al., 2024 <https://journal.hep.com.cn/fcs/EN/10.1007/s11704-024-40085-7>`_.
 
 .. code-block:: latex
     @article{ABLkit2024,

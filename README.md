@@ -220,7 +220,7 @@ For more information about ABL, please refer to: [Zhou, 2019](http://scis.scichi
 }
 ```
 
-## Cite
+## Citation
 
 To cite ABLkit, please cite the following paper:  [Huang et al., 2024](https://journal.hep.com.cn/fcs/EN/10.1007/s11704-024-40085-7).
 
