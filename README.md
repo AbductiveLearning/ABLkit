@@ -10,6 +10,9 @@
 
 # ABLkit: A Toolkit for Abductive Learning
 
+- [Documentation](https://ablkit.readthedocs.io/en/latest/index.html)
+- [Read the paper](https://journal.hep.com.cn/fcs/EN/10.1007/s11704-024-40085-7)
+
 **ABLkit** is an efficient Python toolkit for [**Abductive Learning (ABL)**](https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf). ABL is a novel paradigm that integrates machine learning and logical reasoning in a unified framework. It is suitable for tasks where both data and (logical) domain knowledge are available. 
 
 <p align="center">
@@ -182,7 +185,7 @@ bridge.test(test_data)
 
 </details>
 
-To explore detailed tutorials and information, please refer to - [document](https://ablkit.readthedocs.io/en/latest/index.html).
+To explore detailed tutorials and information, please refer to: [Documentation on Read the Docs](https://ablkit.readthedocs.io/en/latest/index.html).
 
 ## Examples
 
@@ -217,5 +220,21 @@ For more information about ABL, please refer to: [Zhou, 2019](http://scis.scichi
   pages     = {353--369},
   address   = {Amsterdam},
   year      = {2022}
+}
+```
+
+## Cite
+
+To cite ABLkit, please cite the following paper:  [Huang et al., 2024](https://journal.hep.com.cn/fcs/EN/10.1007/s11704-024-40085-7).
+
+```
+@article{ABLkit2024,
+  author     = {Huang, Yu-Xuan and Hu, Wen-Chao and Gao, En-Hao and Jiang, Yuan},
+  title      = {ABLkit: a Python toolkit for abductive learning},
+  journal    = {Frontiers of Computer Science},
+  volume     = {18},
+  number     = {6},
+  pages      = {186354},
+  year       = {2024}
 }
 ```
