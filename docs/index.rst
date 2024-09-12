@@ -92,6 +92,22 @@ and `Zhou and Huang, 2022 <https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf
         year      = {2022}
     }
 
+Cite
+----
+To cite ABLkit, please cite the following paper:  `Huang et al., 2024 <https://journal.hep.com.cn/fcs/EN/10.1007/s11704-024-40085-7>`.
+
+.. code-block:: latex
+    @article{ABLkit2024,
+    author     = {Huang, Yu-Xuan and Hu, Wen-Chao and Gao, En-Hao and Jiang, Yuan},
+    title      = {ABLkit: a Python toolkit for abductive learning},
+    journal    = {Frontiers of Computer Science},
+    volume     = {18},
+    number     = {6},
+    pages      = {186354},
+    year       = {2024}
+    }
+
+
 .. toctree::
    :maxdepth: 1
    :caption: Overview
