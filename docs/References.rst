@@ -6,6 +6,7 @@ To cite ABLkit, please cite the following paper:
 Yu-Xuan Huang, Wen-Chao Hu, En-Hao Gao and Yuan Jiang. `ABLkit: a Python toolkit for abductive learning <https://journal.hep.com.cn/fcs/EN/10.1007/s11704-024-40085-7>`_. **Frontiers of Computer Science**, 2024, 18: 186354.
 
 .. code-block:: latex
+
     @article{ABLkit2024,
     author     = {Huang, Yu-Xuan and Hu, Wen-Chao and Gao, En-Hao and Jiang, Yuan},
     title      = {ABLkit: a Python toolkit for abductive learning},
