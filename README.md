@@ -28,7 +28,7 @@ ABLkit encapsulates advanced ABL techniques, providing users with an efficient a
 <img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/ABLkit.png" alt="ABLkit" style="width: 80%;"/>
 </p>
 
-## Installation
+## 🛠️ Installation
 
 ### Install from PyPI
 
@@ -60,7 +60,7 @@ sudo apt-get install swi-prolog
 
 For Windows and Mac users, please refer to the [SWI-Prolog Install Guide](https://github.com/yuce/pyswip/blob/master/INSTALL.md).
 
-## Quick Start
+## ⚡ Quick Start
 
 We use the MNIST Addition task as a quick start example. In this task, pairs of MNIST handwritten images and their sums are given, alongwith a domain knowledge base which contains information on how to perform addition operations. Our objective is to input a pair of handwritten images and accurately determine their sum.
 
@@ -184,7 +184,7 @@ bridge.test(test_data)
 
 To explore detailed tutorials and information, please refer to: [Documentation on Read the Docs](https://ablkit.readthedocs.io/en/latest/index.html).
 
-## Examples
+## 🧪 Examples
 
 We provide several examples in `examples/`. Each example is stored in a separate folder containing a README file.
 
@@ -194,7 +194,7 @@ We provide several examples in `examples/`. Each example is stored in a separate
 + [Zoo](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/zoo)
 + [BDD-OIA](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/bdd_oia)
 
-## References
+## 📚 References
 
 For more information about ABL, please refer to: [Zhou, 2019](http://scis.scichina.com/en/2019/076101.pdf) and [Zhou and Huang, 2022](https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf).
 
@@ -221,7 +221,7 @@ For more information about ABL, please refer to: [Zhou, 2019](http://scis.scichi
 }
 ```
 
-## Citation
+## 📝 Citation
 
 To cite ABLkit, please cite the following paper:  [Huang et al., 2024](https://journal.hep.com.cn/fcs/EN/10.1007/s11704-024-40085-7).
 
@@ -236,3 +236,51 @@ To cite ABLkit, please cite the following paper:  [Huang et al., 2024](https://j
   year       = {2024}
 }
 ```
+
+## ✨ Contributors
+
+We would like to thank the following contributors for their efforts on this project:
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/Tony-HYX">
+        <img src="https://avatars.githubusercontent.com/u/34394824?V=4" width="100px;" alt=""/>
+        <br />
+        Yu-Xuan Huang
+      </a><br />
+      <span style="font-size:11px; line-height:1; display:block; margin-top:4px; visibility: hidden;">(placeholder)</span>
+    </td>
+    <td align="center">
+      <a href="https://github.com/troyyyyy">
+        <img src="https://avatars.githubusercontent.com/u/49091847?v=4" width="100px;" alt=""/>
+        <br />
+        Wen-Chao Hu
+      </a><br />
+      <span style="font-size:12px; line-height:1; display:block; margin-top:-1px; margin-bottom: 5px;">
+        <i>(current maintainer)</i>
+      </span>
+    </td>
+    <td align="center">
+      <a href="https://github.com/WaTerminator">
+        <img src="https://avatars.githubusercontent.com/u/58843099?V=4" width="100px;" alt=""/>
+        <br />
+        En-Hao Gao
+      </a><br />
+      <span style="font-size:11px; line-height:1; display:block; margin-top:4px; visibility: hidden;">(placeholder)</span>
+    </td>
+    <td align="center">
+      <a href="https://github.com/snqn1597">
+        <img src="https://avatars.githubusercontent.com/u/98020642?V=4" width="100px;" alt=""/>
+        <br />
+        Qi-Jie Li
+      </a><br />
+      <span style="font-size:11px; line-height:1; display:block; margin-top:4px; visibility: hidden;">(placeholder)</span>
+    </td>
+  </tr>
+</table>
+
+We also thank the following users for their helpful suggestions and feedback:
+
+- [Hao-Yuan He](https://github.com/Hao-Yuan-He)
+- [Wang-Zhou Dai](https://github.com/haldai)
