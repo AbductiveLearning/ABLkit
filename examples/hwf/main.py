@@ -81,7 +81,7 @@ def main():
         "--label-smoothing",
         type=float,
         default=0.2,
-        help="label smoothing in cross entropy loss (default : 0.2)"
+        help="label smoothing in cross entropy loss (default : 0.2)",
     )
     parser.add_argument(
         "--lr", type=float, default=1e-3, help="base model learning rate (default : 0.001)"
@@ -138,7 +138,12 @@ def main():
 
     # Build BasicNN
     base_model = BasicNN(
-        cls, loss_fn, optimizer, device=device, batch_size=args.batch_size, num_epochs=args.epochs,
+        cls,
+        loss_fn,
+        optimizer,
+        device=device,
+        batch_size=args.batch_size,
+        num_epochs=args.epochs,
     )
 
     # Build ABLModel

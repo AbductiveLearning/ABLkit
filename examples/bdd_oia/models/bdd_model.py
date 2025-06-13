@@ -5,6 +5,7 @@ from ablkit.data import ListData
 from ablkit.learning import ABLModel
 from ablkit.utils import reform_list
 
+
 class BDDABLModel(ABLModel):
     def predict(self, data_examples: ListData) -> Dict:
         model = self.base_model

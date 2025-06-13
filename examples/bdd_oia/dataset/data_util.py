@@ -14,5 +14,6 @@ def get_dataset(fname, get_pseudo_label=True):
     Y = [tuple(y) for y in Y]
     return X, pseudo_label, Y
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     dataset = get_dataset("val.npz")

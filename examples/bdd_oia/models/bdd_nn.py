@@ -1,10 +1,9 @@
 import logging
-import os
-from typing import Any, Callable, List, Optional, Tuple, Union
+from typing import Any, Callable, List, Optional
 
 import numpy
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 
 from ablkit.learning import BasicNN, PredictionDataset, ClassificationDataset
 from ablkit.utils.logger import print_log
@@ -15,11 +14,11 @@ class MultiLabelClassificationDataset(ClassificationDataset):
         if (not isinstance(X, list)) or (not isinstance(Y, list)):
             raise ValueError("X and Y should be of type list.")
         self.X = X
-        self.Y = torch.FloatTensor(numpy.stack(Y, axis=0)) # float32 for BCELoss
+        self.Y = torch.FloatTensor(numpy.stack(Y, axis=0))  # float32 for BCELoss
         self.transform = transform
 
-class BDDNN(BasicNN):
 
+class BDDNN(BasicNN):
     def predict(
         self,
         data_loader: Optional[DataLoader] = None,

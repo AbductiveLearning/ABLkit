@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from ablkit.reasoning import KBBase
 
+
 class BDDKB(KBBase):
     def __init__(self, pseudo_label_list=None):
         if pseudo_label_list is None:
@@ -20,9 +21,29 @@ class BDDKB(KBBase):
         (1, 0, 1, 1) 196
         """
         assert len(attrs) == 21
-        green_light, follow, road_clear, red_light, traffic_sign, car, person, rider, other_obstacle, \
-        left_lane, left_green_light, left_follow, no_left_lane, left_obstacle, left_solid_line, \
-        right_lane, right_green_light, right_follow, no_right_lane, right_obstacle, right_solid_line = attrs
+        (
+            green_light,
+            follow,
+            road_clear,
+            red_light,
+            traffic_sign,
+            car,
+            person,
+            rider,
+            other_obstacle,
+            left_lane,
+            left_green_light,
+            left_follow,
+            no_left_lane,
+            left_obstacle,
+            left_solid_line,
+            right_lane,
+            right_green_light,
+            right_follow,
+            no_right_lane,
+            right_obstacle,
+            right_solid_line,
+        ) = attrs
 
         illegal_return = (0, 0, 0, 0)
         if red_light == green_light == 1:
@@ -30,8 +51,8 @@ class BDDKB(KBBase):
         obstacle = car or person or rider or other_obstacle
         if road_clear == obstacle:
             return illegal_return
-        move_forward = (green_light or follow or road_clear)
-        stop = (red_light or traffic_sign or obstacle)
+        move_forward = green_light or follow or road_clear
+        stop = red_light or traffic_sign or obstacle
         if stop:
             move_forward = 0
 

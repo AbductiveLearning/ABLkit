@@ -8,7 +8,7 @@ from ablkit.data.evaluation import SymbolAccuracy
 from ablkit.reasoning import Reasoner
 from ablkit.utils import ABLLogger, print_log
 
-from models.nn import *
+from models.nn import ConceptNet
 from models.bdd_nn import BDDNN
 from models.bdd_model import BDDABLModel
 from reasoning.bddkb import BDDKB
@@ -19,11 +19,12 @@ from metric import BDDReasoningMetric
 
 def multi_label_confidence_dist(data_example, candidates, candidates_idxs, reasoning_results):
     pred_prob = data_example.pred_prob.T  # nc x 1
-    pred_prob = np.concatenate([1-pred_prob, pred_prob], axis=1)  # nc x 2
+    pred_prob = np.concatenate([1 - pred_prob, pred_prob], axis=1)  # nc x 2
     cols = np.arange(len(candidates_idxs[0]))[None, :]
     corr_prob = pred_prob[cols, candidates_idxs]
-    costs = - np.sum(np.log(corr_prob + 1e-6), axis=1)
+    costs = -np.sum(np.log(corr_prob + 1e-6), axis=1)
     return costs
+
 
 def get_args():
     parser = argparse.ArgumentParser(description="BDD-OIA example")
@@ -61,6 +62,7 @@ def get_args():
 
     args = parser.parse_args()
     return args
+
 
 def main():
     args = get_args()
@@ -116,7 +118,7 @@ def main():
         kb,
         dist_func=multi_label_confidence_dist,
         max_revision=args.max_revision,
-        require_more_revision=args.require_more_revision
+        require_more_revision=args.require_more_revision,
     )
 
     # -- Building Evaluation Metrics --------------------

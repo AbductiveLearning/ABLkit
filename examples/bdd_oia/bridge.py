@@ -3,6 +3,7 @@ from typing import List, Any
 from ablkit.data import ListData
 from ablkit.bridge import SimpleBridge
 
+
 class BDDBridge(SimpleBridge):
     def idx_to_pseudo_label(self, data_examples: ListData) -> List[List[Any]]:
         pred_idx = data_examples.pred_idx  # [ ndarray(1,nc),... ]
