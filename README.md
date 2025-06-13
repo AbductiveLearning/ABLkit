@@ -239,7 +239,7 @@ To cite ABLkit, please cite the following paper:  [Huang et al., 2024](https://j
 
 ## ✨ Contributors
 
-We would like to thank the following contributors for their efforts on this project:
+We would like to thank the following contributors for their efforts on this project: <sub><i>(*: current maintainer)</i></sub>
 
 <table>
   <tr>
@@ -248,34 +248,28 @@ We would like to thank the following contributors for their efforts on this proj
         <img src="https://avatars.githubusercontent.com/u/34394824?V=4" width="100px;" alt=""/>
         <br />
         Yu-Xuan Huang
-      </a><br />
-      <span style="font-size:11px; line-height:1; display:block; margin-top:4px;">&nbsp;</span>
+      </a>
     </td>
     <td align="center">
       <a href="https://github.com/troyyyyy">
         <img src="https://avatars.githubusercontent.com/u/49091847?v=4" width="100px;" alt=""/>
         <br />
         Wen-Chao Hu
-      </a><br />
-      <span style="font-size:12px; line-height:1; display:block; margin-top:-1px; margin-bottom: 5px;">
-        <i>(current maintainer)</i>
-      </span>
+      </a>*
     </td>
     <td align="center">
       <a href="https://github.com/WaTerminator">
         <img src="https://avatars.githubusercontent.com/u/58843099?V=4" width="100px;" alt=""/>
         <br />
         En-Hao Gao
-      </a><br />
-      <span style="font-size:11px; line-height:1; display:block; margin-top:4px;">&nbsp;</span>
+      </a>
     </td>
     <td align="center">
       <a href="https://github.com/snqn1597">
         <img src="https://avatars.githubusercontent.com/u/98020642?V=4" width="100px;" alt=""/>
         <br />
         Qi-Jie Li
-      </a><br />
-      <span style="font-size:11px; line-height:1; display:block; margin-top:4px;">&nbsp;</span>
+      </a>
     </td>
   </tr>
 </table>
