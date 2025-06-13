@@ -249,7 +249,7 @@ We would like to thank the following contributors for their efforts on this proj
         <br />
         Yu-Xuan Huang
       </a><br />
-      <span style="font-size:11px; line-height:1; display:block; margin-top:4px; visibility: hidden;">(placeholder)</span>
+      <span style="font-size:11px; line-height:1; display:block; margin-top:4px;">&nbsp;</span>
     </td>
     <td align="center">
       <a href="https://github.com/troyyyyy">
@@ -267,7 +267,7 @@ We would like to thank the following contributors for their efforts on this proj
         <br />
         En-Hao Gao
       </a><br />
-      <span style="font-size:11px; line-height:1; display:block; margin-top:4px; visibility: hidden;">(placeholder)</span>
+      <span style="font-size:11px; line-height:1; display:block; margin-top:4px;">&nbsp;</span>
     </td>
     <td align="center">
       <a href="https://github.com/snqn1597">
@@ -275,7 +275,7 @@ We would like to thank the following contributors for their efforts on this proj
         <br />
         Qi-Jie Li
       </a><br />
-      <span style="font-size:11px; line-height:1; display:block; margin-top:4px; visibility: hidden;">(placeholder)</span>
+      <span style="font-size:11px; line-height:1; display:block; margin-top:4px;">&nbsp;</span>
     </td>
   </tr>
 </table>
