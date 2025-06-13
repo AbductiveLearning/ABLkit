@@ -192,6 +192,7 @@ We provide several examples in `examples/`. Each example is stored in a separate
 + [Handwritten Formula (HWF)](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/hwf)
 + [Handwritten Equation Decipherment](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/hed)
 + [Zoo](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/zoo)
++ [BDD-OIA](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/bdd_oia)
 
 ## References
 

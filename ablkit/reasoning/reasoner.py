@@ -180,8 +180,8 @@ class Reasoner:
             candidates_idxs = [[self.label_to_idx[x] for x in c] for c in candidates]
             return avg_confidence_dist(data_example.pred_prob, candidates_idxs)
         else:
-            candidate_idxs = [[self.label_to_idx[x] for x in c] for c in candidates]
-            cost_list = self.dist_func(data_example, candidates, candidate_idxs, reasoning_results)
+            candidates_idxs = [[self.label_to_idx[x] for x in c] for c in candidates]
+            cost_list = self.dist_func(data_example, candidates, candidates_idxs, reasoning_results)
             if len(cost_list) != len(candidates):
                 raise ValueError(
                     "The length of the array returned by dist_func must be equal to the number "
