@@ -244,6 +244,13 @@ We would like to thank the following contributors for their efforts on this proj
 <table>
   <tr>
     <td align="center">
+      <a href="https://github.com/WaTerminator">
+        <img src="https://avatars.githubusercontent.com/u/58843099?V=4" width="100px;" alt=""/>
+        <br />
+        En-Hao Gao
+      </a>
+    </td>
+    <td align="center">
       <a href="https://github.com/Tony-HYX">
         <img src="https://avatars.githubusercontent.com/u/34394824?V=4" width="100px;" alt=""/>
         <br />
@@ -256,13 +263,6 @@ We would like to thank the following contributors for their efforts on this proj
         <br />
         Wen-Chao Hu
       </a>*
-    </td>
-    <td align="center">
-      <a href="https://github.com/WaTerminator">
-        <img src="https://avatars.githubusercontent.com/u/58843099?V=4" width="100px;" alt=""/>
-        <br />
-        En-Hao Gao
-      </a>
     </td>
     <td align="center">
       <a href="https://github.com/snqn1597">

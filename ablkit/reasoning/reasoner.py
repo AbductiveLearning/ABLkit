@@ -356,3 +356,11 @@ class Reasoner:
 
     def __call__(self, data_examples: ListData) -> List[List[Any]]:
         return self.batch_abduce(data_examples)
+
+## TODO: add A3BL reasoner
+# See: https://github.com/Hao-Yuan-He/A3BL/blob/a3bl/ablkit/reasoning/a3bl_reasoner.py
+
+# class A3BLReasoner(Reasoner):
+# ...
+
+

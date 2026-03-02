@@ -230,6 +230,7 @@ class SimpleBridge(BaseBridge[M, R]):
         ] = None,
         loops: int = 50,
         segment_size: Union[int, float] = 1.0,
+        use_supervised_data: bool = False,
         eval_interval: int = 1,
         save_interval: Optional[int] = None,
         save_dir: Optional[str] = None,
@@ -304,6 +305,12 @@ class SimpleBridge(BaseBridge[M, R]):
 
                 sub_data_examples = data_examples[seg_idx * segment_size : (seg_idx + 1) * segment_size]
                 self.predict(sub_data_examples)
+                
+                # TODO: 加一个半监督的bridge方法，当use_supervised_data是True的时候，使用Z的label加入训练，具体来说：
+                # 如果有数据的Z项有label的话，就使用该label进行训练，而不是用abduce的方法得到label进行训练。
+                # 如果数据的Z项是空的话，则与之前相同，使用abduce的方法得到label进行训练。
+                # 把两部分数据合并在一起进行训练。
+                
                 self.idx_to_pseudo_label(sub_data_examples)
                 self.abduce_pseudo_label(sub_data_examples)
                 self.filter_pseudo_label(sub_data_examples)
