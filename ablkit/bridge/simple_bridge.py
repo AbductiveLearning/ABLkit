@@ -16,10 +16,10 @@ from ..data.structures import ListData
 from ..learning import ABLModel
 from ..reasoning import Reasoner
 from ..utils import print_log
-from .base_bridge import BaseBridge, M, R
+from .base_bridge import BaseBridge
 
 
-class SimpleBridge(BaseBridge[M, R]):
+class SimpleBridge(BaseBridge):
     """
     A basic implementation for bridging machine learning and reasoning parts.
 
@@ -34,10 +34,10 @@ class SimpleBridge(BaseBridge[M, R]):
 
     Parameters
     ----------
-    model : M
+    model : ABLModel
         The machine learning model wrapped in ``ABLModel``, which is mainly used for
         prediction and model training.
-    reasoner : R
+    reasoner : Reasoner
         The reasoning part wrapped in ``Reasoner``, which is used for pseudo-label revision.
     metric_list : List[BaseMetric]
         A list of metrics used for evaluating the model's performance.
@@ -45,8 +45,8 @@ class SimpleBridge(BaseBridge[M, R]):
 
     def __init__(
         self,
-        model: M,
-        reasoner: R,
+        model: ABLModel,
+        reasoner: Reasoner,
         metric_list: List[BaseMetric],
     ) -> None:
         super().__init__(model, reasoner)
