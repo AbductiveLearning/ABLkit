@@ -146,7 +146,10 @@ class SimpleBridge(BaseBridge):
             A list of indices converted from pseudo-labels.
         """
         abduced_idx = [
-            [self.reasoner.label_to_idx[_abduced_pseudo_label] for _abduced_pseudo_label in sub_list]
+            [
+                self.reasoner.label_to_idx[_abduced_pseudo_label]
+                for _abduced_pseudo_label in sub_list
+            ]
             for sub_list in data_examples.abduced_pseudo_label
         ]
         data_examples.abduced_idx = abduced_idx
@@ -221,7 +224,9 @@ class SimpleBridge(BaseBridge):
     def train(
         self,
         train_data: Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], List[Any]]],
-        label_data: Optional[Union[ListData, Tuple[List[List[Any]], List[List[Any]], List[Any]]]] = None,
+        label_data: Optional[
+            Union[ListData, Tuple[List[List[Any]], List[List[Any]], List[Any]]]
+        ] = None,
         val_data: Optional[
             Union[
                 ListData,
@@ -303,14 +308,16 @@ class SimpleBridge(BaseBridge):
                     logger="current",
                 )
 
-                sub_data_examples = data_examples[seg_idx * segment_size : (seg_idx + 1) * segment_size]
+                sub_data_examples = data_examples[
+                    seg_idx * segment_size : (seg_idx + 1) * segment_size
+                ]
                 self.predict(sub_data_examples)
-                
+
                 # TODO: 加一个半监督的bridge方法，当use_supervised_data是True的时候，使用Z的label加入训练，具体来说：
                 # 如果有数据的Z项有label的话，就使用该label进行训练，而不是用abduce的方法得到label进行训练。
                 # 如果数据的Z项是空的话，则与之前相同，使用abduce的方法得到label进行训练。
                 # 把两部分数据合并在一起进行训练。
-                
+
                 self.idx_to_pseudo_label(sub_data_examples)
                 self.abduce_pseudo_label(sub_data_examples)
                 self.filter_pseudo_label(sub_data_examples)
@@ -326,7 +333,9 @@ class SimpleBridge(BaseBridge):
 
             if save_interval is not None and ((loop + 1) % save_interval == 0 or loop == loops - 1):
                 print_log(f"Saving model: loop(save) [{loop + 1}]", logger="current")
-                self.model.save(save_path=osp.join(save_dir, f"model_checkpoint_loop_{loop + 1}.pth"))
+                self.model.save(
+                    save_path=osp.join(save_dir, f"model_checkpoint_loop_{loop + 1}.pth")
+                )
 
     def _valid(self, data_examples: ListData, prefix: str = "val") -> None:
         """
