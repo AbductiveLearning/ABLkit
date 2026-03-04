@@ -272,7 +272,7 @@ We would like to thank the following contributors for their efforts on this proj
       </a>
     </td>
     <td align="center">
-      <a href="https://github.com/snqn1597">
+      <a href="https://github.com/Hygebra">
         <img src="https://avatars.githubusercontent.com/u/160569872?V=4" width="100px;" alt=""/>
         <br />
         Yang Hang
