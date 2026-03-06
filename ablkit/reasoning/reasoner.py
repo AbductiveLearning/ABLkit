@@ -354,6 +354,18 @@ class Reasoner:
         data_examples.abduced_pseudo_label = abduced_pseudo_label
         return abduced_pseudo_label
 
+    def batch_supervised_abduce(self, data_examples: ListData) -> List[List[Any]]:
+        """
+        Perform abductive reasoning on the given prediction data examples, using supervised data
+        when gt_pseudo_label is given.
+        """
+        abduced_pseudo_label = [
+            data_example.gt_pseudo_label if data_example.gt_pseudo_label else self.abduce(data_example) \
+            for data_example in data_examples
+        ]
+        data_examples.abduced_pseudo_label = abduced_pseudo_label
+        return abduced_pseudo_label
+
     def __call__(self, data_examples: ListData) -> List[List[Any]]:
         return self.batch_abduce(data_examples)
 

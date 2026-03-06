@@ -111,6 +111,23 @@ class SimpleBridge(BaseBridge):
         self.reasoner.batch_abduce(data_examples)
         return data_examples.abduced_pseudo_label
 
+    def supervised_abduce_pseudo_label(self, data_examples: ListData) -> List[List[Any]]:
+        """
+        Revise predicted pseudo-labels of the given data examples using ground truth.
+
+        Parameters
+        ----------
+        data_examples : ListData
+            Data examples containing predicted pseudo-labels.
+
+        Returns
+        -------
+        List[List[Any]]
+            A list of ground truth pseudo-labels for the given data examples.
+        """
+        self.reasoner.batch_supervised_abduce(data_examples)
+        return data_examples.abduced_pseudo_label
+
     def idx_to_pseudo_label(self, data_examples: ListData) -> List[List[Any]]:
         """
         Map indices of data examples into pseudo-labels.
@@ -313,13 +330,11 @@ class SimpleBridge(BaseBridge):
                 ]
                 self.predict(sub_data_examples)
 
-                # TODO: 加一个半监督的bridge方法，当use_supervised_data是True的时候，使用Z的label加入训练，具体来说：
-                # 如果有数据的Z项有label的话，就使用该label进行训练，而不是用abduce的方法得到label进行训练。
-                # 如果数据的Z项是空的话，则与之前相同，使用abduce的方法得到label进行训练。
-                # 把两部分数据合并在一起进行训练。
-
                 self.idx_to_pseudo_label(sub_data_examples)
-                self.abduce_pseudo_label(sub_data_examples)
+                if use_supervised_data or True:
+                    self.supervised_abduce_pseudo_label(sub_data_examples)
+                else:
+                    self.abduce_pseudo_label(sub_data_examples)
                 self.filter_pseudo_label(sub_data_examples)
                 self.concat_data_examples(sub_data_examples, label_data_examples)
                 self.pseudo_label_to_idx(sub_data_examples)
