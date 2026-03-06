@@ -123,7 +123,7 @@ class SimpleBridge(BaseBridge):
         Returns
         -------
         List[List[Any]]
-            A list of ground truth pseudo-labels for the given data examples.
+            A list of ground truth/abduced pseudo-labels for the given data examples.
         """
         self.reasoner.batch_supervised_abduce(data_examples)
         return data_examples.abduced_pseudo_label
