@@ -331,7 +331,7 @@ class SimpleBridge(BaseBridge):
                 self.predict(sub_data_examples)
 
                 self.idx_to_pseudo_label(sub_data_examples)
-                if use_supervised_data or True:
+                if use_supervised_data:
                     self.supervised_abduce_pseudo_label(sub_data_examples)
                 else:
                     self.abduce_pseudo_label(sub_data_examples)

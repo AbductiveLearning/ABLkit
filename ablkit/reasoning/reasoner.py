@@ -360,7 +360,11 @@ class Reasoner:
         when gt_pseudo_label is given.
         """
         abduced_pseudo_label = [
-            data_example.gt_pseudo_label if data_example.gt_pseudo_label else self.abduce(data_example) \
+            (
+                data_example.gt_pseudo_label
+                if data_example.gt_pseudo_label
+                else self.abduce(data_example)
+            )
             for data_example in data_examples
         ]
         data_examples.abduced_pseudo_label = abduced_pseudo_label
