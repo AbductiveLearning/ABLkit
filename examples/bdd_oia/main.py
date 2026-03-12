@@ -3,6 +3,7 @@ import os.path as osp
 import numpy as np
 import torch
 from torch import optim
+import torch.nn as nn
 
 from ablkit.data.evaluation import SymbolAccuracy
 from ablkit.reasoning import Reasoner
