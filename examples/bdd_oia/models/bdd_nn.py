@@ -19,6 +19,7 @@ class MultiLabelClassificationDataset(ClassificationDataset):
 
 
 class BDDNN(BasicNN):
+    # TODO: 这里要简单介绍一下BDDNN是什么，它与BasicNN的区别是什么，为什么要写这样一个继承类
     def predict(
         self,
         data_loader: Optional[DataLoader] = None,
