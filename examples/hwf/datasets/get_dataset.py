@@ -6,6 +6,8 @@ import gdown
 from PIL import Image
 from torchvision.transforms import transforms
 
+from ablkit.utils import print_log
+
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 img_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (1,))])
@@ -30,10 +32,10 @@ def get_dataset(train=True, get_pseudo_label=False):
     data_dir = CURRENT_DIR + "/data"
 
     if not os.path.exists(data_dir):
-        print("Dataset not exist, downloading it...")
+        print_log("Dataset not present, downloading it...", logger="current")
         url = "https://drive.google.com/u/0/uc?id=1t52OE2Wdm5GdShX1jD2Wy8phCllk0r8I&export=download"
         download_and_unzip(url, os.path.join(CURRENT_DIR, "HWF.zip"))
-        print("Download and extraction complete.")
+        print_log("Download and extraction complete.", logger="current")
 
     if train:
         file = os.path.join(data_dir, "expr_train.json")
