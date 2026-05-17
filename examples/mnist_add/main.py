@@ -6,7 +6,7 @@ import torch
 from torch import nn
 from torch.optim import RMSprop, lr_scheduler
 
-from ablkit.bridge import SimpleBridge, VerificationBridge
+from ablkit.bridge import A3BLBridge, SimpleBridge, VerificationBridge
 from ablkit.data.evaluation import ReasoningMetric, SymbolAccuracy
 from ablkit.learning import ABLModel, BasicNN
 from ablkit.reasoning import (
@@ -19,7 +19,6 @@ from ablkit.reasoning import (
 )
 from ablkit.utils import ABLLogger, print_log
 
-from a3bl_bridge import A3BLBridge
 from datasets import get_dataset
 from models.nn import LeNet5
 

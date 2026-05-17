@@ -6,12 +6,11 @@ from torch import optim
 import torch.nn as nn
 
 from ablkit.data.evaluation import SymbolAccuracy
+from ablkit.learning import MultiLabelABLModel, MultiLabelBasicNN
 from ablkit.reasoning import Reasoner
 from ablkit.utils import ABLLogger, print_log
 
 from models.nn import ConceptNet
-from models.bdd_nn import BDDNN
-from models.bdd_model import BDDABLModel
 from reasoning.bddkb import BDDKB
 from dataset.data_util import get_dataset
 from bridge import BDDBridge
@@ -80,7 +79,7 @@ def main():
     # -- Building the Learning Part ---------------------
     print_log("Building the Learning Part.", logger="current")
 
-    # Build necessary components for BDDNN
+    # Build necessary components for MultiLabelBasicNN
     net = ConceptNet()
     loss_fn = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(net.parameters(), lr=args.lr)
@@ -94,8 +93,7 @@ def main():
         steps_per_epoch=int(1 / args.segment_size) + 1,
     )
 
-    # Build BDDNN
-    base_model = BDDNN(
+    base_model = MultiLabelBasicNN(
         net,
         loss_fn,
         optimizer,
@@ -105,8 +103,7 @@ def main():
         num_epochs=args.epochs,
     )
 
-    # Build ABLModel
-    model = BDDABLModel(base_model)
+    model = MultiLabelABLModel(base_model)
 
     # -- Building the Reasoning Part --------------------
     print_log("Building the Reasoning Part.", logger="current")

@@ -380,26 +380,26 @@ In addition to the standard pipeline above, ``examples/mnist_add/main.py`` accep
 several flags that switch in alternative methods. The defaults reproduce the
 standard pipeline, so existing usage is unaffected.
 
-- ``--method {standard,a3bl,verification}`` — choose the learning/reasoning
+- ``--method {standard,a3bl,verification}``: choose the learning/reasoning
   pipeline.
   ``standard`` uses ``Reasoner`` / ``SimpleBridge``.
   ``a3bl`` uses the ambiguity-aware ``A3BLReasoner`` together with
-  ``A3BLBridge`` (defined under ``examples/mnist_add/a3bl_bridge.py``).
+  ``A3BLBridge``.
   ``verification`` uses ``VerificationReasoner`` and ``VerificationBridge``:
   rather than picking one best candidate by ``dist_func``, it enumerates
   the top ``--top-k`` consistent candidates by joint probability and trains
   the model once per candidate.
   All methods share the same ``BasicNN`` / ``ABLModel`` wrappers.
-- ``--dist-func {hamming,confidence,avg_confidence,similarity,rejection}`` —
+- ``--dist-func {hamming,confidence,avg_confidence,similarity,rejection}``:
   passed straight to the reasoner. ``similarity`` requires the wrapped
   PyTorch model to implement ``extract_features(x)`` (the ``LeNet5`` in
   this example does); ``BasicNN`` then surfaces those embeddings to the
   reasoner automatically. Ignored when ``--method verification``.
-- ``--labeled-ratio FLOAT`` — fraction in ``(0, 1]`` of training samples that
+- ``--labeled-ratio FLOAT``: fraction in ``(0, 1]`` of training samples that
   keep their ground-truth pseudo-labels. Values below ``1.0`` enable the
   semi-supervised pipeline (``use_supervised_data=True`` on
   ``bridge.train``). Only valid with ``--method standard``.
-- ``--top-k INT`` — number of consistent candidates the verification
+- ``--top-k INT``: number of consistent candidates the verification
   reasoner enumerates per example. Only used with ``--method verification``.
   Defaults to ``1``.
 

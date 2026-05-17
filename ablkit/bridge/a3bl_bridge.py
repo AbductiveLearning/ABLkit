@@ -1,16 +1,19 @@
 import os.path as osp
 from typing import Any, List, Optional, Tuple, Union
 
-from ablkit.bridge import SimpleBridge
-from ablkit.data.evaluation.base_metric import BaseMetric
-from ablkit.data.structures.list_data import ListData
-from ablkit.learning import ABLModel
-from ablkit.reasoning import A3BLReasoner
-from ablkit.utils import print_log
+from ..data.evaluation.base_metric import BaseMetric
+from ..data.structures.list_data import ListData
+from ..learning import ABLModel
+from ..reasoning import A3BLReasoner
+from ..utils import print_log
+from .simple_bridge import SimpleBridge
+
 
 class A3BLBridge(SimpleBridge):
     """
     An ambiguity-aware implementation for bridging machine learning and reasoning parts.
+
+    Reference: https://github.com/Hao-Yuan-He/A3BL
 
     Involves the following five steps:
         - Predict class probabilities and indices for the given data examples.
@@ -60,9 +63,9 @@ class A3BLBridge(SimpleBridge):
     def train_data_iter(
         self,
         train_data,
-        val_data = None,
-        segment_size= 1.0,
-    ):        
+        val_data=None,
+        segment_size=1.0,
+    ):
         data_examples = self.data_preprocess("train", train_data)
 
         if val_data is not None:
@@ -80,12 +83,10 @@ class A3BLBridge(SimpleBridge):
                 raise ValueError("segment_size should be in (0, 1].")
         else:
             raise ValueError("segment_size should be int or float.")
-        
+
         for seg_idx in range((len(data_examples) - 1) // segment_size + 1):
-            sub_data_examples = data_examples[seg_idx * segment_size : (seg_idx + 1) * segment_size]
-            yield sub_data_examples, val_data_examples
-        
-        
+            sub = data_examples[seg_idx * segment_size: (seg_idx + 1) * segment_size]
+            yield sub, val_data_examples
 
     def train(
         self,
@@ -141,11 +142,12 @@ class A3BLBridge(SimpleBridge):
         save_dir : str, optional
             Directory to save the model. Defaults to None.
         """
-
-
         for loop in range(loops):
-            for train_examples_batch, val_examples_batch in self.train_data_iter(train_data, val_data, segment_size):
-                print_log(f"loop(train) [{loop + 1}/{loops}] segment(train) ",logger="current")
+            iterator = self.train_data_iter(train_data, val_data, segment_size)
+            for train_examples_batch, val_examples_batch in iterator:
+                print_log(
+                    f"loop(train) [{loop + 1}/{loops}] segment(train) ", logger="current"
+                )
                 self.predict(train_examples_batch)
                 self.idx_to_pseudo_label(train_examples_batch)
                 self.abduce_pseudo_label(train_examples_batch)
@@ -159,4 +161,6 @@ class A3BLBridge(SimpleBridge):
 
             if save_interval is not None and ((loop + 1) % save_interval == 0 or loop == loops - 1):
                 print_log(f"Saving model: loop(save) [{loop + 1}]", logger="current")
-                self.model.save(save_path=osp.join(save_dir, f"model_checkpoint_loop_{loop + 1}.pth"))
+                self.model.save(
+                    save_path=osp.join(save_dir, f"model_checkpoint_loop_{loop + 1}.pth")
+                )

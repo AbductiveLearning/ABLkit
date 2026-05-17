@@ -15,7 +15,11 @@ import torch
 from torch.utils.data import DataLoader
 
 from ..utils.logger import print_log
-from .torch_dataset import ClassificationDataset, PredictionDataset
+from .torch_dataset import (
+    ClassificationDataset,
+    MultiLabelClassificationDataset,
+    PredictionDataset,
+)
 
 
 class BasicNN:
@@ -637,3 +641,109 @@ class BasicNN:
         self.model.load_state_dict(param_dic["model"])
         if "optimizer" in param_dic.keys():
             self.optimizer.load_state_dict(param_dic["optimizer"])
+
+
+# =============================================================================
+# Multi-label variants
+# =============================================================================
+
+
+class MultiLabelBasicNN(BasicNN):
+    """
+    A multi-label variant of :class:`BasicNN`.
+
+    The standard :class:`BasicNN` assumes a single-label, multi-class
+    classification setting (softmax output, argmax prediction). In
+    contrast, :class:`MultiLabelBasicNN` treats each output dimension as
+    an independent binary decision (sigmoid output, threshold-based binary
+    vector prediction) and uses
+    :class:`~ablkit.learning.MultiLabelClassificationDataset` so that
+    targets can be fed straight into losses like ``BCEWithLogitsLoss``.
+
+    Apart from prediction and dataset handling, the class reuses the full
+    training and evaluation pipeline from :class:`BasicNN`.
+    """
+
+    def predict(
+        self,
+        data_loader: Optional[DataLoader] = None,
+        X: Optional[List[Any]] = None,
+    ) -> numpy.ndarray:
+        """
+        Return a binary indicator vector for each sample by thresholding
+        the per-label sigmoid probabilities at 0.5.
+        """
+        if data_loader is not None and X is not None:
+            print_log(
+                "Predict the class of input data in data_loader instead of X.",
+                logger="current",
+                level=logging.WARNING,
+            )
+
+        if data_loader is None:
+            dataset = PredictionDataset(X, self.test_transform)
+            data_loader = DataLoader(
+                dataset,
+                batch_size=self.batch_size,
+                num_workers=self.num_workers,
+                collate_fn=self.collate_fn,
+                pin_memory=torch.cuda.is_available(),
+            )
+        pred_probs = self._predict(data_loader).sigmoid()
+        pred = torch.where(pred_probs > 0.5, 1, 0).int()
+        return pred.cpu().numpy()
+
+    def predict_proba(
+        self,
+        data_loader: Optional[DataLoader] = None,
+        X: Optional[List[Any]] = None,
+    ) -> numpy.ndarray:
+        """
+        Return per-label sigmoid probabilities of shape
+        ``(num_samples, num_labels)``.
+        """
+        if data_loader is not None and X is not None:
+            print_log(
+                "Predict the class probability of input data in data_loader instead of X.",
+                logger="current",
+                level=logging.WARNING,
+            )
+
+        if data_loader is None:
+            dataset = PredictionDataset(X, self.test_transform)
+            data_loader = DataLoader(
+                dataset,
+                batch_size=self.batch_size,
+                num_workers=self.num_workers,
+                collate_fn=self.collate_fn,
+                pin_memory=torch.cuda.is_available(),
+            )
+        return self._predict(data_loader).sigmoid().cpu().numpy()
+
+    def _data_loader(
+        self,
+        X: Optional[List[Any]],
+        y: Optional[List[int]] = None,
+        shuffle: Optional[bool] = True,
+    ) -> DataLoader:
+        """
+        Build a DataLoader backed by
+        :class:`~ablkit.learning.MultiLabelClassificationDataset`.
+        """
+        if X is None:
+            raise ValueError("X should not be None.")
+        if y is None:
+            y = [0] * len(X)
+        if not len(y) == len(X):
+            raise ValueError("X and y should have equal length.")
+
+        dataset = MultiLabelClassificationDataset(X, y, transform=self.train_transform)
+        data_loader = DataLoader(
+            dataset,
+            batch_size=self.batch_size,
+            shuffle=shuffle,
+            num_workers=self.num_workers,
+            collate_fn=self.collate_fn,
+            pin_memory=torch.cuda.is_available(),
+        )
+        return data_loader

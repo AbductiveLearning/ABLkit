@@ -8,6 +8,8 @@ Copyright (c) 2024 LAMDA.  All rights reserved.
 import pickle
 from typing import Any, Dict
 
+import numpy as np
+
 from ..data.structures import ListData
 from ..utils import reform_list
 
@@ -147,3 +149,57 @@ class ABLModel:
         this method should match those expected by the ``load`` method of self.base_model.
         """
         self._model_operation("load", *args, **kwargs)
+
+
+# =============================================================================
+# Multi-label variants
+# =============================================================================
+
+
+class MultiLabelABLModel(ABLModel):
+    """
+    Multi-label variant of :class:`ABLModel`.
+
+    The standard :class:`ABLModel.predict` selects a single class index per
+    instance via ``argmax`` over a softmax distribution. For multi-label
+    settings (each instance can have multiple active labels), this class
+    instead thresholds the per-label sigmoid probabilities at 0.5 and
+    stores the resulting binary indicator vectors on ``pred_idx``.
+
+    Pair it with :class:`~ablkit.learning.MultiLabelBasicNN` (which
+    provides ``predict_proba`` returning ``(num_samples, num_labels)``
+    sigmoid probabilities) for the typical multi-label workflow.
+    """
+
+    def predict(self, data_examples: ListData) -> Dict[str, Any]:
+        """
+        Predict per-label binary indicators and per-label probabilities.
+
+        Parameters
+        ----------
+        data_examples : ListData
+            A batch of data to predict on.
+
+        Returns
+        -------
+        Dict[str, Any]
+            A dictionary with keys ``"label"`` (binary indicator vectors
+            grouped per example) and ``"prob"`` (per-label probabilities
+            grouped per example, or ``None`` if the base model does not
+            expose ``predict_proba``).
+        """
+        model = self.base_model
+        data_X = data_examples.flatten("X")
+        if hasattr(model, "predict_proba"):
+            prob = model.predict_proba(X=data_X)
+            label = np.where(prob > 0.5, 1, 0).astype(int)
+            prob = reform_list(prob, data_examples.X)
+        else:
+            prob = None
+            label = model.predict(X=data_X)
+        label = reform_list(label, data_examples.X)
+
+        data_examples.pred_idx = label
+        data_examples.pred_prob = prob
+
+        return {"label": label, "prob": prob}

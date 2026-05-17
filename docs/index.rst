@@ -127,6 +127,7 @@ To cite ABLkit, please cite the following paper:  `Huang et al., 2024 <https://j
    Intro/Reasoning
    Intro/Evaluation
    Intro/Bridge
+   Intro/Advanced
 
 .. toctree::
    :maxdepth: 1
@@ -136,6 +137,7 @@ To cite ABLkit, please cite the following paper:  `Huang et al., 2024 <https://j
    Examples/HWF
    Examples/HED
    Examples/Zoo
+   Examples/BDD-OIA
 
 .. toctree::
    :maxdepth: 1

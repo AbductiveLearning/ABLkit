@@ -284,4 +284,5 @@ We would like to thank the following contributors for their efforts on this proj
 We also thank the following users for their helpful suggestions and feedback:
 
 - [Hao-Yuan He](https://github.com/Hao-Yuan-He)
+- [Lin-Han Jia](https://github.com/YGZWQZD)
 - [Wang-Zhou Dai](https://github.com/haldai)
