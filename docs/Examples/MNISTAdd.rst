@@ -381,13 +381,15 @@ several flags that switch in alternative methods. The defaults reproduce the
 standard pipeline, so existing usage is unaffected.
 
 - ``--method {standard,a3bl}`` — choose the learning/reasoning pipeline.
-  ``standard`` uses ``BasicNN`` / ``ABLModel`` / ``Reasoner`` / ``SimpleBridge``.
-  ``a3bl`` uses the ambiguity-aware ``A3BLReasoner`` together with the matching
-  ``A3BLBasicNN``, ``A3BLModel`` and ``A3BLBridge`` defined under
-  ``examples/mnist_add/{models,bridge}``.
+  ``standard`` uses ``BasicNN`` / ``Reasoner`` / ``SimpleBridge``.
+  ``a3bl`` uses ``A3BLBasicNN`` together with the ambiguity-aware
+  ``A3BLReasoner`` and ``A3BLBridge`` defined under
+  ``examples/mnist_add/{models,bridge}``. Both methods share the same
+  ``ABLModel`` wrapper.
 - ``--dist-func {hamming,confidence,avg_confidence,similarity,rejection}`` —
-  passed straight to the reasoner. ``similarity`` requires the model to populate
-  ``data_example.embeddings``, which ``A3BLModel`` already does.
+  passed straight to the reasoner. ``similarity`` requires the base model to
+  expose an ``extract_features`` method; ``A3BLBasicNN`` provides one out of
+  the box.
 - ``--labeled-ratio FLOAT`` — fraction in ``(0, 1]`` of training samples that
   keep their ground-truth pseudo-labels. Values below ``1.0`` enable the
   semi-supervised pipeline (``use_supervised_data=True`` on

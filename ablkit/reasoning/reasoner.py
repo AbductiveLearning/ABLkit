@@ -37,7 +37,8 @@ class Reasoner:
         probabilities and each candidate, defined as ``1 - product`` and
         ``1 - average`` of the candidate's per-symbol probabilities respectively.
         'similarity' compares candidates against the geometry of the model's
-        embeddings (requires the model to populate ``data_example.embeddings``).
+        embeddings (requires the base model to expose ``extract_features``;
+        ``ABLModel`` then stores the result on ``data_example.embeddings``).
         'rejection' combines confidence distance with a candidate-complexity penalty,
         favoring shorter candidates when scores are close.
         Alternatively, the callable function should have the signature
@@ -188,8 +189,9 @@ class Reasoner:
             embeddings = getattr(data_example, "embeddings", None)
             if embeddings is None:
                 raise ValueError(
-                    "dist_func='similarity' requires the ABLModel to populate "
-                    "data_example.embeddings (see A3BLModel for an example)."
+                    "dist_func='similarity' requires the base model to expose an "
+                    "extract_features(X=...) method so ABLModel can populate "
+                    "data_example.embeddings."
                 )
             candidates_idxs = [[self.label_to_idx[x] for x in c] for c in candidates]
             return similarity_dist(embeddings, candidates_idxs=candidates_idxs)
@@ -535,8 +537,8 @@ class A3BLReasoner(Reasoner):
 
     def abduce(self, data_example: ListData) -> Tuple[List[Any], List[Any]]:
         """
-        Perform abduction and get soft label distribution
-        (given by all valid candidates that satisfy the underlying rules).
+        Perform abduction and get a soft label distribution aggregated from
+        all valid candidates that satisfy the underlying rules.
 
         Parameters
         ----------
@@ -545,15 +547,11 @@ class A3BLReasoner(Reasoner):
 
         Returns
         -------
-
-        List[Any]
-            A revised soft label which is aggregated from valid candidates.
-
-        List[Any]
-            A revised pseudo-labels of the example through abductive reasoning, which is compatible
-            with the knowledge base.
-
-
+        soft_label : List[Any]
+            Soft label aggregated from the top-k valid candidates.
+        pseudo_label : List[Any]
+            Hard pseudo-label revision (the top-1 candidate) that is
+            consistent with the knowledge base.
         """
         max_revision_num = data_example.elements_num("pred_pseudo_label")
         max_revision_num = self._get_max_revision_num(self.max_revision, max_revision_num)

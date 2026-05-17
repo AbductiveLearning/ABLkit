@@ -4,10 +4,9 @@ from typing import Any, List, Optional, Tuple, Union
 from ablkit.bridge import SimpleBridge
 from ablkit.data.evaluation.base_metric import BaseMetric
 from ablkit.data.structures.list_data import ListData
+from ablkit.learning import ABLModel
 from ablkit.reasoning import A3BLReasoner
 from ablkit.utils import print_log
-
-from models.a3bl_model import A3BLModel
 
 class A3BLBridge(SimpleBridge):
     """
@@ -22,18 +21,20 @@ class A3BLBridge(SimpleBridge):
 
     Parameters
     ----------
-    model : A3BLModel
-        The machine learning model wrapped in ``A3BLModel``, which is mainly used for
-        prediction and model training.
+    model : ABLModel
+        The machine learning model wrapped in ``ABLModel``, used for prediction
+        and training. The wrapped base model should expose ``extract_features``
+        so embeddings are available for the soft-label aggregation.
     reasoner : A3BLReasoner
-        The reasoning part wrapped in ``A3blReasoner``, which is used for pseudo-label enumeration.
+        The reasoning part wrapped in ``A3BLReasoner``, used for pseudo-label
+        enumeration and soft-label aggregation.
     metric_list : List[BaseMetric]
         A list of metrics used for evaluating the model's performance.
     """
 
     def __init__(
         self,
-        model: A3BLModel,
+        model: ABLModel,
         reasoner: A3BLReasoner,
         metric_list: List[BaseMetric],
     ):

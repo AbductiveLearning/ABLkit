@@ -20,9 +20,10 @@ class ABLModel:
     ----------
     base_model : Machine Learning Model
         The machine learning base model used for training and prediction. This model should
-        implement the ``fit`` and ``predict`` methods. It's recommended, but not required, for the
-        model to also implement the ``predict_proba`` method for generating
-        predictions on the probabilities.
+        implement the ``fit`` and ``predict`` methods. It's recommended, but not required, for
+        the model to also implement ``predict_proba`` (used to populate ``pred_prob``) and
+        ``extract_features`` (used to populate ``data_example.embeddings`` for distance
+        functions such as ``similarity``).
     """
 
     def __init__(self, base_model: Any) -> None:
@@ -47,8 +48,11 @@ class ABLModel:
         """
         model = self.base_model
         data_X = data_examples.flatten("X")
+        embeddings = None
         if hasattr(model, "predict_proba"):
             prob = model.predict_proba(X=data_X)
+            if hasattr(model, "extract_features"):
+                embeddings = model.extract_features(X=data_X)
             label = prob.argmax(axis=1)
             prob = reform_list(prob, data_examples.X)
         else:
@@ -58,6 +62,8 @@ class ABLModel:
 
         data_examples.pred_idx = label
         data_examples.pred_prob = prob
+        if embeddings is not None:
+            data_examples.embeddings = reform_list(embeddings, data_examples.X)
 
         return {"label": label, "prob": prob}
 

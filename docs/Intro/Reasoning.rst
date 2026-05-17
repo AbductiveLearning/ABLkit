@@ -325,8 +325,10 @@ specify:
    probabilities and each candidate, defined as ``1 - product`` and ``1 - average``
    of the candidate's per-symbol probabilities respectively. For “similarity”,
    it compares candidates against the geometry of the model's embeddings
-   (requires the ABLModel to populate ``data_example.embeddings``; see
-   ``A3BLModel`` in the MNIST Addition example for a reference implementation).
+   (requires the base model to expose an ``extract_features`` method;
+   ``ABLModel`` calls it automatically and stores the result on
+   ``data_example.embeddings``). See ``A3BLBasicNN`` in the MNIST Addition
+   example for a reference implementation.
    For “rejection”, it combines the confidence distance with a candidate-complexity
    penalty so that shorter candidates are favored when scores are close.
    Defaults to “confidence”.

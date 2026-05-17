@@ -20,7 +20,10 @@ class BDDKB(KBBase):
         (1, 0, 1, 0) 1596
         (1, 0, 1, 1) 196
         """
-        assert len(attrs) == 21
+        if len(attrs) != 21:
+            raise ValueError(
+                f"BDDKB.logic_forward expects exactly 21 concept attributes, got {len(attrs)}."
+            )
         (
             green_light,
             follow,

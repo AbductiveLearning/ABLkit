@@ -14,7 +14,7 @@ from ablkit.utils import ABLLogger, print_log
 
 from bridge.a3bl_bridge import A3BLBridge
 from datasets import get_dataset
-from models.a3bl_model import A3BLBasicNN, A3BLModel
+from models.a3bl_model import A3BLBasicNN
 from models.nn import LeNet5
 
 
@@ -185,8 +185,7 @@ def main():
 
     print_log("Building the Learning Part.", logger="current")
     base_model = build_base_model(args)
-    model_cls = A3BLModel if args.method == "a3bl" else ABLModel
-    model = model_cls(base_model)
+    model = ABLModel(base_model)
 
     print_log("Building the Reasoning Part.", logger="current")
     kb = build_kb(args)
