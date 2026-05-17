@@ -137,6 +137,7 @@ def avg_confidence_dist(pred_prob: np.ndarray, candidates_idxs: List[List[Any]])
     cols = np.arange(len(candidates_idxs[0]))[None, :]
     return 1 - np.average(pred_prob[cols, candidates_idxs], axis=1)
 
+
 def similarity_dist(
     pred_embeddings: np.ndarray, candidates_idxs: List[List[Any]]
 ) -> np.ndarray:
@@ -208,7 +209,6 @@ def rejection_dist(
     if complexity.max() > 0:
         complexity = complexity / complexity.max()
     return (1 - alpha) * conf + alpha * complexity
-
 
 
 def to_hashable(x: Union[List[Any], Any]) -> Union[Tuple[Any, ...], Any]:

@@ -10,7 +10,6 @@ the model to every assignment that is consistent with the knowledge base.
 Reference: https://github.com/VerificationLearning/VerificationLearning
 """
 
-import os.path as osp
 from typing import Any, List, Optional, Tuple, Union
 
 from ..data.evaluation import BaseMetric

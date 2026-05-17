@@ -52,7 +52,10 @@ class ABLModel:
         if hasattr(model, "predict_proba"):
             prob = model.predict_proba(X=data_X)
             if hasattr(model, "extract_features"):
-                embeddings = model.extract_features(X=data_X)
+                try:
+                    embeddings = model.extract_features(X=data_X)
+                except AttributeError:
+                    embeddings = None
             label = prob.argmax(axis=1)
             prob = reform_list(prob, data_examples.X)
         else:

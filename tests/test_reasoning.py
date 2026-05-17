@@ -114,11 +114,10 @@ class TestReaonser(object):
     def test_invalid_predefined_dist_func(self, kb_add):
         with pytest.raises(NotImplementedError) as excinfo:
             Reasoner(kb_add, "invalid_dist_func")
-        assert (
-            'Valid options for predefined dist_func include "hamming", "confidence" '
-            + 'and "avg_confidence"'
-            in str(excinfo.value)
-        )
+        message = str(excinfo.value)
+        for option in ("hamming", "confidence", "avg_confidence", "similarity", "rejection"):
+            assert option in message
+        assert "invalid_dist_func" in message
 
     def random_dist(self, data_example, candidates, candidate_idxs, reasoning_results):
         cost_list = [np.random.rand() for _ in candidates]

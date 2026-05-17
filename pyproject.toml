@@ -10,7 +10,7 @@ authors = [
 ]
 description = "Abductive Learning (ABL) toolkit"
 readme = "README.md"
-requires-python = ">=3.7.0"
+requires-python = ">=3.8.0"
 license = {text = "MIT LICENSE"}
 keywords = ["machine-learning", "framework", "abductive-learning", "neuro-symbolic"]
 classifiers = [
@@ -24,7 +24,6 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS :: MacOS X",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -45,6 +44,7 @@ Issues = "https://github.com/AbductiveLearning/ABLkit/issues"
 
 [project.optional-dependencies]
 test = [
+    "pytest",
     "pytest-cov",
     "black==22.10.0",
 ]

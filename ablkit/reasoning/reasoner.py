@@ -13,7 +13,13 @@ from zoopt import Dimension, Objective, Opt, Parameter, Solution
 
 from ..data.structures import ListData
 from ..reasoning import KBBase
-from ..utils.utils import hamming_dist, confidence_dist, avg_confidence_dist, similarity_dist, rejection_dist
+from ..utils.utils import (
+    avg_confidence_dist,
+    confidence_dist,
+    hamming_dist,
+    rejection_dist,
+    similarity_dist,
+)
 
 
 class Reasoner:
@@ -393,7 +399,7 @@ class Reasoner:
         return self.batch_abduce(data_examples)
 
 
-class A3BLReasoner(Reasoner): 
+class A3BLReasoner(Reasoner):
     """
     Reasoner for minimizing the inconsistency between the knowledge base and learning models.
 
