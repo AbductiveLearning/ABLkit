@@ -367,6 +367,86 @@ class BasicNN:
             )
         return self._predict(data_loader).softmax(axis=1).cpu().numpy()
 
+    def _extract_features(self, data_loader: DataLoader) -> torch.Tensor:
+        """
+        Internal method to compute feature embeddings via ``self.model.extract_features``
+        over every batch in ``data_loader``.
+
+        Parameters
+        ----------
+        data_loader : DataLoader
+            DataLoader providing input samples.
+
+        Returns
+        -------
+        torch.Tensor
+            Concatenated feature tensor across all batches.
+        """
+        if not isinstance(data_loader, DataLoader):
+            raise TypeError(
+                "data_loader must be an instance of torch.utils.data.DataLoader, "
+                f"but got {type(data_loader)}"
+            )
+        if not hasattr(self.model, "extract_features"):
+            raise AttributeError(
+                f"{type(self.model).__name__} does not implement extract_features(x). "
+                "Add such a method to your PyTorch model to enable feature extraction "
+                "(used by dist_func='similarity', among others)."
+            )
+        model = self.model
+        device = self.device
+        model.eval()
+        with torch.no_grad():
+            results = []
+            for data in data_loader:
+                data = data.to(device)
+                results.append(model.extract_features(data))
+        return torch.cat(results, dim=0)
+
+    def extract_features(
+        self,
+        data_loader: Optional[DataLoader] = None,
+        X: Optional[List[Any]] = None,
+    ) -> numpy.ndarray:
+        """
+        Compute feature embeddings for ``X`` (or a prebuilt ``data_loader``).
+        When both are provided, ``data_loader`` takes precedence.
+
+        The wrapped PyTorch model must implement ``extract_features(x)``
+        returning the embedding tensor (typically penultimate-layer
+        activations) used by downstream consumers such as
+        ``dist_func='similarity'``.
+
+        Parameters
+        ----------
+        data_loader : DataLoader, optional
+            DataLoader to use directly. Defaults to None.
+        X : List[Any], optional
+            Raw input list; converted to a ``PredictionDataset`` when used.
+            Defaults to None.
+
+        Returns
+        -------
+        numpy.ndarray
+            Feature embeddings of shape ``(num_samples, embedding_dim)``.
+        """
+        if data_loader is not None and X is not None:
+            print_log(
+                "Extracting features from data_loader; ignoring X.",
+                logger="current",
+                level=logging.WARNING,
+            )
+        if data_loader is None:
+            dataset = PredictionDataset(X, self.test_transform)
+            data_loader = DataLoader(
+                dataset,
+                batch_size=self.batch_size,
+                num_workers=self.num_workers,
+                collate_fn=self.collate_fn,
+                pin_memory=torch.cuda.is_available(),
+            )
+        return self._extract_features(data_loader).cpu().numpy()
+
     def _score(self, data_loader: DataLoader) -> Tuple[float, float]:
         """
         Internal method to compute loss and accuracy for the data provided through a DataLoader.

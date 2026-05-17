@@ -6,15 +6,21 @@ import torch
 from torch import nn
 from torch.optim import RMSprop, lr_scheduler
 
-from ablkit.bridge import SimpleBridge
+from ablkit.bridge import SimpleBridge, VerificationBridge
 from ablkit.data.evaluation import ReasoningMetric, SymbolAccuracy
 from ablkit.learning import ABLModel, BasicNN
-from ablkit.reasoning import A3BLReasoner, GroundKB, KBBase, PrologKB, Reasoner
+from ablkit.reasoning import (
+    A3BLReasoner,
+    GroundKB,
+    KBBase,
+    PrologKB,
+    Reasoner,
+    VerificationReasoner,
+)
 from ablkit.utils import ABLLogger, print_log
 
 from a3bl_bridge import A3BLBridge
 from datasets import get_dataset
-from models.a3bl_model import A3BLBasicNN
 from models.nn import LeNet5
 
 
@@ -86,7 +92,7 @@ def parse_args():
     )
     parser.add_argument(
         "--method",
-        choices=["standard", "a3bl"],
+        choices=["standard", "a3bl", "verification"],
         default="standard",
         help="learning/reasoning pipeline to use (default: standard)",
     )
@@ -106,6 +112,15 @@ def parse_args():
         ),
     )
     parser.add_argument(
+        "--top-k",
+        type=int,
+        default=1,
+        help=(
+            "number of consistent candidates the verification reasoner enumerates per example. "
+            "Only used when --method verification (default: 1)"
+        ),
+    )
+    parser.add_argument(
         "--seed", type=int, default=0, help="random seed for semi-supervised split (default: 0)"
     )
 
@@ -116,6 +131,10 @@ def parse_args():
         parser.error("--method a3bl does not support --labeled-ratio < 1.0.")
     if args.method == "a3bl" and args.dist_func == "rejection":
         parser.error("--method a3bl is not compatible with --dist-func rejection.")
+    if args.method == "verification" and args.labeled_ratio < 1.0:
+        parser.error("--method verification does not support --labeled-ratio < 1.0.")
+    if args.top_k < 1:
+        parser.error("--top-k must be >= 1.")
     return args
 
 
@@ -133,15 +152,15 @@ def build_base_model(args):
     optimizer = RMSprop(net.parameters(), lr=args.lr, alpha=args.alpha)
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
+    train_passes_per_segment = args.top_k if args.method == "verification" else 1
     scheduler = lr_scheduler.OneCycleLR(
         optimizer,
         max_lr=args.lr,
         pct_start=0.15,
         epochs=args.loops,
-        steps_per_epoch=int(1 / args.segment_size),
+        steps_per_epoch=int(1 / args.segment_size) * train_passes_per_segment,
     )
-    nn_cls = A3BLBasicNN if args.method == "a3bl" else BasicNN
-    return nn_cls(
+    return BasicNN(
         net,
         loss_fn,
         optimizer,
@@ -189,19 +208,33 @@ def main():
 
     print_log("Building the Reasoning Part.", logger="current")
     kb = build_kb(args)
-    reasoner_cls = A3BLReasoner if args.method == "a3bl" else Reasoner
-    reasoner = reasoner_cls(
-        kb,
-        dist_func=args.dist_func,
-        max_revision=args.max_revision,
-        require_more_revision=args.require_more_revision,
-    )
+    if args.method == "verification":
+        reasoner = VerificationReasoner(kb, top_k=args.top_k)
+    elif args.method == "a3bl":
+        reasoner = A3BLReasoner(
+            kb,
+            dist_func=args.dist_func,
+            max_revision=args.max_revision,
+            require_more_revision=args.require_more_revision,
+        )
+    else:
+        reasoner = Reasoner(
+            kb,
+            dist_func=args.dist_func,
+            max_revision=args.max_revision,
+            require_more_revision=args.require_more_revision,
+        )
 
     print_log("Building Evaluation Metrics.", logger="current")
     metric_list = [SymbolAccuracy(prefix="mnist_add"), ReasoningMetric(kb=kb, prefix="mnist_add")]
 
     print_log("Bridge Learning and Reasoning.", logger="current")
-    bridge_cls = A3BLBridge if args.method == "a3bl" else SimpleBridge
+    if args.method == "verification":
+        bridge_cls = VerificationBridge
+    elif args.method == "a3bl":
+        bridge_cls = A3BLBridge
+    else:
+        bridge_cls = SimpleBridge
     bridge = bridge_cls(model, reasoner, metric_list)
 
     log_dir = ABLLogger.get_current_instance().log_dir
@@ -213,7 +246,7 @@ def main():
         save_interval=args.save_interval,
         save_dir=weights_dir,
     )
-    if args.method != "a3bl" and args.labeled_ratio < 1.0:
+    if args.method == "standard" and args.labeled_ratio < 1.0:
         train_kwargs["use_supervised_data"] = True
     if val_data is not None and args.method != "a3bl":
         train_kwargs["val_data"] = val_data

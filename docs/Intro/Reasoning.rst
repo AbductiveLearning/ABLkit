@@ -324,11 +324,12 @@ specify:
    “avg_confidence”, it calculates the confidence distance between the predicted
    probabilities and each candidate, defined as ``1 - product`` and ``1 - average``
    of the candidate's per-symbol probabilities respectively. For “similarity”,
-   it compares candidates against the geometry of the model's embeddings
-   (requires the base model to expose an ``extract_features`` method;
-   ``ABLModel`` calls it automatically and stores the result on
-   ``data_example.embeddings``). See ``A3BLBasicNN`` in the MNIST Addition
-   example for a reference implementation.
+   it compares candidates against the geometry of the model's embeddings.
+   This requires the wrapped PyTorch model to implement
+   ``extract_features(x)`` (returning, for example, penultimate-layer
+   activations); ``BasicNN`` then surfaces them via its own
+   ``extract_features`` method, and ``ABLModel`` automatically stores the
+   resulting embeddings on ``data_example.embeddings`` for the reasoner.
    For “rejection”, it combines the confidence distance with a candidate-complexity
    penalty so that shorter candidates are favored when scores are close.
    Defaults to “confidence”.
@@ -385,7 +386,7 @@ Out:
 
 Specifically, as mentioned before, “confidence” calculates the distance between the data 
 example and candidates based on the confidence derived from the predicted probability. 
-Take ``example1`` as an example, the ``pred_prob`` in it indicates a higher 
-confidence that the first label should be "1" rather than "7". Therefore, among the 
+Take ``example1`` as an example, the ``pred_prob`` in it indicates a higher
+confidence that the first label should be "1" rather than "7". Therefore, among the
 candidates [1,7] and [7,1], it would be closer to [1,7] (as its first label is "1").
 

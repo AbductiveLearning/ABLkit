@@ -25,3 +25,12 @@ ablkit.reasoning
    :members:
    :undoc-members:
    :show-inheritance:
+
+.. autoclass:: ablkit.reasoning.VerificationReasoner
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autofunction:: ablkit.reasoning.verification.enumerate_label_assignments
+
+.. autofunction:: ablkit.reasoning.verification.top_k_satisfying
