@@ -9,8 +9,6 @@ from typing import Any, List, Optional, Tuple, Union
 
 from numpy import ndarray
 
-import wandb
-
 from ..data.evaluation import BaseMetric
 from ..data.structures import ListData
 from ..learning import ABLModel
@@ -51,7 +49,6 @@ class SimpleBridge(BaseBridge):
     ) -> None:
         super().__init__(model, reasoner)
         self.metric_list = metric_list
-        self.use_wandb = self._check_wandb_available()
         if not hasattr(model.base_model, "predict_proba") and reasoner.dist_func in [
             "confidence",
             "avg_confidence",
@@ -61,20 +58,6 @@ class SimpleBridge(BaseBridge):
                 + "then the dist_func in the reasoner cannot be set to 'confidence'"
                 + "or 'avg_confidence', which are related to predicted probability."
             )
-
-    def _check_wandb_available(self):
-        """
-        Check if wandb is available and initialized.
-
-        Returns
-        -------
-        bool
-            True if wandb is available and initialized, False otherwise.
-        """
-        try:
-            return wandb.run is not None
-        except ImportError:
-            return False
 
     def predict(self, data_examples: ListData) -> Tuple[List[ndarray], List[ndarray]]:
         """
@@ -412,15 +395,6 @@ class SimpleBridge(BaseBridge):
                 msg += k + f": {v:.3f} "
             except (TypeError, ValueError):
                 pass
-
-        if self.use_wandb:
-            try:
-                wandb_metrics = {}
-                for k, v in res.items():
-                    wandb_metrics[f"{k}"] = v
-                wandb.log(wandb_metrics)
-            except Exception as e:
-                print_log(f"Failed to log metrics to wandb: {e}", logger="current")
 
         print_log(msg, logger="current")
 
