@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ablkit"
-version = "0.2.2"
+version = "1.0.0"
 authors = [
   { name="LAMDA 2024", email = "abductivelearning@gmail.com" },
 ]
@@ -48,3 +48,7 @@ test = [
     "pytest-cov",
     "black==22.10.0",
 ]
+
+[tool.setuptools.packages.find]
+include = ["ablkit*"]
+namespaces = false
