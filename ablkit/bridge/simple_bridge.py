@@ -295,62 +295,93 @@ class SimpleBridge(BaseBridge):
             Directory to save the model. Defaults to None.
         """
         data_examples = self.data_preprocess("train", train_data)
+        label_data_examples = (
+            self.data_preprocess("label", label_data) if label_data is not None else None
+        )
+        val_data_examples = (
+            self.data_preprocess("val", val_data) if val_data is not None else data_examples
+        )
 
-        if label_data is not None:
-            label_data_examples = self.data_preprocess("label", label_data)
-        else:
-            label_data_examples = None
-
-        if val_data is not None:
-            val_data_examples = self.data_preprocess("val", val_data)
-        else:
-            val_data_examples = data_examples
-
-        if isinstance(segment_size, int):
-            if segment_size <= 0:
-                raise ValueError("segment_size should be positive.")
-        elif isinstance(segment_size, float):
-            if 0 < segment_size <= 1:
-                segment_size = int(segment_size * len(data_examples))
-            else:
-                raise ValueError("segment_size should be in (0, 1].")
-        else:
-            raise ValueError("segment_size should be int or float.")
+        segment_size = self._resolve_segment_size(segment_size, len(data_examples))
+        num_segments = (len(data_examples) - 1) // segment_size + 1
 
         for loop in range(loops):
-            for seg_idx in range((len(data_examples) - 1) // segment_size + 1):
+            for seg_idx in range(num_segments):
                 print_log(
                     f"loop(train) [{loop + 1}/{loops}] segment(train) "
-                    f"[{(seg_idx + 1)}/{(len(data_examples) - 1) // segment_size + 1}] ",
+                    f"[{seg_idx + 1}/{num_segments}] ",
                     logger="current",
                 )
-
                 sub_data_examples = data_examples[
                     seg_idx * segment_size : (seg_idx + 1) * segment_size
                 ]
-                self.predict(sub_data_examples)
-
-                self.idx_to_pseudo_label(sub_data_examples)
-                if use_supervised_data:
-                    self.supervised_abduce_pseudo_label(sub_data_examples)
-                else:
-                    self.abduce_pseudo_label(sub_data_examples)
-                self.filter_pseudo_label(sub_data_examples)
-                self.concat_data_examples(sub_data_examples, label_data_examples)
-                self.pseudo_label_to_idx(sub_data_examples)
-                if len(sub_data_examples) == 0:
-                    continue
-                self.model.train(sub_data_examples)
-
-            if (loop + 1) % eval_interval == 0 or loop == loops - 1:
-                print_log(f"Eval start: loop(val) [{loop + 1}]", logger="current")
-                self._valid(val_data_examples, prefix="val")
-
-            if save_interval is not None and ((loop + 1) % save_interval == 0 or loop == loops - 1):
-                print_log(f"Saving model: loop(save) [{loop + 1}]", logger="current")
-                self.model.save(
-                    save_path=osp.join(save_dir, f"model_checkpoint_loop_{loop + 1}.pth")
+                self._train_one_segment(
+                    sub_data_examples, label_data_examples, use_supervised_data
                 )
+
+            self._maybe_eval(val_data_examples, loop, loops, eval_interval)
+            self._maybe_save(loop, loops, save_interval, save_dir)
+
+    @staticmethod
+    def _resolve_segment_size(segment_size: Union[int, float], dataset_len: int) -> int:
+        """Validate and convert ``segment_size`` into an absolute number of examples."""
+        if isinstance(segment_size, int):
+            if segment_size <= 0:
+                raise ValueError("segment_size should be positive.")
+            return segment_size
+        if isinstance(segment_size, float):
+            if not (0 < segment_size <= 1):
+                raise ValueError("segment_size should be in (0, 1].")
+            return int(segment_size * dataset_len)
+        raise ValueError("segment_size should be int or float.")
+
+    def _train_one_segment(
+        self,
+        sub_data_examples: ListData,
+        label_data_examples: Optional[ListData],
+        use_supervised_data: bool,
+    ) -> None:
+        """Run prediction, abduction, label-data concat, and a single model.train step."""
+        self.predict(sub_data_examples)
+        self.idx_to_pseudo_label(sub_data_examples)
+        if use_supervised_data:
+            self.supervised_abduce_pseudo_label(sub_data_examples)
+        else:
+            self.abduce_pseudo_label(sub_data_examples)
+        self.filter_pseudo_label(sub_data_examples)
+        self.concat_data_examples(sub_data_examples, label_data_examples)
+        self.pseudo_label_to_idx(sub_data_examples)
+        if len(sub_data_examples) == 0:
+            return
+        self.model.train(sub_data_examples)
+
+    def _maybe_eval(
+        self,
+        val_data_examples: ListData,
+        loop: int,
+        loops: int,
+        eval_interval: int,
+    ) -> None:
+        """Evaluate on ``val_data_examples`` at the configured interval (and on the last loop)."""
+        if (loop + 1) % eval_interval == 0 or loop == loops - 1:
+            print_log(f"Eval start: loop(val) [{loop + 1}]", logger="current")
+            self._valid(val_data_examples, prefix="val")
+
+    def _maybe_save(
+        self,
+        loop: int,
+        loops: int,
+        save_interval: Optional[int],
+        save_dir: Optional[str],
+    ) -> None:
+        """Persist the model at the configured interval (and on the last loop)."""
+        if save_interval is None:
+            return
+        if (loop + 1) % save_interval == 0 or loop == loops - 1:
+            print_log(f"Saving model: loop(save) [{loop + 1}]", logger="current")
+            self.model.save(
+                save_path=osp.join(save_dir, f"model_checkpoint_loop_{loop + 1}.pth")
+            )
 
     def _valid(self, data_examples: ListData, prefix: str = "val") -> None:
         """
