@@ -3,7 +3,7 @@ Bridge for Verification Learning.
 
 :class:`VerificationBridge` replaces the single-candidate abduction step of
 :class:`SimpleBridge` with a top-K enumeration provided by
-:class:`~ablkit.reasoning.verification.VerificationReasoner`. For each
+:class:`~ablkit.reasoning.VerificationReasoner`. For each
 segment the bridge trains the model once per top-K candidate, exposing
 the model to every assignment that is consistent with the knowledge base.
 
@@ -15,7 +15,7 @@ from typing import Any, List, Optional, Tuple, Union
 from ..data.evaluation import BaseMetric
 from ..data.structures import ListData
 from ..learning import ABLModel
-from ..reasoning.verification import VerificationReasoner
+from ..reasoning.reasoner import VerificationReasoner
 from ..utils import print_log
 from .simple_bridge import SimpleBridge
 

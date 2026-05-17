@@ -1,6 +1,5 @@
 from .kb import GroundKB, KBBase, PrologKB
-from .reasoner import A3BLReasoner, Reasoner
-from .verification import VerificationReasoner
+from .reasoner import A3BLReasoner, Reasoner, VerificationReasoner
 
 __all__ = [
     "KBBase",

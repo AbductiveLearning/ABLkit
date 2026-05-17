@@ -31,6 +31,6 @@ ablkit.reasoning
    :undoc-members:
    :show-inheritance:
 
-.. autofunction:: ablkit.reasoning.verification.enumerate_label_assignments
+.. autofunction:: ablkit.reasoning.reasoner.enumerate_label_assignments
 
-.. autofunction:: ablkit.reasoning.verification.top_k_satisfying
+.. autofunction:: ablkit.reasoning.reasoner.top_k_satisfying
