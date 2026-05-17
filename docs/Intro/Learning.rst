@@ -43,13 +43,13 @@ For a PyTorch-based neural network, we need to encapsulate it within a ``BasicNN
 .. code:: python
 
     # Load a PyTorch-based neural network
-    cls = torchvision.models.resnet18(pretrained=True)
+    net = torchvision.models.resnet18(pretrained=True)
 
     # loss function and optimizer are used for training
-    loss_fn = torch.nn.CrossEntropyLoss() 
-    optimizer = torch.optim.Adam(cls.parameters())
+    loss_fn = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(net.parameters())
 
-    base_model = BasicNN(cls, loss_fn, optimizer)
+    base_model = BasicNN(net, loss_fn, optimizer)
 
 BasicNN
 ^^^^^^^

@@ -147,14 +147,14 @@ model with a sklearn-style interface.
 
 .. code:: python
 
-    cls = LeNet5(num_classes=10)
+    net = LeNet5(num_classes=10)
     loss_fn = nn.CrossEntropyLoss(label_smoothing=0.1)
-    optimizer = RMSprop(cls.parameters(), lr=0.001, alpha=0.9)
+    optimizer = RMSprop(net.parameters(), lr=0.001, alpha=0.9)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     scheduler = lr_scheduler.OneCycleLR(optimizer, max_lr=0.001, pct_start=0.1, total_steps=100)
 
     base_model = BasicNN(
-        cls,
+        net,
         loss_fn,
         optimizer,
         scheduler=scheduler,

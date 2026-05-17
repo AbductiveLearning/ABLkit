@@ -128,9 +128,9 @@ def build_kb(args):
 
 
 def build_base_model(args):
-    cls = LeNet5(num_classes=10)
+    net = LeNet5(num_classes=10)
     loss_fn = nn.CrossEntropyLoss(label_smoothing=args.label_smoothing)
-    optimizer = RMSprop(cls.parameters(), lr=args.lr, alpha=args.alpha)
+    optimizer = RMSprop(net.parameters(), lr=args.lr, alpha=args.alpha)
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
     scheduler = lr_scheduler.OneCycleLR(
@@ -142,7 +142,7 @@ def build_base_model(args):
     )
     nn_cls = A3BLBasicNN if args.method == "a3bl" else BasicNN
     return nn_cls(
-        cls,
+        net,
         loss_fn,
         optimizer,
         scheduler=scheduler,

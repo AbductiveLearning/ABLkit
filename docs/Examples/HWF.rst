@@ -178,13 +178,13 @@ sklearn-style interface.
 .. code:: python
 
     # class of symbol may be one of ['1', ..., '9', '+', '-', '*', '/'], total of 13 classes
-    cls = SymbolNet(num_classes=13, image_size=(45, 45, 1))
+    net = SymbolNet(num_classes=13, image_size=(45, 45, 1))
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(cls.parameters(), lr=0.001, betas=(0.9, 0.99))
+    optimizer = torch.optim.Adam(net.parameters(), lr=0.001, betas=(0.9, 0.99))
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    
+
     base_model = BasicNN(
-        model=cls,
+        model=net,
         loss_fn=loss_fn,
         optimizer=optimizer,
         device=device,

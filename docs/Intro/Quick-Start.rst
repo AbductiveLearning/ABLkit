@@ -41,7 +41,7 @@ In this example, we build a simple LeNet5 network as the base model.
    # The 'models' module below is located in 'examples/mnist_add/'
    from models.nn import LeNet5
 
-   cls = LeNet5(num_classes=10)
+   net = LeNet5(num_classes=10)
 
 To facilitate uniform processing, ABLkit provides the ``BasicNN`` class to convert a PyTorch-based neural network into a format compatible with scikit-learn models. To construct a ``BasicNN`` instance, aside from the network itself, we also need to define a loss function, an optimizer, and the computing device.
 
@@ -51,9 +51,9 @@ To facilitate uniform processing, ABLkit provides the ``BasicNN`` class to conve
    from ablkit.learning import BasicNN
 
    loss_fn = torch.nn.CrossEntropyLoss()
-   optimizer = torch.optim.RMSprop(cls.parameters(), lr=0.001)
+   optimizer = torch.optim.RMSprop(net.parameters(), lr=0.001)
    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-   base_model = BasicNN(model=cls, loss_fn=loss_fn, optimizer=optimizer, device=device)
+   base_model = BasicNN(model=net, loss_fn=loss_fn, optimizer=optimizer, device=device)
 
 The base model built above is trained to make predictions on instance-level data (e.g., a single image), while ABL deals with example-level data. To bridge this gap, we wrap the ``base_model`` into an instance of ``ABLModel``. This class serves as a unified wrapper for base models, facilitating the learning part to train, test, and predict on example-level data, (e.g., images that comprise an equation).
 

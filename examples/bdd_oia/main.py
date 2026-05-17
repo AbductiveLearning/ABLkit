@@ -27,7 +27,7 @@ def multi_label_confidence_dist(data_example, candidates, candidates_idxs, reaso
     return costs
 
 
-def get_args():
+def parse_args():
     parser = argparse.ArgumentParser(description="BDD-OIA example")
     parser.add_argument(
         "--no-cuda", action="store_true", default=False, help="disables CUDA training"
@@ -66,7 +66,7 @@ def get_args():
 
 
 def main():
-    args = get_args()
+    args = parse_args()
 
     # Build logger
     print_log("Abductive Learning on the BDD-OIA example.", logger="current")
@@ -81,9 +81,9 @@ def main():
     print_log("Building the Learning Part.", logger="current")
 
     # Build necessary components for BDDNN
-    cls = ConceptNet()
+    net = ConceptNet()
     loss_fn = nn.BCEWithLogitsLoss()
-    optimizer = optim.Adam(cls.parameters(), lr=args.lr)
+    optimizer = optim.Adam(net.parameters(), lr=args.lr)
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
     scheduler = optim.lr_scheduler.OneCycleLR(
@@ -96,7 +96,7 @@ def main():
 
     # Build BDDNN
     base_model = BDDNN(
-        cls,
+        net,
         loss_fn,
         optimizer,
         scheduler=scheduler,

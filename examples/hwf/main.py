@@ -157,15 +157,15 @@ def main():
     print_log("Building the Learning Part.", logger="current")
 
     # Build necessary components for BasicNN
-    cls = SymbolNet(num_classes=13, image_size=(45, 45, 1))
+    net = SymbolNet(num_classes=13, image_size=(45, 45, 1))
     loss_fn = nn.CrossEntropyLoss(label_smoothing=args.label_smoothing)
-    optimizer = torch.optim.Adam(cls.parameters(), lr=args.lr)
+    optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 
     # Build BasicNN
     base_model = BasicNN(
-        cls,
+        net,
         loss_fn,
         optimizer,
         device=device,
