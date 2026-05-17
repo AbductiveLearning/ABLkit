@@ -194,7 +194,7 @@ class ListData(BaseDataElement):
                     new_data[k] = None
                 else:
                     new_data[k] = v[item]
-        return new_data  # type:ignore
+        return new_data  # type: ignore
 
     def flatten(self, item: str) -> List:
         """

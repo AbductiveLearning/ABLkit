@@ -1,4 +1,5 @@
 from torch import nn
+import torch.nn.functional as F
 
 
 class LeNet5(nn.Module):
@@ -20,6 +21,9 @@ class LeNet5(nn.Module):
             nn.ReLU(),
             nn.Linear(84, num_classes),
         )
+    
+    def extract_features(self, x):
+        return self.encoder(x)
 
     def forward(self, x):
         x = self.encoder(x)

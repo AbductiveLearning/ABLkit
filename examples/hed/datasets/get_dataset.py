@@ -10,6 +10,8 @@ import gdown
 import numpy as np
 from torchvision.transforms import transforms
 
+from ablkit.utils import print_log
+
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -79,10 +81,10 @@ def get_dataset(dataset="mnist", train=True):
     data_dir = CURRENT_DIR + "/mnist_images"
 
     if not os.path.exists(data_dir):
-        print("Dataset not exist, downloading it...")
+        print_log("Dataset not present, downloading it...", logger="current")
         url = "https://drive.google.com/u/0/uc?id=1W2AUn_fnXa4XkgLk4d17K3bEgpae8GMg&export=download"
         download_and_unzip(url, os.path.join(CURRENT_DIR, "HED.zip"))
-        print("Download and extraction complete.")
+        print_log("Download and extraction complete.", logger="current")
 
     if train:
         file = os.path.join(data_dir, "expr_train.json")

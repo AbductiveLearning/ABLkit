@@ -94,6 +94,23 @@ class SimpleBridge(BaseBridge):
         self.reasoner.batch_abduce(data_examples)
         return data_examples.abduced_pseudo_label
 
+    def supervised_abduce_pseudo_label(self, data_examples: ListData) -> List[List[Any]]:
+        """
+        Revise predicted pseudo-labels of the given data examples using ground truth.
+
+        Parameters
+        ----------
+        data_examples : ListData
+            Data examples containing predicted pseudo-labels.
+
+        Returns
+        -------
+        List[List[Any]]
+            A list of ground truth/abduced pseudo-labels for the given data examples.
+        """
+        self.reasoner.batch_supervised_abduce(data_examples)
+        return data_examples.abduced_pseudo_label
+
     def idx_to_pseudo_label(self, data_examples: ListData) -> List[List[Any]]:
         """
         Map indices of data examples into pseudo-labels.
@@ -211,10 +228,14 @@ class SimpleBridge(BaseBridge):
             Union[ListData, Tuple[List[List[Any]], List[List[Any]], List[Any]]]
         ] = None,
         val_data: Optional[
-            Union[ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]]]
+            Union[
+                ListData,
+                Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]],
+            ]
         ] = None,
         loops: int = 50,
         segment_size: Union[int, float] = 1.0,
+        use_supervised_data: bool = False,
         eval_interval: int = 1,
         save_interval: Optional[int] = None,
         save_dir: Optional[str] = None,
@@ -257,58 +278,95 @@ class SimpleBridge(BaseBridge):
             Directory to save the model. Defaults to None.
         """
         data_examples = self.data_preprocess("train", train_data)
+        label_data_examples = (
+            self.data_preprocess("label", label_data) if label_data is not None else None
+        )
+        val_data_examples = (
+            self.data_preprocess("val", val_data) if val_data is not None else data_examples
+        )
 
-        if label_data is not None:
-            label_data_examples = self.data_preprocess("label", label_data)
-        else:
-            label_data_examples = None
-
-        if val_data is not None:
-            val_data_examples = self.data_preprocess("val", val_data)
-        else:
-            val_data_examples = data_examples
-
-        if isinstance(segment_size, int):
-            if segment_size <= 0:
-                raise ValueError("segment_size should be positive.")
-        elif isinstance(segment_size, float):
-            if 0 < segment_size <= 1:
-                segment_size = int(segment_size * len(data_examples))
-            else:
-                raise ValueError("segment_size should be in (0, 1].")
-        else:
-            raise ValueError("segment_size should be int or float.")
+        segment_size = self._resolve_segment_size(segment_size, len(data_examples))
+        num_segments = (len(data_examples) - 1) // segment_size + 1
 
         for loop in range(loops):
-            for seg_idx in range((len(data_examples) - 1) // segment_size + 1):
+            for seg_idx in range(num_segments):
                 print_log(
                     f"loop(train) [{loop + 1}/{loops}] segment(train) "
-                    f"[{(seg_idx + 1)}/{(len(data_examples) - 1) // segment_size + 1}] ",
+                    f"[{seg_idx + 1}/{num_segments}] ",
                     logger="current",
                 )
-
                 sub_data_examples = data_examples[
                     seg_idx * segment_size : (seg_idx + 1) * segment_size
                 ]
-                self.predict(sub_data_examples)
-                self.idx_to_pseudo_label(sub_data_examples)
-                self.abduce_pseudo_label(sub_data_examples)
-                self.filter_pseudo_label(sub_data_examples)
-                self.concat_data_examples(sub_data_examples, label_data_examples)
-                self.pseudo_label_to_idx(sub_data_examples)
-                self.model.train(sub_data_examples)
-
-            if (loop + 1) % eval_interval == 0 or loop == loops - 1:
-                print_log(f"Eval start: loop(val) [{loop + 1}]", logger="current")
-                self._valid(val_data_examples)
-
-            if save_interval is not None and ((loop + 1) % save_interval == 0 or loop == loops - 1):
-                print_log(f"Saving model: loop(save) [{loop + 1}]", logger="current")
-                self.model.save(
-                    save_path=osp.join(save_dir, f"model_checkpoint_loop_{loop + 1}.pth")
+                self._train_one_segment(
+                    sub_data_examples, label_data_examples, use_supervised_data
                 )
 
-    def _valid(self, data_examples: ListData) -> None:
+            self._maybe_eval(val_data_examples, loop, loops, eval_interval)
+            self._maybe_save(loop, loops, save_interval, save_dir)
+
+    @staticmethod
+    def _resolve_segment_size(segment_size: Union[int, float], dataset_len: int) -> int:
+        """Validate and convert ``segment_size`` into an absolute number of examples."""
+        if isinstance(segment_size, int):
+            if segment_size <= 0:
+                raise ValueError("segment_size should be positive.")
+            return segment_size
+        if isinstance(segment_size, float):
+            if not (0 < segment_size <= 1):
+                raise ValueError("segment_size should be in (0, 1].")
+            return int(segment_size * dataset_len)
+        raise ValueError("segment_size should be int or float.")
+
+    def _train_one_segment(
+        self,
+        sub_data_examples: ListData,
+        label_data_examples: Optional[ListData],
+        use_supervised_data: bool,
+    ) -> None:
+        """Run prediction, abduction, label-data concat, and a single model.train step."""
+        self.predict(sub_data_examples)
+        self.idx_to_pseudo_label(sub_data_examples)
+        if use_supervised_data:
+            self.supervised_abduce_pseudo_label(sub_data_examples)
+        else:
+            self.abduce_pseudo_label(sub_data_examples)
+        self.filter_pseudo_label(sub_data_examples)
+        self.concat_data_examples(sub_data_examples, label_data_examples)
+        self.pseudo_label_to_idx(sub_data_examples)
+        if len(sub_data_examples) == 0:
+            return
+        self.model.train(sub_data_examples)
+
+    def _maybe_eval(
+        self,
+        val_data_examples: ListData,
+        loop: int,
+        loops: int,
+        eval_interval: int,
+    ) -> None:
+        """Evaluate on ``val_data_examples`` at the configured interval (and on the last loop)."""
+        if (loop + 1) % eval_interval == 0 or loop == loops - 1:
+            print_log(f"Eval start: loop(val) [{loop + 1}]", logger="current")
+            self._valid(val_data_examples, prefix="val")
+
+    def _maybe_save(
+        self,
+        loop: int,
+        loops: int,
+        save_interval: Optional[int],
+        save_dir: Optional[str],
+    ) -> None:
+        """Persist the model at the configured interval (and on the last loop)."""
+        if save_interval is None:
+            return
+        if (loop + 1) % save_interval == 0 or loop == loops - 1:
+            print_log(f"Saving model: loop(save) [{loop + 1}]", logger="current")
+            self.model.save(
+                save_path=osp.join(save_dir, f"model_checkpoint_loop_{loop + 1}.pth")
+            )
+
+    def _valid(self, data_examples: ListData, prefix: str = "val") -> None:
         """
         Internal method for validating the model with given data examples.
 
@@ -321,20 +379,30 @@ class SimpleBridge(BaseBridge):
         self.idx_to_pseudo_label(data_examples)
 
         for metric in self.metric_list:
+            metric.prefix = prefix
+
+        for metric in self.metric_list:
             metric.process(data_examples)
 
         res = dict()
         for metric in self.metric_list:
             res.update(metric.evaluate())
+
         msg = "Evaluation ended, "
         for k, v in res.items():
-            msg += k + f": {v:.3f} "
+            try:
+                v = float(v)
+                msg += k + f": {v:.3f} "
+            except (TypeError, ValueError):
+                pass
+
         print_log(msg, logger="current")
 
     def valid(
         self,
         val_data: Union[
-            ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]]
+            ListData,
+            Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]],
         ],
     ) -> None:
         """
@@ -349,12 +417,13 @@ class SimpleBridge(BaseBridge):
             ``self.metric_list``.
         """
         val_data_examples = self.data_preprocess("val", val_data)
-        self._valid(val_data_examples)
+        self._valid(val_data_examples, prefix="val")
 
     def test(
         self,
         test_data: Union[
-            ListData, Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]]
+            ListData,
+            Tuple[List[List[Any]], Optional[List[List[Any]]], Optional[List[Any]]],
         ],
     ) -> None:
         """
@@ -370,4 +439,4 @@ class SimpleBridge(BaseBridge):
         """
         print_log("Test start:", logger="current")
         test_data_examples = self.data_preprocess("test", test_data)
-        self._valid(test_data_examples)
+        self._valid(test_data_examples, prefix="test")

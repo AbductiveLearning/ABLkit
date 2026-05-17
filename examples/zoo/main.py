@@ -14,7 +14,7 @@ from get_dataset import load_and_preprocess_dataset, split_dataset
 from kb import ZooKB
 
 
-def consitency(data_example, candidates, candidate_idxs, reasoning_results):
+def consistency(data_example, candidates, candidate_idxs, reasoning_results):
     pred_prob = data_example.pred_prob
     model_scores = avg_confidence_dist(pred_prob, candidate_idxs)
     rule_scores = np.array(reasoning_results)
@@ -57,7 +57,7 @@ def main():
     kb = ZooKB()
 
     # Create reasoner
-    reasoner = Reasoner(kb, dist_func=consitency)
+    reasoner = Reasoner(kb, dist_func=consistency)
 
     # -- Building Evaluation Metrics --------------------
     print_log("Building Evaluation Metrics.", logger="current")

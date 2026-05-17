@@ -8,7 +8,7 @@ Handwritten Formula (HWF)
 Below shows an implementation of `Handwritten
 Formula <https://arxiv.org/abs/2006.06649>`__. In this
 task, handwritten images of decimal formulas and their computed results
-are given, alongwith a domain knowledge base containing information on
+are given, along with a domain knowledge base containing information on
 how to compute the decimal formula. The task is to recognize the symbols
 (which can be digits or operators ‘+’, ‘-’, ‘×’, ‘÷’) of handwritten
 images and accurately determine their results.
@@ -100,7 +100,7 @@ Out:
 
 The ith element of X, gt_pseudo_label, and Y together constitute the ith
 data example. Here we use two of them (the 1001st and the 3001st) as
-illstrations:
+illustrations:
 
 .. code:: python
 
@@ -177,14 +177,14 @@ sklearn-style interface.
 
 .. code:: python
 
-    # class of symbol may be one of ['1', ..., '9', '+', '-', '*', '/'], total of 14 classes
-    cls = SymbolNet(num_classes=13, image_size=(45, 45, 1))
+    # class of symbol may be one of ['1', ..., '9', '+', '-', '*', '/'], total of 13 classes
+    net = SymbolNet(num_classes=13, image_size=(45, 45, 1))
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(cls.parameters(), lr=0.001, betas=(0.9, 0.99))
+    optimizer = torch.optim.Adam(net.parameters(), lr=0.001, betas=(0.9, 0.99))
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    
+
     base_model = BasicNN(
-        model=cls,
+        model=net,
         loss_fn=loss_fn,
         optimizer=optimizer,
         device=device,

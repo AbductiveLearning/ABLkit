@@ -10,7 +10,7 @@ Learn the Basics
 ================
 
 Modules in ABLkit
-----------------------
+-----------------
 
 ABLkit is an efficient toolkit for `Abductive Learning <../Overview/Abductive-Learning.html>`_ (ABL), 
 a paradigm which integrates machine learning and logical reasoning in a balanced-loop.
@@ -50,7 +50,7 @@ learning, and reasoning, facilitating the training and testing
 of the entire ABL framework.
 
 Use ABLkit Step by Step
-----------------------------
+-----------------------
 
 In a typical ABL process, as illustrated below, 
 data inputs are first predicted by the learning model ``ABLModel.predict``, and the outcomes are pseudo-labels.

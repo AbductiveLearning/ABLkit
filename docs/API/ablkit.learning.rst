@@ -1,5 +1,5 @@
 ablkit.learning
-==================
+===============
 
 .. autoclass:: ablkit.learning.ABLModel
    :members:

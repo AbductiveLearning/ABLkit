@@ -179,13 +179,13 @@ sklearn-style interface.
 .. code:: python
 
     # class of symbol may be one of ['0', '1', '+', '='], total of 4 classes
-    cls = SymbolNet(num_classes=4)
+    net = SymbolNet(num_classes=4)
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.RMSprop(cls.parameters(), lr=0.001, weight_decay=1e-4)
+    optimizer = torch.optim.RMSprop(net.parameters(), lr=0.001, weight_decay=1e-4)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
+
     base_model = BasicNN(
-        cls,
+        net,
         loss_fn,
         optimizer,
         device=device,

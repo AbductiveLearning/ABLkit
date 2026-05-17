@@ -15,7 +15,11 @@ import torch
 from torch.utils.data import DataLoader
 
 from ..utils.logger import print_log
-from .torch_dataset import ClassificationDataset, PredictionDataset
+from .torch_dataset import (
+    ClassificationDataset,
+    MultiLabelClassificationDataset,
+    PredictionDataset,
+)
 
 
 class BasicNN:
@@ -367,6 +371,86 @@ class BasicNN:
             )
         return self._predict(data_loader).softmax(axis=1).cpu().numpy()
 
+    def _extract_features(self, data_loader: DataLoader) -> torch.Tensor:
+        """
+        Internal method to compute feature embeddings via ``self.model.extract_features``
+        over every batch in ``data_loader``.
+
+        Parameters
+        ----------
+        data_loader : DataLoader
+            DataLoader providing input samples.
+
+        Returns
+        -------
+        torch.Tensor
+            Concatenated feature tensor across all batches.
+        """
+        if not isinstance(data_loader, DataLoader):
+            raise TypeError(
+                "data_loader must be an instance of torch.utils.data.DataLoader, "
+                f"but got {type(data_loader)}"
+            )
+        if not hasattr(self.model, "extract_features"):
+            raise AttributeError(
+                f"{type(self.model).__name__} does not implement extract_features(x). "
+                "Add such a method to your PyTorch model to enable feature extraction "
+                "(used by dist_func='similarity', among others)."
+            )
+        model = self.model
+        device = self.device
+        model.eval()
+        with torch.no_grad():
+            results = []
+            for data in data_loader:
+                data = data.to(device)
+                results.append(model.extract_features(data))
+        return torch.cat(results, dim=0)
+
+    def extract_features(
+        self,
+        data_loader: Optional[DataLoader] = None,
+        X: Optional[List[Any]] = None,
+    ) -> numpy.ndarray:
+        """
+        Compute feature embeddings for ``X`` (or a prebuilt ``data_loader``).
+        When both are provided, ``data_loader`` takes precedence.
+
+        The wrapped PyTorch model must implement ``extract_features(x)``
+        returning the embedding tensor (typically penultimate-layer
+        activations) used by downstream consumers such as
+        ``dist_func='similarity'``.
+
+        Parameters
+        ----------
+        data_loader : DataLoader, optional
+            DataLoader to use directly. Defaults to None.
+        X : List[Any], optional
+            Raw input list; converted to a ``PredictionDataset`` when used.
+            Defaults to None.
+
+        Returns
+        -------
+        numpy.ndarray
+            Feature embeddings of shape ``(num_samples, embedding_dim)``.
+        """
+        if data_loader is not None and X is not None:
+            print_log(
+                "Extracting features from data_loader; ignoring X.",
+                logger="current",
+                level=logging.WARNING,
+            )
+        if data_loader is None:
+            dataset = PredictionDataset(X, self.test_transform)
+            data_loader = DataLoader(
+                dataset,
+                batch_size=self.batch_size,
+                num_workers=self.num_workers,
+                collate_fn=self.collate_fn,
+                pin_memory=torch.cuda.is_available(),
+            )
+        return self._extract_features(data_loader).cpu().numpy()
+
     def _score(self, data_loader: DataLoader) -> Tuple[float, float]:
         """
         Internal method to compute loss and accuracy for the data provided through a DataLoader.
@@ -455,7 +539,7 @@ class BasicNN:
             else:
                 data_loader = self._data_loader(X, y)
         mean_loss, accuracy = self._score(data_loader)
-        print_log(f"mean loss: {mean_loss:.3f}, accuray: {accuracy:.3f}", logger="current")
+        print_log(f"mean loss: {mean_loss:.3f}, accuracy: {accuracy:.3f}", logger="current")
         return accuracy
 
     def _data_loader(
@@ -528,12 +612,12 @@ class BasicNN:
 
         print_log(f"Checkpoints will be saved to {save_path}", logger="current")
 
-        save_parma_dic = {
+        save_param_dict = {
             "model": self.model.state_dict(),
             "optimizer": self.optimizer.state_dict(),
         }
 
-        torch.save(save_parma_dic, save_path)
+        torch.save(save_param_dict, save_path)
 
     def load(self, load_path: str) -> None:
         """
@@ -557,3 +641,109 @@ class BasicNN:
         self.model.load_state_dict(param_dic["model"])
         if "optimizer" in param_dic.keys():
             self.optimizer.load_state_dict(param_dic["optimizer"])
+
+
+# =============================================================================
+# Multi-label variants
+# =============================================================================
+
+
+class MultiLabelBasicNN(BasicNN):
+    """
+    A multi-label variant of :class:`BasicNN`.
+
+    The standard :class:`BasicNN` assumes a single-label, multi-class
+    classification setting (softmax output, argmax prediction). In
+    contrast, :class:`MultiLabelBasicNN` treats each output dimension as
+    an independent binary decision (sigmoid output, threshold-based binary
+    vector prediction) and uses
+    :class:`~ablkit.learning.MultiLabelClassificationDataset` so that
+    targets can be fed straight into losses like ``BCEWithLogitsLoss``.
+
+    Apart from prediction and dataset handling, the class reuses the full
+    training and evaluation pipeline from :class:`BasicNN`.
+    """
+
+    def predict(
+        self,
+        data_loader: Optional[DataLoader] = None,
+        X: Optional[List[Any]] = None,
+    ) -> numpy.ndarray:
+        """
+        Return a binary indicator vector for each sample by thresholding
+        the per-label sigmoid probabilities at 0.5.
+        """
+        if data_loader is not None and X is not None:
+            print_log(
+                "Predict the class of input data in data_loader instead of X.",
+                logger="current",
+                level=logging.WARNING,
+            )
+
+        if data_loader is None:
+            dataset = PredictionDataset(X, self.test_transform)
+            data_loader = DataLoader(
+                dataset,
+                batch_size=self.batch_size,
+                num_workers=self.num_workers,
+                collate_fn=self.collate_fn,
+                pin_memory=torch.cuda.is_available(),
+            )
+        pred_probs = self._predict(data_loader).sigmoid()
+        pred = torch.where(pred_probs > 0.5, 1, 0).int()
+        return pred.cpu().numpy()
+
+    def predict_proba(
+        self,
+        data_loader: Optional[DataLoader] = None,
+        X: Optional[List[Any]] = None,
+    ) -> numpy.ndarray:
+        """
+        Return per-label sigmoid probabilities of shape
+        ``(num_samples, num_labels)``.
+        """
+        if data_loader is not None and X is not None:
+            print_log(
+                "Predict the class probability of input data in data_loader instead of X.",
+                logger="current",
+                level=logging.WARNING,
+            )
+
+        if data_loader is None:
+            dataset = PredictionDataset(X, self.test_transform)
+            data_loader = DataLoader(
+                dataset,
+                batch_size=self.batch_size,
+                num_workers=self.num_workers,
+                collate_fn=self.collate_fn,
+                pin_memory=torch.cuda.is_available(),
+            )
+        return self._predict(data_loader).sigmoid().cpu().numpy()
+
+    def _data_loader(
+        self,
+        X: Optional[List[Any]],
+        y: Optional[List[int]] = None,
+        shuffle: Optional[bool] = True,
+    ) -> DataLoader:
+        """
+        Build a DataLoader backed by
+        :class:`~ablkit.learning.MultiLabelClassificationDataset`.
+        """
+        if X is None:
+            raise ValueError("X should not be None.")
+        if y is None:
+            y = [0] * len(X)
+        if not len(y) == len(X):
+            raise ValueError("X and y should have equal length.")
+
+        dataset = MultiLabelClassificationDataset(X, y, transform=self.train_transform)
+        data_loader = DataLoader(
+            dataset,
+            batch_size=self.batch_size,
+            shuffle=shuffle,
+            num_workers=self.num_workers,
+            collate_fn=self.collate_fn,
+            pin_memory=torch.cuda.is_available(),
+        )
+        return data_loader

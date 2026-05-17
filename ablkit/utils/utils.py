@@ -138,6 +138,79 @@ def avg_confidence_dist(pred_prob: np.ndarray, candidates_idxs: List[List[Any]])
     return 1 - np.average(pred_prob[cols, candidates_idxs], axis=1)
 
 
+def similarity_dist(
+    pred_embeddings: np.ndarray, candidates_idxs: List[List[Any]]
+) -> np.ndarray:
+    """
+    Compute a similarity-based cost for each candidate label assignment.
+
+    For each candidate, the cost is the average cosine similarity between
+    symbol pairs assigned different labels minus the average between pairs
+    assigned the same label. Lower values mean the candidate's labeling is
+    more consistent with the embedding geometry.
+
+    Parameters
+    ----------
+    pred_embeddings : np.ndarray
+        Embedding matrix for the symbols in a single data example, with shape
+        ``(num_symbols, embedding_dim)``.
+    candidates_idxs : List[List[Any]]
+        Candidate label assignments, each of length ``num_symbols``.
+
+    Returns
+    -------
+    np.ndarray
+        Cost for each candidate.
+    """
+    phi = np.asarray(pred_embeddings, dtype=float)
+    norms = np.linalg.norm(phi, axis=1, keepdims=True)
+    phi_normalized = phi / (norms + 1e-8)
+    sim = phi_normalized @ phi_normalized.T
+    num_symbols = sim.shape[0]
+    triu_i, triu_j = np.triu_indices(num_symbols, k=1)
+    pair_sims = sim[triu_i, triu_j]
+
+    costs = []
+    for cand in candidates_idxs:
+        labels = np.asarray(cand)
+        same = labels[triu_i] == labels[triu_j]
+        intra = pair_sims[same].mean() if same.any() else 0.0
+        inter = pair_sims[~same].mean() if (~same).any() else 0.0
+        costs.append(inter - intra)
+    return np.asarray(costs)
+
+
+def rejection_dist(
+    pred_prob: np.ndarray, candidates_idxs: List[List[Any]], alpha: float = 0.5
+) -> np.ndarray:
+    """
+    Compute a rejection-aware cost that combines model confidence with
+    candidate complexity. Each candidate's cost is a convex combination of
+    the standard confidence distance and a normalized length term, so
+    longer (more complex) candidates are penalized.
+
+    Parameters
+    ----------
+    pred_prob : np.ndarray
+        Prediction probability distributions for the symbols in a single
+        data example.
+    candidates_idxs : List[List[Any]]
+        Candidate label assignments.
+    alpha : float, optional
+        Weight in ``[0, 1]`` for the complexity term. Defaults to 0.5.
+
+    Returns
+    -------
+    np.ndarray
+        Cost for each candidate.
+    """
+    conf = confidence_dist(pred_prob, candidates_idxs)
+    complexity = np.array([len(c) for c in candidates_idxs], dtype=float)
+    if complexity.max() > 0:
+        complexity = complexity / complexity.max()
+    return (1 - alpha) * conf + alpha * complexity
+
+
 def to_hashable(x: Union[List[Any], Any]) -> Union[Tuple[Any, ...], Any]:
     """
     Convert a nested list to a nested tuple so it is hashable.

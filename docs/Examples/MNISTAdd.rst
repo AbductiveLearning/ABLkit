@@ -7,7 +7,7 @@ MNIST Addition
 
 Below shows an implementation of `MNIST
 Addition <https://arxiv.org/abs/1805.10872>`__. In this task, pairs of
-MNIST handwritten images and their sums are given, alongwith a domain
+MNIST handwritten images and their sums are given, along with a domain
 knowledge base containing information on how to perform addition
 operations. The task is to recognize the digits of handwritten images
 and accurately determine their sum.
@@ -147,14 +147,14 @@ model with a sklearn-style interface.
 
 .. code:: python
 
-    cls = LeNet5(num_classes=10)
+    net = LeNet5(num_classes=10)
     loss_fn = nn.CrossEntropyLoss(label_smoothing=0.1)
-    optimizer = RMSprop(cls.parameters(), lr=0.001, alpha=0.9)
+    optimizer = RMSprop(net.parameters(), lr=0.001, alpha=0.9)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     scheduler = lr_scheduler.OneCycleLR(optimizer, max_lr=0.001, pct_start=0.1, total_steps=100)
 
     base_model = BasicNN(
-        cls,
+        net,
         loss_fn,
         optimizer,
         scheduler=scheduler,
@@ -298,8 +298,10 @@ candidate that has the highest consistency.
     customized within the ``dist_func`` parameter. In the code above, we
     employ a consistency measurement based on confidence, which calculates
     the consistency between the data example and candidates based on the
-    confidence derived from the predicted probability. In ``examples/mnist_add/main.py``, we
-    provide options for utilizing other forms of consistency measurement.
+    confidence derived from the predicted probability. In
+    ``examples/mnist_add/main.py``, the ``--dist-func`` flag lets you swap in
+    other predefined options (``hamming``, ``avg_confidence``, ``similarity``,
+    ``rejection``) without editing the code.
 
     Also, during the process of inconsistency minimization, we can leverage
     `ZOOpt library <https://github.com/polixir/ZOOpt>`__ for acceleration.
@@ -368,7 +370,57 @@ Log:
         abl - INFO - Eval start: loop(val) [2]
         abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.993 mnist_add/reasoning_accuracy: 0.986 
         abl - INFO - Test start:
-        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.991 mnist_add/reasoning_accuracy: 0.980 
+        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.991 mnist_add/reasoning_accuracy: 0.980
+
+
+Command-line options
+--------------------
+
+In addition to the standard pipeline above, ``examples/mnist_add/main.py`` accepts
+several flags that switch in alternative methods. The defaults reproduce the
+standard pipeline, so existing usage is unaffected.
+
+- ``--method {standard,a3bl,verification}``: choose the learning/reasoning
+  pipeline.
+  ``standard`` uses ``Reasoner`` / ``SimpleBridge``.
+  ``a3bl`` uses the ambiguity-aware ``A3BLReasoner`` together with
+  ``A3BLBridge``.
+  ``verification`` uses ``VerificationReasoner`` and ``VerificationBridge``:
+  rather than picking one best candidate by ``dist_func``, it enumerates
+  the top ``--top-k`` consistent candidates by joint probability and trains
+  the model once per candidate.
+  All methods share the same ``BasicNN`` / ``ABLModel`` wrappers.
+- ``--dist-func {hamming,confidence,avg_confidence,similarity,rejection}``:
+  passed straight to the reasoner. ``similarity`` requires the wrapped
+  PyTorch model to implement ``extract_features(x)`` (the ``LeNet5`` in
+  this example does); ``BasicNN`` then surfaces those embeddings to the
+  reasoner automatically. Ignored when ``--method verification``.
+- ``--labeled-ratio FLOAT``: fraction in ``(0, 1]`` of training samples that
+  keep their ground-truth pseudo-labels. Values below ``1.0`` enable the
+  semi-supervised pipeline (``use_supervised_data=True`` on
+  ``bridge.train``). Only valid with ``--method standard``.
+- ``--top-k INT``: number of consistent candidates the verification
+  reasoner enumerates per example. Only used with ``--method verification``.
+  Defaults to ``1``.
+
+Examples:
+
+.. code:: bash
+
+    # Standard pipeline (default)
+    python main.py
+
+    # A3BL with similarity-based consistency
+    python main.py --method a3bl --dist-func similarity
+
+    # Semi-supervised: keep 30% of pseudo-labels, abduce the rest
+    python main.py --labeled-ratio 0.3
+
+    # Rejection-aware reasoning
+    python main.py --dist-func rejection
+
+    # Verification Learning: train on the top-3 consistent candidates
+    python main.py --method verification --top-k 3
 
 
 Environment

@@ -26,7 +26,7 @@ class HedBridge(SimpleBridge):
     ) -> None:
         super().__init__(model, reasoner, metric_list)
 
-    def pretrain(self, weights_dir):
+    def pretrain(self, weights_dir: str) -> None:
         if not os.path.exists(os.path.join(weights_dir, "pretrain_weights.pth")):
             print_log("Pretrain Start", logger="current")
 
@@ -64,7 +64,7 @@ class HedBridge(SimpleBridge):
 
         self.model.load(load_path=os.path.join(weights_dir, "pretrain_weights.pth"))
 
-    def select_mapping_and_abduce(self, data_examples: ListData):
+    def select_mapping_and_abduce(self, data_examples: ListData) -> List[List[Any]]:
         candidate_mappings = gen_mappings([0, 1, 2, 3], ["+", "=", 0, 1])
         mapping_score = []
         abduced_pseudo_label_list = []
@@ -87,11 +87,13 @@ class HedBridge(SimpleBridge):
 
         return data_examples.abduced_pseudo_label
 
-    def abduce_pseudo_label(self, data_examples: ListData):
+    def abduce_pseudo_label(self, data_examples: ListData) -> List[List[Any]]:
         self.reasoner.abduce(data_examples)
         return data_examples.abduced_pseudo_label
 
-    def check_training_impact(self, filtered_data_examples, data_examples):
+    def check_training_impact(
+        self, filtered_data_examples: ListData, data_examples: ListData
+    ) -> bool:
         character_accuracy = self.model.valid(filtered_data_examples)
         revisible_ratio = len(filtered_data_examples.X) / len(data_examples.X)
         log_string = (
@@ -104,7 +106,7 @@ class HedBridge(SimpleBridge):
             return True
         return False
 
-    def check_rule_quality(self, rule, val_data, equation_len):
+    def check_rule_quality(self, rule: Any, val_data: Any, equation_len: int) -> bool:
         val_X_true = self.data_preprocess(val_data[1], equation_len)
         val_X_false = self.data_preprocess(val_data[0], equation_len)
 
@@ -121,7 +123,7 @@ class HedBridge(SimpleBridge):
             return True
         return False
 
-    def calc_consistent_ratio(self, data_examples, rule):
+    def calc_consistent_ratio(self, data_examples: ListData, rule: Any) -> float:
         self.predict(data_examples)
         pred_pseudo_label = self.idx_to_pseudo_label(data_examples)
         consistent_num = sum(
@@ -129,7 +131,9 @@ class HedBridge(SimpleBridge):
         )
         return consistent_num / len(data_examples.X)
 
-    def get_rules_from_data(self, data_examples, samples_per_rule, samples_num):
+    def get_rules_from_data(
+        self, data_examples: ListData, samples_per_rule: int, samples_num: int
+    ) -> List[Any]:
         rules = []
         sampler = InfiniteSampler(len(data_examples), batch_size=samples_per_rule)
 
@@ -159,7 +163,7 @@ class HedBridge(SimpleBridge):
         return rules
 
     @staticmethod
-    def filter_empty(data_examples: ListData):
+    def filter_empty(data_examples: ListData) -> ListData:
         consistent_dix = [
             i
             for i in range(len(data_examples.abduced_pseudo_label))
@@ -168,7 +172,7 @@ class HedBridge(SimpleBridge):
         return data_examples[consistent_dix]
 
     @staticmethod
-    def select_rules(rule_dict):
+    def select_rules(rule_dict: dict) -> List[Any]:
         add_nums_dict = {}
         for r in list(rule_dict):
             add_nums = str(r.split("]")[0].split("[")[1]) + str(
@@ -185,7 +189,7 @@ class HedBridge(SimpleBridge):
                 add_nums_dict[add_nums] = r
         return list(rule_dict)
 
-    def data_preprocess(self, data, equation_len) -> ListData:
+    def data_preprocess(self, data: Any, equation_len: int) -> ListData:
         data_examples = ListData()
         data_examples.X = data[equation_len] + data[equation_len + 1]
         data_examples.gt_pseudo_label = None
@@ -193,7 +197,15 @@ class HedBridge(SimpleBridge):
 
         return data_examples
 
-    def train(self, train_data, val_data, segment_size=10, min_len=5, max_len=8, save_dir="./"):
+    def train(
+        self,
+        train_data: Any,
+        val_data: Any,
+        segment_size: int = 10,
+        min_len: int = 5,
+        max_len: int = 8,
+        save_dir: str = "./",
+    ) -> None:
         for equation_len in range(min_len, max_len):
             print_log(
                 f"============== equation_len: {equation_len}-{equation_len + 1} ================",

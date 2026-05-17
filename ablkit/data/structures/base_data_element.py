@@ -306,14 +306,12 @@ class BaseDataElement:
         Returns:
             list: Contains all keys in data_fields.
         """
-        # We assume that the name of the attribute related to property is
-        # '_' + the name of the property. We use this rule to filter out
-        # private keys.
-        # TODO: Use a more robust way to solve this problem
+        cls = type(self)
         private_keys = {
-            "_" + key
-            for key in self._data_fields
-            if isinstance(getattr(type(self), key, None), property)
+            name
+            for name in self._data_fields
+            if name.startswith("_")
+            and isinstance(getattr(cls, name[1:], None), property)
         }
         return list(self._data_fields - private_keys)
 

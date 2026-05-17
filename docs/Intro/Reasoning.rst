@@ -8,7 +8,7 @@
 
 
 Reasoning part
-===============
+==============
 
 In this section, we will look at how to build the reasoning part, which 
 leverages domain knowledge and performs deductive or abductive reasoning.
@@ -318,11 +318,20 @@ specify:
    used when determining consistency between your prediction and
    candidate returned from knowledge base. This can be either a user-defined function
    or one that is predefined. Valid predefined options include
-   “hamming”, “confidence” and “avg_confidence”. For “hamming”, it directly calculates the Hamming distance between the
-   predicted pseudo-label in the data example and candidate. For “confidence”, it
-   calculates the confidence distance between the predicted probabilities in the data
-   example and each candidate, where the confidence distance is defined as 1 - the product
-   of prediction probabilities in “confidence” and 1 - the average of prediction probabilities in “avg_confidence”.
+   “hamming”, “confidence”, “avg_confidence”, “similarity” and “rejection”.
+   For “hamming”, it directly calculates the Hamming distance between the
+   predicted pseudo-label in the data example and candidate. For “confidence” and
+   “avg_confidence”, it calculates the confidence distance between the predicted
+   probabilities and each candidate, defined as ``1 - product`` and ``1 - average``
+   of the candidate's per-symbol probabilities respectively. For “similarity”,
+   it compares candidates against the geometry of the model's embeddings.
+   This requires the wrapped PyTorch model to implement
+   ``extract_features(x)`` (returning, for example, penultimate-layer
+   activations); ``BasicNN`` then surfaces them via its own
+   ``extract_features`` method, and ``ABLModel`` automatically stores the
+   resulting embeddings on ``data_example.embeddings`` for the reasoner.
+   For “rejection”, it combines the confidence distance with a candidate-complexity
+   penalty so that shorter candidates are favored when scores are close.
    Defaults to “confidence”.
 - ``idx_to_label`` (dict, optional), a mapping from index in the base model to label. 
    If not provided, a default order-based index to label mapping is created. 
@@ -333,7 +342,7 @@ The main method implemented by ``Reasoner`` is
 based on the distance function defined in ``dist_func``.
 
 MNIST Addition example (cont.)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As an example, consider these data examples for MNIST Addition:
 
@@ -377,7 +386,7 @@ Out:
 
 Specifically, as mentioned before, “confidence” calculates the distance between the data 
 example and candidates based on the confidence derived from the predicted probability. 
-Take ``example1`` as an example, the ``pred_prob`` in it indicates a higher 
-confidence that the first label should be "1" rather than "7". Therefore, among the 
+Take ``example1`` as an example, the ``pred_prob`` in it indicates a higher
+confidence that the first label should be "1" rather than "7". Therefore, among the
 candidates [1,7] and [7,1], it would be closer to [1,7] (as its first label is "1").
 

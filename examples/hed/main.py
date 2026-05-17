@@ -61,15 +61,15 @@ def main():
     print_log("Building the Learning Part.", logger="current")
 
     # Build necessary components for BasicNN
-    cls = SymbolNet(num_classes=4)
+    net = SymbolNet(num_classes=4)
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.RMSprop(cls.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+    optimizer = torch.optim.RMSprop(net.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 
     # Build BasicNN
     base_model = BasicNN(
-        cls,
+        net,
         loss_fn,
         optimizer,
         device=device,

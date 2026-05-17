@@ -2,13 +2,13 @@
 
 <img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/logo.png" width="180">
 
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ablkit)](https://pypi.org/project/ablkit/) [![PyPI version](https://badgen.net/pypi/v/ablkit)](https://pypi.org/project/ablkit/) [![Documentation Status](https://readthedocs.org/projects/ablkit/badge/?version=latest)](https://ablkit.readthedocs.io/en/latest/?badge=latest) [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/AbductiveLearning/ABLkit/blob/main/LICENSE) [![flake8 Lint](https://github.com/AbductiveLearning/ABLkit/actions/workflows/lint.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLkit/actions/workflows/lint.yaml) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) [![ABLkit-CI](https://github.com/AbductiveLearning/ABLkit/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLkit/actions/workflows/build-and-test.yaml)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/AbductiveLearning/ABLkit/blob/main/LICENSE) [![last commit](https://img.shields.io/github/last-commit/AbductiveLearning/ablkit)](https://img.shields.io/github/last-commit/AbductiveLearning/ablkit) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ablkit)](https://pypi.org/project/ablkit/) [![PyPI version](https://badgen.net/pypi/v/ablkit)](https://pypi.org/project/ablkit/) [![Documentation Status](https://readthedocs.org/projects/ablkit/badge/?version=latest)](https://ablkit.readthedocs.io/en/latest/?badge=latest) [![ABLkit-CI](https://github.com/AbductiveLearning/ABLkit/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLkit/actions/workflows/build-and-test.yaml) [![flake8 Lint](https://github.com/AbductiveLearning/ABLkit/actions/workflows/lint.yaml/badge.svg)](https://github.com/AbductiveLearning/ABLkit/actions/workflows/lint.yaml) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)  [![PyPI - Downloads](https://img.shields.io/pypi/dm/ablkit)](https://pypi.org/project/ablkit/)
 
-[📘Documentation](https://ablkit.readthedocs.io/en/latest/index.html) | [📄Paper](https://journal.hep.com.cn/fcs/EN/10.1007/s11704-024-40085-7) | [📚Examples](https://github.com/AbductiveLearning/ABLkit/tree/main/examples) | [💬Reporting Issues](https://github.com/AbductiveLearning/ABLkit/issues/new)
+[📘Documentation](https://ablkit.readthedocs.io/en/latest/index.html) | [📄Paper](https://journal.hep.com.cn/fcs/EN/10.1007/s11704-024-40085-7) | [🧪Examples](https://github.com/AbductiveLearning/ABLkit/tree/main/examples) | [💬Reporting Issues](https://github.com/AbductiveLearning/ABLkit/issues/new)
 
 </div>
 
-# ABLkit: A Toolkit for Abductive Learning
+# 🧰 ABLkit: A Toolkit for Abductive Learning 📊📐
 
 **ABLkit** is an efficient Python toolkit for [**Abductive Learning (ABL)**](https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf). ABL is a novel paradigm that integrates machine learning and logical reasoning in a unified framework. It is suitable for tasks where both data and (logical) domain knowledge are available. 
 
@@ -28,7 +28,7 @@ ABLkit encapsulates advanced ABL techniques, providing users with an efficient a
 <img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/ABLkit.png" alt="ABLkit" style="width: 80%;"/>
 </p>
 
-## Installation
+## 🛠️ Installation
 
 ### Install from PyPI
 
@@ -60,7 +60,7 @@ sudo apt-get install swi-prolog
 
 For Windows and Mac users, please refer to the [SWI-Prolog Install Guide](https://github.com/yuce/pyswip/blob/master/INSTALL.md).
 
-## Quick Start
+## ⚡ Quick Start
 
 We use the MNIST Addition task as a quick start example. In this task, pairs of MNIST handwritten images and their sums are given, alongwith a domain knowledge base which contains information on how to perform addition operations. Our objective is to input a pair of handwritten images and accurately determine their sum.
 
@@ -184,7 +184,7 @@ bridge.test(test_data)
 
 To explore detailed tutorials and information, please refer to: [Documentation on Read the Docs](https://ablkit.readthedocs.io/en/latest/index.html).
 
-## Examples
+## 🧪 Examples
 
 We provide several examples in `examples/`. Each example is stored in a separate folder containing a README file.
 
@@ -192,8 +192,9 @@ We provide several examples in `examples/`. Each example is stored in a separate
 + [Handwritten Formula (HWF)](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/hwf)
 + [Handwritten Equation Decipherment](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/hed)
 + [Zoo](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/zoo)
++ [BDD-OIA](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/bdd_oia)
 
-## References
+## 📚 References
 
 For more information about ABL, please refer to: [Zhou, 2019](http://scis.scichina.com/en/2019/076101.pdf) and [Zhou and Huang, 2022](https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf).
 
@@ -220,7 +221,7 @@ For more information about ABL, please refer to: [Zhou, 2019](http://scis.scichi
 }
 ```
 
-## Citation
+## 📝 Citation
 
 To cite ABLkit, please cite the following paper:  [Huang et al., 2024](https://journal.hep.com.cn/fcs/EN/10.1007/s11704-024-40085-7).
 
@@ -235,3 +236,53 @@ To cite ABLkit, please cite the following paper:  [Huang et al., 2024](https://j
   year       = {2024}
 }
 ```
+
+## ✨ Contributors
+
+We would like to thank the following contributors for their efforts on this project: <sub><i>(*: current maintainer)</i></sub>
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/WaTerminator">
+        <img src="https://avatars.githubusercontent.com/u/58843099?V=4" width="100px;" alt=""/>
+        <br />
+        En-Hao Gao
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Tony-HYX">
+        <img src="https://avatars.githubusercontent.com/u/34394824?V=4" width="100px;" alt=""/>
+        <br />
+        Yu-Xuan Huang
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/troyyyyy">
+        <img src="https://avatars.githubusercontent.com/u/49091847?v=4" width="100px;" alt=""/>
+        <br />
+        Wen-Chao Hu
+      </a>*
+    </td>
+    <td align="center">
+      <a href="https://github.com/snqn1597">
+        <img src="https://avatars.githubusercontent.com/u/98020642?V=4" width="100px;" alt=""/>
+        <br />
+        Qi-Jie Li
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Hygebra">
+        <img src="https://avatars.githubusercontent.com/u/160569872?V=4" width="100px;" alt=""/>
+        <br />
+        Yang Hang
+      </a>*
+    </td>
+  </tr>
+</table>
+
+We also thank the following users for their helpful suggestions and feedback:
+
+- [Hao-Yuan He](https://github.com/Hao-Yuan-He)
+- [Lin-Han Jia](https://github.com/YGZWQZD)
+- [Wang-Zhou Dai](https://github.com/haldai)

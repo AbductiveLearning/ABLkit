@@ -1,5 +1,8 @@
 import argparse
+import ast
+import operator
 import os.path as osp
+from typing import List
 
 import numpy as np
 import torch
@@ -14,56 +17,80 @@ from ablkit.utils import ABLLogger, print_log
 from datasets import get_dataset
 from models.nn import SymbolNet
 
+DIGITS = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
+OPERATORS = {"+", "-", "*", "/"}
+PSEUDO_LABEL_LIST = sorted(DIGITS) + sorted(OPERATORS)
+
+
+def _is_well_formed(formula: List[str]) -> bool:
+    """Return True iff ``formula`` alternates digit-operator-digit and has odd length."""
+    if len(formula) % 2 == 0:
+        return False
+    for i, sym in enumerate(formula):
+        expected = DIGITS if i % 2 == 0 else OPERATORS
+        if sym not in expected:
+            return False
+    return True
+
+
+_SAFE_BINOPS = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv,
+}
+
+
+def _safe_eval(node: ast.AST) -> float:
+    """Evaluate an arithmetic AST restricted to the four basic operators."""
+    if isinstance(node, ast.Expression):
+        return _safe_eval(node.body)
+    if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+        return node.value
+    if isinstance(node, ast.BinOp) and type(node.op) in _SAFE_BINOPS:
+        return _SAFE_BINOPS[type(node.op)](_safe_eval(node.left), _safe_eval(node.right))
+    raise ValueError(f"unsupported AST node: {type(node).__name__}")
+
+
+def _evaluate(formula: List[str]) -> float:
+    """Evaluate a well-formed digit/operator formula with proper precedence."""
+    try:
+        tree = ast.parse("".join(formula), mode="eval")
+        return _safe_eval(tree)
+    except (SyntaxError, ZeroDivisionError, ValueError):
+        return np.inf
+
+
+def _hwf_logic_forward(formula: List[str]) -> float:
+    """Shared ``logic_forward`` implementation for both ``HwfKB`` variants."""
+    if not _is_well_formed(formula):
+        return np.inf
+    return _evaluate(formula)
+
 
 class HwfKB(KBBase):
     def __init__(
         self,
-        pseudo_label_list=["1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "-", "*", "/"],
-        max_err=1e-10,
-    ):
+        pseudo_label_list: List[str] = PSEUDO_LABEL_LIST,
+        max_err: float = 1e-10,
+    ) -> None:
         super().__init__(pseudo_label_list, max_err)
 
-    def _valid_candidate(self, formula):
-        if len(formula) % 2 == 0:
-            return False
-        for i in range(len(formula)):
-            if i % 2 == 0 and formula[i] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-                return False
-            if i % 2 != 0 and formula[i] not in ["+", "-", "*", "/"]:
-                return False
-        return True
-
-    # Implement the deduction function
-    def logic_forward(self, formula):
-        if not self._valid_candidate(formula):
-            return np.inf
-        return eval("".join(formula))
+    def logic_forward(self, formula: List[str]) -> float:
+        return _hwf_logic_forward(formula)
 
 
 class HwfGroundKB(GroundKB):
     def __init__(
         self,
-        pseudo_label_list=["1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "-", "*", "/"],
-        GKB_len_list=[1, 3, 5, 7],
-        max_err=1e-10,
-    ):
+        pseudo_label_list: List[str] = PSEUDO_LABEL_LIST,
+        GKB_len_list: List[int] = [1, 3, 5, 7],
+        max_err: float = 1e-10,
+    ) -> None:
         super().__init__(pseudo_label_list, GKB_len_list, max_err)
 
-    def _valid_candidate(self, formula):
-        if len(formula) % 2 == 0:
-            return False
-        for i in range(len(formula)):
-            if i % 2 == 0 and formula[i] not in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-                return False
-            if i % 2 != 0 and formula[i] not in ["+", "-", "*", "/"]:
-                return False
-        return True
-
-    # Implement the deduction function
-    def logic_forward(self, formula):
-        if not self._valid_candidate(formula):
-            return np.inf
-        return eval("".join(formula))
+    def logic_forward(self, formula: List[str]) -> float:
+        return _hwf_logic_forward(formula)
 
 
 def main():
@@ -81,7 +108,7 @@ def main():
         "--label-smoothing",
         type=float,
         default=0.2,
-        help="label smoothing in cross entropy loss (default : 0.2)"
+        help="label smoothing in cross entropy loss (default : 0.2)",
     )
     parser.add_argument(
         "--lr", type=float, default=1e-3, help="base model learning rate (default : 0.001)"
@@ -130,15 +157,20 @@ def main():
     print_log("Building the Learning Part.", logger="current")
 
     # Build necessary components for BasicNN
-    cls = SymbolNet(num_classes=13, image_size=(45, 45, 1))
+    net = SymbolNet(num_classes=13, image_size=(45, 45, 1))
     loss_fn = nn.CrossEntropyLoss(label_smoothing=args.label_smoothing)
-    optimizer = torch.optim.Adam(cls.parameters(), lr=args.lr)
+    optimizer = torch.optim.Adam(net.parameters(), lr=args.lr)
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 
     # Build BasicNN
     base_model = BasicNN(
-        cls, loss_fn, optimizer, device=device, batch_size=args.batch_size, num_epochs=args.epochs,
+        net,
+        loss_fn,
+        optimizer,
+        device=device,
+        batch_size=args.batch_size,
+        num_epochs=args.epochs,
     )
 
     # Build ABLModel
