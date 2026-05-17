@@ -1,13 +1,15 @@
 from .cache import Cache, abl_cache
 from .logger import ABLLogger, print_log
 from .utils import (
-    confidence_dist,
     avg_confidence_dist,
+    confidence_dist,
     flatten,
     hamming_dist,
     reform_list,
-    to_hashable,
+    rejection_dist,
+    similarity_dist,
     tab_data_to_tuple,
+    to_hashable,
 )
 
 __all__ = [
@@ -19,6 +21,8 @@ __all__ = [
     "flatten",
     "hamming_dist",
     "reform_list",
+    "rejection_dist",
+    "similarity_dist",
     "to_hashable",
     "abl_cache",
     "tab_data_to_tuple",

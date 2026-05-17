@@ -298,8 +298,10 @@ candidate that has the highest consistency.
     customized within the ``dist_func`` parameter. In the code above, we
     employ a consistency measurement based on confidence, which calculates
     the consistency between the data example and candidates based on the
-    confidence derived from the predicted probability. In ``examples/mnist_add/main.py``, we
-    provide options for utilizing other forms of consistency measurement.
+    confidence derived from the predicted probability. In
+    ``examples/mnist_add/main.py``, the ``--dist-func`` flag lets you swap in
+    other predefined options (``hamming``, ``avg_confidence``, ``similarity``,
+    ``rejection``) without editing the code.
 
     Also, during the process of inconsistency minimization, we can leverage
     `ZOOpt library <https://github.com/polixir/ZOOpt>`__ for acceleration.
@@ -368,7 +370,44 @@ Log:
         abl - INFO - Eval start: loop(val) [2]
         abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.993 mnist_add/reasoning_accuracy: 0.986 
         abl - INFO - Test start:
-        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.991 mnist_add/reasoning_accuracy: 0.980 
+        abl - INFO - Evaluation ended, mnist_add/character_accuracy: 0.991 mnist_add/reasoning_accuracy: 0.980
+
+
+Command-line options
+--------------------
+
+In addition to the standard pipeline above, ``examples/mnist_add/main.py`` accepts
+several flags that switch in alternative methods. The defaults reproduce the
+standard pipeline, so existing usage is unaffected.
+
+- ``--method {standard,a3bl}`` — choose the learning/reasoning pipeline.
+  ``standard`` uses ``BasicNN`` / ``ABLModel`` / ``Reasoner`` / ``SimpleBridge``.
+  ``a3bl`` uses the ambiguity-aware ``A3BLReasoner`` together with the matching
+  ``A3BLBasicNN``, ``A3BLModel`` and ``A3BLBridge`` defined under
+  ``examples/mnist_add/{models,bridge}``.
+- ``--dist-func {hamming,confidence,avg_confidence,similarity,rejection}`` —
+  passed straight to the reasoner. ``similarity`` requires the model to populate
+  ``data_example.embeddings``, which ``A3BLModel`` already does.
+- ``--labeled-ratio FLOAT`` — fraction in ``(0, 1]`` of training samples that
+  keep their ground-truth pseudo-labels. Values below ``1.0`` enable the
+  semi-supervised pipeline (``use_supervised_data=True`` on
+  ``bridge.train``). Only valid with ``--method standard``.
+
+Examples:
+
+.. code:: bash
+
+    # Standard pipeline (default)
+    python main.py
+
+    # A3BL with similarity-based consistency
+    python main.py --method a3bl --dist-func similarity
+
+    # Semi-supervised: keep 30% of pseudo-labels, abduce the rest
+    python main.py --labeled-ratio 0.3
+
+    # Rejection-aware reasoning
+    python main.py --dist-func rejection
 
 
 Environment

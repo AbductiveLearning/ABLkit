@@ -318,11 +318,17 @@ specify:
    used when determining consistency between your prediction and
    candidate returned from knowledge base. This can be either a user-defined function
    or one that is predefined. Valid predefined options include
-   “hamming”, “confidence” and “avg_confidence”. For “hamming”, it directly calculates the Hamming distance between the
-   predicted pseudo-label in the data example and candidate. For “confidence”, it
-   calculates the confidence distance between the predicted probabilities in the data
-   example and each candidate, where the confidence distance is defined as 1 - the product
-   of prediction probabilities in “confidence” and 1 - the average of prediction probabilities in “avg_confidence”.
+   “hamming”, “confidence”, “avg_confidence”, “similarity” and “rejection”.
+   For “hamming”, it directly calculates the Hamming distance between the
+   predicted pseudo-label in the data example and candidate. For “confidence” and
+   “avg_confidence”, it calculates the confidence distance between the predicted
+   probabilities and each candidate, defined as ``1 - product`` and ``1 - average``
+   of the candidate's per-symbol probabilities respectively. For “similarity”,
+   it compares candidates against the geometry of the model's embeddings
+   (requires the ABLModel to populate ``data_example.embeddings``; see
+   ``A3BLModel`` in the MNIST Addition example for a reference implementation).
+   For “rejection”, it combines the confidence distance with a candidate-complexity
+   penalty so that shorter candidates are favored when scores are close.
    Defaults to “confidence”.
 - ``idx_to_label`` (dict, optional), a mapping from index in the base model to label. 
    If not provided, a default order-based index to label mapping is created. 
