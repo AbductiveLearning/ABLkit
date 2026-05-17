@@ -32,7 +32,7 @@ class ABLModel:
 
         self.base_model = base_model
 
-    def predict(self, data_examples: ListData) -> Dict:
+    def predict(self, data_examples: ListData) -> Dict[str, Any]:
         """
         Predict the labels and probabilities for the given data.
 

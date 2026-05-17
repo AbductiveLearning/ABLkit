@@ -1,8 +1,10 @@
 import math
 import os
+from typing import Any, List, Optional, Union
 
 import numpy as np
 
+from ablkit.data.structures import ListData
 from ablkit.reasoning import PrologKB, Reasoner
 from ablkit.utils import reform_list
 
@@ -11,37 +13,44 @@ CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 class HedKB(PrologKB):
     def __init__(
-        self, pseudo_label_list=[1, 0, "+", "="], pl_file=os.path.join(CURRENT_DIR, "learn_add.pl")
-    ):
+        self,
+        pseudo_label_list: List[Any] = [1, 0, "+", "="],
+        pl_file: str = os.path.join(CURRENT_DIR, "learn_add.pl"),
+    ) -> None:
         pl_file = pl_file.replace("\\", "/")
         super().__init__(pseudo_label_list, pl_file)
-        self.learned_rules = {}
+        self.learned_rules: dict = {}
 
-    def consist_rule(self, exs, rules):
+    def consist_rule(self, exs: Any, rules: Any) -> bool:
         rules = str(rules).replace("'", "")
         return len(list(self.prolog.query("eval_inst_feature(%s, %s)." % (exs, rules)))) != 0
 
-    def abduce_rules(self, pred_res):
+    def abduce_rules(self, pred_res: Any) -> Optional[List[Any]]:
         prolog_result = list(self.prolog.query("consistent_inst_feature(%s, X)." % pred_res))
         if len(prolog_result) == 0:
             return None
         prolog_rules = prolog_result[0]["X"]
-        rules = [rule.value for rule in prolog_rules]
-        return rules
+        return [rule.value for rule in prolog_rules]
 
 
 class HedReasoner(Reasoner):
-    def revise_at_idx(self, data_example):
+    def revise_at_idx(self, data_example: ListData) -> Any:
         revision_idx = np.where(np.array(data_example.flatten("revision_flag")) != 0)[0]
         candidate = self.kb.revise_at_idx(
             data_example.pred_pseudo_label, data_example.Y, data_example.X, revision_idx
         )
         return candidate
 
-    def zoopt_budget(self, symbol_num):
+    def zoopt_budget(self, symbol_num: int) -> int:
         return 200
 
-    def zoopt_score(self, symbol_num, data_example, sol, get_score=True):
+    def zoopt_score(
+        self,
+        symbol_num: int,
+        data_example: ListData,
+        sol: Any,
+        get_score: bool = True,
+    ) -> Union[float, List[int]]:
         revision_flag = reform_list(
             list(sol.get_x().astype(np.int32)), data_example.pred_pseudo_label
         )
@@ -82,7 +91,7 @@ class HedReasoner(Reasoner):
         else:
             return max_consistent_idxs
 
-    def abduce(self, data_example):
+    def abduce(self, data_example: ListData) -> List[List[Any]]:
         symbol_num = data_example.elements_num("pred_pseudo_label")
         max_revision_num = self._get_max_revision_num(self.max_revision, symbol_num)
 
@@ -98,5 +107,5 @@ class HedReasoner(Reasoner):
         data_example.abduced_pseudo_label = abduced_pseudo_label
         return abduced_pseudo_label
 
-    def abduce_rules(self, pred_res):
+    def abduce_rules(self, pred_res: Any) -> Optional[List[Any]]:
         return self.kb.abduce_rules(pred_res)
