@@ -12,7 +12,7 @@ from ablkit.learning import ABLModel, BasicNN
 from ablkit.reasoning import A3BLReasoner, GroundKB, KBBase, PrologKB, Reasoner
 from ablkit.utils import ABLLogger, print_log
 
-from bridge.a3bl_bridge import A3BLBridge
+from a3bl_bridge import A3BLBridge
 from datasets import get_dataset
 from models.a3bl_model import A3BLBasicNN
 from models.nn import LeNet5
