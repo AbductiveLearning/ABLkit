@@ -8,7 +8,7 @@
 
 
 Reasoning part
-===============
+==============
 
 In this section, we will look at how to build the reasoning part, which 
 leverages domain knowledge and performs deductive or abductive reasoning.
@@ -339,7 +339,7 @@ The main method implemented by ``Reasoner`` is
 based on the distance function defined in ``dist_func``.
 
 MNIST Addition example (cont.)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As an example, consider these data examples for MNIST Addition:
 

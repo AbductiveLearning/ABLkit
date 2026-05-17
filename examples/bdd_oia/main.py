@@ -48,7 +48,7 @@ def get_args():
         "--loops", type=int, default=2, help="number of loop iterations (default : 2)"
     )
     parser.add_argument(
-        "--segment_size", type=int, default=0.01, help="segment size (default : 0.01)"
+        "--segment_size", type=float, default=0.01, help="segment size (default : 0.01)"
     )
     parser.add_argument("--save_interval", type=int, default=1, help="save interval (default : 1)")
     parser.add_argument(

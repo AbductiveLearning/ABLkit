@@ -455,7 +455,7 @@ class BasicNN:
             else:
                 data_loader = self._data_loader(X, y)
         mean_loss, accuracy = self._score(data_loader)
-        print_log(f"mean loss: {mean_loss:.3f}, accuray: {accuracy:.3f}", logger="current")
+        print_log(f"mean loss: {mean_loss:.3f}, accuracy: {accuracy:.3f}", logger="current")
         return accuracy
 
     def _data_loader(
@@ -528,12 +528,12 @@ class BasicNN:
 
         print_log(f"Checkpoints will be saved to {save_path}", logger="current")
 
-        save_parma_dic = {
+        save_param_dict = {
             "model": self.model.state_dict(),
             "optimizer": self.optimizer.state_dict(),
         }
 
-        torch.save(save_parma_dic, save_path)
+        torch.save(save_param_dict, save_path)
 
     def load(self, load_path: str) -> None:
         """

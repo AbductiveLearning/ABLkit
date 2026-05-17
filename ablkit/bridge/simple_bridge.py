@@ -379,7 +379,7 @@ class SimpleBridge(BaseBridge):
             try:
                 v = float(v)
                 msg += k + f": {v:.3f} "
-            except:
+            except (TypeError, ValueError):
                 pass
 
         if self.use_wandb:

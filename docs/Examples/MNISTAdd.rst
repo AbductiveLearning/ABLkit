@@ -7,7 +7,7 @@ MNIST Addition
 
 Below shows an implementation of `MNIST
 Addition <https://arxiv.org/abs/1805.10872>`__. In this task, pairs of
-MNIST handwritten images and their sums are given, alongwith a domain
+MNIST handwritten images and their sums are given, along with a domain
 knowledge base containing information on how to perform addition
 operations. The task is to recognize the digits of handwritten images
 and accurately determine their sum.

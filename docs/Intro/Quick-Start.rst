@@ -109,7 +109,7 @@ ABLkit provides two basic metrics, namely ``SymbolAccuracy`` and ``ReasoningMetr
 Read more about `building evaluation metrics <Evaluation.html>`_
 
 Bridging Learning and Reasoning
----------------------------------------
+-------------------------------
 
 Now, we use ``SimpleBridge`` to combine learning and reasoning in a unified ABL framework.
 
