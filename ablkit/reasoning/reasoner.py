@@ -13,7 +13,7 @@ from zoopt import Dimension, Objective, Opt, Parameter, Solution
 
 from ..data.structures import ListData
 from ..reasoning import KBBase
-from ..utils.utils import hamming_dist, confidence_dist, avg_confidence_dist
+from ..utils.utils import hamming_dist, confidence_dist, avg_confidence_dist, similarity_dist, rejection_dist
 
 
 class Reasoner:
@@ -30,12 +30,16 @@ class Reasoner:
         measure, wherein the candidate with lowest cost is selected as the final
         abduced label. It can be either a string representing a predefined distance
         function or a callable function. The available predefined distance functions:
-        'hamming' | 'confidence' | 'avg_confidence'. 'hamming' directly calculates the
-        Hamming distance between the predicted pseudo-label in the data example and each
-        candidate. 'confidence' and 'avg_confidence' calculates the confidence distance
-        between the predicted probabilities in the data example and each candidate, where
-        the confidence distance is defined as 1 - the product of prediction probabilities
-        in 'confidence' and 1 - the average of prediction probabilities in 'avg_confidence'.
+        'hamming' | 'confidence' | 'avg_confidence' | 'similarity' | 'rejection'.
+        'hamming' directly calculates the Hamming distance between the predicted
+        pseudo-label in the data example and each candidate. 'confidence' and
+        'avg_confidence' calculate the confidence distance between the predicted
+        probabilities and each candidate, defined as ``1 - product`` and
+        ``1 - average`` of the candidate's per-symbol probabilities respectively.
+        'similarity' compares candidates against the geometry of the model's
+        embeddings (requires the model to populate ``data_example.embeddings``).
+        'rejection' combines confidence distance with a candidate-complexity penalty,
+        favoring shorter candidates when scores are close.
         Alternatively, the callable function should have the signature
         ``dist_func(data_example, candidates, candidate_idxs, reasoning_results)`` and must
         return a cost list. Each element in this cost list should be a numerical value
@@ -83,13 +87,11 @@ class Reasoner:
 
     def _check_valid_dist(self, dist_func):
         if isinstance(dist_func, str):
-            # TODO: 加一下similarity和rejection的选项
-            ### 这两个选项里面都相当于是加权结合，x的similarity+confidence(or, hamming, etc.) / kb的rejection+confidence(or, hamming, etc.)
-            ### 最后应该是设置成dist_func的组合，比如list of str/str, 现在先不这么复杂，先实现一个基础版本的吧
-            if dist_func not in ["hamming", "confidence", "avg_confidence"]:
+            valid = ["hamming", "confidence", "avg_confidence", "similarity", "rejection"]
+            if dist_func not in valid:
                 raise NotImplementedError(
-                    'Valid options for predefined dist_func include "hamming", '
-                    + f'"confidence" and "avg_confidence", but got {dist_func}.'
+                    f"Valid options for predefined dist_func are {valid}, "
+                    f"but got {dist_func!r}."
                 )
             return
         elif callable(dist_func):
@@ -182,18 +184,18 @@ class Reasoner:
         elif self.dist_func == "avg_confidence":
             candidates_idxs = [[self.label_to_idx[x] for x in c] for c in candidates]
             return avg_confidence_dist(data_example.pred_prob, candidates_idxs)
-        
-        
-        ## TODO: 实现一下NeurIPS 2021 Fast Abductive Learning by Similarity-based Consistency Optimization 的方法
-        # elif self.dist_func == "similarity":
-        ## 需要做的事情主要是在这里实现一个similarity的dist_func，参考论文里的式（12）这个函数的输入输出需要符合dist_func的要求
-        ## 可能其他地方也需要修改，比如一开始如何去得到论文里的式（2） (Similarity score)
-        ## 参考一下 https://github.com/AbductiveLearning/ABLSim 的实现（参考思路，它的代码不是用ABLkit的标准接口写的，可能很多地方对不上）
-        
-        ## TODO: 实现一下JCRD 2024 带拒绝推理的反绎学习方法 的方法
-        # elif self.dist_func == "rejection":
-        ## 和原文有一些区别，原文里的式子（5）是要实现的，然后类似ABLsim一样，把（5）和confidence score加权结合直接得到dist_func就可以
-        
+        elif self.dist_func == "similarity":
+            embeddings = getattr(data_example, "embeddings", None)
+            if embeddings is None:
+                raise ValueError(
+                    "dist_func='similarity' requires the ABLModel to populate "
+                    "data_example.embeddings (see A3BLModel for an example)."
+                )
+            candidates_idxs = [[self.label_to_idx[x] for x in c] for c in candidates]
+            return similarity_dist(embeddings, candidates_idxs=candidates_idxs)
+        elif self.dist_func == "rejection":
+            candidates_idxs = [[self.label_to_idx[x] for x in c] for c in candidates]
+            return rejection_dist(data_example.pred_prob, candidates_idxs=candidates_idxs)
         else:
             candidates_idxs = [[self.label_to_idx[x] for x in c] for c in candidates]
             cost_list = self.dist_func(data_example, candidates, candidates_idxs, reasoning_results)
@@ -389,7 +391,7 @@ class Reasoner:
         return self.batch_abduce(data_examples)
 
 
-class A3BLReasoner(Reasoner):  # TODO
+class A3BLReasoner(Reasoner): 
     """
     Reasoner for minimizing the inconsistency between the knowledge base and learning models.
 
@@ -403,17 +405,9 @@ class A3BLReasoner(Reasoner):  # TODO
         measure, wherein the candidate with the lowest cost is selected as the final
         abduced label. It can be either a string representing a predefined distance
         function or a callable function. The available predefined distance functions:
-        'hamming' | 'confidence' | 'avg_confidence'. 'hamming' directly calculates the
-        Hamming distance between the predicted pseudo-label in the data example and each
-        candidate. 'confidence' and 'avg_confidence' calculates the confidence distance
-        between the predicted probabilities in the data example and each candidate, where
-        the confidence distance is defined as 1 - the product of prediction probabilities
-        in 'confidence' and 1 - the average of prediction probabilities in 'avg_confidence'.
-        Alternatively, the callable function should have the signature
-        ``dist_func(data_example, candidates, candidate_idxs, reasoning_results)`` and must
-        return a cost list. Each element in this cost list should be a numerical value
-        representing the cost for each candidate, and the list should have the same length
-        as candidates. Defaults to 'confidence'.
+        'hamming' | 'confidence' | 'avg_confidence' | 'similarity' | 'rejection'.
+        See :class:`Reasoner` for the full description of each option.
+        Defaults to 'confidence'.
     idx_to_label : dict, optional
         A mapping from index in the base model to label. If not provided, a default
         order-based index to label mapping is created. Defaults to None.
@@ -427,6 +421,15 @@ class A3BLReasoner(Reasoner):  # TODO
         when performing abductive reasoning. Defaults to 0.
     use_zoopt : bool, optional
         Whether to use ZOOpt library during abductive reasoning. Defaults to False.
+    topK : int, optional
+        Number of top-ranked candidates to keep when forming the soft label. ``-1``
+        keeps all candidates. Defaults to 16.
+    temperature : float, optional
+        Softmax temperature used when aggregating candidate probabilities into a
+        soft label. Lower values produce sharper distributions. Defaults to 0.2.
+    multi_label : bool, optional
+        Whether the underlying task is multi-label (each symbol is a binary vector
+        rather than a single class index). Defaults to False.
     """
 
     def __init__(
@@ -453,7 +456,7 @@ class A3BLReasoner(Reasoner):  # TODO
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
     def _confidence_dist(
-        pred_probs: np.ndarray, candidate_idxs: List[List[Any]], temp: float = 1.0
+        self, pred_probs: np.ndarray, candidate_idxs: List[List[Any]], temp: float = 1.0
     ) -> np.ndarray:
         from scipy.special import softmax
 
@@ -465,7 +468,7 @@ class A3BLReasoner(Reasoner):  # TODO
         return softmax(candidate_probs)
 
     def _confidence_dist_multi_label(
-        pred_probs: np.ndarray, candidate_idxs: List[List[Any]], temp: float = 1.0
+        self, pred_probs: np.ndarray, candidate_idxs: List[List[Any]], temp: float = 1.0
     ) -> np.ndarray:
         from scipy.special import softmax
 
@@ -530,7 +533,7 @@ class A3BLReasoner(Reasoner):  # TODO
             aggregate_label = weighted_one_hot.sum(dim=0)  # [M, C]
         return [tensor.cpu() for tensor in aggregate_label.unbind(0)]
 
-    def abduce(self, data_example: ListData) -> List[Any]:
+    def abduce(self, data_example: ListData) -> Tuple[List[Any], List[Any]]:
         """
         Perform abduction and get soft label distribution
         (given by all valid candidates that satisfy the underlying rules).

@@ -19,7 +19,38 @@ class MultiLabelClassificationDataset(ClassificationDataset):
 
 
 class BDDNN(BasicNN):
-    # TODO: 这里要简单介绍一下BDDNN是什么，它与BasicNN的区别是什么，为什么要写这样一个继承类
+    """
+    BDDNN (Binary Decision Deep Neural Network) is a variant of BasicNN
+    designed for multi-label classification tasks.
+
+    Compared with BasicNN, which assumes a single-label (multi-class)
+    classification setting using softmax activation and argmax prediction,
+    BDDNN adopts a multi-label formulation where each output dimension is
+    treated independently.
+
+    Key differences from BasicNN:
+    1. Output activation:
+       - BasicNN uses softmax (mutually exclusive classes)
+       - BDDNN uses sigmoid (independent binary probabilities per class)
+
+    2. Prediction format:
+       - BasicNN outputs a single class index
+       - BDDNN outputs a binary vector indicating multiple active labels
+
+    3. Dataset:
+       - BasicNN uses ClassificationDataset (single label)
+       - BDDNN uses MultiLabelClassificationDataset (multi-label targets)
+
+    This design is useful in scenarios where multiple labels can be true
+    simultaneously, such as:
+    - multi-digit recognition
+    - attribute prediction
+    - neural-symbolic tasks (e.g., SAT variable assignment probabilities)
+
+    The class inherits from BasicNN to reuse the training, evaluation,
+    and data pipeline logic, while only modifying prediction behavior
+    and data handling for multi-label settings.
+    """
     def predict(
         self,
         data_loader: Optional[DataLoader] = None,
