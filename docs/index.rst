@@ -3,7 +3,7 @@ ABLkit
 
 .. raw:: html
 
-    <img alt="logo" class="align-right" src="_static/img/logo.png" style="width: 140px; height: 135.1px; margin-left: 20px; margin-right: 10px">
+    <img alt="logo" class="align-right" src="_static/img/new_logo.png" style="width: 140px; height: 135.1px; margin-left: 20px; margin-right: 10px">
     <p>
     <b>ABLkit</b> is an efficient Python toolkit for <a href="https://www.lamda.nju.edu.cn/publication/chap_ABL.pdf"><b>Abductive Learning (ABL)</b></a>.
     </p>
