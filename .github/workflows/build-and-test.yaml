@@ -30,7 +30,13 @@ jobs:
 
       - name: Install SWI-Prolog (Windows)
         if: matrix.os == 'windows-latest'
-        run: choco install -y swi-prolog
+        run: |
+          choco install -y swi-prolog
+          $swiplHome = "C:\Program Files\swipl"
+          $swiplBin = Join-Path $swiplHome "bin"
+          Add-Content -Path $env:GITHUB_PATH -Value $swiplBin
+          Add-Content -Path $env:GITHUB_ENV -Value "SWI_HOME_DIR=$swiplHome"
+          & (Join-Path $swiplBin "swipl.exe") --version
 
       - name: Install SWI-Prolog (macOS)
         if: matrix.os == 'macos-latest'

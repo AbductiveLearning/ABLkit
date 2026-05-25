@@ -201,7 +201,7 @@ def kb_add_ground():
 @pytest.fixture
 def kb_add_prolog():
     if platform.system() == "Darwin":
-        return
+        pytest.skip("Prolog tests are skipped on macOS")
     kb = PrologKB(pseudo_label_list=list(range(10)), pl_file="examples/mnist_add/add.pl")
     return kb
 
@@ -219,7 +219,7 @@ def kb_hwf2():
 @pytest.fixture
 def kb_hed():
     if platform.system() == "Darwin":
-        return
+        pytest.skip("Prolog tests are skipped on macOS")
     kb = HedKB(
         pseudo_label_list=[1, 0, "+", "="],
         pl_file="examples/hed/reasoning/learn_add.pl",
