@@ -115,6 +115,7 @@ To cite ABLkit, please cite the following paper:  `Huang et al., 2024 <https://j
 
    Overview/Abductive-Learning
    Overview/Installation
+   Overview/Algorithms
 
 .. toctree::
    :maxdepth: 1
@@ -154,5 +155,3 @@ To cite ABLkit, please cite the following paper:  `Huang et al., 2024 <https://j
    :caption: References
 
    References
-
-

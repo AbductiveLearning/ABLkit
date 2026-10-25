@@ -28,6 +28,10 @@ ABLkit encapsulates advanced ABL techniques, providing users with an efficient a
 <img src="https://raw.githubusercontent.com/AbductiveLearning/ABLkit/main/docs/_static/img/ABLkit.png" alt="ABLkit" style="width: 80%;"/>
 </p>
 
+## 🧩 Supported Algorithms
+
+ABLkit includes multiple abductive-learning variants and related neuro-symbolic methods, covering different distance measures, optimization strategies, reasoning backends, and supervision settings. See the [Algorithm Guide](https://ablkit.readthedocs.io/en/latest/Overview/Algorithms.html) for the complete list, APIs, parameters, and usage examples.
+
 ## 🛠️ Installation
 
 ### Install from PyPI
